@@ -1,0 +1,4 @@
+Thanks to akramKamal on CodeProject for providing the code for downloading videos,
+and thanks to fracturedsoul & sweetgugly in the comments for improving it. (Link to the CodeProject article: http://www.codeproject.com/Tips/323771/YouTube-Downloader-Using-Csharp-NET)
+
+Thanks to ffmpeg for providing the method for converting video to MP3. (http://www.ffmpeg.org/)
