@@ -6,4 +6,4 @@ YouTube Downloader is a simple program to download & optionally convert YouTube 
 
 ## Screenshot
 
-![logo](Images\Screenshot1.png)
+![logo](Images/Screenshot1.png)
