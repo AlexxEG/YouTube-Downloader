@@ -22,6 +22,13 @@ namespace YouTube_Downloader
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             SettingsEx.WindowStates[this.Name].SaveForm(this);
+
+            string[] paths = new string[cbSaveTo.Items.Count];
+
+            cbSaveTo.Items.CopyTo(paths, 0);
+            SettingsEx.SaveToDirectories.Clear();
+            SettingsEx.SaveToDirectories.AddRange(paths);
+
             SettingsEx.Save();
         }
 
@@ -33,6 +40,7 @@ namespace YouTube_Downloader
             }
 
             SettingsEx.WindowStates[this.Name].RestoreForm(this);
+            cbSaveTo.Items.AddRange(SettingsEx.SaveToDirectories.ToArray());
         }
 
         private void panel1_Paint(object sender, PaintEventArgs e)
@@ -59,6 +67,23 @@ namespace YouTube_Downloader
 
         private void btnDownload_Click(object sender, EventArgs e)
         {
+            string path = string.Empty;
+
+            try
+            {
+                path = cbSaveTo.Text;
+
+                if (!Directory.Exists(path))
+                    Directory.CreateDirectory(path);
+
+                if (!cbSaveTo.Items.Contains(path))
+                    cbSaveTo.Items.Add(path);
+            }
+            catch
+            {
+                MessageBox.Show("Couldn't create directory.");
+            }
+
             try
             {
                 YouTubeVideoQuality tempItem = cbQuality.SelectedItem as YouTubeVideoQuality;
@@ -79,11 +104,25 @@ namespace YouTube_Downloader
 
                 lvQueue.Items.Add(item);
 
-                string file = Application.StartupPath + "\\" + tempItem.VideoTitle + "." + tempItem.Extension;
-
-                item.Download(tempItem.DownloadUrl, file);
+                item.Download(tempItem.DownloadUrl, Path.Combine(path, tempItem.VideoTitle + "." + tempItem.Extension));
             }
             catch (Exception ex) { MessageBox.Show(this, ex.Message, ex.Source, MessageBoxButtons.OK, MessageBoxIcon.Error); }
+        }
+
+        private void btnBrowse_Click(object sender, EventArgs e)
+        {
+            OpenFolderDialog ofd = new OpenFolderDialog();
+
+            if (Directory.Exists(cbSaveTo.Text))
+                ofd.InitialFolder = cbSaveTo.Text;
+            else
+                ofd.InitialFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+            if (ofd.ShowDialog(this) == DialogResult.OK)
+            {
+                cbSaveTo.Text = ofd.Folder;
+                cbSaveTo.Items.Add(ofd.Folder);
+            }
         }
 
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
@@ -96,7 +135,7 @@ namespace YouTube_Downloader
             List<YouTubeVideoQuality> urls = e.Result as List<YouTubeVideoQuality>;
 
             cbQuality.DataSource = urls;
-            label1.Text = string.Format("Title: {0}", urls[0].VideoTitle);
+            lTitle.Text = string.Format("Title: {0}", urls[0].VideoTitle);
 
             btnGetVideo.Enabled = txtYoutubeLink.Enabled = true;
             btnDownload.Enabled = true;
@@ -210,11 +249,22 @@ namespace YouTube_Downloader
         {
             try
             {
-                Process.Start(Application.StartupPath + "\\" + lvQueue.SelectedItems[0].Text);
+                string path = string.Empty;
+
+                if (lvQueue.SelectedItems[0] is ConvertListViewItem)
+                {
+                    path = (lvQueue.SelectedItems[0] as ConvertListViewItem).Output;
+                }
+                else if (lvQueue.SelectedItems[0] is DownloadListViewItem)
+                {
+                    path = (lvQueue.SelectedItems[0] as DownloadListViewItem).File;
+                }
+
+                Process.Start(path);
             }
             catch
             {
-
+                MessageBox.Show(this, "Couldn't open file.");
             }
         }
 
@@ -222,11 +272,22 @@ namespace YouTube_Downloader
         {
             try
             {
-                Process.Start(Application.StartupPath);
+                string path = string.Empty;
+
+                if (lvQueue.SelectedItems[0] is ConvertListViewItem)
+                {
+                    path = (lvQueue.SelectedItems[0] as ConvertListViewItem).Output;
+                }
+                else if (lvQueue.SelectedItems[0] is DownloadListViewItem)
+                {
+                    path = (lvQueue.SelectedItems[0] as DownloadListViewItem).File;
+                }
+
+                Process.Start(Path.GetDirectoryName(path));
             }
             catch
             {
-
+                MessageBox.Show(this, "Couldn't open folder.");
             }
         }
 
@@ -345,7 +406,7 @@ namespace YouTube_Downloader
 
         private void converter_DoWork(object sender, DoWorkEventArgs e)
         {
-            string output = Path.Combine(Application.StartupPath, Path.GetFileNameWithoutExtension((string)e.Argument) + ".mp3");
+            string output = Path.Combine(Path.GetDirectoryName((string)e.Argument), Path.GetFileNameWithoutExtension((string)e.Argument) + ".mp3");
 
             FfmpegHelper.ConvertToMP3((string)e.Argument, output);
 

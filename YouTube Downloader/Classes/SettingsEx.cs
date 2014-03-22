@@ -7,6 +7,7 @@ namespace YouTube_Downloader
 {
     public class SettingsEx
     {
+        public static List<string> SaveToDirectories = new List<string>();
         public static Dictionary<string, WindowState> WindowStates = new Dictionary<string, WindowState>();
 
         public static void Load()
@@ -31,6 +32,11 @@ namespace YouTube_Downloader
 
                 SettingsEx.WindowStates.Add(windowState.FormName, windowState);
             }
+
+            foreach (XmlNode node in document.GetElementsByTagName("path"))
+            {
+                SaveToDirectories.Add(node.InnerText);
+            }
         }
 
         public static void Save()
@@ -50,6 +56,15 @@ namespace YouTube_Downloader
                 {
                     windowState.SerializeXml(w);
                 }
+
+                w.WriteStartElement("save_to_directories");
+
+                foreach (string directory in SaveToDirectories)
+                {
+                    w.WriteElementString("path", directory);
+                }
+
+                w.WriteEndElement();
 
                 w.WriteEndElement();
                 w.WriteEndDocument();

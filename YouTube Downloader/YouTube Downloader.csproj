@@ -44,6 +44,7 @@
     </Compile>
     <Compile Include="Classes\FileSizeFormatProvider.cs" />
     <Compile Include="Classes\Helper.cs" />
+    <Compile Include="Classes\OpenFolderDialog.cs" />
     <Compile Include="Classes\SettingsEx.cs" />
     <Compile Include="Classes\WindowState.cs" />
     <Compile Include="Classes\YouTubeDownloader.cs" />
