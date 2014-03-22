@@ -143,12 +143,14 @@ namespace YouTube_Downloader
 
         private void contextMenu1_Popup(object sender, EventArgs e)
         {
-            if (lvQueue.SelectedItems[0] == null)
+            if (lvQueue.SelectedItems.Count == 0)
             {
                 foreach (MenuItem menuItem in contextMenu1.MenuItems)
                 {
                     menuItem.Visible = false;
                 }
+
+                return;
             }
 
             if (lvQueue.SelectedItems[0] is ConvertListViewItem)
