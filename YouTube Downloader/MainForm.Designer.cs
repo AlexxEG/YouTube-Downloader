@@ -50,6 +50,16 @@
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.contextMenu1 = new System.Windows.Forms.ContextMenu();
+            this.openMenuItem = new System.Windows.Forms.MenuItem();
+            this.openContainingFolderMenuItem = new System.Windows.Forms.MenuItem();
+            this.menuItem3 = new System.Windows.Forms.MenuItem();
+            this.convertToMP3MenuItem = new System.Windows.Forms.MenuItem();
+            this.menuItem5 = new System.Windows.Forms.MenuItem();
+            this.resumeMenuItem = new System.Windows.Forms.MenuItem();
+            this.pauseMenuItem = new System.Windows.Forms.MenuItem();
+            this.stopMenuItem = new System.Windows.Forms.MenuItem();
+            this.removeMenuItem = new System.Windows.Forms.MenuItem();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -259,6 +269,73 @@
             this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
             this.backgroundWorker1.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker1_RunWorkerCompleted);
             // 
+            // contextMenu1
+            // 
+            this.contextMenu1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.openMenuItem,
+            this.openContainingFolderMenuItem,
+            this.menuItem3,
+            this.convertToMP3MenuItem,
+            this.menuItem5,
+            this.resumeMenuItem,
+            this.pauseMenuItem,
+            this.stopMenuItem,
+            this.removeMenuItem});
+            this.contextMenu1.Popup += new System.EventHandler(this.contextMenu1_Popup);
+            this.contextMenu1.Collapse += new System.EventHandler(this.contextMenu1_Collapse);
+            // 
+            // openMenuItem
+            // 
+            this.openMenuItem.Index = 0;
+            this.openMenuItem.Text = "Open";
+            this.openMenuItem.Click += new System.EventHandler(this.openMenuItem_Click);
+            // 
+            // openContainingFolderMenuItem
+            // 
+            this.openContainingFolderMenuItem.Index = 1;
+            this.openContainingFolderMenuItem.Text = "Open Containing Folder";
+            this.openContainingFolderMenuItem.Click += new System.EventHandler(this.openContainingFolderMenuItem_Click);
+            // 
+            // menuItem3
+            // 
+            this.menuItem3.Index = 2;
+            this.menuItem3.Text = "-";
+            // 
+            // convertToMP3MenuItem
+            // 
+            this.convertToMP3MenuItem.Index = 3;
+            this.convertToMP3MenuItem.Text = "Convert to MP3";
+            this.convertToMP3MenuItem.Click += new System.EventHandler(this.convertToMP3MenuItem_Click);
+            // 
+            // menuItem5
+            // 
+            this.menuItem5.Index = 4;
+            this.menuItem5.Text = "-";
+            // 
+            // resumeMenuItem
+            // 
+            this.resumeMenuItem.Index = 5;
+            this.resumeMenuItem.Text = "Resume";
+            this.resumeMenuItem.Click += new System.EventHandler(this.resumeMenuItem_Click);
+            // 
+            // pauseMenuItem
+            // 
+            this.pauseMenuItem.Index = 6;
+            this.pauseMenuItem.Text = "Pause";
+            this.pauseMenuItem.Click += new System.EventHandler(this.pauseMenuItem_Click);
+            // 
+            // stopMenuItem
+            // 
+            this.stopMenuItem.Index = 7;
+            this.stopMenuItem.Text = "Stop";
+            this.stopMenuItem.Click += new System.EventHandler(this.stopMenuItem_Click);
+            // 
+            // removeMenuItem
+            // 
+            this.removeMenuItem.Index = 8;
+            this.removeMenuItem.Text = "Remove";
+            this.removeMenuItem.Click += new System.EventHandler(this.removeMenuItem_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -302,6 +379,16 @@
         private System.Windows.Forms.ComboBox cbSaveTo;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button btnBrowse;
+        private System.Windows.Forms.ContextMenu contextMenu1;
+        private System.Windows.Forms.MenuItem openMenuItem;
+        private System.Windows.Forms.MenuItem openContainingFolderMenuItem;
+        private System.Windows.Forms.MenuItem menuItem3;
+        private System.Windows.Forms.MenuItem convertToMP3MenuItem;
+        private System.Windows.Forms.MenuItem menuItem5;
+        private System.Windows.Forms.MenuItem resumeMenuItem;
+        private System.Windows.Forms.MenuItem pauseMenuItem;
+        private System.Windows.Forms.MenuItem stopMenuItem;
+        private System.Windows.Forms.MenuItem removeMenuItem;
     }
 }
 

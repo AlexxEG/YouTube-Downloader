@@ -14,7 +14,8 @@ namespace YouTube_Downloader
         public MainForm()
         {
             InitializeComponent();
-            InitializeContextMenu();
+
+            lvQueue.ContextMenu = contextMenu1;
 
             SettingsEx.Load();
         }
@@ -142,43 +143,6 @@ namespace YouTube_Downloader
         }
 
         #region contextMenu1
-
-        ContextMenu contextMenu1;
-        MenuItem openMenuItem;
-        MenuItem openContainingFolderMenuItem;
-        MenuItem convertToMP3MenuItem;
-        MenuItem resumeMenuItem;
-        MenuItem pauseMenuItem;
-        MenuItem stopMenuItem;
-        MenuItem removeMenuItem;
-
-        public void InitializeContextMenu()
-        {
-            contextMenu1 = new ContextMenu();
-
-            openMenuItem = new MenuItem("Open", openMenuItem_Click);
-            openContainingFolderMenuItem = new MenuItem("Open Containing Folder", openContainingFolderMenuItem_Click);
-            convertToMP3MenuItem = new MenuItem("Convert to MP3", convertToMP3MenuItem_Click);
-            resumeMenuItem = new MenuItem("Resume", resumeMenuItem_Click);
-            pauseMenuItem = new MenuItem("Pause", pauseMenuItem_Click);
-            stopMenuItem = new MenuItem("Stop", stopMenuItem_Click);
-            removeMenuItem = new MenuItem("Remove", removeMenuItem_Click);
-
-            contextMenu1.MenuItems.Add(openMenuItem);
-            contextMenu1.MenuItems.Add(openContainingFolderMenuItem);
-            contextMenu1.MenuItems.Add(new MenuItem("-"));
-            contextMenu1.MenuItems.Add(convertToMP3MenuItem);
-            contextMenu1.MenuItems.Add(new MenuItem("-"));
-            contextMenu1.MenuItems.Add(resumeMenuItem);
-            contextMenu1.MenuItems.Add(pauseMenuItem);
-            contextMenu1.MenuItems.Add(stopMenuItem);
-            contextMenu1.MenuItems.Add(removeMenuItem);
-
-            contextMenu1.Collapse += contextMenu1_Collapse;
-            contextMenu1.Popup += contextMenu1_Popup;
-
-            lvQueue.ContextMenu = contextMenu1;
-        }
 
         private void contextMenu1_Popup(object sender, EventArgs e)
         {
@@ -442,7 +406,6 @@ namespace YouTube_Downloader
         public DownloadListViewItem(string text)
             : base(text)
         {
-
         }
 
         public void Download(string url, string saveTo)
