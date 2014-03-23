@@ -87,7 +87,7 @@ namespace YouTube_Downloader
                     q.VideoUrl = VideoUrl;
                     q.VideoTitle = title;
                     q.DownloadUrl = videoLink + "&title=" + title;
-                    if (!getSize(q))continue ;
+                    if (!getSize(q)) continue;
                     q.Length = long.Parse(Regex.Match(html, "\"length_seconds\":(.+?),", RegexOptions.Singleline).Groups[1].ToString());
                     bool IsWide = IsWideScreen(html);
                     if (getQuality(q, IsWide))
