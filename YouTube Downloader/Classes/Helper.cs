@@ -41,7 +41,7 @@ namespace YouTube_Downloader
             return System.Web.HttpUtility.UrlDecode(str);
         }
 
-        public static bool isValidUrl(string url)
+        public static bool IsValidUrl(string url)
         {
             string pattern = @"^(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?$";
             Regex regex = new Regex(pattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -158,7 +158,7 @@ namespace YouTube_Downloader
 
         public static IWebProxy InitialProxy()
         {
-            string address = address = getIEProxy();
+            string address = address = GetIEProxy();
             if (!string.IsNullOrEmpty(address))
             {
                 WebProxy proxy = new WebProxy(address);
@@ -167,7 +167,7 @@ namespace YouTube_Downloader
             }
             else return null;
         }
-        private static string getIEProxy()
+        private static string GetIEProxy()
         {
             var p = WebRequest.DefaultWebProxy;
             if (p == null) return null;

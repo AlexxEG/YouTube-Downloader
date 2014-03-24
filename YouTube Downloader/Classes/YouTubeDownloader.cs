@@ -45,13 +45,13 @@ namespace YouTube_Downloader
         public override string ToString()
         {
             string videoExtention = this.Extension;
-            string videoDimension = formatSize(this.Dimension);
+            string videoDimension = FormatSize(this.Dimension);
             string videoSize = String.Format(new FileSizeFormatProvider(), "{0:fs}", this.VideoSize);
 
             return String.Format("{0} ({1}) - {2}", videoExtention.ToUpper(), videoDimension, videoSize);
         }
 
-        private string formatSize(Size value)
+        private string FormatSize(Size value)
         {
             string s = value.Height >= 720 ? " HD" : "";
             return ((Size)value).Width + " x " + value.Height + s;
@@ -87,10 +87,10 @@ namespace YouTube_Downloader
                     q.VideoUrl = VideoUrl;
                     q.VideoTitle = title;
                     q.DownloadUrl = videoLink + "&title=" + title;
-                    if (!getSize(q)) continue;
+                    if (!GetSize(q)) continue;
                     q.Length = long.Parse(Regex.Match(html, "\"length_seconds\":(.+?),", RegexOptions.Singleline).Groups[1].ToString());
                     bool IsWide = IsWideScreen(html);
-                    if (getQuality(q, IsWide))
+                    if (GetQuality(q, IsWide))
                         urls.Add(q);
                 }
             }
@@ -142,7 +142,7 @@ namespace YouTube_Downloader
             return urls;
         }
 
-        private static bool getQuality(YouTubeVideoQuality q, Boolean _Wide)
+        private static bool GetQuality(YouTubeVideoQuality q, Boolean _Wide)
         {
             int iTagValue;
             string itag = Regex.Match(q.DownloadUrl, @"itag=([1-9]?[0-9]?[0-9])", RegexOptions.Singleline).Groups[1].ToString();
@@ -192,7 +192,7 @@ namespace YouTube_Downloader
             return res;
         }
 
-        private static bool getSize(YouTubeVideoQuality q)
+        private static bool GetSize(YouTubeVideoQuality q)
         {
             try
             {

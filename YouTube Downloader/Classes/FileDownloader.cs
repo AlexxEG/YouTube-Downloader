@@ -46,7 +46,7 @@ namespace YouTube_Downloader
             this.FileUrl = FileUrl;
             this.DestFolder = DestFolder;
             this.DestFileName = DestFileName;
-            DoWork += download;
+            DoWork += Download;
         }
 
         public int Progress { get; private set; }
@@ -71,7 +71,7 @@ namespace YouTube_Downloader
         /// <summary>
         /// Begin downloading the file at the specified url, and save it to the given folder.
         /// </summary>
-        private void download(object sender, DoWorkEventArgs e)
+        private void Download(object sender, DoWorkEventArgs e)
         {
             _pause = false;
             DownloadStatus = DownloadStatus.Downloading;

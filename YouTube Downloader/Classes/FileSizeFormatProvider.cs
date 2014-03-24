@@ -19,12 +19,12 @@ namespace YouTube_Downloader
         {
             if (format == null || (!format.StartsWith(FileSizeFormat) && !format.StartsWith(SpeedFormat)))
             {
-                return defaultFormat(format, arg, formatProvider);
+                return DefaultFormat(format, arg, formatProvider);
             }
 
             if (arg is string)
             {
-                return defaultFormat(format, arg, formatProvider);
+                return DefaultFormat(format, arg, formatProvider);
             }
 
             Decimal size;
@@ -35,7 +35,7 @@ namespace YouTube_Downloader
             }
             catch (InvalidCastException)
             {
-                return defaultFormat(format, arg, formatProvider);
+                return DefaultFormat(format, arg, formatProvider);
             }
 
             string suffix;
@@ -66,7 +66,7 @@ namespace YouTube_Downloader
 
         }
 
-        private static string defaultFormat(string format, object arg, IFormatProvider formatProvider)
+        private static string DefaultFormat(string format, object arg, IFormatProvider formatProvider)
         {
             IFormattable formattableArg = arg as IFormattable;
             if (formattableArg != null)
