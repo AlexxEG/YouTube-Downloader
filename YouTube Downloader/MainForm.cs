@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Threading;
 using System.Windows.Forms;
 using YouTube_Downloader.Classes;
 
@@ -98,9 +99,9 @@ namespace YouTube_Downloader
 
                 TimeSpan videoLength = TimeSpan.FromSeconds(tempItem.Length);
                 if (videoLength.Hours > 0)
-                    item.SubItems.Add(String.Format("{0}:{1}:{2}", videoLength.Hours, videoLength.Minutes, videoLength.Seconds));
+                    item.SubItems.Add(String.Format("{0}:{1:00}:{2:00}", videoLength.Hours, videoLength.Minutes, videoLength.Seconds));
                 else
-                    item.SubItems.Add(String.Format("{0}:{1}", videoLength.Minutes, videoLength.Seconds));
+                    item.SubItems.Add(String.Format("{0}:{1:00}", videoLength.Minutes, videoLength.Seconds));
 
                 item.SubItems.Add(String.Format(new FileSizeFormatProvider(), "{0:fs}", tempItem.VideoSize));
                 item.SubItems.Add(tempItem.VideoUrl);
@@ -126,6 +127,17 @@ namespace YouTube_Downloader
                 cbSaveTo.Text = ofd.Folder;
                 cbSaveTo.Items.Add(ofd.Folder);
             }
+        }
+
+        private void chbCutFrom_CheckedChanged(object sender, EventArgs e)
+        {
+            mtxtFrom.Enabled = chbCutTo.Enabled = chbCutFrom.Checked;
+            mtxtTo.Enabled = chbCutFrom.Checked && chbCutTo.Checked;
+        }
+
+        private void chbCutTo_CheckedChanged(object sender, EventArgs e)
+        {
+            mtxtTo.Enabled = chbCutTo.Checked;
         }
 
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
@@ -271,7 +283,25 @@ namespace YouTube_Downloader
 
             lvQueue.Items.Add(newItem);
 
-            newItem.Convert(item.File);
+            if (chbCutFrom.Checked)
+            {
+                mtxtFrom.ValidateText();
+
+                if (chbCutTo.Enabled && chbCutTo.Checked)
+                {
+                    mtxtTo.ValidateText();
+
+                    newItem.Convert(item.File, mtxtFrom.Text, mtxtTo.Text);
+                }
+                else
+                {
+                    newItem.Convert(item.File, mtxtFrom.Text);
+                }
+            }
+            else
+            {
+                newItem.Convert(item.File);
+            }
         }
 
         private void resumeMenuItem_Click(object sender, EventArgs e)
@@ -300,12 +330,50 @@ namespace YouTube_Downloader
             ListViewItem item = lvQueue.SelectedItems[0];
 
             if (item is DownloadListViewItem)
-                (item as DownloadListViewItem).Stop();
+            {
+                var dlItem = item as DownloadListViewItem;
+                bool wasSuccessful = dlItem.DownloadStatus == DownloadStatus.Success;
+
+                dlItem.Stop();
+
+                if (!wasSuccessful)
+                {
+                    DeleteFile(dlItem.File);
+                }
+            }
 
             item.Remove();
         }
 
         #endregion
+
+        public void DeleteFile(string file)
+        {
+            new Thread(delegate()
+            {
+                int attempts = 0;
+
+                Thread.Sleep(2000);
+
+                while (attempts <= 10)
+                {
+                    try
+                    {
+                        File.Delete(file);
+                        Console.WriteLine("Successfully deleted '{0}' after {1} attempt(s).",
+                            Path.GetFileName(file), attempts);
+                        break;
+                    }
+                    catch
+                    {
+                        attempts++;
+                        Console.WriteLine("Failed to delete '{0}', {1} attempts left.",
+                            Path.GetFileName(file), 10 - attempts);
+                        Thread.Sleep(2000);
+                    }
+                }
+            }).Start();
+        }
 
         public static string FormatTitle(string title)
         {
@@ -337,16 +405,47 @@ namespace YouTube_Downloader
             this.Status = ConvertStatus.Converting;
         }
 
+        public void Convert(string file, string start)
+        {
+            this.converterStart = start;
+            this.converterEnd = string.Empty;
+            this.Convert(file);
+        }
+
+        public void Convert(string file, string start, string end)
+        {
+            this.converterStart = start;
+            this.converterEnd = end;
+            this.Convert(file);
+        }
+
         #region converter
 
         private BackgroundWorker converter;
+        private string converterStart = string.Empty;
+        private string converterEnd = string.Empty;
 
         private void converter_DoWork(object sender, DoWorkEventArgs e)
         {
+            string input = (string)e.Argument;
             string output = Path.Combine(Path.GetDirectoryName((string)e.Argument), Path.GetFileNameWithoutExtension((string)e.Argument) + ".mp3");
 
-            FfmpegHelper.ConvertToMP3((string)e.Argument, output);
+            FfmpegHelper.ConvertToMP3(input, output);
 
+            if (!string.IsNullOrEmpty(converterStart))
+            {
+                if (string.IsNullOrEmpty(converterEnd))
+                {
+                    FfmpegHelper.CutMP3(output, output, converterStart);
+                }
+                else
+                {
+                    FfmpegHelper.CutMP3(output, output, converterStart, converterEnd);
+                }
+            }
+
+            this.converterStart = string.Empty;
+            this.converterEnd = string.Empty;
             e.Result = output;
         }
 
@@ -406,6 +505,7 @@ namespace YouTube_Downloader
         public void Stop()
         {
             downloader.Abort();
+            RefreshStatus();
         }
 
         #region downloader
@@ -450,6 +550,10 @@ namespace YouTube_Downloader
             else if (downloader.DownloadStatus == DownloadStatus.Paused)
             {
                 this.SubItems[1].Text = "Paused";
+            }
+            else if (downloader.DownloadStatus == DownloadStatus.Canceled)
+            {
+                this.SubItems[1].Text = "Canceled";
             }
         }
     }

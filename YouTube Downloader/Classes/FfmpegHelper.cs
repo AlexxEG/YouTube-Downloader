@@ -28,7 +28,7 @@ namespace YouTube_Downloader.Classes
                 string filename = Path.GetFileNameWithoutExtension(output);
                 string extension = Path.GetExtension(output);
 
-                output = string.Format("{0}\\{1}_out{2}", folder, filename, extension);
+                output = string.Format("{0}\\{1}_cut{2}", folder, filename, extension);
             }
 
             TimeSpan from = TimeSpan.Parse(start);
@@ -54,7 +54,7 @@ namespace YouTube_Downloader.Classes
                 string filename = Path.GetFileNameWithoutExtension(output);
                 string extension = Path.GetExtension(output);
 
-                output = string.Format("{0}\\{1}_out{2}", folder, filename, extension);
+                output = string.Format("{0}\\{1}_cut{2}", folder, filename, extension);
             }
 
             TimeSpan from = TimeSpan.Parse(start);

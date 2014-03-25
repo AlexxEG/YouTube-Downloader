@@ -60,8 +60,14 @@
             this.pauseMenuItem = new System.Windows.Forms.MenuItem();
             this.stopMenuItem = new System.Windows.Forms.MenuItem();
             this.removeMenuItem = new System.Windows.Forms.MenuItem();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.mtxtFrom = new System.Windows.Forms.MaskedTextBox();
+            this.chbCutFrom = new System.Windows.Forms.CheckBox();
+            this.chbCutTo = new System.Windows.Forms.CheckBox();
+            this.mtxtTo = new System.Windows.Forms.MaskedTextBox();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -234,7 +240,7 @@
             this.lvQueue.FullRowSelect = true;
             this.lvQueue.Location = new System.Drawing.Point(12, 120);
             this.lvQueue.Name = "lvQueue";
-            this.lvQueue.Size = new System.Drawing.Size(590, 233);
+            this.lvQueue.Size = new System.Drawing.Size(590, 165);
             this.lvQueue.TabIndex = 2;
             this.lvQueue.UseCompatibleStateImageBehavior = false;
             this.lvQueue.View = System.Windows.Forms.View.Details;
@@ -336,11 +342,70 @@
             this.removeMenuItem.Text = "Remove";
             this.removeMenuItem.Click += new System.EventHandler(this.removeMenuItem_Click);
             // 
+            // groupBox2
+            // 
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.mtxtTo);
+            this.groupBox2.Controls.Add(this.chbCutTo);
+            this.groupBox2.Controls.Add(this.mtxtFrom);
+            this.groupBox2.Controls.Add(this.chbCutFrom);
+            this.groupBox2.Location = new System.Drawing.Point(12, 291);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(590, 62);
+            this.groupBox2.TabIndex = 3;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Converting Options";
+            // 
+            // mtxtFrom
+            // 
+            this.mtxtFrom.Enabled = false;
+            this.mtxtFrom.Location = new System.Drawing.Point(80, 19);
+            this.mtxtFrom.Mask = "00:00:00.000";
+            this.mtxtFrom.Name = "mtxtFrom";
+            this.mtxtFrom.Size = new System.Drawing.Size(100, 20);
+            this.mtxtFrom.TabIndex = 1;
+            this.mtxtFrom.ValidatingType = typeof(System.TimeSpan);
+            // 
+            // chbCutFrom
+            // 
+            this.chbCutFrom.AutoSize = true;
+            this.chbCutFrom.Location = new System.Drawing.Point(6, 21);
+            this.chbCutFrom.Name = "chbCutFrom";
+            this.chbCutFrom.Size = new System.Drawing.Size(68, 17);
+            this.chbCutFrom.TabIndex = 0;
+            this.chbCutFrom.Text = "Cut From";
+            this.chbCutFrom.UseVisualStyleBackColor = true;
+            this.chbCutFrom.CheckedChanged += new System.EventHandler(this.chbCutFrom_CheckedChanged);
+            // 
+            // chbCutTo
+            // 
+            this.chbCutTo.AutoSize = true;
+            this.chbCutTo.Enabled = false;
+            this.chbCutTo.Location = new System.Drawing.Point(186, 21);
+            this.chbCutTo.Name = "chbCutTo";
+            this.chbCutTo.Size = new System.Drawing.Size(39, 17);
+            this.chbCutTo.TabIndex = 2;
+            this.chbCutTo.Text = "To";
+            this.chbCutTo.UseVisualStyleBackColor = true;
+            this.chbCutTo.CheckedChanged += new System.EventHandler(this.chbCutTo_CheckedChanged);
+            // 
+            // mtxtTo
+            // 
+            this.mtxtTo.Enabled = false;
+            this.mtxtTo.Location = new System.Drawing.Point(231, 19);
+            this.mtxtTo.Mask = "00:00:00.000";
+            this.mtxtTo.Name = "mtxtTo";
+            this.mtxtTo.Size = new System.Drawing.Size(100, 20);
+            this.mtxtTo.TabIndex = 3;
+            this.mtxtTo.ValidatingType = typeof(System.TimeSpan);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(614, 411);
+            this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.lvQueue);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.groupBox1);
@@ -351,6 +416,8 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.panel1.ResumeLayout(false);
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -389,6 +456,11 @@
         private System.Windows.Forms.MenuItem pauseMenuItem;
         private System.Windows.Forms.MenuItem stopMenuItem;
         private System.Windows.Forms.MenuItem removeMenuItem;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.MaskedTextBox mtxtFrom;
+        private System.Windows.Forms.CheckBox chbCutFrom;
+        private System.Windows.Forms.CheckBox chbCutTo;
+        private System.Windows.Forms.MaskedTextBox mtxtTo;
     }
 }
 
