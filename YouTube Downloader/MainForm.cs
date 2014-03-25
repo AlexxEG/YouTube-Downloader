@@ -15,6 +15,7 @@ namespace YouTube_Downloader
         public MainForm()
         {
             InitializeComponent();
+            InitializeMainMenu();
 
             lvQueue.ContextMenu = contextMenu1;
 
@@ -156,6 +157,151 @@ namespace YouTube_Downloader
             btnDownload.Enabled = true;
         }
 
+        #region mainMenu1
+
+        MainMenu mainMenu1;
+        MenuItem fileMenuItem;
+        MenuItem exitMenuItem;
+        MenuItem toolsMenuItem;
+        MenuItem convertVideoMenuItem;
+        MenuItem cutMP3MenuItem;
+
+        private void InitializeMainMenu()
+        {
+            MenuItem[] fileMenuItems = new MenuItem[]
+            {
+                exitMenuItem = new MenuItem("&Exit", exitMenuItem_Click, Shortcut.CtrlQ)
+            };
+
+            fileMenuItem = new MenuItem("&File");
+            fileMenuItem.MenuItems.AddRange(fileMenuItems);
+
+            MenuItem[] toolsMenuItems = new MenuItem[]
+            {
+                convertVideoMenuItem = new MenuItem("&Convert Video", convertVideoMenuItem_Click),
+                cutMP3MenuItem = new MenuItem("C&ut MP3", cutMP3MenuItem_Click)
+            };
+
+            toolsMenuItem = new MenuItem("&Tools");
+            toolsMenuItem.MenuItems.AddRange(toolsMenuItems);
+
+            mainMenu1 = new MainMenu();
+            mainMenu1.MenuItems.Add(fileMenuItem);
+            mainMenu1.MenuItems.Add(toolsMenuItem);
+
+            this.Menu = mainMenu1;
+        }
+
+        private void exitMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void convertVideoMenuItem_Click(object sender, EventArgs e)
+        {
+            using (var ofd = new OpenFileDialog())
+            {
+                ofd.Filter = "MP4 files|*.mp4|All files|*.*";
+
+                if (ofd.ShowDialog(this) == DialogResult.OK)
+                {
+                    ConvertListViewItem newItem = new ConvertListViewItem(Path.GetFileName(ofd.FileName));
+
+                    newItem.SubItems.Add("Converting");
+                    newItem.SubItems.Add("-");
+                    newItem.SubItems.Add(FormatVideoLength(FfmpegHelper.GetDuration(ofd.FileName)));
+                    newItem.SubItems.Add(GetFileSize(ofd.FileName));
+                    newItem.SubItems.Add("-");
+
+                    lvQueue.Items.Add(newItem);
+
+                    if (chbCutFrom.Checked)
+                    {
+                        DialogResult result = MessageBox.Show(this,
+                            "Do you want to cut the audio?", "Cut Audio", MessageBoxButtons.YesNoCancel);
+
+                        if (result == DialogResult.Yes)
+                        {
+                            if (chbCutFrom.Checked)
+                            {
+                                mtxtFrom.ValidateText().ToString();
+
+                                if (chbCutTo.Enabled && chbCutTo.Checked)
+                                {
+                                    mtxtTo.ValidateText().ToString();
+
+                                    newItem.Convert(ofd.FileName, mtxtFrom.Text, mtxtTo.Text);
+                                }
+                                else
+                                {
+                                    newItem.Convert(ofd.FileName, mtxtFrom.Text);
+                                }
+                            }
+                            else
+                            {
+                                newItem.Convert(ofd.FileName);
+                            }
+                        }
+                        else if (result == DialogResult.No)
+                        {
+                            newItem.Convert(ofd.FileName);
+                        }
+                        else if (result == DialogResult.Cancel)
+                        {
+                            newItem.Remove();
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        newItem.Convert(ofd.FileName);
+                    }
+                }
+            }
+        }
+
+        private void cutMP3MenuItem_Click(object sender, EventArgs e)
+        {
+            if (!chbCutFrom.Checked)
+            {
+                MessageBox.Show(this, "Please enter cutting information below first.");
+                return;
+            }
+
+            using (var ofd = new OpenFileDialog())
+            {
+                ofd.Filter = "MP3 files|*.mp3|All files|*.*";
+
+                if (ofd.ShowDialog(this) == DialogResult.OK)
+                {
+                    CuttingListViewItem newItem = new CuttingListViewItem(Path.GetFileName(ofd.FileName));
+
+                    newItem.SubItems.Add("Cutting");
+                    newItem.SubItems.Add("-");
+                    newItem.SubItems.Add(FormatVideoLength(FfmpegHelper.GetDuration(ofd.FileName)));
+                    newItem.SubItems.Add(GetFileSize(ofd.FileName));
+                    newItem.SubItems.Add("-");
+
+                    lvQueue.Items.Add(newItem);
+
+                    mtxtFrom.ValidateText().ToString();
+
+                    if (chbCutTo.Enabled && chbCutTo.Checked)
+                    {
+                        mtxtTo.ValidateText().ToString();
+
+                        newItem.Cut(ofd.FileName, mtxtFrom.Text, mtxtTo.Text);
+                    }
+                    else
+                    {
+                        newItem.Cut(ofd.FileName, mtxtFrom.Text);
+                    }
+                }
+            }
+        }
+
+        #endregion
+
         #region contextMenu1
 
         private void contextMenu1_Popup(object sender, EventArgs e)
@@ -170,46 +316,46 @@ namespace YouTube_Downloader
                 return;
             }
 
-            if (lvQueue.SelectedItems[0] is ConvertListViewItem)
+            if (lvQueue.SelectedItems[0] is DownloadListViewItem)
             {
-                ConvertListViewItem item = lvQueue.SelectedItems[0] as ConvertListViewItem;
+                DownloadListViewItem item = lvQueue.SelectedItems[0] as DownloadListViewItem;
+
+                convertToMP3MenuItem.Enabled = item.Status == OperationStatus.Success;
+
+                // Only need to REMOVE MenuItems, not show since it's done automatically
+                switch (item.Status)
+                {
+                    case OperationStatus.Success:
+                        resumeMenuItem.Visible = pauseMenuItem.Visible = stopMenuItem.Visible = false;
+                        break;
+                    case OperationStatus.Working:
+                        openMenuItem.Visible = resumeMenuItem.Visible = false;
+                        break;
+                    case OperationStatus.Paused:
+                        openMenuItem.Visible = pauseMenuItem.Visible = false;
+                        break;
+                    case OperationStatus.Canceled:
+                    case OperationStatus.Failed:
+                        openMenuItem.Visible = pauseMenuItem.Visible = stopMenuItem.Visible = resumeMenuItem.Visible = false;
+                        break;
+                }
+            }
+            else if (lvQueue.SelectedItems[0] is IOperation)
+            {
+                IOperation item = lvQueue.SelectedItems[0] as IOperation;
 
                 convertToMP3MenuItem.Enabled = false;
                 resumeMenuItem.Visible = pauseMenuItem.Visible = stopMenuItem.Visible = false;
 
                 switch (item.Status)
                 {
-                    case ConvertStatus.Converting:
+                    case OperationStatus.Working:
                         openMenuItem.Enabled = removeMenuItem.Enabled = false;
                         break;
-                    case ConvertStatus.Failed:
+                    case OperationStatus.Failed:
                         openMenuItem.Enabled = false;
                         break;
-                    case ConvertStatus.Success:
-                        break;
-                }
-            }
-            else if (lvQueue.SelectedItems[0] is DownloadListViewItem)
-            {
-                DownloadListViewItem item = lvQueue.SelectedItems[0] as DownloadListViewItem;
-
-                convertToMP3MenuItem.Enabled = item.DownloadStatus == DownloadStatus.Success;
-
-                // Only need to REMOVE MenuItems, not show since it's done automatically
-                switch (item.DownloadStatus)
-                {
-                    case DownloadStatus.Success:
-                        resumeMenuItem.Visible = pauseMenuItem.Visible = stopMenuItem.Visible = false;
-                        break;
-                    case DownloadStatus.Downloading:
-                        openMenuItem.Visible = resumeMenuItem.Visible = false;
-                        break;
-                    case DownloadStatus.Paused:
-                        openMenuItem.Visible = pauseMenuItem.Visible = false;
-                        break;
-                    case DownloadStatus.Canceled:
-                    case DownloadStatus.Failed:
-                        openMenuItem.Visible = pauseMenuItem.Visible = stopMenuItem.Visible = resumeMenuItem.Visible = false;
+                    case OperationStatus.Success:
                         break;
                 }
             }
@@ -227,16 +373,7 @@ namespace YouTube_Downloader
         {
             try
             {
-                string path = string.Empty;
-
-                if (lvQueue.SelectedItems[0] is ConvertListViewItem)
-                {
-                    path = (lvQueue.SelectedItems[0] as ConvertListViewItem).Output;
-                }
-                else if (lvQueue.SelectedItems[0] is DownloadListViewItem)
-                {
-                    path = (lvQueue.SelectedItems[0] as DownloadListViewItem).File;
-                }
+                string path = (lvQueue.SelectedItems[0] as IOperation).Output;
 
                 Process.Start(path);
             }
@@ -250,16 +387,7 @@ namespace YouTube_Downloader
         {
             try
             {
-                string path = string.Empty;
-
-                if (lvQueue.SelectedItems[0] is ConvertListViewItem)
-                {
-                    path = (lvQueue.SelectedItems[0] as ConvertListViewItem).Output;
-                }
-                else if (lvQueue.SelectedItems[0] is DownloadListViewItem)
-                {
-                    path = (lvQueue.SelectedItems[0] as DownloadListViewItem).File;
-                }
+                string path = (lvQueue.SelectedItems[0] as IOperation).Output;
 
                 Process.Start(Path.GetDirectoryName(path));
             }
@@ -291,16 +419,16 @@ namespace YouTube_Downloader
                 {
                     mtxtTo.ValidateText();
 
-                    newItem.Convert(item.File, mtxtFrom.Text, mtxtTo.Text);
+                    newItem.Convert(item.Output, mtxtFrom.Text, mtxtTo.Text);
                 }
                 else
                 {
-                    newItem.Convert(item.File, mtxtFrom.Text);
+                    newItem.Convert(item.Output, mtxtFrom.Text);
                 }
             }
             else
             {
-                newItem.Convert(item.File);
+                newItem.Convert(item.Output);
             }
         }
 
@@ -332,13 +460,13 @@ namespace YouTube_Downloader
             if (item is DownloadListViewItem)
             {
                 var dlItem = item as DownloadListViewItem;
-                bool wasSuccessful = dlItem.DownloadStatus == DownloadStatus.Success;
+                bool wasSuccessful = dlItem.Status == OperationStatus.Success;
 
                 dlItem.Stop();
 
                 if (!wasSuccessful)
                 {
-                    DeleteFile(dlItem.File);
+                    DeleteFile(dlItem.Output);
                 }
             }
 
@@ -379,56 +507,90 @@ namespace YouTube_Downloader
         {
             return title.Replace(@"\", "").Replace("&#39;", "'").Replace("&quot;", "'").Replace("&lt;", "(").Replace("&gt;", ")").Replace("+", " ").Replace(":", "-");
         }
+
+        public static string FormatVideoLength(TimeSpan duration)
+        {
+            if (duration.Hours > 0)
+                return string.Format("{0}:{1:00}:{2:00}", duration.Hours, duration.Minutes, duration.Seconds);
+            else
+                return string.Format("{0}:{1:00}", duration.Minutes, duration.Seconds);
+        }
+
+        public static string FormatVideoLength(long duration)
+        {
+            return FormatVideoLength(TimeSpan.FromSeconds(duration));
+        }
+
+        public static string GetFileSize(string file)
+        {
+            string size = string.Empty;
+
+            using (var stream = System.IO.File.Open(file, FileMode.Open, FileAccess.Read))
+            {
+                size = string.Format(new FileSizeFormatProvider(), "{0:fs}", stream.Length);
+                stream.Close();
+            }
+
+            return size;
+        }
     }
 
-    public enum ConvertStatus { Converting, Success, Failed }
+    public enum OperationStatus { Canceled, Failed, None, Paused, Success, Working }
 
-    public class ConvertListViewItem : ListViewItem
+    public interface IOperation
     {
-        public string File { get; set; }
+        string Input { get; set; }
+        string Output { get; set; }
+        OperationStatus Status { get; set; }
+    }
+
+    public class ConvertListViewItem : ListViewItem, IOperation
+    {
+        public string Input { get; set; }
         public string Output { get; set; }
-        public ConvertStatus Status;
+        public OperationStatus Status { get; set; }
 
         public ConvertListViewItem(string text)
             : base(text)
         {
         }
 
-        public void Convert(string file)
+        public void Convert(string input)
         {
-            this.File = file;
+            this.Input = input;
 
-            converter = new BackgroundWorker();
-            converter.DoWork += converter_DoWork;
-            converter.RunWorkerCompleted += converter_RunWorkerCompleted;
-            converter.RunWorkerAsync(this.File);
-            this.Status = ConvertStatus.Converting;
+            backgroundWorker = new BackgroundWorker();
+            backgroundWorker.DoWork += backgroundWorker_DoWork;
+            backgroundWorker.RunWorkerCompleted += backgroundWorker_RunWorkerCompleted;
+            backgroundWorker.RunWorkerAsync(this.Input);
+
+            this.Status = OperationStatus.Working;
         }
 
-        public void Convert(string file, string start)
+        public void Convert(string input, string start)
         {
             this.converterStart = start;
             this.converterEnd = string.Empty;
-            this.Convert(file);
+            this.Convert(input);
         }
 
-        public void Convert(string file, string start, string end)
+        public void Convert(string input, string start, string end)
         {
             this.converterStart = start;
             this.converterEnd = end;
-            this.Convert(file);
+            this.Convert(input);
         }
 
-        #region converter
+        #region backgroundWorker
 
-        private BackgroundWorker converter;
+        private BackgroundWorker backgroundWorker;
         private string converterStart = string.Empty;
         private string converterEnd = string.Empty;
 
-        private void converter_DoWork(object sender, DoWorkEventArgs e)
+        private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             string input = (string)e.Argument;
-            string output = Path.Combine(Path.GetDirectoryName((string)e.Argument), Path.GetFileNameWithoutExtension((string)e.Argument) + ".mp3");
+            string output = Path.Combine(Path.GetDirectoryName(input), Path.GetFileNameWithoutExtension(input) + ".mp3");
 
             FfmpegHelper.ConvertToMP3(input, output);
 
@@ -444,51 +606,132 @@ namespace YouTube_Downloader
                 }
             }
 
-            this.converterStart = string.Empty;
-            this.converterEnd = string.Empty;
+            this.converterStart = this.converterEnd = string.Empty;
             e.Result = output;
         }
 
-        private void converter_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             this.Output = (string)e.Result;
 
-            // Display MP3 size
-            using (var stream = System.IO.File.Open(this.Output, FileMode.Open, FileAccess.Read))
-            {
-                string size = String.Format(new FileSizeFormatProvider(), "{0:fs}", stream.Length);
+            this.SubItems[1].Text = "Success";
+            this.SubItems[4].Text = MainForm.GetFileSize(this.Output);
 
-                this.SubItems[4].Text = size;
-                this.SubItems[1].Text = "Success";
-
-                stream.Close();
-            }
-
-            this.Status = ConvertStatus.Success;
+            this.Status = OperationStatus.Success;
         }
 
         #endregion
     }
 
-    public class DownloadListViewItem : ListViewItem
+    public class CuttingListViewItem : ListViewItem, IOperation
     {
-        public DownloadStatus DownloadStatus { get { return downloader.DownloadStatus; } }
-        public string File { get; set; }
+        public string Input { get; set; }
+        public string Output { get; set; }
+        public OperationStatus Status { get; set; }
+
+        public CuttingListViewItem(string text)
+            : base(text)
+        {
+        }
+
+        public void Cut(string input, string start)
+        {
+            this.Input = input;
+            this.cutStart = start;
+
+            backgroundWorker = new BackgroundWorker();
+            backgroundWorker.DoWork += backgroundWorker_DoWork;
+            backgroundWorker.RunWorkerCompleted += backgroundWorker_RunWorkerCompleted;
+            backgroundWorker.RunWorkerAsync(this.Input);
+
+            this.Status = OperationStatus.Working;
+        }
+
+        public void Cut(string input, string start, string end)
+        {
+            this.cutEnd = end;
+            this.Cut(input, start);
+        }
+
+        #region backgroundWorker
+
+        private BackgroundWorker backgroundWorker;
+        private string cutStart = string.Empty;
+        private string cutEnd = string.Empty;
+
+        private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            string input = (string)e.Argument;
+            string output = Path.Combine(Path.GetDirectoryName(input), Path.GetFileNameWithoutExtension(input) + "_cut.mp3");
+
+            if (cutEnd == string.Empty)
+                FfmpegHelper.CutMP3(input, output, cutStart);
+            else
+                FfmpegHelper.CutMP3(input, output, cutStart, cutEnd);
+
+            cutStart = cutEnd = string.Empty;
+            e.Result = output;
+        }
+
+        private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            this.Output = (string)e.Result;
+
+            this.SubItems[1].Text = "Success";
+            this.SubItems[3].Text = MainForm.FormatVideoLength(FfmpegHelper.GetDuration(this.Input));
+            this.SubItems[4].Text = MainForm.GetFileSize(this.Output);
+
+            this.Status = OperationStatus.Success;
+        }
+
+        #endregion
+    }
+
+    public class DownloadListViewItem : ListViewItem, IOperation
+    {
+        public string Input { get; set; }
+        public string Output { get; set; }
+        public OperationStatus Status
+        {
+            get
+            {
+                switch (downloader.DownloadStatus)
+                {
+                    case DownloadStatus.Canceled:
+                        return OperationStatus.Canceled;
+                    case DownloadStatus.Downloading:
+                        return OperationStatus.Working;
+                    case DownloadStatus.Failed:
+                        return OperationStatus.Failed;
+                    case DownloadStatus.Paused:
+                        return OperationStatus.Paused;
+                    case DownloadStatus.Success:
+                        return OperationStatus.Success;
+                    default:
+                        return OperationStatus.None;
+                }
+            }
+            set
+            {
+
+            }
+        }
 
         public DownloadListViewItem(string text)
             : base(text)
         {
         }
 
-        public void Download(string url, string saveTo)
+        public void Download(string url, string output)
         {
-            var folder = Path.GetDirectoryName(saveTo);
-            string file = Path.GetFileName(saveTo).Trim();
-            this.File = Path.Combine(folder, file);
+            this.Input = url;
+            string folder = Path.GetDirectoryName(output);
+            string file = Path.GetFileName(output).Trim();
+            this.Output = Path.Combine(folder, file);
+
             downloader = new FileDownloader(url, folder, file);
             downloader.ProgressChanged += downloader_ProgressChanged;
             downloader.RunWorkerCompleted += downloader_RunWorkerCompleted;
-
             downloader.RunWorkerAsync();
         }
 
@@ -505,17 +748,12 @@ namespace YouTube_Downloader
         public void Stop()
         {
             downloader.Abort();
-            RefreshStatus();
         }
 
         #region downloader
 
+        private bool processing;
         FileDownloader downloader;
-
-        private void downloader_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            RefreshStatus();
-        }
 
         private void downloader_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
@@ -537,9 +775,12 @@ namespace YouTube_Downloader
             }
         }
 
-        #endregion
+        private void downloader_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            RefreshStatus();
+        }
 
-        private bool processing;
+        #endregion
 
         private void RefreshStatus()
         {
