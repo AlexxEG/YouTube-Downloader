@@ -384,7 +384,7 @@ namespace YouTube_Downloader
         public void Download(string url, string saveTo)
         {
             var folder = Path.GetDirectoryName(saveTo);
-            string file = Path.GetFileName(saveTo);
+            string file = Path.GetFileName(saveTo).Trim();
             this.File = Path.Combine(folder, file);
             downloader = new FileDownloader(url, folder, file);
             downloader.ProgressChanged += downloader_ProgressChanged;
