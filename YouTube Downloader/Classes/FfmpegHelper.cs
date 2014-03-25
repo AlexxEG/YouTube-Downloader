@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
@@ -72,6 +73,49 @@ namespace YouTube_Downloader.Classes
             string arguments = string.Format(Command_Crop_From_To, args);
 
             FfmpegHelper.StartProcess(arguments);
+        }
+
+        public static TimeSpan GetDuration(string input)
+        {
+            TimeSpan result = TimeSpan.Zero;
+            string arguments = string.Format(" -i \"{0}\"", input);
+
+            Process process = new Process();
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.RedirectStandardInput = true;
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.RedirectStandardError = true;
+            process.StartInfo.CreateNoWindow = true;
+            process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            process.StartInfo.FileName = Application.StartupPath + "\\ffmpeg";
+            process.StartInfo.Arguments = arguments;
+            process.Start();
+            process.StandardOutput.ReadToEnd();
+
+            List<string> lines = new List<string>();
+
+            while (!process.StandardError.EndOfStream)
+            {
+                lines.Add(process.StandardError.ReadLine().Trim());
+            }
+
+            foreach (var line in lines)
+            {
+                if (line.StartsWith("Duration"))
+                {
+                    string[] split = line.Split(' ', ',');
+
+                    result = TimeSpan.Parse(split[1]);
+                    break;
+                }
+            }
+
+            process.WaitForExit();
+
+            if (!process.HasExited)
+                process.Kill();
+
+            return result;
         }
 
         private static string StartProcess(string arguments)
