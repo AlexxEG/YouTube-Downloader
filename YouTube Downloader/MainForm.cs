@@ -61,7 +61,7 @@ namespace YouTube_Downloader
         private void btnGetVideo_Click(object sender, EventArgs e)
         {
             if (!Helper.IsValidUrl(txtYoutubeLink.Text) || !txtYoutubeLink.Text.ToLower().Contains("www.youtube.com/watch?"))
-                MessageBox.Show(this, "You enter invalid YouTube URL, Please correct it.\r\n\nNote: URL should start with:\r\nhttp://www.youtube.com/watch?",
+                MessageBox.Show(this, "You entered invalid YouTube URL, Please correct it.\r\n\nNote: URL should start with:\r\nhttp://www.youtube.com/watch?",
                     "Invalid URL", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             else
             {
@@ -78,6 +78,12 @@ namespace YouTube_Downloader
             {
                 path = cbSaveTo.Text;
 
+                if (path == string.Empty)
+                {
+                    MessageBox.Show(this, "Download path is empty.");
+                    return;
+                }
+
                 if (!Directory.Exists(path))
                     Directory.CreateDirectory(path);
 
@@ -92,24 +98,33 @@ namespace YouTube_Downloader
             try
             {
                 YouTubeVideoQuality tempItem = cbQuality.SelectedItem as YouTubeVideoQuality;
+                string filename = string.Format("{0}.{1}", tempItem.VideoTitle, tempItem.Extension);
+
+                if (File.Exists(Path.Combine(path, filename)))
+                {
+                    DialogResult result = MessageBox.Show(this, "File '" + filename + "' already exists\n\nOverwrite?", "Overwrite?", MessageBoxButtons.YesNo);
+
+                    if (result == DialogResult.Yes)
+                    {
+                        File.Delete(Path.Combine(path, filename));
+                    }
+                    else if (result == DialogResult.No)
+                    {
+                        return;
+                    }
+                }
 
                 DownloadListViewItem item = new DownloadListViewItem(tempItem.VideoTitle + "." + tempItem.Extension);
 
                 item.SubItems.Add("0 %");
                 item.SubItems.Add("");
-
-                TimeSpan videoLength = TimeSpan.FromSeconds(tempItem.Length);
-                if (videoLength.Hours > 0)
-                    item.SubItems.Add(String.Format("{0}:{1:00}:{2:00}", videoLength.Hours, videoLength.Minutes, videoLength.Seconds));
-                else
-                    item.SubItems.Add(String.Format("{0}:{1:00}", videoLength.Minutes, videoLength.Seconds));
-
+                item.SubItems.Add(FormatVideoLength(tempItem.Length));
                 item.SubItems.Add(String.Format(new FileSizeFormatProvider(), "{0:fs}", tempItem.VideoSize));
                 item.SubItems.Add(tempItem.VideoUrl);
 
                 lvQueue.Items.Add(item);
 
-                item.Download(tempItem.DownloadUrl, Path.Combine(path, tempItem.VideoTitle + "." + tempItem.Extension));
+                item.Download(tempItem.DownloadUrl, Path.Combine(path, filename));
             }
             catch (Exception ex) { MessageBox.Show(this, ex.Message, ex.Source, MessageBoxButtons.OK, MessageBoxIcon.Error); }
         }
@@ -205,6 +220,36 @@ namespace YouTube_Downloader
 
                 if (ofd.ShowDialog(this) == DialogResult.OK)
                 {
+                    string output = string.Format("{0}\\{1}.mp3", Path.GetDirectoryName(ofd.FileName), Path.GetFileNameWithoutExtension(ofd.FileName));
+                    string start = "";
+                    string end = "";
+
+                    if (chbCutFrom.Checked)
+                    {
+                        DialogResult result = MessageBox.Show(this,
+                            "Do you want to cut the audio?", "Cut Audio", MessageBoxButtons.YesNoCancel);
+
+                        if (result == DialogResult.Cancel)
+                            return;
+
+                        try
+                        {
+                            mtxtFrom.ValidateText().ToString();
+                            if (chbCutTo.Enabled && chbCutTo.Checked)
+                            {
+                                mtxtTo.ValidateText().ToString();
+                            }
+                        }
+                        catch
+                        {
+                            MessageBox.Show(this, "Cutting information error.");
+                            return;
+                        }
+
+                        start = result == DialogResult.Yes ? mtxtFrom.Text : "";
+                        end = result == DialogResult.Yes && chbCutTo.Enabled && chbCutTo.Checked ? mtxtTo.Text : "";
+                    }
+                    
                     ConvertListViewItem newItem = new ConvertListViewItem(Path.GetFileName(ofd.FileName));
 
                     newItem.SubItems.Add("Converting");
@@ -215,47 +260,7 @@ namespace YouTube_Downloader
 
                     lvQueue.Items.Add(newItem);
 
-                    if (chbCutFrom.Checked)
-                    {
-                        DialogResult result = MessageBox.Show(this,
-                            "Do you want to cut the audio?", "Cut Audio", MessageBoxButtons.YesNoCancel);
-
-                        if (result == DialogResult.Yes)
-                        {
-                            if (chbCutFrom.Checked)
-                            {
-                                mtxtFrom.ValidateText().ToString();
-
-                                if (chbCutTo.Enabled && chbCutTo.Checked)
-                                {
-                                    mtxtTo.ValidateText().ToString();
-
-                                    newItem.Convert(ofd.FileName, mtxtFrom.Text, mtxtTo.Text);
-                                }
-                                else
-                                {
-                                    newItem.Convert(ofd.FileName, mtxtFrom.Text);
-                                }
-                            }
-                            else
-                            {
-                                newItem.Convert(ofd.FileName);
-                            }
-                        }
-                        else if (result == DialogResult.No)
-                        {
-                            newItem.Convert(ofd.FileName);
-                        }
-                        else if (result == DialogResult.Cancel)
-                        {
-                            newItem.Remove();
-                            return;
-                        }
-                    }
-                    else
-                    {
-                        newItem.Convert(ofd.FileName);
-                    }
+                    newItem.Convert(ofd.FileName, output, start, end);
                 }
             }
         }
@@ -274,6 +279,20 @@ namespace YouTube_Downloader
 
                 if (ofd.ShowDialog(this) == DialogResult.OK)
                 {
+                    try
+                    {
+                        mtxtFrom.ValidateText().ToString();
+                        if (chbCutTo.Enabled && chbCutTo.Checked)
+                        {
+                            mtxtTo.ValidateText().ToString();
+                        }
+                    }
+                    catch
+                    {
+                        MessageBox.Show(this, "Cutting information error.");
+                        return;
+                    }
+
                     CuttingListViewItem newItem = new CuttingListViewItem(Path.GetFileName(ofd.FileName));
 
                     newItem.SubItems.Add("Cutting");
@@ -284,18 +303,11 @@ namespace YouTube_Downloader
 
                     lvQueue.Items.Add(newItem);
 
-                    mtxtFrom.ValidateText().ToString();
+                    string output = string.Format("{0}\\{1}_cut.mp3", Path.GetDirectoryName(ofd.FileName), Path.GetFileNameWithoutExtension(ofd.FileName));
+                    string start = mtxtFrom.Text;
+                    string end = chbCutTo.Enabled && chbCutTo.Checked ? mtxtTo.Text : "";
 
-                    if (chbCutTo.Enabled && chbCutTo.Checked)
-                    {
-                        mtxtTo.ValidateText().ToString();
-
-                        newItem.Cut(ofd.FileName, mtxtFrom.Text, mtxtTo.Text);
-                    }
-                    else
-                    {
-                        newItem.Cut(ofd.FileName, mtxtFrom.Text);
-                    }
+                    newItem.Cut(ofd.FileName, output, start, end);
                 }
             }
         }
@@ -401,6 +413,23 @@ namespace YouTube_Downloader
         {
             DownloadListViewItem item = lvQueue.SelectedItems[0] as DownloadListViewItem;
 
+            try
+            {
+                if (chbCutFrom.Checked)
+                {
+                    mtxtFrom.ValidateText().ToString();
+                    if (chbCutTo.Enabled && chbCutTo.Checked)
+                    {
+                        mtxtTo.ValidateText().ToString();
+                    }
+                }
+            }
+            catch
+            {
+                MessageBox.Show(this, "Cutting information error.");
+                return;
+            }
+
             ConvertListViewItem newItem = new ConvertListViewItem(Path.GetFileNameWithoutExtension(item.Text) + ".mp3");
 
             newItem.SubItems.Add("Converting");
@@ -411,25 +440,11 @@ namespace YouTube_Downloader
 
             lvQueue.Items.Add(newItem);
 
-            if (chbCutFrom.Checked)
-            {
-                mtxtFrom.ValidateText();
+            string output = string.Format("{0}\\{1}.mp3", Path.GetDirectoryName(item.Output), Path.GetFileNameWithoutExtension(item.Output));
+            string start = chbCutFrom.Checked ? mtxtFrom.Text : "";
+            string end = chbCutFrom.Checked && chbCutTo.Enabled && chbCutTo.Checked ? mtxtTo.Text : "";
 
-                if (chbCutTo.Enabled && chbCutTo.Checked)
-                {
-                    mtxtTo.ValidateText();
-
-                    newItem.Convert(item.Output, mtxtFrom.Text, mtxtTo.Text);
-                }
-                else
-                {
-                    newItem.Convert(item.Output, mtxtFrom.Text);
-                }
-            }
-            else
-            {
-                newItem.Convert(item.Output);
-            }
+            newItem.Convert(item.Output, output, start, end);
         }
 
         private void resumeMenuItem_Click(object sender, EventArgs e)
@@ -555,30 +570,19 @@ namespace YouTube_Downloader
         {
         }
 
-        public void Convert(string input)
+        public void Convert(string input, string output, string start, string end)
         {
             this.Input = input;
+            this.Output = output;
+            this.converterStart = start;
+            this.converterEnd = end;
 
             backgroundWorker = new BackgroundWorker();
             backgroundWorker.DoWork += backgroundWorker_DoWork;
             backgroundWorker.RunWorkerCompleted += backgroundWorker_RunWorkerCompleted;
-            backgroundWorker.RunWorkerAsync(this.Input);
+            backgroundWorker.RunWorkerAsync();
 
             this.Status = OperationStatus.Working;
-        }
-
-        public void Convert(string input, string start)
-        {
-            this.converterStart = start;
-            this.converterEnd = string.Empty;
-            this.Convert(input);
-        }
-
-        public void Convert(string input, string start, string end)
-        {
-            this.converterStart = start;
-            this.converterEnd = end;
-            this.Convert(input);
         }
 
         #region backgroundWorker
@@ -589,31 +593,25 @@ namespace YouTube_Downloader
 
         private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            string input = (string)e.Argument;
-            string output = Path.Combine(Path.GetDirectoryName(input), Path.GetFileNameWithoutExtension(input) + ".mp3");
-
-            FfmpegHelper.ConvertToMP3(input, output);
+            FfmpegHelper.ConvertToMP3(this.Input, this.Output);
 
             if (!string.IsNullOrEmpty(converterStart))
             {
                 if (string.IsNullOrEmpty(converterEnd))
                 {
-                    FfmpegHelper.CutMP3(output, output, converterStart);
+                    FfmpegHelper.CutMP3(this.Input, this.Output, converterStart);
                 }
                 else
                 {
-                    FfmpegHelper.CutMP3(output, output, converterStart, converterEnd);
+                    FfmpegHelper.CutMP3(this.Input, this.Output, converterStart, converterEnd);
                 }
             }
 
             this.converterStart = this.converterEnd = string.Empty;
-            e.Result = output;
         }
 
         private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            this.Output = (string)e.Result;
-
             this.SubItems[1].Text = "Success";
             this.SubItems[4].Text = MainForm.GetFileSize(this.Output);
 
@@ -634,23 +632,19 @@ namespace YouTube_Downloader
         {
         }
 
-        public void Cut(string input, string start)
+        public void Cut(string input, string output, string start, string end)
         {
             this.Input = input;
+            this.Output = output;
             this.cutStart = start;
+            this.cutEnd = end;
 
             backgroundWorker = new BackgroundWorker();
             backgroundWorker.DoWork += backgroundWorker_DoWork;
             backgroundWorker.RunWorkerCompleted += backgroundWorker_RunWorkerCompleted;
-            backgroundWorker.RunWorkerAsync(this.Input);
+            backgroundWorker.RunWorkerAsync();
 
             this.Status = OperationStatus.Working;
-        }
-
-        public void Cut(string input, string start, string end)
-        {
-            this.cutEnd = end;
-            this.Cut(input, start);
         }
 
         #region backgroundWorker
@@ -661,22 +655,16 @@ namespace YouTube_Downloader
 
         private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            string input = (string)e.Argument;
-            string output = Path.Combine(Path.GetDirectoryName(input), Path.GetFileNameWithoutExtension(input) + "_cut.mp3");
-
             if (cutEnd == string.Empty)
-                FfmpegHelper.CutMP3(input, output, cutStart);
+                FfmpegHelper.CutMP3(this.Input, this.Output, cutStart);
             else
-                FfmpegHelper.CutMP3(input, output, cutStart, cutEnd);
+                FfmpegHelper.CutMP3(this.Input, this.Output, cutStart, cutEnd);
 
             cutStart = cutEnd = string.Empty;
-            e.Result = output;
         }
 
         private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            this.Output = (string)e.Result;
-
             this.SubItems[1].Text = "Success";
             this.SubItems[3].Text = MainForm.FormatVideoLength(FfmpegHelper.GetDuration(this.Input));
             this.SubItems[4].Text = MainForm.GetFileSize(this.Output);
@@ -787,6 +775,7 @@ namespace YouTube_Downloader
             if (downloader.DownloadStatus == DownloadStatus.Success)
             {
                 this.SubItems[1].Text = "Completed";
+                this.SubItems[2].Text = "-";
             }
             else if (downloader.DownloadStatus == DownloadStatus.Paused)
             {
