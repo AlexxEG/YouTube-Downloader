@@ -29,6 +29,7 @@ namespace YouTube_Downloader
             cbSaveTo.Items.CopyTo(paths, 0);
             SettingsEx.SaveToDirectories.Clear();
             SettingsEx.SaveToDirectories.AddRange(paths);
+            SettingsEx.SelectedDirectory = cbSaveTo.SelectedIndex;
 
             SettingsEx.Save();
         }
@@ -42,6 +43,7 @@ namespace YouTube_Downloader
 
             SettingsEx.WindowStates[this.Name].RestoreForm(this);
             cbSaveTo.Items.AddRange(SettingsEx.SaveToDirectories.ToArray());
+            cbSaveTo.SelectedIndex = SettingsEx.SelectedDirectory;
         }
 
         private void panel1_Paint(object sender, PaintEventArgs e)
