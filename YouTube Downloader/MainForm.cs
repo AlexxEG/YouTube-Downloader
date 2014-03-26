@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ListViewEmbeddedControls;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -7,6 +8,7 @@ using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 using YouTube_Downloader.Classes;
+using YouTube_Downloader.Dialogs;
 
 namespace YouTube_Downloader
 {
@@ -26,11 +28,7 @@ namespace YouTube_Downloader
         {
             SettingsEx.WindowStates[this.Name].SaveForm(this);
 
-            string[] paths = new string[cbSaveTo.Items.Count];
-
-            cbSaveTo.Items.CopyTo(paths, 0);
-            SettingsEx.SaveToDirectories.Clear();
-            SettingsEx.SaveToDirectories.AddRange(paths);
+            cbSaveTo.DataSource = SettingsEx.SaveToDirectories;
             SettingsEx.SelectedDirectory = cbSaveTo.SelectedIndex;
 
             SettingsEx.Save();
@@ -46,6 +44,11 @@ namespace YouTube_Downloader
             SettingsEx.WindowStates[this.Name].RestoreForm(this);
             cbSaveTo.Items.AddRange(SettingsEx.SaveToDirectories.ToArray());
             cbSaveTo.SelectedIndex = SettingsEx.SelectedDirectory;
+        }
+
+        private void btnExit_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
 
         private void panel1_Paint(object sender, PaintEventArgs e)
@@ -124,6 +127,20 @@ namespace YouTube_Downloader
 
                 lvQueue.Items.Add(item);
 
+                ProgressBar pb = new ProgressBar()
+                {
+                    Maximum = 100,
+                    Minimum = 0,
+                    Value = 0
+                };
+                lvQueue.AddEmbeddedControl(pb, 1, item.Index);
+
+                LinkLabel ll = new LinkLabel();
+                ll.Text = tempItem.VideoUrl;
+                ll.Tag = tempItem.VideoUrl;
+                ll.LinkClicked += linkLabel_LinkClicked;
+                lvQueue.AddEmbeddedControl(ll, 5, item.Index);
+
                 item.Download(tempItem.DownloadUrl, Path.Combine(path, filename));
             }
             catch (Exception ex) { MessageBox.Show(this, ex.Message, ex.Source, MessageBoxButtons.OK, MessageBoxIcon.Error); }
@@ -154,6 +171,25 @@ namespace YouTube_Downloader
         private void chbCutTo_CheckedChanged(object sender, EventArgs e)
         {
             mtxtTo.Enabled = chbCutTo.Checked;
+        }
+
+        private void linkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            try
+            {
+                object tag = (sender as LinkLabel).Tag;
+
+                if (tag == null)
+                    return;
+
+                string link = (string)tag;
+
+                Process.Start(link);
+            }
+            catch
+            {
+                MessageBox.Show(this, "Couldn't open link.");
+            }
         }
 
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
@@ -214,15 +250,23 @@ namespace YouTube_Downloader
 
         private void convertVideoMenuItem_Click(object sender, EventArgs e)
         {
-            using (var ofd = new OpenFileDialog())
+            using (var cd = new ConvertDialog())
             {
-                ofd.Filter = "MP4 files|*.mp4|All files|*.*";
-
-                if (ofd.ShowDialog(this) == DialogResult.OK)
+                if (cd.ShowDialog(this) == DialogResult.OK)
                 {
-                    string output = string.Format("{0}\\{1}.mp3", Path.GetDirectoryName(ofd.FileName), Path.GetFileNameWithoutExtension(ofd.FileName));
-                    string start = "";
-                    string end = "";
+                    if (File.Exists(cd.Output))
+                    {
+                        DialogResult result = MessageBox.Show(this,
+                                "File '" + Path.GetFileName(cd.Output) + "' already exists\n\nOverwrite?",
+                                "Overwrite?", MessageBoxButtons.YesNo);
+
+                        if (result == DialogResult.No)
+                            return;
+
+                        File.Delete(cd.Output);
+                    }
+
+                    bool cut = false;
 
                     if (chbCutFrom.Checked)
                     {
@@ -232,35 +276,10 @@ namespace YouTube_Downloader
                         if (result == DialogResult.Cancel)
                             return;
 
-                        try
-                        {
-                            mtxtFrom.ValidateText().ToString();
-                            if (chbCutTo.Enabled && chbCutTo.Checked)
-                            {
-                                mtxtTo.ValidateText().ToString();
-                            }
-                        }
-                        catch
-                        {
-                            MessageBox.Show(this, "Cutting information error.");
-                            return;
-                        }
-
-                        start = result == DialogResult.Yes ? mtxtFrom.Text : "";
-                        end = result == DialogResult.Yes && chbCutTo.Enabled && chbCutTo.Checked ? mtxtTo.Text : "";
+                        cut = result == DialogResult.Yes;
                     }
-                    
-                    ConvertListViewItem newItem = new ConvertListViewItem(Path.GetFileName(ofd.FileName));
 
-                    newItem.SubItems.Add("Converting");
-                    newItem.SubItems.Add("-");
-                    newItem.SubItems.Add(FormatVideoLength(FfmpegHelper.GetDuration(ofd.FileName)));
-                    newItem.SubItems.Add(GetFileSize(ofd.FileName));
-                    newItem.SubItems.Add("-");
-
-                    lvQueue.Items.Add(newItem);
-
-                    newItem.Convert(ofd.FileName, output, start, end);
+                    this.ConvertVideo(cd.Input, cd.Output, cut);
                 }
             }
         }
@@ -411,40 +430,27 @@ namespace YouTube_Downloader
 
         private void convertToMP3MenuItem_Click(object sender, EventArgs e)
         {
-            DownloadListViewItem item = lvQueue.SelectedItems[0] as DownloadListViewItem;
+            string input = (lvQueue.SelectedItems[0] as DownloadListViewItem).Output;
 
-            try
+            using (var cd = new ConvertDialog())
             {
-                if (chbCutFrom.Checked)
+                if (cd.ShowDialog(this, input) == DialogResult.OK)
                 {
-                    mtxtFrom.ValidateText().ToString();
-                    if (chbCutTo.Enabled && chbCutTo.Checked)
+                    if (File.Exists(cd.Output))
                     {
-                        mtxtTo.ValidateText().ToString();
+                        var filename = Path.GetFileName(cd.Output);
+                        var result = MessageBox.Show(this, "File '" + filename + "' already exists.\n\nOverwrite?",
+                            "Overwrite", MessageBoxButtons.YesNo);
+
+                        if (result == DialogResult.No)
+                            return;
+
+                        File.Delete(cd.Output);
                     }
+
+                    this.ConvertVideo(input, cd.Output, true);
                 }
             }
-            catch
-            {
-                MessageBox.Show(this, "Cutting information error.");
-                return;
-            }
-
-            ConvertListViewItem newItem = new ConvertListViewItem(Path.GetFileNameWithoutExtension(item.Text) + ".mp3");
-
-            newItem.SubItems.Add("Converting");
-            newItem.SubItems.Add("-");
-            newItem.SubItems.Add(item.SubItems[3].Text);
-            newItem.SubItems.Add("-");
-            newItem.SubItems.Add("-");
-
-            lvQueue.Items.Add(newItem);
-
-            string output = string.Format("{0}\\{1}.mp3", Path.GetDirectoryName(item.Output), Path.GetFileNameWithoutExtension(item.Output));
-            string start = chbCutFrom.Checked ? mtxtFrom.Text : "";
-            string end = chbCutFrom.Checked && chbCutTo.Enabled && chbCutTo.Checked ? mtxtTo.Text : "";
-
-            newItem.Convert(item.Output, output, start, end);
         }
 
         private void resumeMenuItem_Click(object sender, EventArgs e)
@@ -489,6 +495,60 @@ namespace YouTube_Downloader
         }
 
         #endregion
+
+        public void ConvertVideo(string input, string output, bool cut)
+        {
+            string start = string.Empty;
+            string end = string.Empty;
+
+            if (cut && chbCutFrom.Checked)
+            {
+                try
+                {
+                    mtxtFrom.ValidateText().ToString();
+                    start = mtxtFrom.Text;
+                    if (chbCutTo.Enabled && chbCutFrom.Checked)
+                    {
+                        mtxtTo.ValidateText().ToString();
+                        end = mtxtTo.Text;
+                    }
+                }
+                catch
+                {
+                    MessageBox.Show(this, "Cutting information error.");
+                    return;
+                }
+            }
+
+            var item = new ConvertListViewItem(Path.GetFileName(output));
+
+            item.SubItems.Add("");
+            item.SubItems.Add("Converting");
+            item.SubItems.Add(FormatVideoLength(FfmpegHelper.GetDuration(input)));
+            item.SubItems.Add(GetFileSize(input));
+            item.SubItems.Add("");
+
+            lvQueue.Items.Add(item);
+
+            ProgressBar pb = new ProgressBar()
+            {
+                Maximum = 100,
+                Minimum = 0,
+                Value = 0,
+                Style = ProgressBarStyle.Marquee,
+                MarqueeAnimationSpeed = 15
+            };
+            lvQueue.AddEmbeddedControl(pb, 1, item.Index);
+
+            LinkLabel ll = new LinkLabel()
+            {
+                Text = Path.GetFileName(input),
+                Tag = input
+            };
+            lvQueue.AddEmbeddedControl(ll, 5, item.Index);
+
+            item.Convert(input, output, start, end);
+        }
 
         public void DeleteFile(string file)
         {
@@ -612,10 +672,18 @@ namespace YouTube_Downloader
 
         private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            this.SubItems[1].Text = "Success";
+            this.SubItems[2].Text = "Success";
             this.SubItems[4].Text = MainForm.GetFileSize(this.Output);
 
             this.Status = OperationStatus.Success;
+
+            ProgressBar pb = (ProgressBar)((ListViewEx)this.ListView).GetEmbeddedControl(1, this.Index);
+
+            if (pb != null)
+            {
+                pb.Style = ProgressBarStyle.Blocks;
+                pb.Value = 100;
+            }
         }
 
         #endregion
@@ -683,6 +751,9 @@ namespace YouTube_Downloader
         {
             get
             {
+                if (downloader == null)
+                    return OperationStatus.None;
+
                 switch (downloader.DownloadStatus)
                 {
                     case DownloadStatus.Canceled:
@@ -756,6 +827,8 @@ namespace YouTube_Downloader
                     string ETA = downloader.ETA == 0 ? "" : "  [ " + FormatLeftTime.Format(((long)downloader.ETA) * 1000) + " ]";
                     this.SubItems[1].Text = e.ProgressPercentage + " %";
                     this.SubItems[2].Text = speed + ETA;
+                    ProgressBar progressBar = (ProgressBar)((ListViewEx)this.ListView).GetEmbeddedControl(1, this.Index);
+                    progressBar.Value = e.ProgressPercentage;
                     RefreshStatus();
                 }
                 catch { }
@@ -774,16 +847,15 @@ namespace YouTube_Downloader
         {
             if (downloader.DownloadStatus == DownloadStatus.Success)
             {
-                this.SubItems[1].Text = "Completed";
-                this.SubItems[2].Text = "-";
+                this.SubItems[2].Text = "Completed";
             }
             else if (downloader.DownloadStatus == DownloadStatus.Paused)
             {
-                this.SubItems[1].Text = "Paused";
+                this.SubItems[2].Text = "Paused";
             }
             else if (downloader.DownloadStatus == DownloadStatus.Canceled)
             {
-                this.SubItems[1].Text = "Canceled";
+                this.SubItems[2].Text = "Canceled";
             }
         }
     }

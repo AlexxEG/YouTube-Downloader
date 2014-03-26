@@ -42,7 +42,7 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.btnToDo = new System.Windows.Forms.Button();
             this.btnExit = new System.Windows.Forms.Button();
-            this.lvQueue = new System.Windows.Forms.ListView();
+            this.lvQueue = new ListViewEmbeddedControls.ListViewEx();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -61,10 +61,10 @@
             this.stopMenuItem = new System.Windows.Forms.MenuItem();
             this.removeMenuItem = new System.Windows.Forms.MenuItem();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.mtxtTo = new System.Windows.Forms.MaskedTextBox();
+            this.chbCutTo = new System.Windows.Forms.CheckBox();
             this.mtxtFrom = new System.Windows.Forms.MaskedTextBox();
             this.chbCutFrom = new System.Windows.Forms.CheckBox();
-            this.chbCutTo = new System.Windows.Forms.CheckBox();
-            this.mtxtTo = new System.Windows.Forms.MaskedTextBox();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -224,6 +224,7 @@
             this.btnExit.TabIndex = 3;
             this.btnExit.Text = "Exit";
             this.btnExit.UseVisualStyleBackColor = true;
+            this.btnExit.Click += new System.EventHandler(this.btnExit_Click);
             // 
             // lvQueue
             // 
@@ -357,6 +358,28 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Converting Options";
             // 
+            // mtxtTo
+            // 
+            this.mtxtTo.Enabled = false;
+            this.mtxtTo.Location = new System.Drawing.Point(231, 19);
+            this.mtxtTo.Mask = "00:00:00.000";
+            this.mtxtTo.Name = "mtxtTo";
+            this.mtxtTo.Size = new System.Drawing.Size(100, 20);
+            this.mtxtTo.TabIndex = 3;
+            this.mtxtTo.ValidatingType = typeof(System.TimeSpan);
+            // 
+            // chbCutTo
+            // 
+            this.chbCutTo.AutoSize = true;
+            this.chbCutTo.Enabled = false;
+            this.chbCutTo.Location = new System.Drawing.Point(186, 21);
+            this.chbCutTo.Name = "chbCutTo";
+            this.chbCutTo.Size = new System.Drawing.Size(39, 17);
+            this.chbCutTo.TabIndex = 2;
+            this.chbCutTo.Text = "To";
+            this.chbCutTo.UseVisualStyleBackColor = true;
+            this.chbCutTo.CheckedChanged += new System.EventHandler(this.chbCutTo_CheckedChanged);
+            // 
             // mtxtFrom
             // 
             this.mtxtFrom.Enabled = false;
@@ -377,28 +400,6 @@
             this.chbCutFrom.Text = "Cut From";
             this.chbCutFrom.UseVisualStyleBackColor = true;
             this.chbCutFrom.CheckedChanged += new System.EventHandler(this.chbCutFrom_CheckedChanged);
-            // 
-            // chbCutTo
-            // 
-            this.chbCutTo.AutoSize = true;
-            this.chbCutTo.Enabled = false;
-            this.chbCutTo.Location = new System.Drawing.Point(186, 21);
-            this.chbCutTo.Name = "chbCutTo";
-            this.chbCutTo.Size = new System.Drawing.Size(39, 17);
-            this.chbCutTo.TabIndex = 2;
-            this.chbCutTo.Text = "To";
-            this.chbCutTo.UseVisualStyleBackColor = true;
-            this.chbCutTo.CheckedChanged += new System.EventHandler(this.chbCutTo_CheckedChanged);
-            // 
-            // mtxtTo
-            // 
-            this.mtxtTo.Enabled = false;
-            this.mtxtTo.Location = new System.Drawing.Point(231, 19);
-            this.mtxtTo.Mask = "00:00:00.000";
-            this.mtxtTo.Name = "mtxtTo";
-            this.mtxtTo.Size = new System.Drawing.Size(100, 20);
-            this.mtxtTo.TabIndex = 3;
-            this.mtxtTo.ValidatingType = typeof(System.TimeSpan);
             // 
             // MainForm
             // 
@@ -432,7 +433,7 @@
         private System.Windows.Forms.Button btnToDo;
         private System.Windows.Forms.Button btnExit;
         private System.Windows.Forms.Button btnPaste;
-        private System.Windows.Forms.ListView lvQueue;
+        private ListViewEmbeddedControls.ListViewEx lvQueue;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ColumnHeader columnHeader3;
