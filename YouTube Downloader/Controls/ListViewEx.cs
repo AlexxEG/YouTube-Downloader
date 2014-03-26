@@ -10,9 +10,6 @@ using System.Windows.Forms;
 
 namespace ListViewEmbeddedControls
 {
-    /// <summary>
-    /// Zusammenfassung für ListViewEx.
-    /// </summary>
     public class ListViewEx : ListView
     {
         #region Interop-Defines
