@@ -292,41 +292,11 @@ namespace YouTube_Downloader
                 return;
             }
 
-            using (var ofd = new OpenFileDialog())
+            using (var cd = new ConvertDialog())
             {
-                ofd.Filter = "MP3 files|*.mp3|All files|*.*";
-
-                if (ofd.ShowDialog(this) == DialogResult.OK)
+                if (cd.ShowDialog(this) == DialogResult.OK)
                 {
-                    try
-                    {
-                        mtxtFrom.ValidateText().ToString();
-                        if (chbCutTo.Enabled && chbCutTo.Checked)
-                        {
-                            mtxtTo.ValidateText().ToString();
-                        }
-                    }
-                    catch
-                    {
-                        MessageBox.Show(this, "Cutting information error.");
-                        return;
-                    }
-
-                    CuttingListViewItem newItem = new CuttingListViewItem(Path.GetFileName(ofd.FileName));
-
-                    newItem.SubItems.Add("Cutting");
-                    newItem.SubItems.Add("-");
-                    newItem.SubItems.Add(FormatVideoLength(FfmpegHelper.GetDuration(ofd.FileName)));
-                    newItem.SubItems.Add(GetFileSize(ofd.FileName));
-                    newItem.SubItems.Add("-");
-
-                    lvQueue.Items.Add(newItem);
-
-                    string output = string.Format("{0}\\{1}_cut.mp3", Path.GetDirectoryName(ofd.FileName), Path.GetFileNameWithoutExtension(ofd.FileName));
-                    string start = mtxtFrom.Text;
-                    string end = chbCutTo.Enabled && chbCutTo.Checked ? mtxtTo.Text : "";
-
-                    newItem.Cut(ofd.FileName, output, start, end);
+                    this.CutAudio(cd.Input, cd.Output);
                 }
             }
         }
@@ -550,6 +520,57 @@ namespace YouTube_Downloader
             item.Convert(input, output, start, end);
         }
 
+        public void CutAudio(string input, string output)
+        {
+            string start = string.Empty;
+            string end = string.Empty;
+
+            try
+            {
+                mtxtFrom.ValidateText().ToString();
+                start = mtxtFrom.Text;
+                if (chbCutTo.Enabled && chbCutTo.Checked)
+                {
+                    mtxtTo.ValidateText().ToString();
+                    end = mtxtTo.Text;
+                }
+            }
+            catch
+            {
+                MessageBox.Show(this, "Cutting information error.");
+                return;
+            }
+
+            CuttingListViewItem item = new CuttingListViewItem(Path.GetFileName(output));
+
+            item.SubItems.Add("Cutting");
+            item.SubItems.Add("-");
+            item.SubItems.Add(FormatVideoLength(FfmpegHelper.GetDuration(input)));
+            item.SubItems.Add(GetFileSize(input));
+            item.SubItems.Add("-");
+
+            lvQueue.Items.Add(item);
+
+            ProgressBar pb = new ProgressBar()
+            {
+                Maximum = 100,
+                Minimum = 0,
+                Value = 0,
+                Style = ProgressBarStyle.Marquee,
+                MarqueeAnimationSpeed = 15
+            };
+            lvQueue.AddEmbeddedControl(pb, 1, item.Index);
+
+            LinkLabel ll = new LinkLabel()
+            {
+                Text = Path.GetFileName(input),
+                Tag = input
+            };
+            lvQueue.AddEmbeddedControl(ll, 5, item.Index);
+
+            item.Cut(input, output, start, end);
+        }
+
         public void DeleteFile(string file)
         {
             new Thread(delegate()
@@ -733,11 +754,19 @@ namespace YouTube_Downloader
 
         private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            this.SubItems[1].Text = "Success";
+            this.SubItems[2].Text = "Success";
             this.SubItems[3].Text = MainForm.FormatVideoLength(FfmpegHelper.GetDuration(this.Input));
             this.SubItems[4].Text = MainForm.GetFileSize(this.Output);
 
             this.Status = OperationStatus.Success;
+
+            ProgressBar pb = (ProgressBar)((ListViewEx)this.ListView).GetEmbeddedControl(1, this.Index);
+
+            if (pb != null)
+            {
+                pb.Style = ProgressBarStyle.Blocks;
+                pb.Value = 100;
+            }
         }
 
         #endregion

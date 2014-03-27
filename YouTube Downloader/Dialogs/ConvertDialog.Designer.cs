@@ -124,13 +124,11 @@
             // 
             // openFileDialog1
             // 
-            this.openFileDialog1.FileName = "*.mp4";
-            this.openFileDialog1.Filter = "MP4 files|*.mp4|All files|*.*";
+            this.openFileDialog1.Filter = "MP3 files|*.mp3|MP4 files|*.mp4|All files|*.*";
             this.openFileDialog1.Title = "Select Video File";
             // 
             // saveFileDialog1
             // 
-            this.saveFileDialog1.FileName = "*.mp3";
             this.saveFileDialog1.Filter = "MP3 files|*.mp3";
             this.saveFileDialog1.Title = "Save MP3";
             // 
@@ -150,6 +148,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txtOutput);
             this.Controls.Add(this.txtInput);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Name = "ConvertDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Convert Video";
