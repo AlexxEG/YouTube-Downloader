@@ -624,8 +624,6 @@ namespace YouTube_Downloader
             {
                 int attempts = 0;
 
-                Thread.Sleep(2000);
-
                 while (attempts <= 10)
                 {
                     try
