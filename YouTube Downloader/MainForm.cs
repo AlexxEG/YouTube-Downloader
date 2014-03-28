@@ -135,9 +135,11 @@ namespace YouTube_Downloader
                 };
                 lvQueue.AddEmbeddedControl(pb, 1, item.Index);
 
-                LinkLabel ll = new LinkLabel();
-                ll.Text = tempItem.VideoUrl;
-                ll.Tag = tempItem.VideoUrl;
+                LinkLabel ll = new LinkLabel()
+                {
+                    Text = tempItem.VideoUrl,
+                    Tag = tempItem.VideoUrl
+                };
                 ll.LinkClicked += linkLabel_LinkClicked;
                 lvQueue.AddEmbeddedControl(ll, 5, item.Index);
 
@@ -515,6 +517,7 @@ namespace YouTube_Downloader
                 Text = Path.GetFileName(input),
                 Tag = input
             };
+            ll.LinkClicked += linkLabel_LinkClicked;
             lvQueue.AddEmbeddedControl(ll, 5, item.Index);
 
             item.Convert(input, output, start, end);
@@ -566,6 +569,7 @@ namespace YouTube_Downloader
                 Text = Path.GetFileName(input),
                 Tag = input
             };
+            ll.LinkClicked += linkLabel_LinkClicked;
             lvQueue.AddEmbeddedControl(ll, 5, item.Index);
 
             item.Cut(input, output, start, end);
