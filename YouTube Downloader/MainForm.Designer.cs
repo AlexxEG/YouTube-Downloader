@@ -64,9 +64,9 @@
             this.btnBrowseOutput = new System.Windows.Forms.Button();
             this.btnBrowseInput = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.chbCutFrom = new System.Windows.Forms.CheckBox();
+            this.chbCropFrom = new System.Windows.Forms.CheckBox();
             this.mtxtTo = new System.Windows.Forms.MaskedTextBox();
-            this.chbCutTo = new System.Windows.Forms.CheckBox();
+            this.chbCropTo = new System.Windows.Forms.CheckBox();
             this.mtxtFrom = new System.Windows.Forms.MaskedTextBox();
             this.btnConvert = new System.Windows.Forms.Button();
             this.txtOutput = new System.Windows.Forms.TextBox();
@@ -452,54 +452,54 @@
             // groupBox4
             // 
             this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.groupBox4.Controls.Add(this.chbCutFrom);
+            this.groupBox4.Controls.Add(this.chbCropFrom);
             this.groupBox4.Controls.Add(this.mtxtTo);
-            this.groupBox4.Controls.Add(this.chbCutTo);
+            this.groupBox4.Controls.Add(this.chbCropTo);
             this.groupBox4.Controls.Add(this.mtxtFrom);
             this.groupBox4.Location = new System.Drawing.Point(6, 124);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(372, 64);
             this.groupBox4.TabIndex = 5;
             this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Cut";
+            this.groupBox4.Text = "Crop";
             // 
-            // chbCutFrom
+            // chbCropFrom
             // 
-            this.chbCutFrom.AutoSize = true;
-            this.chbCutFrom.Location = new System.Drawing.Point(6, 21);
-            this.chbCutFrom.Name = "chbCutFrom";
-            this.chbCutFrom.Size = new System.Drawing.Size(68, 17);
-            this.chbCutFrom.TabIndex = 0;
-            this.chbCutFrom.Text = "Cut From";
-            this.chbCutFrom.UseVisualStyleBackColor = true;
-            this.chbCutFrom.CheckedChanged += new System.EventHandler(this.chbCutFrom_CheckedChanged);
+            this.chbCropFrom.AutoSize = true;
+            this.chbCropFrom.Location = new System.Drawing.Point(6, 21);
+            this.chbCropFrom.Name = "chbCropFrom";
+            this.chbCropFrom.Size = new System.Drawing.Size(74, 17);
+            this.chbCropFrom.TabIndex = 0;
+            this.chbCropFrom.Text = "Crop From";
+            this.chbCropFrom.UseVisualStyleBackColor = true;
+            this.chbCropFrom.CheckedChanged += new System.EventHandler(this.chbCropFrom_CheckedChanged);
             // 
             // mtxtTo
             // 
             this.mtxtTo.Enabled = false;
-            this.mtxtTo.Location = new System.Drawing.Point(231, 19);
+            this.mtxtTo.Location = new System.Drawing.Point(237, 19);
             this.mtxtTo.Mask = "00:00:00.000";
             this.mtxtTo.Name = "mtxtTo";
             this.mtxtTo.Size = new System.Drawing.Size(100, 20);
             this.mtxtTo.TabIndex = 3;
             this.mtxtTo.ValidatingType = typeof(System.TimeSpan);
             // 
-            // chbCutTo
+            // chbCropTo
             // 
-            this.chbCutTo.AutoSize = true;
-            this.chbCutTo.Enabled = false;
-            this.chbCutTo.Location = new System.Drawing.Point(186, 21);
-            this.chbCutTo.Name = "chbCutTo";
-            this.chbCutTo.Size = new System.Drawing.Size(39, 17);
-            this.chbCutTo.TabIndex = 2;
-            this.chbCutTo.Text = "To";
-            this.chbCutTo.UseVisualStyleBackColor = true;
-            this.chbCutTo.CheckedChanged += new System.EventHandler(this.chbCutTo_CheckedChanged);
+            this.chbCropTo.AutoSize = true;
+            this.chbCropTo.Enabled = false;
+            this.chbCropTo.Location = new System.Drawing.Point(192, 21);
+            this.chbCropTo.Name = "chbCropTo";
+            this.chbCropTo.Size = new System.Drawing.Size(39, 17);
+            this.chbCropTo.TabIndex = 2;
+            this.chbCropTo.Text = "To";
+            this.chbCropTo.UseVisualStyleBackColor = true;
+            this.chbCropTo.CheckedChanged += new System.EventHandler(this.chbCropTo_CheckedChanged);
             // 
             // mtxtFrom
             // 
             this.mtxtFrom.Enabled = false;
-            this.mtxtFrom.Location = new System.Drawing.Point(80, 19);
+            this.mtxtFrom.Location = new System.Drawing.Point(86, 19);
             this.mtxtFrom.Mask = "00:00:00.000";
             this.mtxtFrom.Name = "mtxtFrom";
             this.mtxtFrom.Size = new System.Drawing.Size(100, 20);
@@ -692,7 +692,7 @@
         private System.Windows.Forms.TabPage convertTabPage;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.CheckBox chbCutFrom;
+        private System.Windows.Forms.CheckBox chbCropFrom;
         private System.Windows.Forms.MaskedTextBox mtxtFrom;
         private System.Windows.Forms.Button btnConvert;
         private System.Windows.Forms.TextBox txtOutput;
@@ -700,7 +700,7 @@
         private System.Windows.Forms.TextBox txtInput;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.MaskedTextBox mtxtTo;
-        private System.Windows.Forms.CheckBox chbCutTo;
+        private System.Windows.Forms.CheckBox chbCropTo;
         private System.Windows.Forms.Button btnBrowseOutput;
         private System.Windows.Forms.Button btnBrowseInput;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;

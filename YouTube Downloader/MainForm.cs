@@ -239,9 +239,9 @@ namespace YouTube_Downloader
             }
 
             if (txtInput.Text == txtOutput.Text || 
-                Path.GetExtension(txtInput.Text) == Path.GetExtension(txtOutput.Text)) // If they match, the user probably wants to cut. Right?
+                Path.GetExtension(txtInput.Text) == Path.GetExtension(txtOutput.Text)) // If they match, the user probably wants to crop. Right?
             {
-                this.CutAudio(txtInput.Text, txtOutput.Text);
+                this.Crop(txtInput.Text, txtOutput.Text);
             }
             else
             {
@@ -254,15 +254,15 @@ namespace YouTube_Downloader
             tabControl1.SelectedTab = queueTabPage;
         }
 
-        private void chbCutFrom_CheckedChanged(object sender, EventArgs e)
+        private void chbCropFrom_CheckedChanged(object sender, EventArgs e)
         {
-            mtxtFrom.Enabled = chbCutTo.Enabled = chbCutFrom.Checked;
-            mtxtTo.Enabled = chbCutFrom.Checked && chbCutTo.Checked;
+            mtxtFrom.Enabled = chbCropTo.Enabled = chbCropFrom.Checked;
+            mtxtTo.Enabled = chbCropFrom.Checked && chbCropTo.Checked;
         }
 
-        private void chbCutTo_CheckedChanged(object sender, EventArgs e)
+        private void chbCropTo_CheckedChanged(object sender, EventArgs e)
         {
-            mtxtTo.Enabled = chbCutTo.Checked;
+            mtxtTo.Enabled = chbCropTo.Checked;
         }
 
         private void linkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -530,18 +530,18 @@ namespace YouTube_Downloader
 
         #endregion
 
-        public void ConvertVideo(string input, string output, bool cut)
+        public void ConvertVideo(string input, string output, bool crop)
         {
             string start = string.Empty;
             string end = string.Empty;
 
-            if (cut && chbCutFrom.Checked)
+            if (crop && chbCropFrom.Checked)
             {
                 try
                 {
                     mtxtFrom.ValidateText().ToString();
                     start = mtxtFrom.Text;
-                    if (chbCutTo.Enabled && chbCutTo.Checked)
+                    if (chbCropTo.Enabled && chbCropTo.Checked)
                     {
                         mtxtTo.ValidateText().ToString();
                         end = mtxtTo.Text;
@@ -549,7 +549,7 @@ namespace YouTube_Downloader
                 }
                 catch
                 {
-                    MessageBox.Show(this, "Cutting information error.");
+                    MessageBox.Show(this, "Cropping information error.");
                     return;
                 }
             }
@@ -586,7 +586,7 @@ namespace YouTube_Downloader
             item.Convert(input, output, start, end);
         }
 
-        public void CutAudio(string input, string output)
+        public void Crop(string input, string output)
         {
             string start = string.Empty;
             string end = string.Empty;
@@ -595,7 +595,7 @@ namespace YouTube_Downloader
             {
                 mtxtFrom.ValidateText().ToString();
                 start = mtxtFrom.Text;
-                if (chbCutTo.Enabled && chbCutTo.Checked)
+                if (chbCropTo.Enabled && chbCropTo.Checked)
                 {
                     mtxtTo.ValidateText().ToString();
                     end = mtxtTo.Text;
@@ -603,15 +603,15 @@ namespace YouTube_Downloader
             }
             catch
             {
-                MessageBox.Show(this, "Cutting information error.");
+                MessageBox.Show(this, "Cropping information error.");
                 return;
             }
 
-            CuttingListViewItem item = new CuttingListViewItem(Path.GetFileName(output));
+            CroppingListViewItem item = new CroppingListViewItem(Path.GetFileName(output));
 
             item.Selected = true;
             item.SubItems.Add("");
-            item.SubItems.Add("Cutting");
+            item.SubItems.Add("Cropping");
             item.SubItems.Add(FormatVideoLength(FfmpegHelper.GetDuration(input)));
             item.SubItems.Add(GetFileSize(input));
             item.SubItems.Add("");
@@ -636,7 +636,7 @@ namespace YouTube_Downloader
             ll.LinkClicked += linkLabel_LinkClicked;
             lvQueue.AddEmbeddedControl(ll, 5, item.Index);
 
-            item.Cut(input, output, start, end);
+            item.Crop(input, output, start, end);
         }
 
         public static void DeleteFile(string file)
@@ -756,11 +756,11 @@ namespace YouTube_Downloader
             {
                 if (string.IsNullOrEmpty(converterEnd))
                 {
-                    FfmpegHelper.CutMP3(this.Output, this.Output, converterStart);
+                    FfmpegHelper.Crop(this.Output, this.Output, converterStart);
                 }
                 else
                 {
-                    FfmpegHelper.CutMP3(this.Output, this.Output, converterStart, converterEnd);
+                    FfmpegHelper.Crop(this.Output, this.Output, converterStart, converterEnd);
                 }
             }
 
@@ -786,23 +786,23 @@ namespace YouTube_Downloader
         #endregion
     }
 
-    public class CuttingListViewItem : ListViewItem, IOperation
+    public class CroppingListViewItem : ListViewItem, IOperation
     {
         public string Input { get; set; }
         public string Output { get; set; }
         public OperationStatus Status { get; set; }
 
-        public CuttingListViewItem(string text)
+        public CroppingListViewItem(string text)
             : base(text)
         {
         }
 
-        public void Cut(string input, string output, string start, string end)
+        public void Crop(string input, string output, string start, string end)
         {
             this.Input = input;
             this.Output = output;
-            this.cutStart = start;
-            this.cutEnd = end;
+            this.cropStart = start;
+            this.cropEnd = end;
 
             backgroundWorker = new BackgroundWorker();
             backgroundWorker.DoWork += backgroundWorker_DoWork;
@@ -815,17 +815,17 @@ namespace YouTube_Downloader
         #region backgroundWorker
 
         private BackgroundWorker backgroundWorker;
-        private string cutStart = string.Empty;
-        private string cutEnd = string.Empty;
+        private string cropStart = string.Empty;
+        private string cropEnd = string.Empty;
 
         private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            if (cutEnd == string.Empty)
-                FfmpegHelper.CutMP3(this.Input, this.Output, cutStart);
+            if (cropEnd == string.Empty)
+                FfmpegHelper.Crop(this.Input, this.Output, cropStart);
             else
-                FfmpegHelper.CutMP3(this.Input, this.Output, cutStart, cutEnd);
+                FfmpegHelper.Crop(this.Input, this.Output, cropStart, cropEnd);
 
-            cutStart = cutEnd = string.Empty;
+            cropStart = cropEnd = string.Empty;
         }
 
         private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)

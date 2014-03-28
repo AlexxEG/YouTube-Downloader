@@ -40,7 +40,7 @@ namespace YouTube_Downloader.Classes
             }
         }
 
-        public static void CutMP3(string input, string output, string start)
+        public static void Crop(string input, string output, string start)
         {
             bool deleteInput = false;
 
@@ -75,7 +75,7 @@ namespace YouTube_Downloader.Classes
             }
         }
 
-        public static void CutMP3(string input, string output, string start, string end)
+        public static void Crop(string input, string output, string start, string end)
         {
             bool deleteInput = false;
 
