@@ -756,11 +756,11 @@ namespace YouTube_Downloader
             {
                 if (string.IsNullOrEmpty(converterEnd))
                 {
-                    FfmpegHelper.CutMP3(this.Input, this.Output, converterStart);
+                    FfmpegHelper.CutMP3(this.Output, this.Output, converterStart);
                 }
                 else
                 {
-                    FfmpegHelper.CutMP3(this.Input, this.Output, converterStart, converterEnd);
+                    FfmpegHelper.CutMP3(this.Output, this.Output, converterStart, converterEnd);
                 }
             }
 
