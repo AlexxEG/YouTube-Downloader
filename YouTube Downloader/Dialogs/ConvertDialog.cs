@@ -37,6 +37,12 @@ namespace YouTube_Downloader.Dialogs
 
         private void btnBrowseOutput_Click(object sender, EventArgs e)
         {
+            if (saveFileDialog1.FileName == "")
+            {
+                // Suggest file name
+                saveFileDialog1.FileName = Path.GetFileNameWithoutExtension(txtInput.Text) + ".mp3";
+            }
+
             if (saveFileDialog1.ShowDialog(this) == DialogResult.OK)
             {
                 txtOutput.Text = saveFileDialog1.FileName;
