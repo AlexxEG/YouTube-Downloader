@@ -241,7 +241,6 @@ namespace YouTube_Downloader
                         URL += "&signature=" + sign;
                     }
                     URLs.Add(URL.Trim());
-                    Console.WriteLine(URL.Trim());
                 }
 
                 return URLs;
