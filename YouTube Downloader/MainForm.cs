@@ -94,6 +94,7 @@ namespace YouTube_Downloader
                 lTitle.Text = "-";
                 cbQuality.DataSource = null;
                 btnGetVideo.Enabled = txtYoutubeLink.Enabled = btnDownload.Enabled = cbQuality.Enabled = false;
+                videoThumbnail.Tag = null;
                 videoThumbnail.ImageLocation = string.Format("http://i3.ytimg.com/vi/{0}/default.jpg", Helper.GetVideoIDFromUrl(txtYoutubeLink.Text));
                 backgroundWorker1.RunWorkerAsync(txtYoutubeLink.Text);
             }
@@ -127,7 +128,7 @@ namespace YouTube_Downloader
             try
             {
                 YouTubeVideoQuality tempItem = cbQuality.SelectedItem as YouTubeVideoQuality;
-                string filename = string.Format("{0}.{1}", tempItem.VideoTitle, tempItem.Extension);
+                string filename = string.Format("{0}.{1}", FormatTitle(tempItem.VideoTitle), tempItem.Extension);
 
                 if (File.Exists(Path.Combine(path, filename)))
                 {
@@ -143,7 +144,7 @@ namespace YouTube_Downloader
                     }
                 }
 
-                DownloadListViewItem item = new DownloadListViewItem(tempItem.VideoTitle + "." + tempItem.Extension);
+                DownloadListViewItem item = new DownloadListViewItem(Path.GetFileName(filename));
 
                 item.Selected = true;
                 item.SubItems.Add("0 %");
@@ -237,7 +238,8 @@ namespace YouTube_Downloader
                     return;
             }
 
-            if (txtInput.Text == txtOutput.Text) // If they match, the user probably wants to cut. Right?
+            if (txtInput.Text == txtOutput.Text || 
+                Path.GetExtension(txtInput.Text) == Path.GetExtension(txtOutput.Text)) // If they match, the user probably wants to cut. Right?
             {
                 this.CutAudio(txtInput.Text, txtOutput.Text);
             }
@@ -282,6 +284,24 @@ namespace YouTube_Downloader
             }
         }
 
+        private void videoThumbnail_Paint(object sender, PaintEventArgs e)
+        {
+            if (videoThumbnail.Tag != null)
+            {
+                string length = (string)videoThumbnail.Tag;
+                Font mFont = new Font(this.Font.Name, 10.0F, FontStyle.Bold, GraphicsUnit.Point);
+                SizeF mSize = e.Graphics.MeasureString(length, mFont);
+                Rectangle mRec = new Rectangle((int)(videoThumbnail.Width - mSize.Width - 6),
+                                               (int)(videoThumbnail.Height - mSize.Height - 6),
+                                               (int)(mSize.Width + 2),
+                                               (int)(mSize.Height + 2));
+
+                e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(200, Color.Black)), mRec);
+                e.Graphics.DrawString(length, mFont, new SolidBrush(Color.Gainsboro), new PointF((videoThumbnail.Width - mSize.Width - 5),
+                    (videoThumbnail.Height - mSize.Height - 5)));
+            }
+        }
+
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
             e.Result = YouTubeDownloader.GetYouTubeVideoUrls(e.Argument + "");
@@ -304,9 +324,10 @@ namespace YouTube_Downloader
 
             TimeSpan videoLength = TimeSpan.FromSeconds(urls[0].Length);
             if (videoLength.Hours > 0)
-                DrawVideoLength(String.Format("{0}:{1:00}:{2:00}", videoLength.Hours, videoLength.Minutes, videoLength.Seconds));
+                videoThumbnail.Tag = string.Format("{0}:{1:00}:{2:00}", videoLength.Hours, videoLength.Minutes, videoLength.Seconds);
             else
-                DrawVideoLength(String.Format("{0}:{1:00}", videoLength.Minutes, videoLength.Seconds));
+                videoThumbnail.Tag = string.Format("{0}:{1:00}", videoLength.Minutes, videoLength.Seconds);
+            videoThumbnail.Refresh();
 
             btnGetVideo.Enabled = txtYoutubeLink.Enabled = true;
             cbQuality.Enabled = urls.Count > 0;
@@ -520,7 +541,7 @@ namespace YouTube_Downloader
                 {
                     mtxtFrom.ValidateText().ToString();
                     start = mtxtFrom.Text;
-                    if (chbCutTo.Enabled && chbCutFrom.Checked)
+                    if (chbCutTo.Enabled && chbCutTo.Checked)
                     {
                         mtxtTo.ValidateText().ToString();
                         end = mtxtTo.Text;
@@ -589,11 +610,11 @@ namespace YouTube_Downloader
             CuttingListViewItem item = new CuttingListViewItem(Path.GetFileName(output));
 
             item.Selected = true;
+            item.SubItems.Add("");
             item.SubItems.Add("Cutting");
-            item.SubItems.Add("-");
             item.SubItems.Add(FormatVideoLength(FfmpegHelper.GetDuration(input)));
             item.SubItems.Add(GetFileSize(input));
-            item.SubItems.Add("-");
+            item.SubItems.Add("");
 
             lvQueue.Items.Add(item);
 
@@ -640,27 +661,15 @@ namespace YouTube_Downloader
             }).Start();
         }
 
-        private void DrawVideoLength(string length)
-        {
-            videoThumbnail.Refresh();
-
-            Graphics e = videoThumbnail.CreateGraphics();
-            Font mFont = new Font(this.Font.Name, 10.0F, FontStyle.Bold, GraphicsUnit.Point);
-            SizeF mSize = e.MeasureString(length, mFont);
-            Rectangle mRec = new Rectangle((int)(videoThumbnail.Width - mSize.Width - 6),
-                                           (int)(videoThumbnail.Height - mSize.Height - 6),
-                                           (int)(mSize.Width + 2),
-                                           (int)(mSize.Height + 2));
-
-            e.FillRectangle(new SolidBrush(Color.FromArgb(200, Color.Black)), mRec);
-            e.DrawString(length, mFont, new SolidBrush(Color.Gainsboro), new PointF((videoThumbnail.Width - mSize.Width - 5),
-                                                                                (videoThumbnail.Height - mSize.Height - 5)));
-            e.Dispose();
-        }
-
         public static string FormatTitle(string title)
         {
-            return title.Replace(@"\", "")
+            string[] illegalCharacters = new string[] { "/", @"\", "*", "?", "\"", "<", ">" };
+
+            // Remove illegal characters
+            foreach (string characters in illegalCharacters)
+                title = title.Replace(characters, string.Empty);
+
+            return title.Replace("|", "-")
                 .Replace("&#39;", "'")
                 .Replace("&quot;", "'")
                 .Replace("&lt;", "(")

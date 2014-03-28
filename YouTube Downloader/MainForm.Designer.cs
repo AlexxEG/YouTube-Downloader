@@ -359,6 +359,7 @@
             this.videoThumbnail.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.videoThumbnail.TabIndex = 4;
             this.videoThumbnail.TabStop = false;
+            this.videoThumbnail.Paint += new System.Windows.Forms.PaintEventHandler(this.videoThumbnail_Paint);
             // 
             // label3
             // 
@@ -611,7 +612,7 @@
             // 
             // openFileDialog1
             // 
-            this.openFileDialog1.Filter = "MP3 files|*.mp3|MP4 files|*.mp4|All files|*.*";
+            this.openFileDialog1.Filter = "MP4 files|*.mp4|MP3 files|*.mp3|All files|*.*";
             // 
             // saveFileDialog1
             // 
