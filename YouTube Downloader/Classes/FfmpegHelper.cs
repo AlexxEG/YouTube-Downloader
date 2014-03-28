@@ -14,22 +14,43 @@ namespace YouTube_Downloader.Classes
 
         public static void ConvertToMP3(string input, string output)
         {
+            bool deleteInput = false;
+
+            if (input == output)
+            {
+                string dest = Path.Combine(Path.GetDirectoryName(input), System.Guid.NewGuid().ToString());
+                dest += Path.GetExtension(input);
+
+                File.Move(input, dest);
+
+                input = dest;
+                deleteInput = true;
+            }
+
             string[] args = new string[] { input, output };
             string arguments = string.Format(FfmpegHelper.Command_Convert, args);
 
             FfmpegHelper.StartProcess(arguments);
+
+            if (deleteInput)
+            {
+                MainForm.DeleteFile(input);
+            }
         }
 
         public static void CutMP3(string input, string output, string start)
         {
-            if (input == output) // Don't know if ffmpeg overwrites or not yet
-            {
-                // Add '_out' to the end of the file, before the extension.
-                string folder = Path.GetDirectoryName(output);
-                string filename = Path.GetFileNameWithoutExtension(output);
-                string extension = Path.GetExtension(output);
+            bool deleteInput = false;
 
-                output = string.Format("{0}\\{1}_cut{2}", folder, filename, extension);
+            if (input == output)
+            {
+                string dest = Path.Combine(Path.GetDirectoryName(input), System.Guid.NewGuid().ToString());
+                dest += Path.GetExtension(input);
+
+                File.Move(input, dest);
+
+                input = dest;
+                deleteInput = true;
             }
 
             TimeSpan from = TimeSpan.Parse(start);
@@ -44,18 +65,26 @@ namespace YouTube_Downloader.Classes
             string arguments = string.Format(Command_Crop_From, args);
 
             FfmpegHelper.StartProcess(arguments);
+
+            if (deleteInput)
+            {
+                MainForm.DeleteFile(input);
+            }
         }
 
         public static void CutMP3(string input, string output, string start, string end)
         {
-            if (input == output) // Don't know if ffmpeg overwrites or not yet
-            {
-                // Add '_out' to the end of the file, before the extension.
-                string folder = Path.GetDirectoryName(output);
-                string filename = Path.GetFileNameWithoutExtension(output);
-                string extension = Path.GetExtension(output);
+            bool deleteInput = false;
 
-                output = string.Format("{0}\\{1}_cut{2}", folder, filename, extension);
+            if (input == output)
+            {
+                string dest = Path.Combine(Path.GetDirectoryName(input), System.Guid.NewGuid().ToString());
+                dest += Path.GetExtension(input);
+
+                File.Move(input, dest);
+
+                input = dest;
+                deleteInput = true;
             }
 
             TimeSpan from = TimeSpan.Parse(start);
@@ -73,6 +102,11 @@ namespace YouTube_Downloader.Classes
             string arguments = string.Format(Command_Crop_From_To, args);
 
             FfmpegHelper.StartProcess(arguments);
+
+            if (deleteInput)
+            {
+                MainForm.DeleteFile(input);
+            }
         }
 
         public static TimeSpan GetDuration(string input)
