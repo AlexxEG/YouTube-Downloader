@@ -618,7 +618,7 @@ namespace YouTube_Downloader
             item.Cut(input, output, start, end);
         }
 
-        public void DeleteFile(string file)
+        public static void DeleteFile(string file)
         {
             new Thread(delegate()
             {
