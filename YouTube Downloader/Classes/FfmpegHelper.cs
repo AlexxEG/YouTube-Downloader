@@ -6,11 +6,13 @@ using System.Windows.Forms;
 
 namespace YouTube_Downloader.Classes
 {
+    public enum FileType { Audio, Error, Video }
+
     public class FfmpegHelper
     {
         private const string Command_Convert = " -y -i \"{0}\" -vn -f mp3 -ab 192k \"{1}\"";
-        private const string Command_Crop_From = " -y -ss {0} -i \"{1}\" -acodec copy \"{2}\"";
-        private const string Command_Crop_From_To = " -y -ss {0} -i \"{1}\" -to {2} -acodec copy \"{3}\"";
+        private const string Command_Crop_From = " -y -ss {0} -i \"{1}\" -acodec copy{2} \"{3}\"";
+        private const string Command_Crop_From_To = " -y -ss {0} -i \"{1}\" -to {2} -acodec copy{3} \"{4}\"";
 
         public static void ConvertToMP3(string input, string output)
         {
@@ -59,6 +61,7 @@ namespace YouTube_Downloader.Classes
             {
                 string.Format("{0:00}:{1:00}:{2:00}.{3:000}", from.Hours, from.Minutes, from.Seconds, from.Milliseconds),
                 input,
+                GetFileType(input) == FileType.Video ? " -vcodec copy" : "",
                 output
             };
 
@@ -96,6 +99,7 @@ namespace YouTube_Downloader.Classes
                 string.Format("{0:00}:{1:00}:{2:00}.{3:000}", from.Hours, from.Minutes, from.Seconds, from.Milliseconds),
                 input,
                 string.Format("{0:00}:{1:00}:{2:00}.{3:000}", length.Hours, length.Minutes, length.Seconds, length.Milliseconds),
+                GetFileType(input) == FileType.Video ? " -vcodec copy" : "",
                 output
             };
 
@@ -152,6 +156,55 @@ namespace YouTube_Downloader.Classes
             return result;
         }
 
+        public static FileType GetFileType(string input)
+        {
+            FileType result = FileType.Error;
+            string arguments = string.Format(" -i \"{0}\"", input);
+
+            Process process = new Process();
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.RedirectStandardInput = true;
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.RedirectStandardError = true;
+            process.StartInfo.CreateNoWindow = true;
+            process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            process.StartInfo.FileName = Application.StartupPath + "\\ffmpeg";
+            process.StartInfo.Arguments = arguments;
+            process.Start();
+
+            List<string> lines = new List<string>();
+
+            while (!process.StandardError.EndOfStream)
+            {
+                lines.Add(process.StandardError.ReadLine().Trim());
+            }
+
+            foreach (var line in lines)
+            {
+                if (line.StartsWith("Stream #"))
+                {
+                    if (line.Contains("Video: "))
+                    {
+                        result = FileType.Video;
+                        break;
+                    }
+                    else if (line.Contains("Audio: "))
+                    {
+                        // File contains audio stream, so if a video stream
+                        // is not found it's a audio file.
+                        result = FileType.Audio;
+                    }
+                }
+            }
+
+            process.WaitForExit();
+
+            if (!process.HasExited)
+                process.Kill();
+
+            return result;
+        }
+
         private static string StartProcess(string arguments)
         {
             Process process = new Process();
@@ -164,9 +217,11 @@ namespace YouTube_Downloader.Classes
             process.StartInfo.FileName = Application.StartupPath + "\\ffmpeg";
             process.StartInfo.Arguments = arguments;
             process.Start();
-            process.StandardOutput.ReadToEnd();
+            // process.StandardOutput.ReadToEnd();
 
             string error = process.StandardError.ReadToEnd();
+
+            Console.WriteLine(error);
 
             process.WaitForExit();
 
