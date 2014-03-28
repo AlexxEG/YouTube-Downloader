@@ -11,3 +11,7 @@ A portable version can be found in [Releases](https://github.com/AlexxEG/YouTube
 ### Screenshot
 
 ![logo](Images/Screenshot1.png)
+
+![logo](Images/Screenshot2.png)
+
+![logo](Images/Screenshot3.png)
