@@ -22,6 +22,12 @@ namespace YouTube_Downloader.Dialogs
                 return;
             }
 
+            if (txtInput.Text == txtOutput.Text)
+            {
+                MessageBox.Show(this, "Input & output can't be the same, it's currently not supported.");
+                return;
+            }
+
             this.Input = txtInput.Text;
             this.Output = txtOutput.Text;
             this.DialogResult = DialogResult.OK;
