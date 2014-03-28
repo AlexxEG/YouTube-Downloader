@@ -15,19 +15,27 @@ namespace YouTube_Downloader
         public static string Format(long millis)
         {
             string format = "";
+
             for (int i = 0; i < TimeUnitsValue.Length; i++)
             {
                 long y = millis % TimeUnitsValue[i];
                 millis = millis / TimeUnitsValue[i];
-                if (y == 0) continue;
+
+                if (y == 0)
+                    continue;
+
                 format = y + " " + TimeUnitsNames[i] + " , " + format;
             }
 
             format = format.Trim(',', ' ');
-            if (format == "") return "0 Sec";
+
+            if (format == "")
+                return "0 Sec";
+
             else return format;
         }
     }
+
     public static class Helper
     {
 
@@ -45,8 +53,10 @@ namespace YouTube_Downloader
         {
             string pattern = @"^(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?$";
             Regex regex = new Regex(pattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
             return regex.IsMatch(url);
         }
+
         /// <summary>
         /// Gets the txt that lies between these two strings
         /// </summary>
@@ -54,6 +64,7 @@ namespace YouTube_Downloader
         {
             return GetTxtBtwn(input, start, end, startIndex, false);
         }
+
         /// <summary>
         /// Gets the txt that lies between these two strings
         /// </summary>
@@ -61,6 +72,7 @@ namespace YouTube_Downloader
         {
             return GetTxtBtwn(input, start, end, startIndex, true);
         }
+
         /// <summary>
         /// Gets the txt that lies between these two strings
         /// </summary>
@@ -68,10 +80,17 @@ namespace YouTube_Downloader
         {
             int index1 = UseLastIndexOf ? input.LastIndexOf(start, startIndex) :
                                           input.IndexOf(start, startIndex);
-            if (index1 == -1) return "";
+
+            if (index1 == -1)
+                return string.Empty;
+
             index1 += start.Length;
+
             int index2 = input.IndexOf(end, index1);
-            if (index2 == -1) return input.Substring(index1);
+
+            if (index2 == -1)
+                return input.Substring(index1);
+
             return input.Substring(index1, index2 - index1);
         }
 
@@ -82,7 +101,6 @@ namespace YouTube_Downloader
         {
             return Regex.Split(input, pattren);
         }
-
 
         /// <summary>
         /// Returns the content of a given web adress as string.
@@ -114,14 +132,21 @@ namespace YouTube_Downloader
                 // Create reader object:
                 StreamReader Reader = new StreamReader(WebStream);
                 string PageContent = "", line;
+
                 if (stopLine == null)
                     PageContent = Reader.ReadToEnd();
-                else while (!Reader.EndOfStream)
+                else
+                {
+                    while (!Reader.EndOfStream)
                     {
                         line = Reader.ReadLine();
                         PageContent += line + Environment.NewLine;
-                        if (line.Contains(stopLine)) break;
+
+                        if (line.Contains(stopLine))
+                            break;
                     }
+                }
+
                 // Cleanup
                 Reader.Close();
                 WebStream.Close();
@@ -131,10 +156,10 @@ namespace YouTube_Downloader
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
+
         /// <summary>
         /// Get the ID of a youtube video from its URL
         /// </summary>
@@ -146,6 +171,7 @@ namespace YouTube_Downloader
             string[] props = url.Split('&');
 
             string videoid = "";
+
             foreach (string prop in props)
             {
                 if (prop.StartsWith("v="))
@@ -155,32 +181,41 @@ namespace YouTube_Downloader
             return videoid;
         }
 
-
         public static IWebProxy InitialProxy()
         {
             string address = address = GetIEProxy();
-            if (!string.IsNullOrEmpty(address))
+
+            if (string.IsNullOrEmpty(address))
+                return null;
+            else
             {
                 WebProxy proxy = new WebProxy(address);
                 proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
                 return proxy;
             }
-            else return null;
         }
+
         private static string GetIEProxy()
         {
             var p = WebRequest.DefaultWebProxy;
-            if (p == null) return null;
+
+            if (p == null)
+                return null;
+
             WebProxy webProxy = null;
-            if (p is WebProxy) webProxy = p as WebProxy;
+
+            if (p is WebProxy)
+                webProxy = p as WebProxy;
             else
             {
                 Type t = p.GetType();
                 var s = t.GetProperty("WebProxy", (BindingFlags)0xfff).GetValue(p, null);
                 webProxy = s as WebProxy;
             }
+
             if (webProxy == null || webProxy.Address == null || string.IsNullOrEmpty(webProxy.Address.AbsolutePath))
                 return null;
+
             return webProxy.Address.Host;
         }
     }

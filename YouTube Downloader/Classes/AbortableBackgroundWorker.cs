@@ -4,11 +4,37 @@ namespace System.ComponentModel
 {
     public class AbortableBackgroundWorker : BackgroundWorker
     {
+        private Thread workerThread;
+
+        public object Tag { get; set; }
+
         public AbortableBackgroundWorker()
         {
             this.WorkerSupportsCancellation = true;
             this.WorkerReportsProgress = true;
         }
+
+        /// <summary>
+        /// Kill the background thread
+        /// </summary>
+        public void Abort()
+        {
+            if (!IsBusy)
+                return;
+
+            this.CancelAsync();
+
+            try
+            {
+                if (workerThread != null)
+                {
+                    workerThread.Abort();
+                    workerThread = null;
+                }
+            }
+            catch { }
+        }
+
         /// <summary>
         /// Start work in current thread
         /// </summary>
@@ -17,16 +43,23 @@ namespace System.ComponentModel
         {
             DoWorkEventArgs args = new DoWorkEventArgs(objectState);
             Exception eee = null;
-            try { OnDoWork(args); }
-            catch (Exception ex) { eee = ex; }
+
+            try
+            {
+                OnDoWork(args);
+            }
+            catch (Exception ex)
+            {
+                eee = ex;
+            }
+
             OnRunWorkerCompleted(new RunWorkerCompletedEventArgs(args.Result, eee, args.Cancel));
         }
-        public object Tag { get; set; }
-        private Thread workerThread;
 
         protected override void OnDoWork(DoWorkEventArgs e)
         {
             workerThread = Thread.CurrentThread;
+
             try
             {
                 base.OnDoWork(e);
@@ -38,23 +71,5 @@ namespace System.ComponentModel
                 Thread.ResetAbort(); //Prevents ThreadAbortException propagation
             }
         }
-        /// <summary>
-        /// Kill the background thread
-        /// </summary>
-        public void Abort()
-        {
-            if (!IsBusy) return;
-            this.CancelAsync();
-            try
-            {
-                if (workerThread != null)
-                {
-                    workerThread.Abort();
-                    workerThread = null;
-                }
-            }
-            catch { }
-        }
     }
-
 }

@@ -42,69 +42,40 @@ namespace YouTube_Downloader
         /// Gets the youtube video length
         /// </summary>
         public long Length { get; set; }
-        public override string ToString()
-        {
-            string videoExtention = this.Extension;
-            string videoDimension = FormatSize(this.Dimension);
-            string videoSize = String.Format(new FileSizeFormatProvider(), "{0:fs}", this.VideoSize);
-
-            return String.Format("{0} ({1}) - {2}", videoExtention.ToUpper(), videoDimension, videoSize);
-        }
 
         private string FormatSize(Size value)
         {
             string s = value.Height >= 720 ? " HD" : "";
-            return ((Size)value).Width + " x " + value.Height + s;
-        }
 
-        public void SetQuality(string Extention, Size Dimension)
-        {
-            this.Extension = Extention;
-            this.Dimension = Dimension;
+            return ((Size)value).Width + " x " + value.Height + s;
         }
 
         public void SetSize(long size)
         {
             this.VideoSize = size;
         }
+
+        public void SetQuality(string extension, Size dimension)
+        {
+            this.Extension = extension;
+            this.Dimension = dimension;
+        }
+
+        public override string ToString()
+        {
+            string videoExtention = this.Extension;
+            string videoDimension = FormatSize(this.Dimension);
+            string videoSize = string.Format(new FileSizeFormatProvider(), "{0:fs}", this.VideoSize);
+
+            return string.Format("{0} ({1}) - {2}", videoExtention.ToUpper(), videoDimension, videoSize);
+        }
     }
+
     /// <summary>
     /// Use this class to get youtube video urls
     /// </summary>
     public class YouTubeDownloader
     {
-        public static List<YouTubeVideoQuality> GetYouTubeVideoUrls(params string[] VideoUrls)
-        {
-            List<YouTubeVideoQuality> urls = new List<YouTubeVideoQuality>();
-            foreach (var VideoUrl in VideoUrls)
-            {
-                string html = Helper.DownloadWebPage(VideoUrl);
-                string title = GetTitle(html);
-                // foreach (var videoLink in ExtractUrls(html))
-                foreach (var videoLink in NewMethod.GetUrl(VideoUrl))
-                {
-                    YouTubeVideoQuality q = new YouTubeVideoQuality();
-                    q.VideoUrl = VideoUrl;
-                    q.VideoTitle = title;
-                    q.DownloadUrl = videoLink + "&title=" + title;
-                    if (!GetSize(q)) continue;
-                    q.Length = long.Parse(Regex.Match(html, "\"length_seconds\":(.+?),", RegexOptions.Singleline).Groups[1].ToString());
-                    bool IsWide = IsWideScreen(html);
-                    if (GetQuality(q, IsWide))
-                        urls.Add(q);
-                }
-            }
-            return urls;
-        }
-        private static string GetTitle(string RssDoc)
-        {
-            string str14 = Helper.GetTxtBtwn(RssDoc, "'VIDEO_TITLE': '", "'", 0);
-            if (str14 == "") str14 = Helper.GetTxtBtwn(RssDoc, "\"title\" content=\"", "\"", 0);
-            if (str14 == "") str14 = Helper.GetTxtBtwn(RssDoc, "&title=", "&", 0);
-            str14 = str14.Replace(@"\", "").Replace("'", "&#39;").Replace("\"", "&quot;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("+", " ");
-            return str14;
-        }
-
         private static List<string> ExtractUrls(string html)
         {
             List<string> urls = new List<string>();
@@ -114,19 +85,30 @@ namespace YouTube_Downloader
 
             string firstPatren = html.Substring(0, html.IndexOf('=') + 1);
             var matchs = Regex.Split(html, firstPatren);
+
             for (int i = 0; i < matchs.Length; i++)
                 matchs[i] = firstPatren + matchs[i];
+
             foreach (var match in matchs)
             {
-                if (!match.Contains("url=")) continue;
+                if (!match.Contains("url="))
+                    continue;
 
                 string url = Helper.GetTxtBtwn(match, "url=", "\\u0026", 0);
-                if (url == "") url = Helper.GetTxtBtwn(match, "url=", ",url", 0);
-                if (url == "") url = Helper.GetTxtBtwn(match, "url=", "\",", 0);
+
+                if (url == "")
+                    url = Helper.GetTxtBtwn(match, "url=", ",url", 0);
+
+                if (url == "")
+                    url = Helper.GetTxtBtwn(match, "url=", "\",", 0);
 
                 string sig = Helper.GetTxtBtwn(match, "sig=", "\\u0026", 0);
-                if (sig == "") sig = Helper.GetTxtBtwn(match, "sig=", ",sig", 0);
-                if (sig == "") sig = Helper.GetTxtBtwn(match, "sig=", "\",", 0);
+
+                if (sig == "")
+                    sig = Helper.GetTxtBtwn(match, "sig=", ",sig", 0);
+
+                if (sig == "")
+                    sig = Helper.GetTxtBtwn(match, "sig=", "\",", 0);
 
                 while ((url.EndsWith(",")) || (url.EndsWith(".")) || (url.EndsWith("\"")))
                     url = url.Remove(url.Length - 1, 1);
@@ -134,62 +116,16 @@ namespace YouTube_Downloader
                 while ((sig.EndsWith(",")) || (sig.EndsWith(".")) || (sig.EndsWith("\"")))
                     sig = sig.Remove(sig.Length - 1, 1);
 
-                if (string.IsNullOrEmpty(url)) continue;
+                if (string.IsNullOrEmpty(url))
+                    continue;
+
                 if (!string.IsNullOrEmpty(sig))
                     url += "&signature=" + sig;
+
                 urls.Add(url);
             }
+
             return urls;
-        }
-
-        private static bool GetQuality(YouTubeVideoQuality q, Boolean _Wide)
-        {
-            int iTagValue;
-            string itag = Regex.Match(q.DownloadUrl, @"itag=([1-9]?[0-9]?[0-9])", RegexOptions.Singleline).Groups[1].ToString();
-            if (itag != "")
-            {
-                if (int.TryParse(itag, out iTagValue) == false)
-                    iTagValue = 0;
-
-                switch (iTagValue)
-                {
-                    case 5: q.SetQuality("flv", new Size(320, (_Wide ? 180 : 240))); break;
-                    case 6: q.SetQuality("flv", new Size(480, (_Wide ? 270 : 360))); break;
-                    case 17: q.SetQuality("3gp", new Size(176, (_Wide ? 99 : 144))); break;
-                    case 18: q.SetQuality("mp4", new Size(640, (_Wide ? 360 : 480))); break;
-                    case 22: q.SetQuality("mp4", new Size(1280, (_Wide ? 720 : 960))); break;
-                    case 34: q.SetQuality("flv", new Size(640, (_Wide ? 360 : 480))); break;
-                    case 35: q.SetQuality("flv", new Size(854, (_Wide ? 480 : 640))); break;
-                    case 36: q.SetQuality("3gp", new Size(320, (_Wide ? 180 : 240))); break;
-                    case 37: q.SetQuality("mp4", new Size(1920, (_Wide ? 1080 : 1440))); break;
-                    case 38: q.SetQuality("mp4", new Size(2048, (_Wide ? 1152 : 1536))); break;
-                    case 43: q.SetQuality("webm", new Size(640, (_Wide ? 360 : 480))); break;
-                    case 44: q.SetQuality("webm", new Size(854, (_Wide ? 480 : 640))); break;
-                    case 45: q.SetQuality("webm", new Size(1280, (_Wide ? 720 : 960))); break;
-                    case 46: q.SetQuality("webm", new Size(1920, (_Wide ? 1080 : 1440))); break;
-                    case 82: q.SetQuality("3D.mp4", new Size(480, (_Wide ? 270 : 360))); break;        // 3D
-                    case 83: q.SetQuality("3D.mp4", new Size(640, (_Wide ? 360 : 480))); break;        // 3D
-                    case 84: q.SetQuality("3D.mp4", new Size(1280, (_Wide ? 720 : 960))); break;       // 3D
-                    case 85: q.SetQuality("3D.mp4", new Size(1920, (_Wide ? 1080 : 1440))); break;     // 3D
-                    case 100: q.SetQuality("3D.webm", new Size(640, (_Wide ? 360 : 480))); break;      // 3D
-                    case 101: q.SetQuality("3D.webm", new Size(640, (_Wide ? 360 : 480))); break;      // 3D
-                    case 102: q.SetQuality("3D.webm", new Size(1280, (_Wide ? 720 : 960))); break;     // 3D
-                    case 120: q.SetQuality("live.flv", new Size(1280, (_Wide ? 720 : 960))); break;    // Live-streaming - should be ignored?
-                    default: q.SetQuality("itag-" + itag, new Size(0, 0)); break;       // unknown or parse error
-                }
-                return true;
-            } return false;
-        }
-        /// <summary>
-        /// check whether the video is in widescreen format
-        /// </summary>
-        public static Boolean IsWideScreen(string html)
-        {
-            bool res = false;
-
-            string match = Regex.Match(html, @"'IS_WIDESCREEN':\s+(.+?)\s+", RegexOptions.Singleline).Groups[1].ToString().ToLower().Trim();
-            res = ((match == "true") || (match == "true,"));
-            return res;
         }
 
         private static bool GetSize(YouTubeVideoQuality q)
@@ -200,13 +136,18 @@ namespace YouTube_Downloader
                 fileInfoRequest.Proxy = Helper.InitialProxy();
                 HttpWebResponse fileInfoResponse = (HttpWebResponse)fileInfoRequest.GetResponse();
                 long bytesLength = fileInfoResponse.ContentLength;
+
                 fileInfoRequest.Abort();
+
                 if (bytesLength != -1)
                 {
                     q.SetSize(bytesLength);
                     return true;
                 }
-                else return false;
+                else
+                {
+                    return false;
+                }
             }
             catch (Exception)
             {
@@ -214,12 +155,110 @@ namespace YouTube_Downloader
             }
         }
 
+        private static string GetTitle(string rssDoc)
+        {
+            string str14 = Helper.GetTxtBtwn(rssDoc, "'VIDEO_TITLE': '", "'", 0);
+
+            if (str14 == "")
+                str14 = Helper.GetTxtBtwn(rssDoc, "\"title\" content=\"", "\"", 0);
+
+            if (str14 == "")
+                str14 = Helper.GetTxtBtwn(rssDoc, "&title=", "&", 0);
+
+            str14 = str14.Replace(@"\", "").Replace("'", "&#39;").Replace("\"", "&quot;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("+", " ");
+
+            return str14;
+        }
+
+        private static bool GetQuality(YouTubeVideoQuality q, bool wide)
+        {
+            int iTagValue;
+            string itag = Regex.Match(q.DownloadUrl, @"itag=([1-9]?[0-9]?[0-9])", RegexOptions.Singleline).Groups[1].ToString();
+
+            if (itag != "")
+            {
+                if (int.TryParse(itag, out iTagValue) == false)
+                    iTagValue = 0;
+
+                switch (iTagValue)
+                {
+                    case 5: q.SetQuality("flv", new Size(320, (wide ? 180 : 240))); break;
+                    case 6: q.SetQuality("flv", new Size(480, (wide ? 270 : 360))); break;
+                    case 17: q.SetQuality("3gp", new Size(176, (wide ? 99 : 144))); break;
+                    case 18: q.SetQuality("mp4", new Size(640, (wide ? 360 : 480))); break;
+                    case 22: q.SetQuality("mp4", new Size(1280, (wide ? 720 : 960))); break;
+                    case 34: q.SetQuality("flv", new Size(640, (wide ? 360 : 480))); break;
+                    case 35: q.SetQuality("flv", new Size(854, (wide ? 480 : 640))); break;
+                    case 36: q.SetQuality("3gp", new Size(320, (wide ? 180 : 240))); break;
+                    case 37: q.SetQuality("mp4", new Size(1920, (wide ? 1080 : 1440))); break;
+                    case 38: q.SetQuality("mp4", new Size(2048, (wide ? 1152 : 1536))); break;
+                    case 43: q.SetQuality("webm", new Size(640, (wide ? 360 : 480))); break;
+                    case 44: q.SetQuality("webm", new Size(854, (wide ? 480 : 640))); break;
+                    case 45: q.SetQuality("webm", new Size(1280, (wide ? 720 : 960))); break;
+                    case 46: q.SetQuality("webm", new Size(1920, (wide ? 1080 : 1440))); break;
+                    case 82: q.SetQuality("3D.mp4", new Size(480, (wide ? 270 : 360))); break;        // 3D
+                    case 83: q.SetQuality("3D.mp4", new Size(640, (wide ? 360 : 480))); break;        // 3D
+                    case 84: q.SetQuality("3D.mp4", new Size(1280, (wide ? 720 : 960))); break;       // 3D
+                    case 85: q.SetQuality("3D.mp4", new Size(1920, (wide ? 1080 : 1440))); break;     // 3D
+                    case 100: q.SetQuality("3D.webm", new Size(640, (wide ? 360 : 480))); break;      // 3D
+                    case 101: q.SetQuality("3D.webm", new Size(640, (wide ? 360 : 480))); break;      // 3D
+                    case 102: q.SetQuality("3D.webm", new Size(1280, (wide ? 720 : 960))); break;     // 3D
+                    case 120: q.SetQuality("live.flv", new Size(1280, (wide ? 720 : 960))); break;    // Live-streaming - should be ignored?
+                    default: q.SetQuality("itag-" + itag, new Size(0, 0)); break;       // unknown or parse error
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        public static List<YouTubeVideoQuality> GetYouTubeVideoUrls(params string[] videoUrls)
+        {
+            List<YouTubeVideoQuality> urls = new List<YouTubeVideoQuality>();
+            foreach (var VideoUrl in videoUrls)
+            {
+                string html = Helper.DownloadWebPage(VideoUrl);
+                string title = GetTitle(html);
+                // foreach (var videoLink in ExtractUrls(html))
+                foreach (var videoLink in NewMethod.GetUrl(VideoUrl))
+                {
+                    YouTubeVideoQuality q = new YouTubeVideoQuality();
+                    q.VideoUrl = VideoUrl;
+                    q.VideoTitle = title;
+                    q.DownloadUrl = videoLink + "&title=" + title;
+
+                    if (!GetSize(q))
+                        continue;
+
+                    q.Length = long.Parse(Regex.Match(html, "\"length_seconds\":(.+?),", RegexOptions.Singleline).Groups[1].ToString());
+                    bool IsWide = IsWideScreen(html);
+
+                    if (GetQuality(q, IsWide))
+                        urls.Add(q);
+                }
+            }
+            return urls;
+        }
+
+        /// <summary>
+        /// check whether the video is in widescreen format
+        /// </summary>
+        public static Boolean IsWideScreen(string html)
+        {
+            bool res = false;
+            string match = Regex.Match(html, @"'IS_WIDESCREEN':\s+(.+?)\s+", RegexOptions.Singleline).Groups[1].ToString().ToLower().Trim();
+
+            res = ((match == "true") || (match == "true,"));
+
+            return res;
+        }
+
         class NewMethod
         {
-            public static List<string> GetUrl(string PageURL)
+            public static List<string> GetUrl(string pageURL)
             {
-
-                string HTML = new WebClient().DownloadString(PageURL);
+                string HTML = new WebClient().DownloadString(pageURL);
                 string temp = "\"\\\\/\\\\/s.ytimg.com\\\\/yts\\\\/jsbin\\\\/html5player-(.+?)\\.js\"";
                 Match m = Regex.Match(HTML, temp);
                 Group g = m.Groups[1];
@@ -232,14 +271,17 @@ namespace YouTube_Downloader
                 MatchCollection Streams = Regex.Matches(HTML, "(^url=|(\\\\u0026url=|,url=))(.+?)(\\\\u0026|,|$)");
                 MatchCollection Signatures = Regex.Matches(HTML, "(^s=|(\\\\u0026s=|,s=))(.+?)(\\\\u0026|,|$)");
                 List<string> URLs = new List<string>();
+
                 for (int i = 0; i < Streams.Count - 1; i++)
                 {
                     string URL = Streams[i].Groups[3].ToString();
+
                     if (Signatures.Count > 0)
                     {
                         string sign = Sign_Decipher(Signatures[i].Groups[3].ToString(), Player_Code);
                         URL += "&signature=" + sign;
                     }
+
                     URLs.Add(URL.Trim());
                 }
 
@@ -253,9 +295,11 @@ namespace YouTube_Downloader
                 string var = Function_Match.Groups[1].ToString();
                 string Decipher = Function_Match.Groups[2].ToString();
                 string[] Lines = Decipher.Split(';');
+
                 for (int i = 0; i < Lines.Length; i++)
                 {
                     string Line = Lines[i].Trim();
+
                     if (Regex.IsMatch(Line, var + "=" + var + "\\.reverse\\(\\)"))
                     {
                         char[] charArray = s.ToCharArray();
@@ -275,6 +319,7 @@ namespace YouTube_Downloader
                         s = Swap(s, Convert.ToInt32(Regex.Match(Line, var + "\\[0\\]=" + var + "\\[(\\d+)%" + var + "\\.length\\]").Groups[1].ToString()));
                     }
                 }
+
                 return s;
             }
 
@@ -287,8 +332,10 @@ namespace YouTube_Downloader
             {
                 StringBuilder Str = new StringBuilder(input);
                 char SwapChar = Str[position];
+
                 Str[position] = Str[0];
                 Str[0] = SwapChar;
+
                 return Str.ToString();
             }
         }
