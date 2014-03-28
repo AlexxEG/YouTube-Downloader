@@ -53,18 +53,27 @@
             this.pauseMenuItem = new System.Windows.Forms.MenuItem();
             this.stopMenuItem = new System.Windows.Forms.MenuItem();
             this.removeMenuItem = new System.Windows.Forms.MenuItem();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.mtxtTo = new System.Windows.Forms.MaskedTextBox();
-            this.chbCutTo = new System.Windows.Forms.CheckBox();
-            this.mtxtFrom = new System.Windows.Forms.MaskedTextBox();
-            this.chbCutFrom = new System.Windows.Forms.CheckBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.lTitle = new System.Windows.Forms.Label();
             this.videoThumbnail = new System.Windows.Forms.PictureBox();
             this.label3 = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.downloadTabPage = new System.Windows.Forms.TabPage();
+            this.convertTabPage = new System.Windows.Forms.TabPage();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.btnBrowseOutput = new System.Windows.Forms.Button();
+            this.btnBrowseInput = new System.Windows.Forms.Button();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.chbCutFrom = new System.Windows.Forms.CheckBox();
+            this.mtxtTo = new System.Windows.Forms.MaskedTextBox();
+            this.chbCutTo = new System.Windows.Forms.CheckBox();
+            this.mtxtFrom = new System.Windows.Forms.MaskedTextBox();
+            this.btnConvert = new System.Windows.Forms.Button();
+            this.txtOutput = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.txtInput = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.queueTabPage = new System.Windows.Forms.TabPage();
             this.lvQueue = new ListViewEmbeddedControls.ListViewEx();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -72,14 +81,18 @@
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.videoThumbnail)).BeginInit();
             this.tabControl1.SuspendLayout();
-            this.tabPage1.SuspendLayout();
-            this.tabPage2.SuspendLayout();
+            this.downloadTabPage.SuspendLayout();
+            this.convertTabPage.SuspendLayout();
+            this.groupBox2.SuspendLayout();
+            this.groupBox4.SuspendLayout();
+            this.queueTabPage.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -307,64 +320,6 @@
             this.removeMenuItem.Text = "Remove";
             this.removeMenuItem.Click += new System.EventHandler(this.removeMenuItem_Click);
             // 
-            // groupBox2
-            // 
-            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox2.Controls.Add(this.mtxtTo);
-            this.groupBox2.Controls.Add(this.chbCutTo);
-            this.groupBox2.Controls.Add(this.mtxtFrom);
-            this.groupBox2.Controls.Add(this.chbCutFrom);
-            this.groupBox2.Location = new System.Drawing.Point(6, 209);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(584, 56);
-            this.groupBox2.TabIndex = 3;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Converting Options";
-            // 
-            // mtxtTo
-            // 
-            this.mtxtTo.Enabled = false;
-            this.mtxtTo.Location = new System.Drawing.Point(231, 19);
-            this.mtxtTo.Mask = "00:00:00.000";
-            this.mtxtTo.Name = "mtxtTo";
-            this.mtxtTo.Size = new System.Drawing.Size(100, 20);
-            this.mtxtTo.TabIndex = 3;
-            this.mtxtTo.ValidatingType = typeof(System.TimeSpan);
-            // 
-            // chbCutTo
-            // 
-            this.chbCutTo.AutoSize = true;
-            this.chbCutTo.Enabled = false;
-            this.chbCutTo.Location = new System.Drawing.Point(186, 21);
-            this.chbCutTo.Name = "chbCutTo";
-            this.chbCutTo.Size = new System.Drawing.Size(39, 17);
-            this.chbCutTo.TabIndex = 2;
-            this.chbCutTo.Text = "To";
-            this.chbCutTo.UseVisualStyleBackColor = true;
-            this.chbCutTo.CheckedChanged += new System.EventHandler(this.chbCutTo_CheckedChanged);
-            // 
-            // mtxtFrom
-            // 
-            this.mtxtFrom.Enabled = false;
-            this.mtxtFrom.Location = new System.Drawing.Point(80, 19);
-            this.mtxtFrom.Mask = "00:00:00.000";
-            this.mtxtFrom.Name = "mtxtFrom";
-            this.mtxtFrom.Size = new System.Drawing.Size(100, 20);
-            this.mtxtFrom.TabIndex = 1;
-            this.mtxtFrom.ValidatingType = typeof(System.TimeSpan);
-            // 
-            // chbCutFrom
-            // 
-            this.chbCutFrom.AutoSize = true;
-            this.chbCutFrom.Location = new System.Drawing.Point(6, 21);
-            this.chbCutFrom.Name = "chbCutFrom";
-            this.chbCutFrom.Size = new System.Drawing.Size(68, 17);
-            this.chbCutFrom.TabIndex = 0;
-            this.chbCutFrom.Text = "Cut From";
-            this.chbCutFrom.UseVisualStyleBackColor = true;
-            this.chbCutFrom.CheckedChanged += new System.EventHandler(this.chbCutFrom_CheckedChanged);
-            // 
             // groupBox3
             // 
             this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -419,37 +374,196 @@
             this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.downloadTabPage);
+            this.tabControl1.Controls.Add(this.convertTabPage);
+            this.tabControl1.Controls.Add(this.queueTabPage);
             this.tabControl1.Location = new System.Drawing.Point(12, 12);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(604, 297);
             this.tabControl1.TabIndex = 9;
             // 
-            // tabPage1
+            // downloadTabPage
             // 
-            this.tabPage1.Controls.Add(this.groupBox1);
-            this.tabPage1.Controls.Add(this.groupBox2);
-            this.tabPage1.Controls.Add(this.groupBox3);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(596, 271);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Download";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            this.downloadTabPage.Controls.Add(this.groupBox1);
+            this.downloadTabPage.Controls.Add(this.groupBox3);
+            this.downloadTabPage.Location = new System.Drawing.Point(4, 22);
+            this.downloadTabPage.Name = "downloadTabPage";
+            this.downloadTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.downloadTabPage.Size = new System.Drawing.Size(596, 271);
+            this.downloadTabPage.TabIndex = 0;
+            this.downloadTabPage.Text = "Download";
+            this.downloadTabPage.UseVisualStyleBackColor = true;
             // 
-            // tabPage2
+            // convertTabPage
             // 
-            this.tabPage2.Controls.Add(this.lvQueue);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(596, 271);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Queue";
-            this.tabPage2.UseVisualStyleBackColor = true;
+            this.convertTabPage.Controls.Add(this.groupBox2);
+            this.convertTabPage.Location = new System.Drawing.Point(4, 22);
+            this.convertTabPage.Name = "convertTabPage";
+            this.convertTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.convertTabPage.Size = new System.Drawing.Size(596, 271);
+            this.convertTabPage.TabIndex = 2;
+            this.convertTabPage.Text = "Convert";
+            this.convertTabPage.UseVisualStyleBackColor = true;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.btnBrowseOutput);
+            this.groupBox2.Controls.Add(this.btnBrowseInput);
+            this.groupBox2.Controls.Add(this.groupBox4);
+            this.groupBox2.Controls.Add(this.btnConvert);
+            this.groupBox2.Controls.Add(this.txtOutput);
+            this.groupBox2.Controls.Add(this.label6);
+            this.groupBox2.Controls.Add(this.txtInput);
+            this.groupBox2.Controls.Add(this.label5);
+            this.groupBox2.Location = new System.Drawing.Point(6, 6);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(584, 194);
+            this.groupBox2.TabIndex = 5;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Converting Options";
+            // 
+            // btnBrowseOutput
+            // 
+            this.btnBrowseOutput.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBrowseOutput.Location = new System.Drawing.Point(554, 44);
+            this.btnBrowseOutput.Name = "btnBrowseOutput";
+            this.btnBrowseOutput.Size = new System.Drawing.Size(24, 22);
+            this.btnBrowseOutput.TabIndex = 7;
+            this.btnBrowseOutput.Text = "...";
+            this.btnBrowseOutput.UseVisualStyleBackColor = true;
+            this.btnBrowseOutput.Click += new System.EventHandler(this.btnBrowseOutput_Click);
+            // 
+            // btnBrowseInput
+            // 
+            this.btnBrowseInput.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBrowseInput.Location = new System.Drawing.Point(554, 18);
+            this.btnBrowseInput.Name = "btnBrowseInput";
+            this.btnBrowseInput.Size = new System.Drawing.Size(24, 22);
+            this.btnBrowseInput.TabIndex = 6;
+            this.btnBrowseInput.Text = "...";
+            this.btnBrowseInput.UseVisualStyleBackColor = true;
+            this.btnBrowseInput.Click += new System.EventHandler(this.btnBrowseInput_Click);
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.groupBox4.Controls.Add(this.chbCutFrom);
+            this.groupBox4.Controls.Add(this.mtxtTo);
+            this.groupBox4.Controls.Add(this.chbCutTo);
+            this.groupBox4.Controls.Add(this.mtxtFrom);
+            this.groupBox4.Location = new System.Drawing.Point(6, 124);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(372, 64);
+            this.groupBox4.TabIndex = 5;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Cut";
+            // 
+            // chbCutFrom
+            // 
+            this.chbCutFrom.AutoSize = true;
+            this.chbCutFrom.Location = new System.Drawing.Point(6, 21);
+            this.chbCutFrom.Name = "chbCutFrom";
+            this.chbCutFrom.Size = new System.Drawing.Size(68, 17);
+            this.chbCutFrom.TabIndex = 0;
+            this.chbCutFrom.Text = "Cut From";
+            this.chbCutFrom.UseVisualStyleBackColor = true;
+            // 
+            // mtxtTo
+            // 
+            this.mtxtTo.Enabled = false;
+            this.mtxtTo.Location = new System.Drawing.Point(231, 19);
+            this.mtxtTo.Mask = "00:00:00.000";
+            this.mtxtTo.Name = "mtxtTo";
+            this.mtxtTo.Size = new System.Drawing.Size(100, 20);
+            this.mtxtTo.TabIndex = 3;
+            this.mtxtTo.ValidatingType = typeof(System.TimeSpan);
+            // 
+            // chbCutTo
+            // 
+            this.chbCutTo.AutoSize = true;
+            this.chbCutTo.Enabled = false;
+            this.chbCutTo.Location = new System.Drawing.Point(186, 21);
+            this.chbCutTo.Name = "chbCutTo";
+            this.chbCutTo.Size = new System.Drawing.Size(39, 17);
+            this.chbCutTo.TabIndex = 2;
+            this.chbCutTo.Text = "To";
+            this.chbCutTo.UseVisualStyleBackColor = true;
+            // 
+            // mtxtFrom
+            // 
+            this.mtxtFrom.Enabled = false;
+            this.mtxtFrom.Location = new System.Drawing.Point(80, 19);
+            this.mtxtFrom.Mask = "00:00:00.000";
+            this.mtxtFrom.Name = "mtxtFrom";
+            this.mtxtFrom.Size = new System.Drawing.Size(100, 20);
+            this.mtxtFrom.TabIndex = 1;
+            this.mtxtFrom.ValidatingType = typeof(System.TimeSpan);
+            // 
+            // btnConvert
+            // 
+            this.btnConvert.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnConvert.Location = new System.Drawing.Point(503, 165);
+            this.btnConvert.Name = "btnConvert";
+            this.btnConvert.Size = new System.Drawing.Size(75, 23);
+            this.btnConvert.TabIndex = 4;
+            this.btnConvert.Text = "Convert";
+            this.btnConvert.UseVisualStyleBackColor = true;
+            this.btnConvert.Click += new System.EventHandler(this.btnConvert_Click);
+            // 
+            // txtOutput
+            // 
+            this.txtOutput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtOutput.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.txtOutput.Location = new System.Drawing.Point(51, 45);
+            this.txtOutput.Name = "txtOutput";
+            this.txtOutput.ReadOnly = true;
+            this.txtOutput.Size = new System.Drawing.Size(497, 20);
+            this.txtOutput.TabIndex = 3;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(6, 48);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(39, 13);
+            this.label6.TabIndex = 1;
+            this.label6.Text = "Output";
+            // 
+            // txtInput
+            // 
+            this.txtInput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtInput.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.txtInput.Location = new System.Drawing.Point(51, 19);
+            this.txtInput.Name = "txtInput";
+            this.txtInput.ReadOnly = true;
+            this.txtInput.Size = new System.Drawing.Size(497, 20);
+            this.txtInput.TabIndex = 2;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(6, 22);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(31, 13);
+            this.label5.TabIndex = 0;
+            this.label5.Text = "Input";
+            // 
+            // queueTabPage
+            // 
+            this.queueTabPage.Controls.Add(this.lvQueue);
+            this.queueTabPage.Location = new System.Drawing.Point(4, 22);
+            this.queueTabPage.Name = "queueTabPage";
+            this.queueTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.queueTabPage.Size = new System.Drawing.Size(596, 271);
+            this.queueTabPage.TabIndex = 1;
+            this.queueTabPage.Text = "Queue";
+            this.queueTabPage.UseVisualStyleBackColor = true;
             // 
             // lvQueue
             // 
@@ -493,6 +607,14 @@
             // 
             this.columnHeader6.Text = "Link";
             // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.Filter = "MP3 files|*.mp3|MP4 files|*.mp4|All files|*.*";
+            // 
+            // saveFileDialog1
+            // 
+            this.saveFileDialog1.Filter = "MP3 files|*.mp3|MP4 files|*.mp4|All files|*.*";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -508,14 +630,17 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.panel1.ResumeLayout(false);
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.videoThumbnail)).EndInit();
             this.tabControl1.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
-            this.tabPage2.ResumeLayout(false);
+            this.downloadTabPage.ResumeLayout(false);
+            this.convertTabPage.ResumeLayout(false);
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
+            this.queueTabPage.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -554,18 +679,29 @@
         private System.Windows.Forms.MenuItem pauseMenuItem;
         private System.Windows.Forms.MenuItem stopMenuItem;
         private System.Windows.Forms.MenuItem removeMenuItem;
-        private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.MaskedTextBox mtxtFrom;
-        private System.Windows.Forms.CheckBox chbCutFrom;
-        private System.Windows.Forms.CheckBox chbCutTo;
-        private System.Windows.Forms.MaskedTextBox mtxtTo;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.PictureBox videoThumbnail;
         private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.TabPage downloadTabPage;
+        private System.Windows.Forms.TabPage queueTabPage;
         private System.Windows.Forms.Label lTitle;
+        private System.Windows.Forms.TabPage convertTabPage;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.CheckBox chbCutFrom;
+        private System.Windows.Forms.MaskedTextBox mtxtFrom;
+        private System.Windows.Forms.Button btnConvert;
+        private System.Windows.Forms.TextBox txtOutput;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.TextBox txtInput;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.MaskedTextBox mtxtTo;
+        private System.Windows.Forms.CheckBox chbCutTo;
+        private System.Windows.Forms.Button btnBrowseOutput;
+        private System.Windows.Forms.Button btnBrowseInput;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog1;
     }
 }
 

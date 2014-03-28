@@ -8,7 +8,6 @@ using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 using YouTube_Downloader.Classes;
-using YouTube_Downloader.Dialogs;
 
 namespace YouTube_Downloader
 {
@@ -173,7 +172,7 @@ namespace YouTube_Downloader
 
                 item.Download(tempItem.DownloadUrl, Path.Combine(path, filename));
 
-                tabControl1.SelectedIndex = 1;
+                tabControl1.SelectedTab = queueTabPage;
             }
             catch (Exception ex) { MessageBox.Show(this, ex.Message, ex.Source, MessageBoxButtons.OK, MessageBoxIcon.Error); }
         }
@@ -191,6 +190,60 @@ namespace YouTube_Downloader
             {
                 cbSaveTo.SelectedIndex = cbSaveTo.Items.Add(ofd.Folder);
             }
+        }
+
+        private void btnBrowseInput_Click(object sender, EventArgs e)
+        {
+            openFileDialog1.FileName = Path.GetFileName(txtInput.Text);
+
+            if (openFileDialog1.ShowDialog(this) == DialogResult.OK)
+            {
+                txtInput.Text = openFileDialog1.FileName;
+            }
+        }
+
+        private void btnBrowseOutput_Click(object sender, EventArgs e)
+        {
+            if (File.Exists(txtInput.Text))
+            {
+                saveFileDialog1.FileName = Path.GetFileName(txtInput.Text);
+            }
+            else
+            {
+                saveFileDialog1.FileName = Path.GetFileName(txtOutput.Text);
+            }
+
+            if (saveFileDialog1.ShowDialog(this) == DialogResult.OK)
+            {
+                txtOutput.Text = saveFileDialog1.FileName;
+            }
+        }
+
+        private void btnConvert_Click(object sender, EventArgs e)
+        {
+            if (File.Exists(txtOutput.Text))
+            {
+                var filename = Path.GetFileName(txtOutput.Text);
+                var result = MessageBox.Show(this, "File '" + filename + "' already exists.\n\nOverwrite?",
+                    "Overwrite", MessageBoxButtons.YesNo);
+
+                if (result == DialogResult.No)
+                    return;
+            }
+
+            if (txtInput.Text == txtOutput.Text) // If they match, the user probably wants to cut. Right?
+            {
+                this.CutAudio(txtInput.Text, txtOutput.Text);
+            }
+            else
+            {
+                this.ConvertVideo(txtInput.Text, txtOutput.Text, true);
+            }
+
+            txtInput.Clear();
+            txtOutput.Clear();
+
+            tabControl1.SelectedTab = queueTabPage;
         }
 
         private void chbCutFrom_CheckedChanged(object sender, EventArgs e)
@@ -261,8 +314,6 @@ namespace YouTube_Downloader
         MenuItem exitMenuItem;
         MenuItem toolsMenuItem;
         MenuItem optionsMenuItem;
-        MenuItem convertVideoMenuItem;
-        MenuItem cutMP3MenuItem;
 
         private void InitializeMainMenu()
         {
@@ -277,9 +328,7 @@ namespace YouTube_Downloader
             MenuItem[] toolsMenuItems = new MenuItem[]
             {
                 optionsMenuItem = new MenuItem("&Options", optionsMenuItem_Click),
-                new MenuItem("-"),
-                convertVideoMenuItem = new MenuItem("&Convert Video", convertVideoMenuItem_Click),
-                cutMP3MenuItem = new MenuItem("C&ut MP3", cutMP3MenuItem_Click)
+                new MenuItem("-")
             };
 
             toolsMenuItem = new MenuItem("&Tools");
@@ -299,76 +348,7 @@ namespace YouTube_Downloader
 
         private void optionsMenuItem_Click(object sender, EventArgs e)
         {
-            
-        }
 
-        private void convertVideoMenuItem_Click(object sender, EventArgs e)
-        {
-            using (var cd = new ConvertDialog())
-            {
-                if (cd.ShowDialog(this) == DialogResult.OK)
-                {
-                    if (File.Exists(cd.Output))
-                    {
-                        DialogResult result = MessageBox.Show(this,
-                                "File '" + Path.GetFileName(cd.Output) + "' already exists\n\nOverwrite?",
-                                "Overwrite?", MessageBoxButtons.YesNo);
-
-                        if (result == DialogResult.No)
-                            return;
-
-                        File.Delete(cd.Output);
-                    }
-
-                    bool cut = false;
-
-                    if (chbCutFrom.Checked)
-                    {
-                        DialogResult result = MessageBox.Show(this,
-                            "Do you want to cut the audio?", "Cut Audio", MessageBoxButtons.YesNoCancel);
-
-                        if (result == DialogResult.Cancel)
-                            return;
-
-                        cut = result == DialogResult.Yes;
-                    }
-
-                    this.ConvertVideo(cd.Input, cd.Output, cut);
-                    tabControl1.SelectedIndex = 1;
-                    lvQueue.Items[lvQueue.Items.Count - 1].Selected = true;
-                }
-            }
-        }
-
-        private void cutMP3MenuItem_Click(object sender, EventArgs e)
-        {
-            if (!chbCutFrom.Checked)
-            {
-                MessageBox.Show(this, "Please enter cutting information below first.");
-                return;
-            }
-
-            using (var cd = new ConvertDialog())
-            {
-                if (cd.ShowDialog(this) == DialogResult.OK)
-                {
-                    if (File.Exists(cd.Output))
-                    {
-                        DialogResult result = MessageBox.Show(this,
-                                "File '" + Path.GetFileName(cd.Output) + "' already exists\n\nOverwrite?",
-                                "Overwrite?", MessageBoxButtons.YesNo);
-
-                        if (result == DialogResult.No)
-                            return;
-
-                        File.Delete(cd.Output);
-                    }
-
-                    this.CutAudio(cd.Input, cd.Output);
-                    tabControl1.SelectedIndex = 1;
-                    lvQueue.Items[lvQueue.Items.Count - 1].Selected = true;
-                }
-            }
         }
 
         #endregion
@@ -472,25 +452,9 @@ namespace YouTube_Downloader
         {
             string input = (lvQueue.SelectedItems[0] as DownloadListViewItem).Output;
 
-            using (var cd = new ConvertDialog())
-            {
-                if (cd.ShowDialog(this, input) == DialogResult.OK)
-                {
-                    if (File.Exists(cd.Output))
-                    {
-                        var filename = Path.GetFileName(cd.Output);
-                        var result = MessageBox.Show(this, "File '" + filename + "' already exists.\n\nOverwrite?",
-                            "Overwrite", MessageBoxButtons.YesNo);
-
-                        if (result == DialogResult.No)
-                            return;
-
-                        File.Delete(cd.Output);
-                    }
-
-                    this.ConvertVideo(input, cd.Output, true);
-                }
-            }
+            txtInput.Text = input;
+            txtOutput.Clear();
+            tabControl1.SelectedTab = convertTabPage;
         }
 
         private void resumeMenuItem_Click(object sender, EventArgs e)
@@ -565,6 +529,7 @@ namespace YouTube_Downloader
 
             var item = new ConvertListViewItem(Path.GetFileName(output));
 
+            item.Selected = true;
             item.SubItems.Add("");
             item.SubItems.Add("Converting");
             item.SubItems.Add(FormatVideoLength(FfmpegHelper.GetDuration(input)));
@@ -617,6 +582,7 @@ namespace YouTube_Downloader
 
             CuttingListViewItem item = new CuttingListViewItem(Path.GetFileName(output));
 
+            item.Selected = true;
             item.SubItems.Add("Cutting");
             item.SubItems.Add("-");
             item.SubItems.Add(FormatVideoLength(FfmpegHelper.GetDuration(input)));
@@ -720,15 +686,9 @@ namespace YouTube_Downloader
 
         public static string GetFileSize(string file)
         {
-            string size = string.Empty;
+            FileInfo info = new FileInfo(file);
 
-            using (var stream = System.IO.File.Open(file, FileMode.Open, FileAccess.Read))
-            {
-                size = string.Format(new FileSizeFormatProvider(), "{0:fs}", stream.Length);
-                stream.Close();
-            }
-
-            return size;
+            return string.Format(new FileSizeFormatProvider(), "{0:fs}", info.Length);
         }
 
         public void InsertVideo(string url)

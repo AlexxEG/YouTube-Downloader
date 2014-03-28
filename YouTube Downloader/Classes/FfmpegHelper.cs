@@ -8,9 +8,9 @@ namespace YouTube_Downloader.Classes
 {
     public class FfmpegHelper
     {
-        private const string Command_Convert = " -i \"{0}\" -vn -f mp3 -ab 192k \"{1}\"";
-        private const string Command_Crop_From = " -ss {0} -i \"{1}\" -acodec copy \"{2}\"";
-        private const string Command_Crop_From_To = " -ss {0} -i \"{1}\" -to {2} -acodec copy \"{3}\"";
+        private const string Command_Convert = " -y -i \"{0}\" -vn -f mp3 -ab 192k \"{1}\"";
+        private const string Command_Crop_From = " -y -ss {0} -i \"{1}\" -acodec copy \"{2}\"";
+        private const string Command_Crop_From_To = " -y -ss {0} -i \"{1}\" -to {2} -acodec copy \"{3}\"";
 
         public static void ConvertToMP3(string input, string output)
         {
