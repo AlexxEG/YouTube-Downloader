@@ -202,7 +202,7 @@ namespace YouTube_Downloader
             List<YouTubeVideoQuality> urls = e.Result as List<YouTubeVideoQuality>;
 
             cbQuality.DataSource = urls;
-            lTitle.Text = string.Format("Title: {0}", urls[0].VideoTitle);
+            lTitle.Text = string.Format("Title: {0}", FormatTitle(urls[0].VideoTitle));
 
             btnGetVideo.Enabled = txtYoutubeLink.Enabled = true;
             btnDownload.Enabled = true;
@@ -601,7 +601,15 @@ namespace YouTube_Downloader
 
         public static string FormatTitle(string title)
         {
-            return title.Replace(@"\", "").Replace("&#39;", "'").Replace("&quot;", "'").Replace("&lt;", "(").Replace("&gt;", ")").Replace("+", " ").Replace(":", "-");
+            return title.Replace(@"\", "")
+                .Replace("&#39;", "'")
+                .Replace("&quot;", "'")
+                .Replace("&lt;", "(")
+                .Replace("&gt;", ")")
+                .Replace("+", " ")
+                .Replace(":", "-")
+                .Replace("amp;", "&")
+                .Trim();
         }
 
         public static string FormatVideoLength(TimeSpan duration)
