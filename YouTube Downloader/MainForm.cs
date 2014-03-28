@@ -629,15 +629,11 @@ namespace YouTube_Downloader
                     try
                     {
                         File.Delete(file);
-                        Console.WriteLine("Successfully deleted '{0}' after {1} attempt(s).",
-                            Path.GetFileName(file), attempts);
                         break;
                     }
                     catch
                     {
                         attempts++;
-                        Console.WriteLine("Failed to delete '{0}', {1} attempts left.",
-                            Path.GetFileName(file), 10 - attempts);
                         Thread.Sleep(2000);
                     }
                 }
