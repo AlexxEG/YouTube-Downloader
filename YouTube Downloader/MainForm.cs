@@ -245,7 +245,7 @@ namespace YouTube_Downloader
             }
             else
             {
-                this.ConvertVideo(txtInput.Text, txtOutput.Text, true);
+                this.Convert(txtInput.Text, txtOutput.Text, true);
             }
 
             txtInput.Clear();
@@ -530,7 +530,7 @@ namespace YouTube_Downloader
 
         #endregion
 
-        public void ConvertVideo(string input, string output, bool crop)
+        public void Convert(string input, string output, bool crop)
         {
             string start = string.Empty;
             string end = string.Empty;
@@ -750,7 +750,7 @@ namespace YouTube_Downloader
 
         private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            FfmpegHelper.ConvertToMP3(this.Input, this.Output);
+            FfmpegHelper.Convert(this.Input, this.Output);
 
             if (!string.IsNullOrEmpty(converterStart))
             {

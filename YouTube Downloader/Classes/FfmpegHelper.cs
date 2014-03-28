@@ -14,7 +14,7 @@ namespace YouTube_Downloader.Classes
         private const string Command_Crop_From = " -y -ss {0} -i \"{1}\" -acodec copy{2} \"{3}\"";
         private const string Command_Crop_From_To = " -y -ss {0} -i \"{1}\" -to {2} -acodec copy{3} \"{4}\"";
 
-        public static void ConvertToMP3(string input, string output)
+        public static void Convert(string input, string output)
         {
             bool deleteInput = false;
 
