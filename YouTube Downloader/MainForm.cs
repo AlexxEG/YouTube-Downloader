@@ -199,6 +199,12 @@ namespace YouTube_Downloader
             if (openFileDialog1.ShowDialog(this) == DialogResult.OK)
             {
                 txtInput.Text = openFileDialog1.FileName;
+
+                if (txtOutput.Text == string.Empty)
+                {
+                    // Suggest file name
+                    txtOutput.Text = openFileDialog1.FileName;
+                }
             }
         }
 
