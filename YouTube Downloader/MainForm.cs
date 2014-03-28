@@ -233,6 +233,14 @@ namespace YouTube_Downloader
             List<YouTubeVideoQuality> urls = e.Result as List<YouTubeVideoQuality>;
 
             cbQuality.DataSource = urls;
+            foreach (YouTubeVideoQuality item in cbQuality.Items)
+            {
+                if (item.Extension.Equals("mp4"))
+                {
+                    cbQuality.SelectedItem = item;
+                    break;
+                }
+            }
             lTitle.Text = FormatTitle(urls[0].VideoTitle);
 
             TimeSpan videoLength = TimeSpan.FromSeconds(urls[0].Length);
