@@ -69,6 +69,7 @@ namespace YouTube_Downloader
             else
             {
                 btnGetVideo.Enabled = txtYoutubeLink.Enabled = false;
+                videoThumbnail.ImageLocation = string.Format("http://i3.ytimg.com/vi/{0}/default.jpg", Helper.GetVideoIDFromUrl(txtYoutubeLink.Text));
                 backgroundWorker1.RunWorkerAsync(txtYoutubeLink.Text);
             }
         }
@@ -205,6 +206,12 @@ namespace YouTube_Downloader
 
             cbQuality.DataSource = urls;
             lTitle.Text = string.Format("Title: {0}", FormatTitle(urls[0].VideoTitle));
+
+            TimeSpan videoLength = TimeSpan.FromSeconds(urls[0].Length);
+            if (videoLength.Hours > 0)
+                DrawVideoLength(String.Format("{0}:{1:00}:{2:00}", videoLength.Hours, videoLength.Minutes, videoLength.Seconds));
+            else
+                DrawVideoLength(String.Format("{0}:{1:00}", videoLength.Minutes, videoLength.Seconds));
 
             btnGetVideo.Enabled = txtYoutubeLink.Enabled = true;
             btnDownload.Enabled = true;
@@ -601,6 +608,24 @@ namespace YouTube_Downloader
                     }
                 }
             }).Start();
+        }
+
+        private void DrawVideoLength(string lenght)
+        {
+            videoThumbnail.Refresh();
+
+            Graphics e = videoThumbnail.CreateGraphics();
+            Font mFont = new Font(this.Font.Name, 10.0F, FontStyle.Bold, GraphicsUnit.Point);
+            SizeF mSize = e.MeasureString(lenght, mFont);
+            Rectangle mRec = new Rectangle((int)(videoThumbnail.Width - mSize.Width - 6),
+                                           (int)(videoThumbnail.Height - mSize.Height - 6),
+                                           (int)(mSize.Width + 2),
+                                           (int)(mSize.Height + 2));
+
+            e.FillRectangle(new SolidBrush(Color.FromArgb(200, Color.Black)), mRec);
+            e.DrawString(lenght, mFont, new SolidBrush(Color.Gainsboro), new PointF((videoThumbnail.Width - mSize.Width - 5),
+                                                                                (videoThumbnail.Height - mSize.Height - 5)));
+            e.Dispose();
         }
 
         public static string FormatTitle(string title)
