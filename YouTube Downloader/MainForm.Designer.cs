@@ -471,6 +471,7 @@
             this.chbCutFrom.TabIndex = 0;
             this.chbCutFrom.Text = "Cut From";
             this.chbCutFrom.UseVisualStyleBackColor = true;
+            this.chbCutFrom.CheckedChanged += new System.EventHandler(this.chbCutFrom_CheckedChanged);
             // 
             // mtxtTo
             // 
@@ -492,6 +493,7 @@
             this.chbCutTo.TabIndex = 2;
             this.chbCutTo.Text = "To";
             this.chbCutTo.UseVisualStyleBackColor = true;
+            this.chbCutTo.CheckedChanged += new System.EventHandler(this.chbCutTo_CheckedChanged);
             // 
             // mtxtFrom
             // 
