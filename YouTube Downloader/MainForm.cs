@@ -251,6 +251,7 @@ namespace YouTube_Downloader
         MenuItem fileMenuItem;
         MenuItem exitMenuItem;
         MenuItem toolsMenuItem;
+        MenuItem optionsMenuItem;
         MenuItem convertVideoMenuItem;
         MenuItem cutMP3MenuItem;
 
@@ -266,6 +267,8 @@ namespace YouTube_Downloader
 
             MenuItem[] toolsMenuItems = new MenuItem[]
             {
+                optionsMenuItem = new MenuItem("&Options", optionsMenuItem_Click),
+                new MenuItem("-"),
                 convertVideoMenuItem = new MenuItem("&Convert Video", convertVideoMenuItem_Click),
                 cutMP3MenuItem = new MenuItem("C&ut MP3", cutMP3MenuItem_Click)
             };
@@ -283,6 +286,11 @@ namespace YouTube_Downloader
         private void exitMenuItem_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void optionsMenuItem_Click(object sender, EventArgs e)
+        {
+            
         }
 
         private void convertVideoMenuItem_Click(object sender, EventArgs e)
