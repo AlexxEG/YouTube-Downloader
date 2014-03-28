@@ -459,7 +459,7 @@ namespace YouTube_Downloader
             string input = (lvQueue.SelectedItems[0] as DownloadListViewItem).Output;
 
             txtInput.Text = input;
-            txtOutput.Clear();
+            txtOutput.Text = input;
             tabControl1.SelectedTab = convertTabPage;
         }
 
