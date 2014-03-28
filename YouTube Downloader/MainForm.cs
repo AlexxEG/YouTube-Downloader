@@ -14,6 +14,8 @@ namespace YouTube_Downloader
 {
     public partial class MainForm : Form
     {
+        private string[] args;
+
         public MainForm()
         {
             InitializeComponent();
@@ -24,11 +26,22 @@ namespace YouTube_Downloader
             SettingsEx.Load();
         }
 
+        public MainForm(string[] args)
+            : this()
+        {
+            this.args = args;
+        }
+
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             SettingsEx.WindowStates[this.Name].SaveForm(this);
 
-            cbSaveTo.DataSource = SettingsEx.SaveToDirectories;
+            SettingsEx.SaveToDirectories.Clear();
+
+            string[] paths = new string[cbSaveTo.Items.Count];
+            cbSaveTo.Items.CopyTo(paths, 0);
+
+            SettingsEx.SaveToDirectories.AddRange(paths);
             SettingsEx.SelectedDirectory = cbSaveTo.SelectedIndex;
 
             SettingsEx.Save();
@@ -42,8 +55,19 @@ namespace YouTube_Downloader
             }
 
             SettingsEx.WindowStates[this.Name].RestoreForm(this);
+
             cbSaveTo.Items.AddRange(SettingsEx.SaveToDirectories.ToArray());
             cbSaveTo.SelectedIndex = SettingsEx.SelectedDirectory;
+        }
+
+        private void MainForm_Shown(object sender, EventArgs e)
+        {
+            if (args != null)
+            {
+                txtYoutubeLink.Text = args[0];
+                btnGetVideo.PerformClick();
+                args = null;
+            }
         }
 
         private void btnExit_Click(object sender, EventArgs e)
@@ -68,7 +92,9 @@ namespace YouTube_Downloader
                     "Invalid URL", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             else
             {
-                btnGetVideo.Enabled = txtYoutubeLink.Enabled = false;
+                lTitle.Text = "-";
+                cbQuality.DataSource = null;
+                btnGetVideo.Enabled = txtYoutubeLink.Enabled = btnDownload.Enabled = false;
                 videoThumbnail.ImageLocation = string.Format("http://i3.ytimg.com/vi/{0}/default.jpg", Helper.GetVideoIDFromUrl(txtYoutubeLink.Text));
                 backgroundWorker1.RunWorkerAsync(txtYoutubeLink.Text);
             }
@@ -163,8 +189,7 @@ namespace YouTube_Downloader
 
             if (ofd.ShowDialog(this) == DialogResult.OK)
             {
-                cbSaveTo.Text = ofd.Folder;
-                cbSaveTo.Items.Add(ofd.Folder);
+                cbSaveTo.SelectedIndex = cbSaveTo.Items.Add(ofd.Folder);
             }
         }
 
@@ -292,6 +317,8 @@ namespace YouTube_Downloader
                     }
 
                     this.ConvertVideo(cd.Input, cd.Output, cut);
+                    tabControl1.SelectedIndex = 1;
+                    lvQueue.Items[lvQueue.Items.Count - 1].Selected = true;
                 }
             }
         }
@@ -308,7 +335,21 @@ namespace YouTube_Downloader
             {
                 if (cd.ShowDialog(this) == DialogResult.OK)
                 {
+                    if (File.Exists(cd.Output))
+                    {
+                        DialogResult result = MessageBox.Show(this,
+                                "File '" + Path.GetFileName(cd.Output) + "' already exists\n\nOverwrite?",
+                                "Overwrite?", MessageBoxButtons.YesNo);
+
+                        if (result == DialogResult.No)
+                            return;
+
+                        File.Delete(cd.Output);
+                    }
+
                     this.CutAudio(cd.Input, cd.Output);
+                    tabControl1.SelectedIndex = 1;
+                    lvQueue.Items[lvQueue.Items.Count - 1].Selected = true;
                 }
             }
         }
@@ -671,6 +712,12 @@ namespace YouTube_Downloader
             }
 
             return size;
+        }
+
+        public void InsertVideo(string url)
+        {
+            txtYoutubeLink.Text = url;
+            btnGetVideo.PerformClick();
         }
     }
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualBasic.ApplicationServices;
+using System;
 using System.IO;
 using System.Windows.Forms;
 
@@ -10,15 +11,14 @@ namespace YouTube_Downloader
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
+
+            new App().Run(args);
         }
 
-        static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        static void CurrentDomain_UnhandledException(object sender, System.UnhandledExceptionEventArgs e)
         {
             Program.SaveException((Exception)e.ExceptionObject);
         }
@@ -35,6 +35,39 @@ namespace YouTube_Downloader
                 DateTime.Now.ToString("yyyy_MM_dd-HH_mm_ss"));
 
             File.WriteAllText(file, ex.ToString());
+        }
+    }
+
+    public class App : WindowsFormsApplicationBase
+    {
+        public App()
+        {
+            this.IsSingleInstance = true;
+            this.EnableVisualStyles = true;
+            this.ShutdownStyle = ShutdownMode.AfterMainFormCloses;
+        }
+
+        protected override void OnCreateMainForm()
+        {
+            string[] args = new string[this.CommandLineArgs.Count];
+
+            this.CommandLineArgs.CopyTo(args, 0);
+
+            if (this.CommandLineArgs.Count > 0)
+                this.MainForm = new MainForm(args);
+            else
+                this.MainForm = new MainForm();
+        }
+
+        protected override void OnStartupNextInstance(StartupNextInstanceEventArgs eventArgs)
+        {
+            eventArgs.BringToForeground = true;
+            base.OnStartupNextInstance(eventArgs);
+            if (eventArgs.CommandLine.Count > 0)
+            {
+                MainForm mainForm = (MainForm)this.MainForm;
+                mainForm.InsertVideo(eventArgs.CommandLine[0]);
+            }
         }
     }
 }

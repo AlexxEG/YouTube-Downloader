@@ -36,7 +36,7 @@
             this.btnBrowse = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.cbSaveTo = new System.Windows.Forms.ComboBox();
-            this.lTitle1 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
             this.btnDownload = new System.Windows.Forms.Button();
             this.cbQuality = new System.Windows.Forms.ComboBox();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -59,6 +59,7 @@
             this.mtxtFrom = new System.Windows.Forms.MaskedTextBox();
             this.chbCutFrom = new System.Windows.Forms.CheckBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.lTitle = new System.Windows.Forms.Label();
             this.videoThumbnail = new System.Windows.Forms.PictureBox();
             this.label3 = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
@@ -71,7 +72,6 @@
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.lTitle = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -167,14 +167,14 @@
             this.cbSaveTo.Size = new System.Drawing.Size(269, 21);
             this.cbSaveTo.TabIndex = 5;
             // 
-            // lTitle1
+            // label4
             // 
-            this.lTitle1.AutoSize = true;
-            this.lTitle1.Location = new System.Drawing.Point(132, 22);
-            this.lTitle1.Name = "lTitle1";
-            this.lTitle1.Size = new System.Drawing.Size(30, 13);
-            this.lTitle1.TabIndex = 4;
-            this.lTitle1.Text = "Title:";
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(132, 22);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(30, 13);
+            this.label4.TabIndex = 4;
+            this.label4.Text = "Title:";
             // 
             // btnDownload
             // 
@@ -371,7 +371,7 @@
             this.groupBox3.Controls.Add(this.lTitle);
             this.groupBox3.Controls.Add(this.videoThumbnail);
             this.groupBox3.Controls.Add(this.label3);
-            this.groupBox3.Controls.Add(this.lTitle1);
+            this.groupBox3.Controls.Add(this.label4);
             this.groupBox3.Controls.Add(this.btnBrowse);
             this.groupBox3.Controls.Add(this.cbQuality);
             this.groupBox3.Controls.Add(this.btnDownload);
@@ -383,6 +383,15 @@
             this.groupBox3.TabIndex = 8;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Information";
+            // 
+            // lTitle
+            // 
+            this.lTitle.AutoSize = true;
+            this.lTitle.Location = new System.Drawing.Point(188, 22);
+            this.lTitle.Name = "lTitle";
+            this.lTitle.Size = new System.Drawing.Size(10, 13);
+            this.lTitle.TabIndex = 10;
+            this.lTitle.Text = "-";
             // 
             // videoThumbnail
             // 
@@ -483,15 +492,6 @@
             // 
             this.columnHeader6.Text = "Link";
             // 
-            // lTitle
-            // 
-            this.lTitle.AutoSize = true;
-            this.lTitle.Location = new System.Drawing.Point(188, 22);
-            this.lTitle.Name = "lTitle";
-            this.lTitle.Size = new System.Drawing.Size(10, 13);
-            this.lTitle.TabIndex = 10;
-            this.lTitle.Text = "-";
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -503,6 +503,7 @@
             this.Text = "YouTube Downloader";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
+            this.Shown += new System.EventHandler(this.MainForm_Shown);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.panel1.ResumeLayout(false);
@@ -537,7 +538,7 @@
         private System.Windows.Forms.ColumnHeader columnHeader5;
         private System.Windows.Forms.Button btnDownload;
         private System.Windows.Forms.ColumnHeader columnHeader6;
-        private System.Windows.Forms.Label lTitle1;
+        private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ComboBox cbSaveTo;
         private System.Windows.Forms.Label label1;
