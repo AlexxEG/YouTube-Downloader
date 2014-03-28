@@ -120,6 +120,7 @@ namespace YouTube_Downloader
 
                 DownloadListViewItem item = new DownloadListViewItem(tempItem.VideoTitle + "." + tempItem.Extension);
 
+                item.Selected = true;
                 item.SubItems.Add("0 %");
                 item.SubItems.Add("");
                 item.SubItems.Add(FormatVideoLength(tempItem.Length));
@@ -145,6 +146,8 @@ namespace YouTube_Downloader
                 lvQueue.AddEmbeddedControl(ll, 5, item.Index);
 
                 item.Download(tempItem.DownloadUrl, Path.Combine(path, filename));
+
+                tabControl1.SelectedIndex = 1;
             }
             catch (Exception ex) { MessageBox.Show(this, ex.Message, ex.Source, MessageBoxButtons.OK, MessageBoxIcon.Error); }
         }
@@ -205,7 +208,7 @@ namespace YouTube_Downloader
             List<YouTubeVideoQuality> urls = e.Result as List<YouTubeVideoQuality>;
 
             cbQuality.DataSource = urls;
-            lTitle.Text = string.Format("Title: {0}", FormatTitle(urls[0].VideoTitle));
+            lTitle.Text = FormatTitle(urls[0].VideoTitle);
 
             TimeSpan videoLength = TimeSpan.FromSeconds(urls[0].Length);
             if (videoLength.Hours > 0)
@@ -470,7 +473,10 @@ namespace YouTube_Downloader
                 }
             }
 
-            item.Remove();
+            while (lvQueue.SelectedItems.Count > 0)
+            {
+                lvQueue.SelectedItems[0].Remove();
+            }
         }
 
         #endregion

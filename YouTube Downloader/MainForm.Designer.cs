@@ -36,7 +36,7 @@
             this.btnBrowse = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.cbSaveTo = new System.Windows.Forms.ComboBox();
-            this.lTitle = new System.Windows.Forms.Label();
+            this.lTitle1 = new System.Windows.Forms.Label();
             this.btnDownload = new System.Windows.Forms.Button();
             this.cbQuality = new System.Windows.Forms.ComboBox();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -71,6 +71,7 @@
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.lTitle = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -139,7 +140,7 @@
             // btnBrowse
             // 
             this.btnBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBrowse.Location = new System.Drawing.Point(466, 88);
+            this.btnBrowse.Location = new System.Drawing.Point(466, 73);
             this.btnBrowse.Name = "btnBrowse";
             this.btnBrowse.Size = new System.Drawing.Size(31, 23);
             this.btnBrowse.TabIndex = 7;
@@ -150,7 +151,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(137, 93);
+            this.label1.Location = new System.Drawing.Point(132, 76);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(48, 13);
             this.label1.TabIndex = 6;
@@ -161,25 +162,25 @@
             this.cbSaveTo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cbSaveTo.FormattingEnabled = true;
-            this.cbSaveTo.Location = new System.Drawing.Point(191, 90);
+            this.cbSaveTo.Location = new System.Drawing.Point(191, 73);
             this.cbSaveTo.Name = "cbSaveTo";
             this.cbSaveTo.Size = new System.Drawing.Size(269, 21);
             this.cbSaveTo.TabIndex = 5;
             // 
-            // lTitle
+            // lTitle1
             // 
-            this.lTitle.AutoSize = true;
-            this.lTitle.Location = new System.Drawing.Point(137, 32);
-            this.lTitle.Name = "lTitle";
-            this.lTitle.Size = new System.Drawing.Size(30, 13);
-            this.lTitle.TabIndex = 4;
-            this.lTitle.Text = "Title:";
+            this.lTitle1.AutoSize = true;
+            this.lTitle1.Location = new System.Drawing.Point(132, 22);
+            this.lTitle1.Name = "lTitle1";
+            this.lTitle1.Size = new System.Drawing.Size(30, 13);
+            this.lTitle1.TabIndex = 4;
+            this.lTitle1.Text = "Title:";
             // 
             // btnDownload
             // 
             this.btnDownload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnDownload.Enabled = false;
-            this.btnDownload.Location = new System.Drawing.Point(503, 88);
+            this.btnDownload.Location = new System.Drawing.Point(503, 73);
             this.btnDownload.Name = "btnDownload";
             this.btnDownload.Size = new System.Drawing.Size(75, 23);
             this.btnDownload.TabIndex = 3;
@@ -193,7 +194,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cbQuality.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbQuality.FormattingEnabled = true;
-            this.cbQuality.Location = new System.Drawing.Point(191, 61);
+            this.cbQuality.Location = new System.Drawing.Point(191, 46);
             this.cbQuality.Name = "cbQuality";
             this.cbQuality.Size = new System.Drawing.Size(387, 21);
             this.cbQuality.TabIndex = 1;
@@ -367,9 +368,10 @@
             // 
             this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox3.Controls.Add(this.lTitle);
             this.groupBox3.Controls.Add(this.videoThumbnail);
             this.groupBox3.Controls.Add(this.label3);
-            this.groupBox3.Controls.Add(this.lTitle);
+            this.groupBox3.Controls.Add(this.lTitle1);
             this.groupBox3.Controls.Add(this.btnBrowse);
             this.groupBox3.Controls.Add(this.cbQuality);
             this.groupBox3.Controls.Add(this.btnDownload);
@@ -377,7 +379,7 @@
             this.groupBox3.Controls.Add(this.cbSaveTo);
             this.groupBox3.Location = new System.Drawing.Point(6, 86);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(584, 117);
+            this.groupBox3.Size = new System.Drawing.Size(584, 102);
             this.groupBox3.TabIndex = 8;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Information";
@@ -385,17 +387,18 @@
             // videoThumbnail
             // 
             this.videoThumbnail.BackColor = System.Drawing.Color.Gainsboro;
-            this.videoThumbnail.Location = new System.Drawing.Point(6, 19);
+            this.videoThumbnail.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.videoThumbnail.Location = new System.Drawing.Point(6, 22);
             this.videoThumbnail.Name = "videoThumbnail";
-            this.videoThumbnail.Size = new System.Drawing.Size(125, 92);
-            this.videoThumbnail.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.videoThumbnail.Size = new System.Drawing.Size(120, 68);
+            this.videoThumbnail.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.videoThumbnail.TabIndex = 4;
             this.videoThumbnail.TabStop = false;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(137, 64);
+            this.label3.Location = new System.Drawing.Point(132, 49);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(39, 13);
             this.label3.TabIndex = 9;
@@ -480,6 +483,15 @@
             // 
             this.columnHeader6.Text = "Link";
             // 
+            // lTitle
+            // 
+            this.lTitle.AutoSize = true;
+            this.lTitle.Location = new System.Drawing.Point(188, 22);
+            this.lTitle.Name = "lTitle";
+            this.lTitle.Size = new System.Drawing.Size(10, 13);
+            this.lTitle.TabIndex = 10;
+            this.lTitle.Text = "-";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -525,7 +537,7 @@
         private System.Windows.Forms.ColumnHeader columnHeader5;
         private System.Windows.Forms.Button btnDownload;
         private System.Windows.Forms.ColumnHeader columnHeader6;
-        private System.Windows.Forms.Label lTitle;
+        private System.Windows.Forms.Label lTitle1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ComboBox cbSaveTo;
         private System.Windows.Forms.Label label1;
@@ -551,6 +563,7 @@
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.Label lTitle;
     }
 }
 
