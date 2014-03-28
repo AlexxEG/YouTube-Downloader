@@ -673,20 +673,20 @@ namespace YouTube_Downloader
             }).Start();
         }
 
-        private void DrawVideoLength(string lenght)
+        private void DrawVideoLength(string length)
         {
             videoThumbnail.Refresh();
 
             Graphics e = videoThumbnail.CreateGraphics();
             Font mFont = new Font(this.Font.Name, 10.0F, FontStyle.Bold, GraphicsUnit.Point);
-            SizeF mSize = e.MeasureString(lenght, mFont);
+            SizeF mSize = e.MeasureString(length, mFont);
             Rectangle mRec = new Rectangle((int)(videoThumbnail.Width - mSize.Width - 6),
                                            (int)(videoThumbnail.Height - mSize.Height - 6),
                                            (int)(mSize.Width + 2),
                                            (int)(mSize.Height + 2));
 
             e.FillRectangle(new SolidBrush(Color.FromArgb(200, Color.Black)), mRec);
-            e.DrawString(lenght, mFont, new SolidBrush(Color.Gainsboro), new PointF((videoThumbnail.Width - mSize.Width - 5),
+            e.DrawString(length, mFont, new SolidBrush(Color.Gainsboro), new PointF((videoThumbnail.Width - mSize.Width - 5),
                                                                                 (videoThumbnail.Height - mSize.Height - 5)));
             e.Dispose();
         }
