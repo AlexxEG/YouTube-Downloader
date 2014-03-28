@@ -193,6 +193,7 @@
             this.cbQuality.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cbQuality.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbQuality.Enabled = false;
             this.cbQuality.FormattingEnabled = true;
             this.cbQuality.Location = new System.Drawing.Point(191, 46);
             this.cbQuality.Name = "cbQuality";

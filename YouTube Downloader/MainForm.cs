@@ -94,7 +94,7 @@ namespace YouTube_Downloader
             {
                 lTitle.Text = "-";
                 cbQuality.DataSource = null;
-                btnGetVideo.Enabled = txtYoutubeLink.Enabled = btnDownload.Enabled = false;
+                btnGetVideo.Enabled = txtYoutubeLink.Enabled = btnDownload.Enabled = cbQuality.Enabled = false;
                 videoThumbnail.ImageLocation = string.Format("http://i3.ytimg.com/vi/{0}/default.jpg", Helper.GetVideoIDFromUrl(txtYoutubeLink.Text));
                 backgroundWorker1.RunWorkerAsync(txtYoutubeLink.Text);
             }
@@ -250,6 +250,7 @@ namespace YouTube_Downloader
                 DrawVideoLength(String.Format("{0}:{1:00}", videoLength.Minutes, videoLength.Seconds));
 
             btnGetVideo.Enabled = txtYoutubeLink.Enabled = true;
+            cbQuality.Enabled = urls.Count > 0;
             btnDownload.Enabled = true;
         }
 
