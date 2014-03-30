@@ -716,13 +716,31 @@ namespace YouTube_Downloader
         string Input { get; set; }
         string Output { get; set; }
         OperationStatus Status { get; set; }
+
+        event OperationEventHandler OperationComplete;
     }
+
+    public class OperationEventArgs : EventArgs
+    {
+        public ListViewItem Item { get; set; }
+        public OperationStatus Status { get; set; }
+
+        public OperationEventArgs(ListViewItem item, OperationStatus status)
+        {
+            this.Item = item;
+            this.Status = status;
+        }
+    }
+
+    public delegate void OperationEventHandler(object sender, OperationEventArgs e);
 
     public class ConvertListViewItem : ListViewItem, IOperation
     {
         public string Input { get; set; }
         public string Output { get; set; }
         public OperationStatus Status { get; set; }
+
+        public event OperationEventHandler OperationComplete;
 
         public ConvertListViewItem(string text)
             : base(text)
@@ -783,9 +801,17 @@ namespace YouTube_Downloader
                 pb.Style = ProgressBarStyle.Blocks;
                 pb.Value = 100;
             }
+
+            OnOperationComplete(new OperationEventArgs(this, this.Status));
         }
 
         #endregion
+
+        private void OnOperationComplete(OperationEventArgs e)
+        {
+            if (OperationComplete != null)
+                OperationComplete(this, e);
+        }
     }
 
     public class CroppingListViewItem : ListViewItem, IOperation
@@ -793,6 +819,8 @@ namespace YouTube_Downloader
         public string Input { get; set; }
         public string Output { get; set; }
         public OperationStatus Status { get; set; }
+
+        public event OperationEventHandler OperationComplete;
 
         public CroppingListViewItem(string text)
             : base(text)
@@ -845,9 +873,17 @@ namespace YouTube_Downloader
                 pb.Style = ProgressBarStyle.Blocks;
                 pb.Value = 100;
             }
+
+            OnOperationComplete(new OperationEventArgs(this, this.Status));
         }
 
         #endregion
+
+        private void OnOperationComplete(OperationEventArgs e)
+        {
+            if (OperationComplete != null)
+                OperationComplete(this, e);
+        }
     }
 
     public class DownloadListViewItem : ListViewItem, IOperation
@@ -882,6 +918,8 @@ namespace YouTube_Downloader
 
             }
         }
+
+        public event OperationEventHandler OperationComplete;
 
         public DownloadListViewItem(string text)
             : base(text)
@@ -946,6 +984,8 @@ namespace YouTube_Downloader
         private void downloader_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             RefreshStatus();
+
+            OnOperationComplete(new OperationEventArgs(this, this.Status));
         }
 
         #endregion
@@ -964,6 +1004,12 @@ namespace YouTube_Downloader
             {
                 this.SubItems[2].Text = "Canceled";
             }
+        }
+
+        private void OnOperationComplete(OperationEventArgs e)
+        {
+            if (OperationComplete != null)
+                OperationComplete(this, e);
         }
     }
 }
