@@ -176,7 +176,7 @@
             this.cbSaveTo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cbSaveTo.FormattingEnabled = true;
-            this.cbSaveTo.Location = new System.Drawing.Point(191, 73);
+            this.cbSaveTo.Location = new System.Drawing.Point(191, 74);
             this.cbSaveTo.Name = "cbSaveTo";
             this.cbSaveTo.Size = new System.Drawing.Size(269, 21);
             this.cbSaveTo.TabIndex = 5;
