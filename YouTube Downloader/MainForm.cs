@@ -190,7 +190,7 @@ namespace YouTube_Downloader
         {
             IOperation operation = (IOperation)e.Item;
 
-            if (chbConvertAutomatically.Checked)
+            if (chbConvertAutomatically.Checked && operation.Status == OperationStatus.Success)
             {
                 string output = Path.Combine(Path.GetDirectoryName(operation.Output),
                     Path.GetFileNameWithoutExtension(operation.Output)) + ".mp3";
