@@ -63,11 +63,11 @@ namespace YouTube_Downloader
 
         public override string ToString()
         {
-            string videoExtention = this.Extension;
+            string videoExtension = this.Extension;
             string videoDimension = FormatSize(this.Dimension);
             string videoSize = string.Format(new FileSizeFormatProvider(), "{0:fs}", this.VideoSize);
 
-            return string.Format("{0} ({1}) - {2}", videoExtention.ToUpper(), videoDimension, videoSize);
+            return string.Format("{0} ({1}) - {2}", videoExtension.ToUpper(), videoDimension, videoSize);
         }
     }
 
