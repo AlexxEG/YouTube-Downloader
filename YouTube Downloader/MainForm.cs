@@ -81,7 +81,10 @@ namespace YouTube_Downloader
 
         private void btnPaste_Click(object sender, EventArgs e)
         {
-            txtYoutubeLink.Text = Clipboard.GetText();
+            if (txtYoutubeLink.Enabled)
+            {
+                txtYoutubeLink.Text = Clipboard.GetText();
+            }
         }
 
         private void btnGetVideo_Click(object sender, EventArgs e)
@@ -238,7 +241,7 @@ namespace YouTube_Downloader
                     return;
             }
 
-            if (txtInput.Text == txtOutput.Text || 
+            if (txtInput.Text == txtOutput.Text ||
                 Path.GetExtension(txtInput.Text) == Path.GetExtension(txtOutput.Text)) // If they match, the user probably wants to crop. Right?
             {
                 this.Crop(txtInput.Text, txtOutput.Text);
