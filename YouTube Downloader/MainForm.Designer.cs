@@ -74,6 +74,7 @@
             this.txtInput = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.queueTabPage = new System.Windows.Forms.TabPage();
+            this.chbConvertAutomatically = new System.Windows.Forms.CheckBox();
             this.lvQueue = new ListViewEmbeddedControls.ListViewEx();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -559,6 +560,7 @@
             // 
             // queueTabPage
             // 
+            this.queueTabPage.Controls.Add(this.chbConvertAutomatically);
             this.queueTabPage.Controls.Add(this.lvQueue);
             this.queueTabPage.Location = new System.Drawing.Point(4, 22);
             this.queueTabPage.Name = "queueTabPage";
@@ -568,8 +570,22 @@
             this.queueTabPage.Text = "Queue";
             this.queueTabPage.UseVisualStyleBackColor = true;
             // 
+            // chbConvertAutomatically
+            // 
+            this.chbConvertAutomatically.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chbConvertAutomatically.AutoSize = true;
+            this.chbConvertAutomatically.Location = new System.Drawing.Point(6, 248);
+            this.chbConvertAutomatically.Name = "chbConvertAutomatically";
+            this.chbConvertAutomatically.Size = new System.Drawing.Size(164, 17);
+            this.chbConvertAutomatically.TabIndex = 3;
+            this.chbConvertAutomatically.Text = "Convert to MP3 automatically";
+            this.chbConvertAutomatically.UseVisualStyleBackColor = true;
+            // 
             // lvQueue
             // 
+            this.lvQueue.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lvQueue.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2,
@@ -577,11 +593,10 @@
             this.columnHeader4,
             this.columnHeader5,
             this.columnHeader6});
-            this.lvQueue.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lvQueue.FullRowSelect = true;
-            this.lvQueue.Location = new System.Drawing.Point(3, 3);
+            this.lvQueue.Location = new System.Drawing.Point(6, 6);
             this.lvQueue.Name = "lvQueue";
-            this.lvQueue.Size = new System.Drawing.Size(590, 265);
+            this.lvQueue.Size = new System.Drawing.Size(584, 236);
             this.lvQueue.TabIndex = 2;
             this.lvQueue.UseCompatibleStateImageBehavior = false;
             this.lvQueue.View = System.Windows.Forms.View.Details;
@@ -644,6 +659,7 @@
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
             this.queueTabPage.ResumeLayout(false);
+            this.queueTabPage.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -705,6 +721,7 @@
         private System.Windows.Forms.Button btnBrowseInput;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+        private System.Windows.Forms.CheckBox chbConvertAutomatically;
     }
 }
 

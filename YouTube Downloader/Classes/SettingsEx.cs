@@ -7,6 +7,7 @@ namespace YouTube_Downloader
 {
     public class SettingsEx
     {
+        public static bool ConvertAutomatically = false;
         public static List<string> SaveToDirectories = new List<string>();
         public static int SelectedDirectory = 0;
         public static Dictionary<string, WindowState> WindowStates = new Dictionary<string, WindowState>();
@@ -26,6 +27,16 @@ namespace YouTube_Downloader
 
             if (!document.HasChildNodes)
                 return;
+
+            var properties = document.GetElementsByTagName("properties")[0];
+
+            if (properties != null)
+            {
+                if (properties.Attributes["convert_automatically"] != null)
+                {
+                    ConvertAutomatically = bool.Parse(properties.Attributes["convert_automatically"].Value);
+                }
+            }
 
             foreach (XmlNode node in document.GetElementsByTagName("form"))
             {
@@ -62,6 +73,7 @@ namespace YouTube_Downloader
             {
                 w.WriteStartDocument();
                 w.WriteStartElement("properties");
+                w.WriteAttributeString("convert_automatically", ConvertAutomatically.ToString());
 
                 foreach (WindowState windowState in SettingsEx.WindowStates.Values)
                 {

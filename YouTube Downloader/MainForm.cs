@@ -43,6 +43,8 @@ namespace YouTube_Downloader
             SettingsEx.SaveToDirectories.AddRange(paths);
             SettingsEx.SelectedDirectory = cbSaveTo.SelectedIndex;
 
+            SettingsEx.ConvertAutomatically = chbConvertAutomatically.Checked;
+
             SettingsEx.Save();
         }
 
@@ -57,6 +59,8 @@ namespace YouTube_Downloader
 
             cbSaveTo.Items.AddRange(SettingsEx.SaveToDirectories.ToArray());
             cbSaveTo.SelectedIndex = SettingsEx.SelectedDirectory;
+
+            chbConvertAutomatically.Checked = SettingsEx.ConvertAutomatically;
         }
 
         private void MainForm_Shown(object sender, EventArgs e)
@@ -155,6 +159,7 @@ namespace YouTube_Downloader
                 item.SubItems.Add(FormatVideoLength(tempItem.Length));
                 item.SubItems.Add(String.Format(new FileSizeFormatProvider(), "{0:fs}", tempItem.VideoSize));
                 item.SubItems.Add(tempItem.VideoUrl);
+                item.OperationComplete += downloadItem_OperationComplete;
 
                 lvQueue.Items.Add(item);
 
@@ -179,6 +184,19 @@ namespace YouTube_Downloader
                 tabControl1.SelectedTab = queueTabPage;
             }
             catch (Exception ex) { MessageBox.Show(this, ex.Message, ex.Source, MessageBoxButtons.OK, MessageBoxIcon.Error); }
+        }
+
+        private void downloadItem_OperationComplete(object sender, OperationEventArgs e)
+        {
+            IOperation operation = (IOperation)e.Item;
+
+            if (chbConvertAutomatically.Checked)
+            {
+                string output = Path.Combine(Path.GetDirectoryName(operation.Output),
+                    Path.GetFileNameWithoutExtension(operation.Output)) + ".mp3";
+
+                this.Convert(operation.Output, output, false);
+            }
         }
 
         private void btnBrowse_Click(object sender, EventArgs e)
