@@ -355,7 +355,6 @@ namespace YouTube_Downloader
             MenuItem[] toolsMenuItems = new MenuItem[]
             {
                 optionsMenuItem = new MenuItem("&Options", optionsMenuItem_Click),
-                new MenuItem("-")
             };
 
             toolsMenuItem = new MenuItem("&Tools");
