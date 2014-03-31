@@ -165,7 +165,7 @@ namespace YouTube_Downloader
                 item.SubItems.Add("");
                 item.SubItems.Add("");
                 item.SubItems.Add(FormatVideoLength(tempItem.Length));
-                item.SubItems.Add(String.Format(new FileSizeFormatProvider(), "{0:fs}", tempItem.VideoSize));
+                item.SubItems.Add(string.Format(new FileSizeFormatProvider(), "{0:fs}", tempItem.VideoSize));
                 item.SubItems.Add(tempItem.VideoUrl);
                 item.OperationComplete += downloadItem_OperationComplete;
 
@@ -1020,7 +1020,7 @@ namespace YouTube_Downloader
                 try
                 {
                     processing = true;
-                    string speed = String.Format(new FileSizeFormatProvider(), "{0:s}", downloader.DownloadSpeed);
+                    string speed = string.Format(new FileSizeFormatProvider(), "{0:s}", downloader.DownloadSpeed);
                     string ETA = downloader.ETA == 0 ? "" : "  [ " + FormatLeftTime.Format(((long)downloader.ETA) * 1000) + " ]";
                     this.SubItems[1].Text = e.ProgressPercentage + " %";
                     this.SubItems[2].Text = speed + ETA;
