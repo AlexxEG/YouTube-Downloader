@@ -10,36 +10,36 @@ using System.Text.RegularExpressions;
 namespace YouTube_Downloader
 {
     /// <summary>
-    /// Contains information about the video url extension and dimension
+    /// Contains information about the video url.
     /// </summary>
     public class YouTubeVideoQuality
     {
         /// <summary>
-        /// Gets or Sets the file name
+        /// Gets or sets the video title & file name.
         /// </summary>
         public string VideoTitle { get; set; }
         /// <summary>
-        /// Gets or Sets the file extention
+        /// Gets or sets the file extention.
         /// </summary>
         public string Extension { get; set; }
         /// <summary>
-        /// Gets or Sets the file url
+        /// Gets or sets the file download url.
         /// </summary>
         public string DownloadUrl { get; set; }
         /// <summary>
-        /// Gets or Sets the youtube video url
+        /// Gets or sets the YouTube video url.
         /// </summary>
         public string VideoUrl { get; set; }
         /// <summary>
-        /// Gets or Sets the youtube video size
+        /// Gets or sets the YouTube video size.
         /// </summary>
         public long VideoSize { get; set; }
         /// <summary>
-        /// Gets or Sets the youtube video dimension
+        /// Gets or sets the YouTube video dimension.
         /// </summary>
         public Size Dimension { get; set; }
         /// <summary>
-        /// Gets the youtube video length
+        /// Gets the YouTube video length in seconds.
         /// </summary>
         public long Length { get; set; }
 
@@ -72,7 +72,7 @@ namespace YouTube_Downloader
     }
 
     /// <summary>
-    /// Use this class to get youtube video urls
+    /// Contains methods for getting YouTube video download urls.
     /// </summary>
     public class YouTubeDownloader
     {
@@ -242,7 +242,7 @@ namespace YouTube_Downloader
         }
 
         /// <summary>
-        /// check whether the video is in widescreen format
+        /// Check whether the video is in widescreen format.
         /// </summary>
         public static Boolean IsWideScreen(string html)
         {
@@ -254,6 +254,9 @@ namespace YouTube_Downloader
             return res;
         }
 
+        /// <summary>
+        /// Contains a new method for getting download urls.
+        /// </summary>
         class NewMethod
         {
             public static List<string> GetUrl(string pageURL)
