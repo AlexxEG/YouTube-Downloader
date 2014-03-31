@@ -76,7 +76,7 @@
             this.txtInput = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.queueTabPage = new System.Windows.Forms.TabPage();
-            this.chbConvertAutomatically = new System.Windows.Forms.CheckBox();
+            this.chbAutoConvert = new System.Windows.Forms.CheckBox();
             this.lvQueue = new ListViewEmbeddedControls.ListViewEx();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -589,7 +589,7 @@
             // 
             // queueTabPage
             // 
-            this.queueTabPage.Controls.Add(this.chbConvertAutomatically);
+            this.queueTabPage.Controls.Add(this.chbAutoConvert);
             this.queueTabPage.Controls.Add(this.lvQueue);
             this.queueTabPage.Location = new System.Drawing.Point(4, 22);
             this.queueTabPage.Name = "queueTabPage";
@@ -599,16 +599,16 @@
             this.queueTabPage.Text = "Queue";
             this.queueTabPage.UseVisualStyleBackColor = true;
             // 
-            // chbConvertAutomatically
+            // chbAutoConvert
             // 
-            this.chbConvertAutomatically.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.chbConvertAutomatically.AutoSize = true;
-            this.chbConvertAutomatically.Location = new System.Drawing.Point(6, 248);
-            this.chbConvertAutomatically.Name = "chbConvertAutomatically";
-            this.chbConvertAutomatically.Size = new System.Drawing.Size(164, 17);
-            this.chbConvertAutomatically.TabIndex = 3;
-            this.chbConvertAutomatically.Text = "Convert to MP3 automatically";
-            this.chbConvertAutomatically.UseVisualStyleBackColor = true;
+            this.chbAutoConvert.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chbAutoConvert.AutoSize = true;
+            this.chbAutoConvert.Location = new System.Drawing.Point(6, 248);
+            this.chbAutoConvert.Name = "chbAutoConvert";
+            this.chbAutoConvert.Size = new System.Drawing.Size(164, 17);
+            this.chbAutoConvert.TabIndex = 3;
+            this.chbAutoConvert.Text = "Convert to MP3 automatically";
+            this.chbAutoConvert.UseVisualStyleBackColor = true;
             // 
             // lvQueue
             // 
@@ -751,7 +751,7 @@
         private System.Windows.Forms.Button btnBrowseInput;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
-        private System.Windows.Forms.CheckBox chbConvertAutomatically;
+        private System.Windows.Forms.CheckBox chbAutoConvert;
         private System.Windows.Forms.Label lFFmpegMissing;
         private System.Windows.Forms.Button btnCheckAgain;
     }

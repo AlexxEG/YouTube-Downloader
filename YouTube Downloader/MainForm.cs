@@ -43,7 +43,7 @@ namespace YouTube_Downloader
             SettingsEx.SaveToDirectories.AddRange(paths);
             SettingsEx.SelectedDirectory = cbSaveTo.SelectedIndex;
 
-            SettingsEx.ConvertAutomatically = chbConvertAutomatically.Checked;
+            SettingsEx.AutoConvert = chbAutoConvert.Checked;
 
             SettingsEx.Save();
         }
@@ -60,7 +60,7 @@ namespace YouTube_Downloader
             cbSaveTo.Items.AddRange(SettingsEx.SaveToDirectories.ToArray());
             cbSaveTo.SelectedIndex = SettingsEx.SelectedDirectory;
 
-            chbConvertAutomatically.Checked = SettingsEx.ConvertAutomatically;
+            chbAutoConvert.Checked = SettingsEx.AutoConvert;
         }
 
         private void MainForm_Shown(object sender, EventArgs e)
@@ -77,7 +77,7 @@ namespace YouTube_Downloader
                 groupBox2.Enabled = false;
                 lFFmpegMissing.Visible = true;
                 btnCheckAgain.Visible = true;
-                chbConvertAutomatically.Enabled = false;
+                chbAutoConvert.Enabled = false;
             }
         }
 
@@ -198,7 +198,7 @@ namespace YouTube_Downloader
         {
             IOperation operation = (IOperation)e.Item;
 
-            if (chbConvertAutomatically.Enabled && chbConvertAutomatically.Checked && operation.Status == OperationStatus.Success)
+            if (chbAutoConvert.Enabled && chbAutoConvert.Checked && operation.Status == OperationStatus.Success)
             {
                 string output = Path.Combine(Path.GetDirectoryName(operation.Output),
                     Path.GetFileNameWithoutExtension(operation.Output)) + ".mp3";
@@ -287,7 +287,7 @@ namespace YouTube_Downloader
         {
             Program.FFmpegAvailable = File.Exists(Path.Combine(Application.StartupPath, "ffmpeg.exe"));
 
-            groupBox2.Enabled = chbConvertAutomatically.Enabled = Program.FFmpegAvailable;
+            groupBox2.Enabled = chbAutoConvert.Enabled = Program.FFmpegAvailable;
             lFFmpegMissing.Visible = btnCheckAgain.Visible = !Program.FFmpegAvailable;
 
             MessageBox.Show(this, Program.FFmpegAvailable ? "Found FFmmpeg, enabling related functions." : "Did not find FFmpeg.");

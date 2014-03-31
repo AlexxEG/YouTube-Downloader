@@ -7,7 +7,7 @@ namespace YouTube_Downloader
 {
     public class SettingsEx
     {
-        public static bool ConvertAutomatically = false;
+        public static bool AutoConvert = false;
         public static List<string> SaveToDirectories = new List<string>();
         public static int SelectedDirectory = 0;
         public static Dictionary<string, WindowState> WindowStates = new Dictionary<string, WindowState>();
@@ -32,9 +32,9 @@ namespace YouTube_Downloader
 
             if (properties != null)
             {
-                if (properties.Attributes["convert_automatically"] != null)
+                if (properties.Attributes["auto_convert"] != null)
                 {
-                    ConvertAutomatically = bool.Parse(properties.Attributes["convert_automatically"].Value);
+                    AutoConvert = bool.Parse(properties.Attributes["convert_automatically"].Value);
                 }
             }
 
@@ -73,7 +73,7 @@ namespace YouTube_Downloader
             {
                 w.WriteStartDocument();
                 w.WriteStartElement("properties");
-                w.WriteAttributeString("convert_automatically", ConvertAutomatically.ToString());
+                w.WriteAttributeString("auto_convert", AutoConvert.ToString());
 
                 foreach (WindowState windowState in SettingsEx.WindowStates.Values)
                 {
