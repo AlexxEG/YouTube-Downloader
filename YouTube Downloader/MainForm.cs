@@ -154,7 +154,7 @@ namespace YouTube_Downloader
                 DownloadListViewItem item = new DownloadListViewItem(Path.GetFileName(filename));
 
                 item.Selected = true;
-                item.SubItems.Add("0 %");
+                item.SubItems.Add("");
                 item.SubItems.Add("");
                 item.SubItems.Add(FormatVideoLength(tempItem.Length));
                 item.SubItems.Add(String.Format(new FileSizeFormatProvider(), "{0:fs}", tempItem.VideoSize));
