@@ -161,7 +161,6 @@ namespace YouTube_Downloader
 
                 DownloadListViewItem item = new DownloadListViewItem(Path.GetFileName(filename));
 
-                item.Selected = true;
                 item.SubItems.Add("");
                 item.SubItems.Add("");
                 item.SubItems.Add(FormatVideoLength(tempItem.Length));
@@ -170,6 +169,8 @@ namespace YouTube_Downloader
                 item.OperationComplete += downloadItem_OperationComplete;
 
                 lvQueue.Items.Add(item);
+
+                SelectOneItem(item);
 
                 ProgressBar pb = new ProgressBar()
                 {
@@ -603,7 +604,6 @@ namespace YouTube_Downloader
 
             var item = new ConvertListViewItem(Path.GetFileName(output));
 
-            item.Selected = true;
             item.SubItems.Add("");
             item.SubItems.Add("Converting");
             item.SubItems.Add(FormatVideoLength(FfmpegHelper.GetDuration(input)));
@@ -611,6 +611,8 @@ namespace YouTube_Downloader
             item.SubItems.Add("");
 
             lvQueue.Items.Add(item);
+
+            SelectOneItem(item);
 
             ProgressBar pb = new ProgressBar()
             {
@@ -658,7 +660,6 @@ namespace YouTube_Downloader
 
             CroppingListViewItem item = new CroppingListViewItem(Path.GetFileName(output));
 
-            item.Selected = true;
             item.SubItems.Add("");
             item.SubItems.Add("Cropping");
             item.SubItems.Add(FormatVideoLength(FfmpegHelper.GetDuration(input)));
@@ -666,6 +667,8 @@ namespace YouTube_Downloader
             item.SubItems.Add("");
 
             lvQueue.Items.Add(item);
+
+            SelectOneItem(item);
 
             ProgressBar pb = new ProgressBar()
             {
@@ -758,6 +761,14 @@ namespace YouTube_Downloader
         {
             txtYoutubeLink.Text = url;
             btnGetVideo.PerformClick();
+        }
+
+        private void SelectOneItem(ListViewItem item)
+        {
+            foreach (ListViewItem lvi in lvQueue.Items)
+                lvi.Selected = false;
+
+            item.Selected = true;
         }
     }
 
