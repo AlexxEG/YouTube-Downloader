@@ -34,7 +34,7 @@ namespace YouTube_Downloader
             {
                 if (properties.Attributes["auto_convert"] != null)
                 {
-                    AutoConvert = bool.Parse(properties.Attributes["convert_automatically"].Value);
+                    AutoConvert = bool.Parse(properties.Attributes["auto_convert"].Value);
                 }
             }
 
