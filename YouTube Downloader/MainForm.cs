@@ -358,6 +358,8 @@ namespace YouTube_Downloader
             cbQuality.DataSource = urls;
             foreach (YouTubeVideoQuality item in cbQuality.Items)
             {
+                // Look for the mp4 format, because 
+                // I assume it's more commonly used.
                 if (item.Extension.Equals("mp4"))
                 {
                     cbQuality.SelectedItem = item;
