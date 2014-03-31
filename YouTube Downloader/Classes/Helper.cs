@@ -51,6 +51,9 @@ namespace YouTube_Downloader
 
         public static bool IsValidUrl(string url)
         {
+            if (!url.ToLower().Contains("www.youtube.com/watch?"))
+                return false;
+
             string pattern = @"^(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?$";
             Regex regex = new Regex(pattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
