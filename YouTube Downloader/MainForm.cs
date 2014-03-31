@@ -685,9 +685,7 @@ namespace YouTube_Downloader
         {
             new Thread(delegate()
             {
-                int attempts = 0;
-
-                while (attempts <= 10)
+                for (int attempts = 0; attempts < 10; attempts++)
                 {
                     try
                     {
@@ -696,7 +694,6 @@ namespace YouTube_Downloader
                     }
                     catch
                     {
-                        attempts++;
                         Thread.Sleep(2000);
                     }
                 }
