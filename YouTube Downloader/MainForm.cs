@@ -704,19 +704,27 @@ namespace YouTube_Downloader
         {
             string[] illegalCharacters = new string[] { "/", @"\", "*", "?", "\"", "<", ">" };
 
-            // Remove illegal characters
-            foreach (string characters in illegalCharacters)
-                title = title.Replace(characters, string.Empty);
+            var replace = new Dictionary<string, string>()
+            {
+                {"|", "-"},
+                {"&#39;", "'"},
+                {"&quot;", "'"},
+                {"&lt;", "("},
+                {"&gt;", ")"},
+                {"+", " "},
+                {":", "-"},
+                {"amp;", "&"}
+            };
 
-            return title.Replace("|", "-")
-                .Replace("&#39;", "'")
-                .Replace("&quot;", "'")
-                .Replace("&lt;", "(")
-                .Replace("&gt;", ")")
-                .Replace("+", " ")
-                .Replace(":", "-")
-                .Replace("amp;", "&")
-                .Trim();
+            var sb = new System.Text.StringBuilder(title);
+
+            foreach (string s in illegalCharacters)
+                sb.Replace(s, string.Empty);
+
+            foreach (KeyValuePair<string, string> s in replace)
+                sb.Replace(s.Key, s.Value);
+
+            return sb.ToString().Trim();
         }
 
         public static string FormatVideoLength(TimeSpan duration)
