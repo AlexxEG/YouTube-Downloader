@@ -85,11 +85,14 @@ namespace YouTube_Downloader
 
         private void panel1_Paint(object sender, PaintEventArgs e)
         {
+            // Draw line on top of panel.
             e.Graphics.DrawLine(new Pen(Color.Silver, 2), new Point(0, 1), new Point(panel1.Width, 1));
         }
 
         private void btnPaste_Click(object sender, EventArgs e)
         {
+            // Only paste if enabled so that it can't be changed
+            // while getting video information.
             if (txtYoutubeLink.Enabled)
             {
                 txtYoutubeLink.Text = Clipboard.GetText();
@@ -574,6 +577,8 @@ namespace YouTube_Downloader
             {
                 try
                 {
+                    // Call 'ValidateText().ToString()' because it will throw a
+                    // exception if there is a error in the text.
                     mtxtFrom.ValidateText().ToString();
                     start = mtxtFrom.Text;
                     if (chbCropTo.Enabled && chbCropTo.Checked)
@@ -628,6 +633,8 @@ namespace YouTube_Downloader
 
             try
             {
+                // Call 'ValidateText().ToString()' because it will throw a
+                // exception if there is a error in the text.
                 mtxtFrom.ValidateText().ToString();
                 start = mtxtFrom.Text;
                 if (chbCropTo.Enabled && chbCropTo.Checked)
