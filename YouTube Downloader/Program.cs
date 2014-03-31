@@ -7,6 +7,8 @@ namespace YouTube_Downloader
 {
     static class Program
     {
+        public static bool FFmpegAvailable = true;
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -14,6 +16,8 @@ namespace YouTube_Downloader
         static void Main(string[] args)
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+
+            Program.FFmpegAvailable = File.Exists(Path.Combine(Application.StartupPath, "ffmpeg.exe"));
 
             new App().Run(args);
         }

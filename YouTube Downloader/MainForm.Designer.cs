@@ -60,6 +60,8 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.downloadTabPage = new System.Windows.Forms.TabPage();
             this.convertTabPage = new System.Windows.Forms.TabPage();
+            this.btnCheckAgain = new System.Windows.Forms.Button();
+            this.lFFmpegMissing = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.btnBrowseOutput = new System.Windows.Forms.Button();
             this.btnBrowseInput = new System.Windows.Forms.Button();
@@ -75,6 +77,8 @@
             this.label5 = new System.Windows.Forms.Label();
             this.queueTabPage = new System.Windows.Forms.TabPage();
             this.chbConvertAutomatically = new System.Windows.Forms.CheckBox();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.lvQueue = new ListViewEmbeddedControls.ListViewEx();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -82,8 +86,6 @@
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -399,6 +401,8 @@
             // 
             // convertTabPage
             // 
+            this.convertTabPage.Controls.Add(this.btnCheckAgain);
+            this.convertTabPage.Controls.Add(this.lFFmpegMissing);
             this.convertTabPage.Controls.Add(this.groupBox2);
             this.convertTabPage.Location = new System.Drawing.Point(4, 22);
             this.convertTabPage.Name = "convertTabPage";
@@ -407,6 +411,31 @@
             this.convertTabPage.TabIndex = 2;
             this.convertTabPage.Text = "Convert";
             this.convertTabPage.UseVisualStyleBackColor = true;
+            // 
+            // btnCheckAgain
+            // 
+            this.btnCheckAgain.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCheckAgain.Location = new System.Drawing.Point(484, 206);
+            this.btnCheckAgain.Name = "btnCheckAgain";
+            this.btnCheckAgain.Size = new System.Drawing.Size(106, 23);
+            this.btnCheckAgain.TabIndex = 11;
+            this.btnCheckAgain.Text = "Check Again";
+            this.btnCheckAgain.UseVisualStyleBackColor = true;
+            this.btnCheckAgain.Visible = false;
+            this.btnCheckAgain.Click += new System.EventHandler(this.btnCheckAgain_Click);
+            // 
+            // lFFmpegMissing
+            // 
+            this.lFFmpegMissing.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lFFmpegMissing.AutoSize = true;
+            this.lFFmpegMissing.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lFFmpegMissing.ForeColor = System.Drawing.Color.Red;
+            this.lFFmpegMissing.Location = new System.Drawing.Point(6, 206);
+            this.lFFmpegMissing.Name = "lFFmpegMissing";
+            this.lFFmpegMissing.Size = new System.Drawing.Size(429, 20);
+            this.lFFmpegMissing.TabIndex = 10;
+            this.lFFmpegMissing.Text = "\'FFmpeg.exe\' was not found. Converting/Cutting is disabled.";
+            this.lFFmpegMissing.Visible = false;
             // 
             // groupBox2
             // 
@@ -581,6 +610,14 @@
             this.chbConvertAutomatically.Text = "Convert to MP3 automatically";
             this.chbConvertAutomatically.UseVisualStyleBackColor = true;
             // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.Filter = "MP4 files|*.mp4|MP3 files|*.mp3|All files|*.*";
+            // 
+            // saveFileDialog1
+            // 
+            this.saveFileDialog1.Filter = "MP3 files|*.mp3|MP4 files|*.mp4|All files|*.*";
+            // 
             // lvQueue
             // 
             this.lvQueue.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -625,14 +662,6 @@
             // 
             this.columnHeader6.Text = "Link";
             // 
-            // openFileDialog1
-            // 
-            this.openFileDialog1.Filter = "MP4 files|*.mp4|MP3 files|*.mp3|All files|*.*";
-            // 
-            // saveFileDialog1
-            // 
-            this.saveFileDialog1.Filter = "MP3 files|*.mp3|MP4 files|*.mp4|All files|*.*";
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -654,6 +683,7 @@
             this.tabControl1.ResumeLayout(false);
             this.downloadTabPage.ResumeLayout(false);
             this.convertTabPage.ResumeLayout(false);
+            this.convertTabPage.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.groupBox4.ResumeLayout(false);
@@ -722,6 +752,8 @@
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.CheckBox chbConvertAutomatically;
+        private System.Windows.Forms.Label lFFmpegMissing;
+        private System.Windows.Forms.Button btnCheckAgain;
     }
 }
 

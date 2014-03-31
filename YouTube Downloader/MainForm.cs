@@ -71,6 +71,14 @@ namespace YouTube_Downloader
                 btnGetVideo.PerformClick();
                 args = null;
             }
+
+            if (!Program.FFmpegAvailable)
+            {
+                groupBox2.Enabled = false;
+                lFFmpegMissing.Visible = true;
+                btnCheckAgain.Visible = true;
+                chbConvertAutomatically.Enabled = false;
+            }
         }
 
         private void btnExit_Click(object sender, EventArgs e)
@@ -190,7 +198,7 @@ namespace YouTube_Downloader
         {
             IOperation operation = (IOperation)e.Item;
 
-            if (chbConvertAutomatically.Checked && operation.Status == OperationStatus.Success)
+            if (chbConvertAutomatically.Enabled && chbConvertAutomatically.Checked && operation.Status == OperationStatus.Success)
             {
                 string output = Path.Combine(Path.GetDirectoryName(operation.Output),
                     Path.GetFileNameWithoutExtension(operation.Output)) + ".mp3";
@@ -273,6 +281,16 @@ namespace YouTube_Downloader
             txtOutput.Clear();
 
             tabControl1.SelectedTab = queueTabPage;
+        }
+
+        private void btnCheckAgain_Click(object sender, EventArgs e)
+        {
+            Program.FFmpegAvailable = File.Exists(Path.Combine(Application.StartupPath, "ffmpeg.exe"));
+
+            groupBox2.Enabled = chbConvertAutomatically.Enabled = Program.FFmpegAvailable;
+            lFFmpegMissing.Visible = btnCheckAgain.Visible = !Program.FFmpegAvailable;
+
+            MessageBox.Show(this, Program.FFmpegAvailable ? "Found FFmmpeg, enabling related functions." : "Did not find FFmpeg.");
         }
 
         private void chbCropFrom_CheckedChanged(object sender, EventArgs e)
@@ -418,7 +436,7 @@ namespace YouTube_Downloader
             {
                 DownloadListViewItem item = lvQueue.SelectedItems[0] as DownloadListViewItem;
 
-                convertToMP3MenuItem.Enabled = item.Status == OperationStatus.Success;
+                convertToMP3MenuItem.Enabled = Program.FFmpegAvailable && item.Status == OperationStatus.Success;
 
                 // Only need to REMOVE MenuItems, not show since it's done automatically
                 switch (item.Status)
