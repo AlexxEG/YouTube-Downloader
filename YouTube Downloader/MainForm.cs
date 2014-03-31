@@ -233,7 +233,12 @@ namespace YouTube_Downloader
                 if (txtOutput.Text == string.Empty)
                 {
                     // Suggest file name
-                    txtOutput.Text = openFileDialog1.FileName;
+                    string output = Path.GetDirectoryName(openFileDialog1.FileName);
+
+                    output = Path.Combine(output, Path.GetFileNameWithoutExtension(openFileDialog1.FileName));
+                    output += ".mp3";
+
+                    txtOutput.Text = output;
                 }
             }
         }
