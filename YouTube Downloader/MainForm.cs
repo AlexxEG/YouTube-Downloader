@@ -72,13 +72,10 @@ namespace YouTube_Downloader
                 args = null;
             }
 
-            if (!Program.FFmpegAvailable)
-            {
-                groupBox2.Enabled = false;
-                lFFmpegMissing.Visible = true;
-                btnCheckAgain.Visible = true;
-                chbAutoConvert.Enabled = false;
-            }
+            // Disable & enable functions depending on if FFmpeg is available, and
+            // display error for the user.
+            groupBox2.Enabled = chbAutoConvert.Enabled = Program.FFmpegAvailable;
+            lFFmpegMissing.Visible = btnCheckAgain.Visible = !Program.FFmpegAvailable;
         }
 
         private void btnExit_Click(object sender, EventArgs e)
