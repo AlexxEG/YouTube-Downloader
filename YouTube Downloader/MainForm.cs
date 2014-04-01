@@ -33,6 +33,23 @@ namespace YouTube_Downloader
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
+            if (GetDownloading())
+            {
+                string text = "Files are being downloaded/converted/cut.\n\nAre you sure you want to quit?";
+
+                if (MessageBox.Show(this, text, "Confirmation",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning) == DialogResult.Yes)
+                {
+                    // Hide form while waiting for threads to finish,
+                    // except downloads which will abort.
+                    CancelOperations();
+                }
+
+                e.Cancel = true;
+                return;
+            }
+
             SettingsEx.WindowStates[this.Name].SaveForm(this);
 
             SettingsEx.SaveToDirectories.Clear();
@@ -111,7 +128,10 @@ namespace YouTube_Downloader
                 btnGetVideo.Enabled = txtYoutubeLink.Enabled = btnDownload.Enabled = cbQuality.Enabled = false;
                 videoThumbnail.Tag = null;
                 videoThumbnail.ImageLocation = string.Format("http://i3.ytimg.com/vi/{0}/default.jpg", Helper.GetVideoIDFromUrl(txtYoutubeLink.Text));
+
                 backgroundWorker1.RunWorkerAsync(txtYoutubeLink.Text);
+
+                Program.RunningWorkers.Add(backgroundWorker1);
             }
         }
 
@@ -379,6 +399,8 @@ namespace YouTube_Downloader
             btnGetVideo.Enabled = txtYoutubeLink.Enabled = true;
             cbQuality.Enabled = urls.Count > 0;
             btnDownload.Enabled = true;
+
+            Program.RunningWorkers.Remove(backgroundWorker1);
         }
 
         #region mainMenu1
@@ -576,6 +598,72 @@ namespace YouTube_Downloader
 
         #endregion
 
+        private void CancelOperations()
+        {
+            this.Hide();
+
+            // Store files & attempts in Dictionary.
+            Dictionary<string, int> files = new Dictionary<string, int>();
+
+            foreach (ListViewItem item in lvQueue.Items)
+            {
+                IOperation operation = (IOperation)item;
+
+                // Only DownloadListViewItem can be stopped at the moment.
+                if (item is DownloadListViewItem)
+                {
+                    (item as DownloadListViewItem).Stop();
+
+                    if (!(operation.Status == OperationStatus.Success))
+                    {
+                        if (!files.ContainsKey(operation.Output))
+                        {
+                            files.Add(operation.Output, 0);
+                        }
+                    }
+                }
+            }
+
+            bool done = false;
+
+            while (!done)
+            {
+                // If there are no files left & all BackgroundWorkers are done,
+                // then it's safe to exit the application.
+                if (files.Count < 1 && Program.RunningWorkers.Count < 1)
+                {
+                    done = true;
+                }
+
+                string[] keys = new string[files.Count];
+
+                files.Keys.CopyTo(keys, 0);
+
+                foreach (string key in keys)
+                {
+                    int attempts = files[key];
+
+                    if (attempts < 10)
+                    {
+                        try
+                        {
+                            File.Delete(key);
+
+                            files.Remove(key);
+                        }
+                        catch
+                        {
+                            files[key]++;
+                        }
+                    }
+                }
+
+                Application.DoEvents();
+            }
+
+            this.Close();
+        }
+
         public void Convert(string input, string output, bool crop)
         {
             string start = string.Empty;
@@ -750,6 +838,20 @@ namespace YouTube_Downloader
             return FormatVideoLength(TimeSpan.FromSeconds(duration));
         }
 
+        public bool GetDownloading()
+        {
+            foreach (ListViewItem item in lvQueue.Items)
+            {
+                IOperation operation = (IOperation)item;
+
+                if (operation.Status == OperationStatus.Working)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public static string GetFileSize(string file)
         {
             FileInfo info = new FileInfo(file);
@@ -822,6 +924,8 @@ namespace YouTube_Downloader
             backgroundWorker.RunWorkerCompleted += backgroundWorker_RunWorkerCompleted;
             backgroundWorker.RunWorkerAsync();
 
+            Program.RunningWorkers.Add(backgroundWorker);
+
             this.Status = OperationStatus.Working;
         }
 
@@ -865,6 +969,8 @@ namespace YouTube_Downloader
                 pb.Value = 100;
             }
 
+            Program.RunningWorkers.Remove(backgroundWorker);
+
             OnOperationComplete(new OperationEventArgs(this, this.Status));
         }
 
@@ -902,6 +1008,8 @@ namespace YouTube_Downloader
             backgroundWorker.RunWorkerCompleted += backgroundWorker_RunWorkerCompleted;
             backgroundWorker.RunWorkerAsync();
 
+            Program.RunningWorkers.Add(backgroundWorker);
+
             this.Status = OperationStatus.Working;
         }
 
@@ -936,6 +1044,8 @@ namespace YouTube_Downloader
                 pb.Style = ProgressBarStyle.Blocks;
                 pb.Value = 100;
             }
+
+            Program.RunningWorkers.Remove(backgroundWorker);
 
             OnOperationComplete(new OperationEventArgs(this, this.Status));
         }
@@ -1000,6 +1110,8 @@ namespace YouTube_Downloader
             downloader.ProgressChanged += downloader_ProgressChanged;
             downloader.RunWorkerCompleted += downloader_RunWorkerCompleted;
             downloader.RunWorkerAsync();
+
+            Program.RunningWorkers.Add(downloader);
         }
 
         public void Pause()
@@ -1047,6 +1159,8 @@ namespace YouTube_Downloader
         private void downloader_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             RefreshStatus();
+
+            Program.RunningWorkers.Remove(downloader);
 
             OnOperationComplete(new OperationEventArgs(this, this.Status));
         }

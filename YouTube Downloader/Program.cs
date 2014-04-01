@@ -1,5 +1,7 @@
 ﻿using Microsoft.VisualBasic.ApplicationServices;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
 
@@ -8,6 +10,8 @@ namespace YouTube_Downloader
     static class Program
     {
         public static bool FFmpegAvailable = true;
+
+        public static List<BackgroundWorker> RunningWorkers = new List<BackgroundWorker>();
 
         /// <summary>
         /// The main entry point for the application.
