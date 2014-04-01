@@ -158,6 +158,7 @@ namespace YouTube_Downloader
             catch
             {
                 MessageBox.Show("Couldn't create directory.");
+                return;
             }
 
             try
