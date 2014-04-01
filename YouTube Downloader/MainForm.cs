@@ -150,7 +150,16 @@ namespace YouTube_Downloader
                 }
 
                 if (!Directory.Exists(path))
-                    Directory.CreateDirectory(path);
+                {
+                    if (MessageBox.Show(this, "Download path doesn't exists.\n\nDo you want to create it?") == DialogResult.Yes)
+                    {
+                        Directory.CreateDirectory(path);
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
 
                 if (!cbSaveTo.Items.Contains(path))
                     cbSaveTo.Items.Add(path);
