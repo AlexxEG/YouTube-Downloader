@@ -472,48 +472,23 @@ namespace YouTube_Downloader
                 return;
             }
 
-            if (lvQueue.SelectedItems[0] is DownloadListViewItem)
+            bool hasDownloadItem = false;
+
+            // Check if SelectedItems contains a DownloadListViewItem,
+            // which means Converting, Pause & Resume should be available.
+            foreach (var item in lvQueue.SelectedItems)
             {
-                DownloadListViewItem item = lvQueue.SelectedItems[0] as DownloadListViewItem;
-
-                convertToMP3MenuItem.Enabled = Program.FFmpegAvailable && item.Status == OperationStatus.Success;
-
-                // Only need to REMOVE MenuItems, not show since it's done automatically
-                switch (item.Status)
+                if (item is DownloadListViewItem)
                 {
-                    case OperationStatus.Success:
-                        resumeMenuItem.Visible = pauseMenuItem.Visible = stopMenuItem.Visible = false;
-                        break;
-                    case OperationStatus.Working:
-                        openMenuItem.Visible = resumeMenuItem.Visible = false;
-                        break;
-                    case OperationStatus.Paused:
-                        openMenuItem.Visible = pauseMenuItem.Visible = false;
-                        break;
-                    case OperationStatus.Canceled:
-                    case OperationStatus.Failed:
-                        openMenuItem.Visible = pauseMenuItem.Visible = stopMenuItem.Visible = resumeMenuItem.Visible = false;
-                        break;
+                    hasDownloadItem = true;
+                    break;
                 }
             }
-            else if (lvQueue.SelectedItems[0] is IOperation)
+
+            if (!hasDownloadItem)
             {
-                IOperation item = lvQueue.SelectedItems[0] as IOperation;
-
                 convertToMP3MenuItem.Enabled = false;
-                resumeMenuItem.Visible = pauseMenuItem.Visible = stopMenuItem.Visible = false;
-
-                switch (item.Status)
-                {
-                    case OperationStatus.Working:
-                        openMenuItem.Enabled = removeMenuItem.Enabled = false;
-                        break;
-                    case OperationStatus.Failed:
-                        openMenuItem.Enabled = false;
-                        break;
-                    case OperationStatus.Success:
-                        break;
-                }
+                resumeMenuItem.Visible = pauseMenuItem.Visible = false;
             }
         }
 
@@ -521,84 +496,120 @@ namespace YouTube_Downloader
         {
             foreach (MenuItem menuItem in contextMenu1.MenuItems)
             {
+                menuItem.Enabled = true;
                 menuItem.Visible = true;
             }
         }
 
         private void openMenuItem_Click(object sender, EventArgs e)
         {
-            try
-            {
-                string path = (lvQueue.SelectedItems[0] as IOperation).Output;
+            int fails = 0;
 
-                Process.Start(path);
-            }
-            catch
+            foreach (IOperation operation in lvQueue.SelectedItems)
             {
-                MessageBox.Show(this, "Couldn't open file.");
+                try
+                {
+                    Process.Start(operation.Output);
+                }
+                catch
+                {
+                    fails++;
+                }
+            }
+
+            if (fails > 0)
+            {
+                MessageBox.Show(this, "Couldn't open " + fails + " file(s).");
             }
         }
 
         private void openContainingFolderMenuItem_Click(object sender, EventArgs e)
         {
-            try
-            {
-                string path = (lvQueue.SelectedItems[0] as IOperation).Output;
+            int fails = 0;
 
-                Process.Start(Path.GetDirectoryName(path));
-            }
-            catch
+            foreach (IOperation operation in lvQueue.SelectedItems)
             {
-                MessageBox.Show(this, "Couldn't open folder.");
+                try
+                {
+                    Process.Start(Path.GetDirectoryName(operation.Output));
+                }
+                catch
+                {
+                    fails++;
+                }
+            }
+            
+            if (fails > 0)
+            {
+                MessageBox.Show(this, "Couldn't open " + fails + " folder(s).");
             }
         }
 
         private void convertToMP3MenuItem_Click(object sender, EventArgs e)
         {
-            string input = (lvQueue.SelectedItems[0] as DownloadListViewItem).Output;
+            foreach (var item in lvQueue.SelectedItems)
+            {
+                if (item is DownloadListViewItem)
+                {
+                    string input = (item as DownloadListViewItem).Output;
+                    string output = Path.GetDirectoryName(input) + "\\" + Path.GetFileNameWithoutExtension(input) + ".mp3";
 
-            txtInput.Text = input;
-            txtOutput.Text = input;
-            tabControl1.SelectedTab = convertTabPage;
+                    txtInput.Text = input;
+                    txtOutput.Text = output;
+                    tabControl1.SelectedTab = convertTabPage;
+                    break;
+                }
+            }
         }
 
         private void resumeMenuItem_Click(object sender, EventArgs e)
         {
-            DownloadListViewItem item = lvQueue.SelectedItems[0] as DownloadListViewItem;
-
-            item.Resume();
+            foreach (ListViewItem item in lvQueue.SelectedItems)
+            {
+                if (item is DownloadListViewItem)
+                {
+                    (item as DownloadListViewItem).Resume();
+                }
+            }
         }
 
         private void pauseMenuItem_Click(object sender, EventArgs e)
         {
-            DownloadListViewItem item = lvQueue.SelectedItems[0] as DownloadListViewItem;
-
-            item.Pause();
+            foreach (ListViewItem item in lvQueue.SelectedItems)
+            {
+                if (item is DownloadListViewItem)
+                {
+                    (item as DownloadListViewItem).Pause();
+                }
+            }
         }
 
         private void stopMenuItem_Click(object sender, EventArgs e)
         {
-            DownloadListViewItem item = lvQueue.SelectedItems[0] as DownloadListViewItem;
+            List<string> files = new List<string>();
 
-            item.Stop();
+            foreach (IOperation operation in lvQueue.SelectedItems)
+            {
+                if (operation.Status != OperationStatus.Success)
+                {
+                    operation.Stop();
+
+                    if (File.Exists(operation.Output))
+                    {
+                        files.Add(operation.Output);
+                    }
+                }
+            }
+
+            if (files.Count > 0)
+            {
+                DeleteFiles(files.ToArray());
+            }
         }
 
         private void removeMenuItem_Click(object sender, EventArgs e)
         {
-            ListViewItem item = lvQueue.SelectedItems[0];
-
-            if (item is DownloadListViewItem)
-            {
-                var dlItem = item as DownloadListViewItem;
-                bool wasSuccessful = dlItem.Status == OperationStatus.Success;
-
-                dlItem.Stop();
-
-                if (!wasSuccessful)
-                {
-                    DeleteFile(dlItem.Output);
-                }
-            }
+            stopMenuItem.PerformClick();
 
             while (lvQueue.SelectedItems.Count > 0)
             {
@@ -619,11 +630,8 @@ namespace YouTube_Downloader
             {
                 IOperation operation = (IOperation)item;
 
-                // Only DownloadListViewItem can be stopped at the moment.
-                if (item is DownloadListViewItem)
+                if (operation.Stop())
                 {
-                    (item as DownloadListViewItem).Stop();
-
                     if (!(operation.Status == OperationStatus.Success))
                     {
                         if (!files.ContainsKey(operation.Output))
@@ -716,9 +724,7 @@ namespace YouTube_Downloader
             {
                 Maximum = 100,
                 Minimum = 0,
-                Value = 0,
-                Style = ProgressBarStyle.Marquee,
-                MarqueeAnimationSpeed = 15
+                Value = 0
             };
             lvQueue.AddEmbeddedControl(pb, 1, item.Index);
 
@@ -772,9 +778,7 @@ namespace YouTube_Downloader
             {
                 Maximum = 100,
                 Minimum = 0,
-                Value = 0,
-                Style = ProgressBarStyle.Marquee,
-                MarqueeAnimationSpeed = 15
+                Value = 0
             };
             lvQueue.AddEmbeddedControl(pb, 1, item.Index);
 
@@ -789,23 +793,45 @@ namespace YouTube_Downloader
             item.Crop(input, output, start, end);
         }
 
-        public static void DeleteFile(string file)
+        public static void DeleteFiles(params string[] files)
         {
             new Thread(delegate()
-            {
-                for (int attempts = 0; attempts < 10; attempts++)
                 {
-                    try
+                    var dict = new Dictionary<string, int>();
+                    var keys = new List<string>();
+
+                    foreach (string file in files)
                     {
-                        File.Delete(file);
-                        break;
+                        dict.Add(file, 0);
+                        keys.Add(file);
                     }
-                    catch
+
+                    while (dict.Count > 0)
                     {
+                        foreach (string key in keys)
+                        {
+                            try
+                            {
+                                File.Delete(key);
+
+                                dict.Remove(key);
+                            }
+                            catch
+                            {
+                                if (dict[key] == 10)
+                                {
+                                    dict.Remove(key);
+                                }
+                                else
+                                {
+                                    dict[key]++;
+                                }
+                            }
+                        }
+
                         Thread.Sleep(2000);
                     }
-                }
-            }).Start();
+                }).Start();
         }
 
         public static string FormatTitle(string title)
@@ -893,6 +919,8 @@ namespace YouTube_Downloader
         OperationStatus Status { get; set; }
 
         event OperationEventHandler OperationComplete;
+
+        bool Stop();
     }
 
     public class OperationEventArgs : EventArgs
@@ -930,7 +958,9 @@ namespace YouTube_Downloader
             this.converterEnd = end;
 
             backgroundWorker = new BackgroundWorker();
+            backgroundWorker.WorkerReportsProgress = true;
             backgroundWorker.DoWork += backgroundWorker_DoWork;
+            backgroundWorker.ProgressChanged += backgroundWorker_ProgressChanged;
             backgroundWorker.RunWorkerCompleted += backgroundWorker_RunWorkerCompleted;
             backgroundWorker.RunWorkerAsync();
 
@@ -939,29 +969,60 @@ namespace YouTube_Downloader
             this.Status = OperationStatus.Working;
         }
 
+        public bool Stop()
+        {
+            try
+            {
+                if (process != null)
+                    process.StandardInput.WriteLine("\x71");
+
+                this.Status = OperationStatus.Canceled;
+                this.SubItems[2].Text = "Stopped";
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         #region backgroundWorker
 
         private BackgroundWorker backgroundWorker;
         private string converterStart = string.Empty;
         private string converterEnd = string.Empty;
+        private Process process;
 
         private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            FfmpegHelper.Convert(this.Input, this.Output);
+            FfmpegHelper.Convert(backgroundWorker, this.Input, this.Output);
 
             if (!string.IsNullOrEmpty(converterStart))
             {
                 if (string.IsNullOrEmpty(converterEnd))
                 {
-                    FfmpegHelper.Crop(this.Output, this.Output, converterStart);
+                    FfmpegHelper.Crop(backgroundWorker, this.Output, this.Output, converterStart);
                 }
                 else
                 {
-                    FfmpegHelper.Crop(this.Output, this.Output, converterStart, converterEnd);
+                    FfmpegHelper.Crop(backgroundWorker, this.Output, this.Output, converterStart, converterEnd);
                 }
             }
 
             this.converterStart = this.converterEnd = string.Empty;
+        }
+
+        private void backgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            ProgressBar pb = (ProgressBar)((ListViewEx)this.ListView).GetEmbeddedControl(1, this.Index);
+
+            pb.Value = e.ProgressPercentage;
+
+            if (e.UserState is Process)
+            {
+                this.process = (Process)e.UserState;
+            }
         }
 
         private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -970,14 +1031,6 @@ namespace YouTube_Downloader
             this.SubItems[4].Text = MainForm.GetFileSize(this.Output);
 
             this.Status = OperationStatus.Success;
-
-            ProgressBar pb = (ProgressBar)((ListViewEx)this.ListView).GetEmbeddedControl(1, this.Index);
-
-            if (pb != null)
-            {
-                pb.Style = ProgressBarStyle.Blocks;
-                pb.Value = 100;
-            }
 
             Program.RunningWorkers.Remove(backgroundWorker);
 
@@ -1014,7 +1067,9 @@ namespace YouTube_Downloader
             this.cropEnd = end;
 
             backgroundWorker = new BackgroundWorker();
+            backgroundWorker.WorkerReportsProgress = true;
             backgroundWorker.DoWork += backgroundWorker_DoWork;
+            backgroundWorker.ProgressChanged += backgroundWorker_ProgressChanged;
             backgroundWorker.RunWorkerCompleted += backgroundWorker_RunWorkerCompleted;
             backgroundWorker.RunWorkerAsync();
 
@@ -1023,20 +1078,51 @@ namespace YouTube_Downloader
             this.Status = OperationStatus.Working;
         }
 
+        public bool Stop()
+        {
+            try
+            {
+                if (process != null)
+                    process.StandardInput.WriteLine("\x71");
+
+                this.Status = OperationStatus.Canceled;
+                this.SubItems[2].Text = "Stopped";
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         #region backgroundWorker
 
         private BackgroundWorker backgroundWorker;
         private string cropStart = string.Empty;
         private string cropEnd = string.Empty;
+        private Process process;
 
         private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             if (cropEnd == string.Empty)
-                FfmpegHelper.Crop(this.Input, this.Output, cropStart);
+                FfmpegHelper.Crop(backgroundWorker, this.Input, this.Output, cropStart);
             else
-                FfmpegHelper.Crop(this.Input, this.Output, cropStart, cropEnd);
+                FfmpegHelper.Crop(backgroundWorker, this.Input, this.Output, cropStart, cropEnd);
 
             cropStart = cropEnd = string.Empty;
+        }
+
+        private void backgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            ProgressBar pb = (ProgressBar)((ListViewEx)this.ListView).GetEmbeddedControl(1, this.Index);
+
+            pb.Value = e.ProgressPercentage;
+
+            if (e.UserState is Process)
+            {
+                this.process = (Process)e.UserState;
+            }
         }
 
         private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -1046,14 +1132,6 @@ namespace YouTube_Downloader
             this.SubItems[4].Text = MainForm.GetFileSize(this.Output);
 
             this.Status = OperationStatus.Success;
-
-            ProgressBar pb = (ProgressBar)((ListViewEx)this.ListView).GetEmbeddedControl(1, this.Index);
-
-            if (pb != null)
-            {
-                pb.Style = ProgressBarStyle.Blocks;
-                pb.Value = 100;
-            }
 
             Program.RunningWorkers.Remove(backgroundWorker);
 
@@ -1134,9 +1212,18 @@ namespace YouTube_Downloader
             downloader.Resume();
         }
 
-        public void Stop()
+        public bool Stop()
         {
-            downloader.Abort();
+            try
+            {
+                downloader.Abort();
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         #region downloader

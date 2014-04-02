@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
@@ -14,7 +15,7 @@ namespace YouTube_Downloader.Classes
         private const string Command_Crop_From = " -y -ss {0} -i \"{1}\" -acodec copy{2} \"{3}\"";
         private const string Command_Crop_From_To = " -y -ss {0} -i \"{1}\" -to {2} -acodec copy{3} \"{4}\"";
 
-        public static void Convert(string input, string output)
+        public static void Convert(BackgroundWorker bw, string input, string output)
         {
             bool deleteInput = false;
 
@@ -32,15 +33,69 @@ namespace YouTube_Downloader.Classes
             string[] args = new string[] { input, output };
             string arguments = string.Format(FfmpegHelper.Command_Convert, args);
 
-            FfmpegHelper.StartProcess(arguments);
+            Process process = FfmpegHelper.StartProcess(arguments);
+
+            bw.ReportProgress(0, process);
+
+            bool started = false;
+            double milliseconds = 0;
+            string line = "";
+
+            while ((line = process.StandardError.ReadLine()) != null)
+            {
+                // 'bw' is null, don't report any progress
+                if (bw != null && bw.WorkerReportsProgress)
+                {
+                    line = line.Trim();
+
+                    if (line.StartsWith("Duration: "))
+                    {
+                        int start = "Duration: ".Length;
+                        int length = "00:00:00.00".Length;
+
+                        string time = line.Substring(start, length);
+
+                        milliseconds = TimeSpan.Parse(time).TotalMilliseconds;
+                    }
+                    else if (line == "Press [q] to stop, [?] for help")
+                    {
+                        started = true;
+
+                        bw.ReportProgress(0);
+                    }
+                    else if (started && line.StartsWith("size="))
+                    {
+                        int start = line.IndexOf("time=") + 5;
+                        int length = "00:00:00.00".Length;
+
+                        string time = line.Substring(start, length);
+
+                        double currentMilli = TimeSpan.Parse(time).TotalMilliseconds;
+                        double percentage = (currentMilli / milliseconds) * 100;
+
+                        bw.ReportProgress(System.Convert.ToInt32(percentage));
+                    }
+                    else if (started && line == string.Empty)
+                    {
+                        started = false;
+
+                        bw.ReportProgress(100);
+                    }
+                }
+            }
+
+            process.WaitForExit();
+
+            if (!process.HasExited)
+                process.Kill();
 
             if (deleteInput)
             {
-                MainForm.DeleteFile(input);
+                MainForm.DeleteFiles(input);
             }
         }
 
-        public static void Crop(string input, string output, string start)
+        public static void Crop(BackgroundWorker bw, string input, string output, string start)
         {
             bool deleteInput = false;
 
@@ -67,15 +122,69 @@ namespace YouTube_Downloader.Classes
 
             string arguments = string.Format(Command_Crop_From, args);
 
-            FfmpegHelper.StartProcess(arguments);
+            Process process = FfmpegHelper.StartProcess(arguments);
+
+            bw.ReportProgress(0, process);
+
+            bool started = false;
+            double milliseconds = 0;
+            string line = "";
+
+            while ((line = process.StandardError.ReadLine()) != null)
+            {
+                // 'bw' is null, don't report any progress
+                if (bw != null && bw.WorkerReportsProgress)
+                {
+                    line = line.Trim();
+
+                    if (line.StartsWith("Duration: "))
+                    {
+                        int lineStart = "Duration: ".Length;
+                        int length = "00:00:00.00".Length;
+
+                        string time = line.Substring(lineStart, length);
+
+                        milliseconds = TimeSpan.Parse(time).TotalMilliseconds;
+                    }
+                    else if (line == "Press [q] to stop, [?] for help")
+                    {
+                        started = true;
+
+                        bw.ReportProgress(0);
+                    }
+                    else if (started && line.StartsWith("size="))
+                    {
+                        int lineStart = line.IndexOf("time=") + 5;
+                        int length = "00:00:00.00".Length;
+
+                        string time = line.Substring(lineStart, length);
+
+                        double currentMilli = TimeSpan.Parse(time).TotalMilliseconds;
+                        double percentage = (currentMilli / milliseconds) * 100;
+
+                        bw.ReportProgress(System.Convert.ToInt32(percentage));
+                    }
+                    else if (started && line == string.Empty)
+                    {
+                        started = false;
+
+                        bw.ReportProgress(100);
+                    }
+                }
+            }
+
+            process.WaitForExit();
+
+            if (!process.HasExited)
+                process.Kill();
 
             if (deleteInput)
             {
-                MainForm.DeleteFile(input);
+                MainForm.DeleteFiles(input);
             }
         }
 
-        public static void Crop(string input, string output, string start, string end)
+        public static void Crop(BackgroundWorker bw, string input, string output, string start, string end)
         {
             bool deleteInput = false;
 
@@ -105,11 +214,58 @@ namespace YouTube_Downloader.Classes
 
             string arguments = string.Format(Command_Crop_From_To, args);
 
-            FfmpegHelper.StartProcess(arguments);
+            Process process = FfmpegHelper.StartProcess(arguments);
+
+            bw.ReportProgress(0, process);
+
+            bool started = false;
+            double milliseconds = 0;
+            string line = "";
+
+            while ((line = process.StandardError.ReadLine()) != null)
+            {
+                // 'bw' is null, don't report any progress
+                if (bw != null && bw.WorkerReportsProgress)
+                {
+                    line = line.Trim();
+
+                    milliseconds = TimeSpan.Parse(end).TotalMilliseconds;
+
+                    if (line == "Press [q] to stop, [?] for help")
+                    {
+                        started = true;
+
+                        bw.ReportProgress(0);
+                    }
+                    else if (started && line.StartsWith("size="))
+                    {
+                        int lineStart = line.IndexOf("time=") + 5;
+                        int lineLength = "00:00:00.00".Length;
+
+                        string time = line.Substring(lineStart, lineLength);
+
+                        double currentMilli = TimeSpan.Parse(time).TotalMilliseconds;
+                        double percentage = (currentMilli / milliseconds) * 100;
+
+                        bw.ReportProgress(System.Convert.ToInt32(percentage));
+                    }
+                    else if (started && line == string.Empty)
+                    {
+                        started = false;
+
+                        bw.ReportProgress(100);
+                    }
+                }
+            }
+
+            process.WaitForExit();
+
+            if (!process.HasExited)
+                process.Kill();
 
             if (deleteInput)
             {
-                MainForm.DeleteFile(input);
+                MainForm.DeleteFiles(input);
             }
         }
 
@@ -118,17 +274,7 @@ namespace YouTube_Downloader.Classes
             TimeSpan result = TimeSpan.Zero;
             string arguments = string.Format(" -i \"{0}\"", input);
 
-            Process process = new Process();
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.RedirectStandardInput = true;
-            process.StartInfo.RedirectStandardOutput = true;
-            process.StartInfo.RedirectStandardError = true;
-            process.StartInfo.CreateNoWindow = true;
-            process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            process.StartInfo.FileName = Application.StartupPath + "\\ffmpeg";
-            process.StartInfo.Arguments = arguments;
-            process.Start();
-            process.StandardOutput.ReadToEnd();
+            Process process = StartProcess(arguments);
 
             List<string> lines = new List<string>();
 
@@ -205,9 +351,14 @@ namespace YouTube_Downloader.Classes
             return result;
         }
 
-        private static string StartProcess(string arguments)
+        /// <summary>
+        /// Creates a Process with the given arguments, then returns
+        /// it after it has started.
+        /// </summary>
+        private static Process StartProcess(string arguments)
         {
             Process process = new Process();
+
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.RedirectStandardInput = true;
             process.StartInfo.RedirectStandardOutput = true;
@@ -217,18 +368,8 @@ namespace YouTube_Downloader.Classes
             process.StartInfo.FileName = Application.StartupPath + "\\ffmpeg";
             process.StartInfo.Arguments = arguments;
             process.Start();
-            // process.StandardOutput.ReadToEnd();
 
-            string error = process.StandardError.ReadToEnd();
-
-            Console.WriteLine(error);
-
-            process.WaitForExit();
-
-            if (!process.HasExited)
-                process.Kill();
-
-            return error;
+            return process;
         }
     }
 }
