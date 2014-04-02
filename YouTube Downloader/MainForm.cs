@@ -973,7 +973,7 @@ namespace YouTube_Downloader
         {
             try
             {
-                if (process != null)
+                if (process != null && !process.HasExited)
                     process.StandardInput.WriteLine("\x71");
 
                 this.Status = OperationStatus.Canceled;
@@ -1082,7 +1082,7 @@ namespace YouTube_Downloader
         {
             try
             {
-                if (process != null)
+                if (process != null && !process.HasExited)
                     process.StandardInput.WriteLine("\x71");
 
                 this.Status = OperationStatus.Canceled;
