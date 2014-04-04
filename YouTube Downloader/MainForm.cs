@@ -33,7 +33,7 @@ namespace YouTube_Downloader
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (GetDownloading())
+            if (IsWorking())
             {
                 string text = "Files are being downloaded/converted/cut.\n\nAre you sure you want to quit?";
 
@@ -129,9 +129,9 @@ namespace YouTube_Downloader
                 videoThumbnail.Tag = null;
                 videoThumbnail.ImageLocation = string.Format("http://i3.ytimg.com/vi/{0}/default.jpg", Helper.GetVideoIDFromUrl(txtYoutubeLink.Text));
 
-                backgroundWorker1.RunWorkerAsync(txtYoutubeLink.Text);
+                bwGetVideo.RunWorkerAsync(txtYoutubeLink.Text);
 
-                Program.RunningWorkers.Add(backgroundWorker1);
+                Program.RunningWorkers.Add(bwGetVideo);
             }
         }
 
@@ -377,20 +377,19 @@ namespace YouTube_Downloader
             }
         }
 
-        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        private void bwGetVideo_DoWork(object sender, DoWorkEventArgs e)
         {
             e.Result = YouTubeDownloader.GetYouTubeVideoUrls(e.Argument + "");
         }
 
-        private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private void bwGetVideo_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             List<YouTubeVideoQuality> urls = e.Result as List<YouTubeVideoQuality>;
 
             cbQuality.DataSource = urls;
             foreach (YouTubeVideoQuality item in cbQuality.Items)
             {
-                // Look for the mp4 format, because 
-                // I assume it's more commonly used.
+                // Look for the mp4 format, because I assume it's more commonly used.
                 if (item.Extension.Equals("mp4"))
                 {
                     cbQuality.SelectedItem = item;
@@ -410,7 +409,7 @@ namespace YouTube_Downloader
             cbQuality.Enabled = urls.Count > 0;
             btnDownload.Enabled = true;
 
-            Program.RunningWorkers.Remove(backgroundWorker1);
+            Program.RunningWorkers.Remove(bwGetVideo);
         }
 
         #region mainMenu1
@@ -820,7 +819,13 @@ namespace YouTube_Downloader
             return sb.ToString().Trim();
         }
 
-        private bool GetDownloading()
+        public void InsertVideo(string url)
+        {
+            txtYoutubeLink.Text = url;
+            btnGetVideo.PerformClick();
+        }
+
+        private bool IsWorking()
         {
             foreach (ListViewItem item in lvQueue.Items)
             {
@@ -832,12 +837,6 @@ namespace YouTube_Downloader
                 }
             }
             return false;
-        }
-
-        public void InsertVideo(string url)
-        {
-            txtYoutubeLink.Text = url;
-            btnGetVideo.PerformClick();
         }
 
         private void SelectOneItem(ListViewItem item)

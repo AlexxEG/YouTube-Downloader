@@ -42,7 +42,7 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.btnToDo = new System.Windows.Forms.Button();
             this.btnExit = new System.Windows.Forms.Button();
-            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.bwGetVideo = new System.ComponentModel.BackgroundWorker();
             this.contextMenu1 = new System.Windows.Forms.ContextMenu();
             this.openMenuItem = new System.Windows.Forms.MenuItem();
             this.openContainingFolderMenuItem = new System.Windows.Forms.MenuItem();
@@ -250,11 +250,11 @@
             this.btnExit.UseVisualStyleBackColor = true;
             this.btnExit.Click += new System.EventHandler(this.btnExit_Click);
             // 
-            // backgroundWorker1
+            // bwGetVideo
             // 
-            this.backgroundWorker1.WorkerSupportsCancellation = true;
-            this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
-            this.backgroundWorker1.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker1_RunWorkerCompleted);
+            this.bwGetVideo.WorkerSupportsCancellation = true;
+            this.bwGetVideo.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwGetVideo_DoWork);
+            this.bwGetVideo.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwGetVideo_RunWorkerCompleted);
             // 
             // contextMenu1
             // 
@@ -708,7 +708,7 @@
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ColumnHeader columnHeader3;
-        private System.ComponentModel.BackgroundWorker backgroundWorker1;
+        private System.ComponentModel.BackgroundWorker bwGetVideo;
         private System.Windows.Forms.ColumnHeader columnHeader4;
         private System.Windows.Forms.ColumnHeader columnHeader5;
         private System.Windows.Forms.Button btnDownload;
