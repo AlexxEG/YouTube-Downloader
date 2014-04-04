@@ -538,7 +538,7 @@ namespace YouTube_Downloader
                     fails++;
                 }
             }
-            
+
             if (fails > 0)
             {
                 MessageBox.Show(this, "Couldn't open " + fails + " folder(s).");
@@ -682,7 +682,7 @@ namespace YouTube_Downloader
             this.Close();
         }
 
-        public void Convert(string input, string output, bool crop)
+        private void Convert(string input, string output, bool crop)
         {
             string start = string.Empty;
             string end = string.Empty;
@@ -739,7 +739,7 @@ namespace YouTube_Downloader
             item.Convert(input, output, start, end);
         }
 
-        public void Crop(string input, string output)
+        private void Crop(string input, string output)
         {
             string start = string.Empty;
             string end = string.Empty;
@@ -793,48 +793,7 @@ namespace YouTube_Downloader
             item.Crop(input, output, start, end);
         }
 
-        public static void DeleteFiles(params string[] files)
-        {
-            new Thread(delegate()
-                {
-                    var dict = new Dictionary<string, int>();
-                    var keys = new List<string>();
-
-                    foreach (string file in files)
-                    {
-                        dict.Add(file, 0);
-                        keys.Add(file);
-                    }
-
-                    while (dict.Count > 0)
-                    {
-                        foreach (string key in keys)
-                        {
-                            try
-                            {
-                                File.Delete(key);
-
-                                dict.Remove(key);
-                            }
-                            catch
-                            {
-                                if (dict[key] == 10)
-                                {
-                                    dict.Remove(key);
-                                }
-                                else
-                                {
-                                    dict[key]++;
-                                }
-                            }
-                        }
-
-                        Thread.Sleep(2000);
-                    }
-                }).Start();
-        }
-
-        public static string FormatTitle(string title)
+        private string FormatTitle(string title)
         {
             string[] illegalCharacters = new string[] { "/", @"\", "*", "?", "\"", "<", ">" };
 
@@ -861,20 +820,7 @@ namespace YouTube_Downloader
             return sb.ToString().Trim();
         }
 
-        public static string FormatVideoLength(TimeSpan duration)
-        {
-            if (duration.Hours > 0)
-                return string.Format("{0}:{1:00}:{2:00}", duration.Hours, duration.Minutes, duration.Seconds);
-            else
-                return string.Format("{0}:{1:00}", duration.Minutes, duration.Seconds);
-        }
-
-        public static string FormatVideoLength(long duration)
-        {
-            return FormatVideoLength(TimeSpan.FromSeconds(duration));
-        }
-
-        public bool GetDownloading()
+        private bool GetDownloading()
         {
             foreach (ListViewItem item in lvQueue.Items)
             {
@@ -886,13 +832,6 @@ namespace YouTube_Downloader
                 }
             }
             return false;
-        }
-
-        public static string GetFileSize(string file)
-        {
-            FileInfo info = new FileInfo(file);
-
-            return string.Format(new FileSizeFormatProvider(), "{0:fs}", info.Length);
         }
 
         public void InsertVideo(string url)
@@ -907,6 +846,67 @@ namespace YouTube_Downloader
                 lvi.Selected = false;
 
             item.Selected = true;
+        }
+
+        public static void DeleteFiles(params string[] files)
+        {
+            new Thread(delegate()
+            {
+                var dict = new Dictionary<string, int>();
+                var keys = new List<string>();
+
+                foreach (string file in files)
+                {
+                    dict.Add(file, 0);
+                    keys.Add(file);
+                }
+
+                while (dict.Count > 0)
+                {
+                    foreach (string key in keys)
+                    {
+                        try
+                        {
+                            File.Delete(key);
+
+                            dict.Remove(key);
+                        }
+                        catch
+                        {
+                            if (dict[key] == 10)
+                            {
+                                dict.Remove(key);
+                            }
+                            else
+                            {
+                                dict[key]++;
+                            }
+                        }
+                    }
+
+                    Thread.Sleep(2000);
+                }
+            }).Start();
+        }
+
+        public static string FormatVideoLength(TimeSpan duration)
+        {
+            if (duration.Hours > 0)
+                return string.Format("{0}:{1:00}:{2:00}", duration.Hours, duration.Minutes, duration.Seconds);
+            else
+                return string.Format("{0}:{1:00}", duration.Minutes, duration.Seconds);
+        }
+
+        public static string FormatVideoLength(long duration)
+        {
+            return FormatVideoLength(TimeSpan.FromSeconds(duration));
+        }
+
+        public static string GetFileSize(string file)
+        {
+            FileInfo info = new FileInfo(file);
+
+            return string.Format(new FileSizeFormatProvider(), "{0:fs}", info.Length);
         }
     }
 
