@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label2 = new System.Windows.Forms.Label();
             this.btnPaste = new System.Windows.Forms.Button();
@@ -60,6 +61,8 @@
             this.label3 = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.downloadTabPage = new System.Windows.Forms.TabPage();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.label7 = new System.Windows.Forms.Label();
             this.convertTabPage = new System.Windows.Forms.TabPage();
             this.btnCheckAgain = new System.Windows.Forms.Button();
             this.lFFmpegMissing = new System.Windows.Forms.Label();
@@ -93,6 +96,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.videoThumbnail)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.downloadTabPage.SuspendLayout();
+            this.groupBox5.SuspendLayout();
             this.convertTabPage.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -401,6 +405,7 @@
             // 
             // downloadTabPage
             // 
+            this.downloadTabPage.Controls.Add(this.groupBox5);
             this.downloadTabPage.Controls.Add(this.groupBox1);
             this.downloadTabPage.Controls.Add(this.groupBox3);
             this.downloadTabPage.Location = new System.Drawing.Point(4, 22);
@@ -410,6 +415,25 @@
             this.downloadTabPage.TabIndex = 0;
             this.downloadTabPage.Text = "Download";
             this.downloadTabPage.UseVisualStyleBackColor = true;
+            // 
+            // groupBox5
+            // 
+            this.groupBox5.Controls.Add(this.label7);
+            this.groupBox5.Location = new System.Drawing.Point(6, 194);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(584, 71);
+            this.groupBox5.TabIndex = 9;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "DASH Information";
+            // 
+            // label7
+            // 
+            this.label7.Location = new System.Drawing.Point(6, 19);
+            this.label7.Margin = new System.Windows.Forms.Padding(3);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(572, 46);
+            this.label7.TabIndex = 0;
+            this.label7.Text = resources.GetString("label7.Text");
             // 
             // convertTabPage
             // 
@@ -694,6 +718,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.videoThumbnail)).EndInit();
             this.tabControl1.ResumeLayout(false);
             this.downloadTabPage.ResumeLayout(false);
+            this.groupBox5.ResumeLayout(false);
             this.convertTabPage.ResumeLayout(false);
             this.convertTabPage.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -767,6 +792,8 @@
         private System.Windows.Forms.Label lFFmpegMissing;
         private System.Windows.Forms.Button btnCheckAgain;
         private System.Windows.Forms.Label lFileSize;
+        private System.Windows.Forms.GroupBox groupBox5;
+        private System.Windows.Forms.Label label7;
     }
 }
 
