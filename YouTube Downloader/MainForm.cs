@@ -383,7 +383,7 @@ namespace YouTube_Downloader
 
         private void bwGetVideo_DoWork(object sender, DoWorkEventArgs e)
         {
-            e.Result = YouTubeDLHelper.GetJSONInfo(bwGetVideo, (string)e.Argument);
+            e.Result = YouTubeDLHelper.GetJSONInfo((string)e.Argument);
         }
 
         private void bwGetVideo_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)

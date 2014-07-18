@@ -14,16 +14,13 @@ namespace YouTube_Downloader.Classes
     {
         private const string Cmd_JSON_Info = " -o \"{0}\\%(title)s\" --no-playlist --skip-download --write-info-json \"{1}\"";
 
-        public static VideoInfo GetJSONInfo(BackgroundWorker bw, string url)
+        public static VideoInfo GetJSONInfo(string url)
         {
             string json_dir = Path.Combine(Application.StartupPath, "json");
             /* Fill in json directory & video url. */
             string arguments = string.Format(Cmd_JSON_Info, json_dir, url);
 
             Process process = StartProcess(arguments);
-
-            if (bw != null && bw.WorkerReportsProgress)
-                bw.ReportProgress(0, process);
 
             string json_file = "";
             string line = "";
