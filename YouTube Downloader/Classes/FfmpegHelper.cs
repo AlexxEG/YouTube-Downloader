@@ -307,16 +307,7 @@ namespace YouTube_Downloader.Classes
             FileType result = FileType.Error;
             string arguments = string.Format(" -i \"{0}\"", input);
 
-            Process process = new Process();
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.RedirectStandardInput = true;
-            process.StartInfo.RedirectStandardOutput = true;
-            process.StartInfo.RedirectStandardError = true;
-            process.StartInfo.CreateNoWindow = true;
-            process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            process.StartInfo.FileName = Application.StartupPath + "\\ffmpeg";
-            process.StartInfo.Arguments = arguments;
-            process.Start();
+            Process process = StartProcess(arguments);
 
             List<string> lines = new List<string>();
 
