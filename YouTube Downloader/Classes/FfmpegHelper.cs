@@ -19,7 +19,6 @@ namespace YouTube_Downloader.Classes
 
         public static bool CanConvertMP3(string file)
         {
-            /* ToDo: Check for audio stream. */
             string arguments = string.Format(Cmd_Get_File_Info, file);
 
             Process process = StartProcess(arguments);
