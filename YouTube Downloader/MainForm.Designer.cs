@@ -81,15 +81,9 @@
             this.label5 = new System.Windows.Forms.Label();
             this.queueTabPage = new System.Windows.Forms.TabPage();
             this.chbAutoConvert = new System.Windows.Forms.CheckBox();
-            this.lvQueue = new ListViewEmbeddedControls.ListViewEx();
-            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.label11 = new System.Windows.Forms.Label();
             this.btnDashBrowseOutput = new System.Windows.Forms.Button();
             this.txtDashOutput = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
@@ -102,6 +96,13 @@
             this.label8 = new System.Windows.Forms.Label();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.lvQueue = new ListViewEmbeddedControls.ListViewEx();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -242,7 +243,7 @@
             this.panel1.Controls.Add(this.btnToDo);
             this.panel1.Controls.Add(this.btnExit);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 321);
+            this.panel1.Location = new System.Drawing.Point(0, 341);
             this.panel1.Margin = new System.Windows.Forms.Padding(3, 9, 3, 3);
             this.panel1.Name = "panel1";
             this.panel1.Padding = new System.Windows.Forms.Padding(5);
@@ -415,7 +416,7 @@
             this.tabControl1.Location = new System.Drawing.Point(12, 12);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(604, 297);
+            this.tabControl1.Size = new System.Drawing.Size(604, 317);
             this.tabControl1.TabIndex = 9;
             // 
             // downloadTabPage
@@ -426,15 +427,13 @@
             this.downloadTabPage.Location = new System.Drawing.Point(4, 22);
             this.downloadTabPage.Name = "downloadTabPage";
             this.downloadTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.downloadTabPage.Size = new System.Drawing.Size(596, 271);
+            this.downloadTabPage.Size = new System.Drawing.Size(596, 291);
             this.downloadTabPage.TabIndex = 0;
             this.downloadTabPage.Text = "Download";
             this.downloadTabPage.UseVisualStyleBackColor = true;
             // 
             // groupBox5
             // 
-            this.groupBox5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox5.Controls.Add(this.label7);
             this.groupBox5.Location = new System.Drawing.Point(6, 194);
             this.groupBox5.Name = "groupBox5";
@@ -462,7 +461,7 @@
             this.convertTabPage.Location = new System.Drawing.Point(4, 22);
             this.convertTabPage.Name = "convertTabPage";
             this.convertTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.convertTabPage.Size = new System.Drawing.Size(596, 271);
+            this.convertTabPage.Size = new System.Drawing.Size(596, 281);
             this.convertTabPage.TabIndex = 2;
             this.convertTabPage.Text = "Convert";
             this.convertTabPage.UseVisualStyleBackColor = true;
@@ -470,7 +469,7 @@
             // btnCheckAgain
             // 
             this.btnCheckAgain.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCheckAgain.Location = new System.Drawing.Point(484, 206);
+            this.btnCheckAgain.Location = new System.Drawing.Point(484, 216);
             this.btnCheckAgain.Name = "btnCheckAgain";
             this.btnCheckAgain.Size = new System.Drawing.Size(106, 23);
             this.btnCheckAgain.TabIndex = 11;
@@ -485,7 +484,7 @@
             this.lFFmpegMissing.AutoSize = true;
             this.lFFmpegMissing.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lFFmpegMissing.ForeColor = System.Drawing.Color.Red;
-            this.lFFmpegMissing.Location = new System.Drawing.Point(6, 206);
+            this.lFFmpegMissing.Location = new System.Drawing.Point(6, 216);
             this.lFFmpegMissing.Name = "lFFmpegMissing";
             this.lFFmpegMissing.Size = new System.Drawing.Size(429, 20);
             this.lFFmpegMissing.TabIndex = 10;
@@ -507,7 +506,7 @@
             this.groupBox2.Controls.Add(this.label5);
             this.groupBox2.Location = new System.Drawing.Point(6, 6);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(584, 194);
+            this.groupBox2.Size = new System.Drawing.Size(584, 204);
             this.groupBox2.TabIndex = 5;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Convert to MP3";
@@ -541,7 +540,7 @@
             this.groupBox4.Controls.Add(this.mtxtTo);
             this.groupBox4.Controls.Add(this.chbCropTo);
             this.groupBox4.Controls.Add(this.mtxtFrom);
-            this.groupBox4.Location = new System.Drawing.Point(6, 124);
+            this.groupBox4.Location = new System.Drawing.Point(6, 134);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(372, 64);
             this.groupBox4.TabIndex = 5;
@@ -594,7 +593,7 @@
             // btnConvert
             // 
             this.btnConvert.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnConvert.Location = new System.Drawing.Point(503, 165);
+            this.btnConvert.Location = new System.Drawing.Point(503, 175);
             this.btnConvert.Name = "btnConvert";
             this.btnConvert.Size = new System.Drawing.Size(75, 23);
             this.btnConvert.TabIndex = 4;
@@ -649,7 +648,7 @@
             this.queueTabPage.Location = new System.Drawing.Point(4, 22);
             this.queueTabPage.Name = "queueTabPage";
             this.queueTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.queueTabPage.Size = new System.Drawing.Size(596, 271);
+            this.queueTabPage.Size = new System.Drawing.Size(596, 281);
             this.queueTabPage.TabIndex = 1;
             this.queueTabPage.Text = "Queue";
             this.queueTabPage.UseVisualStyleBackColor = true;
@@ -658,56 +657,12 @@
             // 
             this.chbAutoConvert.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chbAutoConvert.AutoSize = true;
-            this.chbAutoConvert.Location = new System.Drawing.Point(6, 248);
+            this.chbAutoConvert.Location = new System.Drawing.Point(6, 258);
             this.chbAutoConvert.Name = "chbAutoConvert";
             this.chbAutoConvert.Size = new System.Drawing.Size(164, 17);
             this.chbAutoConvert.TabIndex = 3;
             this.chbAutoConvert.Text = "Convert to MP3 automatically";
             this.chbAutoConvert.UseVisualStyleBackColor = true;
-            // 
-            // lvQueue
-            // 
-            this.lvQueue.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lvQueue.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader2,
-            this.columnHeader3,
-            this.columnHeader4,
-            this.columnHeader5,
-            this.columnHeader6});
-            this.lvQueue.FullRowSelect = true;
-            this.lvQueue.Location = new System.Drawing.Point(6, 6);
-            this.lvQueue.Name = "lvQueue";
-            this.lvQueue.Size = new System.Drawing.Size(584, 236);
-            this.lvQueue.TabIndex = 2;
-            this.lvQueue.UseCompatibleStateImageBehavior = false;
-            this.lvQueue.View = System.Windows.Forms.View.Details;
-            // 
-            // columnHeader1
-            // 
-            this.columnHeader1.Text = "Video";
-            // 
-            // columnHeader2
-            // 
-            this.columnHeader2.Text = "Progress";
-            // 
-            // columnHeader3
-            // 
-            this.columnHeader3.Text = "Speed";
-            // 
-            // columnHeader4
-            // 
-            this.columnHeader4.Text = "Length";
-            // 
-            // columnHeader5
-            // 
-            this.columnHeader5.Text = "Size";
-            // 
-            // columnHeader6
-            // 
-            this.columnHeader6.Text = "Input";
             // 
             // tabPage1
             // 
@@ -715,7 +670,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(596, 271);
+            this.tabPage1.Size = new System.Drawing.Size(596, 281);
             this.tabPage1.TabIndex = 3;
             this.tabPage1.Text = "DASH";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -724,6 +679,7 @@
             // 
             this.groupBox6.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox6.Controls.Add(this.label11);
             this.groupBox6.Controls.Add(this.btnDashBrowseOutput);
             this.groupBox6.Controls.Add(this.txtDashOutput);
             this.groupBox6.Controls.Add(this.label10);
@@ -740,6 +696,16 @@
             this.groupBox6.TabIndex = 0;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Combine DASH video && audio";
+            // 
+            // label11
+            // 
+            this.label11.Location = new System.Drawing.Point(6, 129);
+            this.label11.Margin = new System.Windows.Forms.Padding(3, 5, 3, 3);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(491, 32);
+            this.label11.TabIndex = 15;
+            this.label11.Text = "This tool can combine DASH video && audio into one file. Normally the video will " +
+    "look for the audio file in the same folder, playing it separately.";
             // 
             // btnDashBrowseOutput
             // 
@@ -853,13 +819,58 @@
             // 
             this.saveFileDialog1.Filter = "MP3 files|*.mp3|MP4 files|*.mp4|All files|*.*";
             // 
+            // lvQueue
+            // 
+            this.lvQueue.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lvQueue.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader2,
+            this.columnHeader3,
+            this.columnHeader4,
+            this.columnHeader5,
+            this.columnHeader6});
+            this.lvQueue.FullRowSelect = true;
+            this.lvQueue.Location = new System.Drawing.Point(6, 6);
+            this.lvQueue.Name = "lvQueue";
+            this.lvQueue.Size = new System.Drawing.Size(584, 246);
+            this.lvQueue.TabIndex = 2;
+            this.lvQueue.UseCompatibleStateImageBehavior = false;
+            this.lvQueue.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "Video";
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "Progress";
+            // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "Speed";
+            // 
+            // columnHeader4
+            // 
+            this.columnHeader4.Text = "Length";
+            // 
+            // columnHeader5
+            // 
+            this.columnHeader5.Text = "Size";
+            // 
+            // columnHeader6
+            // 
+            this.columnHeader6.Text = "Input";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(628, 367);
+            this.ClientSize = new System.Drawing.Size(628, 387);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.panel1);
+            this.MinimumSize = new System.Drawing.Size(644, 425);
             this.Name = "MainForm";
             this.Text = "YouTube Downloader";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
@@ -964,6 +975,7 @@
         private System.Windows.Forms.Button btnDashBrowseOutput;
         private System.Windows.Forms.TextBox txtDashOutput;
         private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label label11;
     }
 }
 
