@@ -510,7 +510,7 @@
             this.groupBox2.Size = new System.Drawing.Size(584, 194);
             this.groupBox2.TabIndex = 5;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Converting Options";
+            this.groupBox2.Text = "Convert to MP3";
             // 
             // btnBrowseOutput
             // 
