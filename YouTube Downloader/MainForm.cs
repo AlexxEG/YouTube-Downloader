@@ -410,12 +410,13 @@ namespace YouTube_Downloader
         {
             if (File.Exists(txtDashOutput.Text))
             {
-                var filename = Path.GetFileName(txtDashOutput.Text);
-                var result = MessageBox.Show(this, "File '" + filename + "' already exists.\n\nOverwrite?",
-                    "Overwrite", MessageBoxButtons.YesNo);
+                string filename = Path.GetFileName(txtDashOutput.Text);
+                string text = "File '" + filename + "' already exists.\n\nOverwrite?";
 
-                if (result == DialogResult.No)
+                if (MessageBox.Show(this, text, "Overwrite", MessageBoxButtons.YesNo) == DialogResult.No)
+                {
                     return;
+                }
             }
 
             FfmpegHelper.CombineDash(txtDashVideo.Text, txtDashAudio.Text, txtDashOutput.Text);
