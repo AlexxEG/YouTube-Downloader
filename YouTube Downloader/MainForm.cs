@@ -322,12 +322,14 @@ namespace YouTube_Downloader
 
             if (File.Exists(txtOutput.Text))
             {
-                var filename = Path.GetFileName(txtOutput.Text);
-                var result = MessageBox.Show(this, "File '" + filename + "' already exists.\n\nOverwrite?",
-                    "Overwrite", MessageBoxButtons.YesNo);
+                string filename = Path.GetFileName(txtOutput.Text);
+                string text = "File '" + filename + "' already exists.\n\nOverwrite?";
 
-                if (result == DialogResult.No)
+                if (MessageBox.Show(this, text, "Overwrite", MessageBoxButtons.YesNo) == DialogResult.No)
+                {
                     return;
+                }
+
             }
 
             if (txtInput.Text == txtOutput.Text ||
