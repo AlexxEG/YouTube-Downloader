@@ -43,7 +43,7 @@ namespace YouTube_Downloader
         {
             get
             {
-                if (DownloadData == null || DownloadSpeed == 0) 
+                if (DownloadData == null || DownloadSpeed == 0)
                     return 0;
 
                 long remainBytes = DownloadData.FileSize - totalDownloaded;
@@ -85,7 +85,7 @@ namespace YouTube_Downloader
             _pause = false;
             DownloadStatus = DownloadStatus.Downloading;
             OnProgressChanged(new ProgressChangedEventArgs(Progress, null));
-            DownloadData = DownloadData.Create(FileUrl, DestFolder, this.DestFileName, Helper.InitialProxy());
+            DownloadData = DownloadData.Create(FileUrl, DestFolder, this.DestFileName, null);
 
             if (string.IsNullOrEmpty(DestFileName))
                 Path.GetFileName(DownloadData.Response.ResponseUri.ToString());
@@ -104,17 +104,17 @@ namespace YouTube_Downloader
                 callProgess = true;
 
                 if (this.CancellationPending)
-                { 
-                    DownloadSpeed = Progress = 0; 
-                    e.Cancel = true; 
-                    break; 
+                {
+                    DownloadSpeed = Progress = 0;
+                    e.Cancel = true;
+                    break;
                 }
 
                 if (_pause)
-                { 
-                    DownloadSpeed = 0; 
+                {
+                    DownloadSpeed = 0;
                     DownloadStatus = DownloadStatus.Paused;
-                    System.Threading.Thread.Sleep(500); 
+                    System.Threading.Thread.Sleep(500);
                 }
                 else
                 {
@@ -122,7 +122,7 @@ namespace YouTube_Downloader
                     long startTime = DateTime.Now.Ticks;
                     int readCount = DownloadData.DownloadStream.Read(buffer, 0, DownloadBlockSize);
 
-                    if (readCount == 0) 
+                    if (readCount == 0)
                         break;
 
                     totalDownloadedInTime += readCount;

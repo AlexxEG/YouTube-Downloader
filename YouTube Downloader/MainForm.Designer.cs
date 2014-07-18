@@ -54,6 +54,7 @@
             this.stopMenuItem = new System.Windows.Forms.MenuItem();
             this.removeMenuItem = new System.Windows.Forms.MenuItem();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.lFileSize = new System.Windows.Forms.Label();
             this.lTitle = new System.Windows.Forms.Label();
             this.videoThumbnail = new System.Windows.Forms.PictureBox();
             this.label3 = new System.Windows.Forms.Label();
@@ -213,8 +214,9 @@
             this.cbQuality.FormattingEnabled = true;
             this.cbQuality.Location = new System.Drawing.Point(191, 46);
             this.cbQuality.Name = "cbQuality";
-            this.cbQuality.Size = new System.Drawing.Size(387, 21);
+            this.cbQuality.Size = new System.Drawing.Size(269, 21);
             this.cbQuality.TabIndex = 1;
+            this.cbQuality.SelectedIndexChanged += new System.EventHandler(this.cbQuality_SelectedIndexChanged);
             // 
             // panel1
             // 
@@ -327,6 +329,7 @@
             // 
             this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox3.Controls.Add(this.lFileSize);
             this.groupBox3.Controls.Add(this.lTitle);
             this.groupBox3.Controls.Add(this.videoThumbnail);
             this.groupBox3.Controls.Add(this.label3);
@@ -342,6 +345,15 @@
             this.groupBox3.TabIndex = 8;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Information";
+            // 
+            // lFileSize
+            // 
+            this.lFileSize.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lFileSize.AutoSize = true;
+            this.lFileSize.Location = new System.Drawing.Point(466, 49);
+            this.lFileSize.Name = "lFileSize";
+            this.lFileSize.Size = new System.Drawing.Size(0, 13);
+            this.lFileSize.TabIndex = 11;
             // 
             // lTitle
             // 
@@ -359,7 +371,7 @@
             this.videoThumbnail.Location = new System.Drawing.Point(6, 22);
             this.videoThumbnail.Name = "videoThumbnail";
             this.videoThumbnail.Size = new System.Drawing.Size(120, 68);
-            this.videoThumbnail.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.videoThumbnail.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.videoThumbnail.TabIndex = 4;
             this.videoThumbnail.TabStop = false;
             this.videoThumbnail.Paint += new System.Windows.Forms.PaintEventHandler(this.videoThumbnail_Paint);
@@ -754,6 +766,7 @@
         private System.Windows.Forms.CheckBox chbAutoConvert;
         private System.Windows.Forms.Label lFFmpegMissing;
         private System.Windows.Forms.Button btnCheckAgain;
+        private System.Windows.Forms.Label lFileSize;
     }
 }
 

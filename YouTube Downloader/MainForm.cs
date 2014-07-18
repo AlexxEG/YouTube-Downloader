@@ -14,6 +14,9 @@ namespace YouTube_Downloader
     public partial class MainForm : Form
     {
         private string[] args;
+        private VideoInfo selectedVideo;
+
+        private delegate void UpdateFileSize(object sender, FileSizeUpdateEventArgs e);
 
         public MainForm()
         {
@@ -50,6 +53,9 @@ namespace YouTube_Downloader
                 return;
             }
 
+            if (selectedVideo != null)
+                selectedVideo.AbortUpdateFileSizes();
+
             SettingsEx.WindowStates[this.Name].SaveForm(this);
 
             SettingsEx.SaveToDirectories.Clear();
@@ -63,6 +69,8 @@ namespace YouTube_Downloader
             SettingsEx.AutoConvert = chbAutoConvert.Checked;
 
             SettingsEx.Save();
+
+            Application.Exit();
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -127,11 +135,25 @@ namespace YouTube_Downloader
                 cbQuality.DataSource = null;
                 btnGetVideo.Enabled = txtYoutubeLink.Enabled = btnDownload.Enabled = cbQuality.Enabled = false;
                 videoThumbnail.Tag = null;
-                videoThumbnail.ImageLocation = string.Format("http://i3.ytimg.com/vi/{0}/default.jpg", Helper.GetVideoIDFromUrl(txtYoutubeLink.Text));
 
                 bwGetVideo.RunWorkerAsync(txtYoutubeLink.Text);
 
                 Program.RunningWorkers.Add(bwGetVideo);
+            }
+        }
+
+        private void cbQuality_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            /* Display file size. */
+            VideoFormat format = (VideoFormat)cbQuality.SelectedItem;
+
+            if (format.FileSize == 0)
+            {
+                lFileSize.Text = "Getting file size...";
+            }
+            else
+            {
+                lFileSize.Text = FormatFileSize((cbQuality.SelectedItem as VideoFormat).FileSize);
             }
         }
 
@@ -151,7 +173,7 @@ namespace YouTube_Downloader
 
                 if (!Directory.Exists(path))
                 {
-                    if (MessageBox.Show(this, "Download path doesn't exists.\n\nDo you want to create it?") == DialogResult.Yes)
+                    if (MessageBox.Show(this, "Download path doesn't exists.\n\nDo you want to create it?", "Missing Folder", MessageBoxButtons.YesNo) == DialogResult.Yes)
                     {
                         Directory.CreateDirectory(path);
                     }
@@ -172,8 +194,8 @@ namespace YouTube_Downloader
 
             try
             {
-                YouTubeVideoQuality tempItem = cbQuality.SelectedItem as YouTubeVideoQuality;
-                string filename = string.Format("{0}.{1}", FormatTitle(tempItem.VideoTitle), tempItem.Extension);
+                VideoFormat tempFormat = cbQuality.SelectedItem as VideoFormat;
+                string filename = string.Format("{0}.{1}", FormatTitle(tempFormat.VideoInfo.FullTitle), tempFormat.Extension);
 
                 if (File.Exists(Path.Combine(path, filename)))
                 {
@@ -193,9 +215,9 @@ namespace YouTube_Downloader
 
                 item.SubItems.Add("");
                 item.SubItems.Add("");
-                item.SubItems.Add(FormatVideoLength(tempItem.Length));
-                item.SubItems.Add(string.Format(new FileSizeFormatProvider(), "{0:fs}", tempItem.VideoSize));
-                item.SubItems.Add(tempItem.VideoUrl);
+                item.SubItems.Add(FormatVideoLength(tempFormat.VideoInfo.Duration));
+                item.SubItems.Add(string.Format(new FileSizeFormatProvider(), "{0:fs}", tempFormat.FileSize));
+                item.SubItems.Add(tempFormat.VideoInfo.Url);
                 item.OperationComplete += downloadItem_OperationComplete;
 
                 lvQueue.Items.Add(item);
@@ -212,13 +234,13 @@ namespace YouTube_Downloader
 
                 LinkLabel ll = new LinkLabel()
                 {
-                    Text = tempItem.VideoUrl,
-                    Tag = tempItem.VideoUrl
+                    Text = tempFormat.VideoInfo.Url,
+                    Tag = tempFormat.VideoInfo.Url
                 };
                 ll.LinkClicked += linkLabel_LinkClicked;
                 lvQueue.AddEmbeddedControl(ll, 5, item.Index);
 
-                item.Download(tempItem.DownloadUrl, Path.Combine(path, filename));
+                item.Download(tempFormat.DownloadUrl, Path.Combine(path, filename));
 
                 tabControl1.SelectedTab = queueTabPage;
             }
@@ -359,6 +381,64 @@ namespace YouTube_Downloader
             }
         }
 
+        private void bwGetVideo_DoWork(object sender, DoWorkEventArgs e)
+        {
+            e.Result = YouTubeDLHelper.GetJSONInfo(bwGetVideo, (string)e.Argument);
+        }
+
+        private void bwGetVideo_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            VideoInfo videoInfo = e.Result as VideoInfo;
+
+            selectedVideo = videoInfo;
+
+            videoInfo.FileSizeUpdated += videoInfo_FileSizeUpdated;
+
+            cbQuality.DataSource = videoInfo.Formats;
+
+            foreach (VideoFormat format in cbQuality.Items)
+            {
+                /* Look for the mp4 format, because I assume it's more commonly used. */
+                if (format.Extension.Equals("mp4"))
+                {
+                    cbQuality.SelectedItem = format;
+                    break;
+                }
+            }
+
+            lTitle.Text = FormatTitle(videoInfo.FullTitle);
+
+            TimeSpan videoLength = TimeSpan.FromSeconds(videoInfo.Duration);
+            if (videoLength.Hours > 0)
+                videoThumbnail.Tag = string.Format("{0}:{1:00}:{2:00}", videoLength.Hours, videoLength.Minutes, videoLength.Seconds);
+            else
+                videoThumbnail.Tag = string.Format("{0}:{1:00}", videoLength.Minutes, videoLength.Seconds);
+            videoThumbnail.Refresh();
+
+            btnGetVideo.Enabled = txtYoutubeLink.Enabled = true;
+            cbQuality.Enabled = videoInfo.Formats.Count > 0;
+            btnDownload.Enabled = true;
+            videoThumbnail.ImageLocation = videoInfo.ThumbnailUrl;
+
+            Program.RunningWorkers.Remove(bwGetVideo);
+        }
+
+        private void videoInfo_FileSizeUpdated(object sender, FileSizeUpdateEventArgs e)
+        {
+            /* Display the updated file size if the selected item was updated. */
+            if (lFileSize.InvokeRequired)
+            {
+                lFileSize.Invoke(new UpdateFileSize(videoInfo_FileSizeUpdated), sender, e);
+            }
+            else
+            {
+                if (e.VideoFormat == cbQuality.SelectedItem)
+                {
+                    lFileSize.Text = FormatFileSize(e.VideoFormat.FileSize);
+                }
+            }
+        }
+
         private void videoThumbnail_Paint(object sender, PaintEventArgs e)
         {
             if (videoThumbnail.Tag != null)
@@ -375,41 +455,6 @@ namespace YouTube_Downloader
                 e.Graphics.DrawString(length, mFont, new SolidBrush(Color.Gainsboro), new PointF((videoThumbnail.Width - mSize.Width - 5),
                     (videoThumbnail.Height - mSize.Height - 5)));
             }
-        }
-
-        private void bwGetVideo_DoWork(object sender, DoWorkEventArgs e)
-        {
-            e.Result = YouTubeDownloader.GetYouTubeVideoUrls(e.Argument + "");
-        }
-
-        private void bwGetVideo_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            List<YouTubeVideoQuality> urls = e.Result as List<YouTubeVideoQuality>;
-
-            cbQuality.DataSource = urls;
-            foreach (YouTubeVideoQuality item in cbQuality.Items)
-            {
-                // Look for the mp4 format, because I assume it's more commonly used.
-                if (item.Extension.Equals("mp4"))
-                {
-                    cbQuality.SelectedItem = item;
-                    break;
-                }
-            }
-            lTitle.Text = FormatTitle(urls[0].VideoTitle);
-
-            TimeSpan videoLength = TimeSpan.FromSeconds(urls[0].Length);
-            if (videoLength.Hours > 0)
-                videoThumbnail.Tag = string.Format("{0}:{1:00}:{2:00}", videoLength.Hours, videoLength.Minutes, videoLength.Seconds);
-            else
-                videoThumbnail.Tag = string.Format("{0}:{1:00}", videoLength.Minutes, videoLength.Seconds);
-            videoThumbnail.Refresh();
-
-            btnGetVideo.Enabled = txtYoutubeLink.Enabled = true;
-            cbQuality.Enabled = urls.Count > 0;
-            btnDownload.Enabled = true;
-
-            Program.RunningWorkers.Remove(bwGetVideo);
         }
 
         #region mainMenu1
@@ -790,6 +835,11 @@ namespace YouTube_Downloader
             lvQueue.AddEmbeddedControl(ll, 5, item.Index);
 
             item.Crop(input, output, start, end);
+        }
+
+        private string FormatFileSize(long size)
+        {
+            return string.Format(new FileSizeFormatProvider(), "{0:fs}", size);
         }
 
         private string FormatTitle(string title)
@@ -1180,6 +1230,7 @@ namespace YouTube_Downloader
         }
 
         public event OperationEventHandler OperationComplete;
+        private FileDownloader downloader;
 
         public DownloadListViewItem(string text)
             : base(text)
@@ -1228,7 +1279,6 @@ namespace YouTube_Downloader
         #region downloader
 
         private bool processing;
-        FileDownloader downloader;
 
         private void downloader_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
