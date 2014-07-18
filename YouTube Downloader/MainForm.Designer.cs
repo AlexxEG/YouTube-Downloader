@@ -88,6 +88,18 @@
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.btnDashBrowseOutput = new System.Windows.Forms.Button();
+            this.txtDashOutput = new System.Windows.Forms.TextBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.btnDashCombine = new System.Windows.Forms.Button();
+            this.btnBrowseDashAudio = new System.Windows.Forms.Button();
+            this.txtDashAudio = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.btnBrowseDashVideo = new System.Windows.Forms.Button();
+            this.txtDashVideo = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.groupBox1.SuspendLayout();
@@ -101,6 +113,8 @@
             this.groupBox2.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.queueTabPage.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            this.groupBox6.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -397,6 +411,7 @@
             this.tabControl1.Controls.Add(this.downloadTabPage);
             this.tabControl1.Controls.Add(this.convertTabPage);
             this.tabControl1.Controls.Add(this.queueTabPage);
+            this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Location = new System.Drawing.Point(12, 12);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -418,6 +433,8 @@
             // 
             // groupBox5
             // 
+            this.groupBox5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox5.Controls.Add(this.label7);
             this.groupBox5.Location = new System.Drawing.Point(6, 194);
             this.groupBox5.Name = "groupBox5";
@@ -428,6 +445,8 @@
             // 
             // label7
             // 
+            this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.label7.Location = new System.Drawing.Point(6, 19);
             this.label7.Margin = new System.Windows.Forms.Padding(3);
             this.label7.Name = "label7";
@@ -690,6 +709,142 @@
             // 
             this.columnHeader6.Text = "Input";
             // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.groupBox6);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(596, 271);
+            this.tabPage1.TabIndex = 3;
+            this.tabPage1.Text = "DASH";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // groupBox6
+            // 
+            this.groupBox6.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox6.Controls.Add(this.btnDashBrowseOutput);
+            this.groupBox6.Controls.Add(this.txtDashOutput);
+            this.groupBox6.Controls.Add(this.label10);
+            this.groupBox6.Controls.Add(this.btnDashCombine);
+            this.groupBox6.Controls.Add(this.btnBrowseDashAudio);
+            this.groupBox6.Controls.Add(this.txtDashAudio);
+            this.groupBox6.Controls.Add(this.label9);
+            this.groupBox6.Controls.Add(this.btnBrowseDashVideo);
+            this.groupBox6.Controls.Add(this.txtDashVideo);
+            this.groupBox6.Controls.Add(this.label8);
+            this.groupBox6.Location = new System.Drawing.Point(6, 6);
+            this.groupBox6.Name = "groupBox6";
+            this.groupBox6.Size = new System.Drawing.Size(584, 167);
+            this.groupBox6.TabIndex = 0;
+            this.groupBox6.TabStop = false;
+            this.groupBox6.Text = "Combine DASH video && audio";
+            // 
+            // btnDashBrowseOutput
+            // 
+            this.btnDashBrowseOutput.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDashBrowseOutput.Location = new System.Drawing.Point(554, 70);
+            this.btnDashBrowseOutput.Name = "btnDashBrowseOutput";
+            this.btnDashBrowseOutput.Size = new System.Drawing.Size(24, 22);
+            this.btnDashBrowseOutput.TabIndex = 14;
+            this.btnDashBrowseOutput.Text = "...";
+            this.btnDashBrowseOutput.UseVisualStyleBackColor = true;
+            this.btnDashBrowseOutput.Click += new System.EventHandler(this.btnDashBrowseOutput_Click);
+            // 
+            // txtDashOutput
+            // 
+            this.txtDashOutput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtDashOutput.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.txtDashOutput.Location = new System.Drawing.Point(51, 71);
+            this.txtDashOutput.Name = "txtDashOutput";
+            this.txtDashOutput.ReadOnly = true;
+            this.txtDashOutput.Size = new System.Drawing.Size(497, 20);
+            this.txtDashOutput.TabIndex = 13;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(6, 74);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(39, 13);
+            this.label10.TabIndex = 12;
+            this.label10.Text = "Output";
+            // 
+            // btnDashCombine
+            // 
+            this.btnDashCombine.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDashCombine.Location = new System.Drawing.Point(503, 138);
+            this.btnDashCombine.Name = "btnDashCombine";
+            this.btnDashCombine.Size = new System.Drawing.Size(75, 23);
+            this.btnDashCombine.TabIndex = 11;
+            this.btnDashCombine.Text = "Combine";
+            this.btnDashCombine.UseVisualStyleBackColor = true;
+            this.btnDashCombine.Click += new System.EventHandler(this.btnDashCombine_Click);
+            // 
+            // btnBrowseDashAudio
+            // 
+            this.btnBrowseDashAudio.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBrowseDashAudio.Location = new System.Drawing.Point(554, 44);
+            this.btnBrowseDashAudio.Name = "btnBrowseDashAudio";
+            this.btnBrowseDashAudio.Size = new System.Drawing.Size(24, 22);
+            this.btnBrowseDashAudio.TabIndex = 10;
+            this.btnBrowseDashAudio.Text = "...";
+            this.btnBrowseDashAudio.UseVisualStyleBackColor = true;
+            this.btnBrowseDashAudio.Click += new System.EventHandler(this.btnBrowseDashAudio_Click);
+            // 
+            // txtDashAudio
+            // 
+            this.txtDashAudio.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtDashAudio.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.txtDashAudio.Location = new System.Drawing.Point(51, 45);
+            this.txtDashAudio.Name = "txtDashAudio";
+            this.txtDashAudio.ReadOnly = true;
+            this.txtDashAudio.Size = new System.Drawing.Size(497, 20);
+            this.txtDashAudio.TabIndex = 9;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(6, 48);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(34, 13);
+            this.label9.TabIndex = 8;
+            this.label9.Text = "Audio";
+            // 
+            // btnBrowseDashVideo
+            // 
+            this.btnBrowseDashVideo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBrowseDashVideo.Location = new System.Drawing.Point(554, 18);
+            this.btnBrowseDashVideo.Name = "btnBrowseDashVideo";
+            this.btnBrowseDashVideo.Size = new System.Drawing.Size(24, 22);
+            this.btnBrowseDashVideo.TabIndex = 7;
+            this.btnBrowseDashVideo.Text = "...";
+            this.btnBrowseDashVideo.UseVisualStyleBackColor = true;
+            this.btnBrowseDashVideo.Click += new System.EventHandler(this.btnBrowseDashVideo_Click);
+            // 
+            // txtDashVideo
+            // 
+            this.txtDashVideo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtDashVideo.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.txtDashVideo.Location = new System.Drawing.Point(51, 19);
+            this.txtDashVideo.Name = "txtDashVideo";
+            this.txtDashVideo.ReadOnly = true;
+            this.txtDashVideo.Size = new System.Drawing.Size(497, 20);
+            this.txtDashVideo.TabIndex = 1;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(6, 22);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(34, 13);
+            this.label8.TabIndex = 0;
+            this.label8.Text = "Video";
+            // 
             // openFileDialog1
             // 
             this.openFileDialog1.Filter = "MP4 files|*.mp4|MP3 files|*.mp3|All files|*.*";
@@ -727,6 +882,9 @@
             this.groupBox4.PerformLayout();
             this.queueTabPage.ResumeLayout(false);
             this.queueTabPage.PerformLayout();
+            this.tabPage1.ResumeLayout(false);
+            this.groupBox6.ResumeLayout(false);
+            this.groupBox6.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -794,6 +952,18 @@
         private System.Windows.Forms.Label lFileSize;
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.GroupBox groupBox6;
+        private System.Windows.Forms.Button btnDashCombine;
+        private System.Windows.Forms.Button btnBrowseDashAudio;
+        private System.Windows.Forms.TextBox txtDashAudio;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Button btnBrowseDashVideo;
+        private System.Windows.Forms.TextBox txtDashVideo;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Button btnDashBrowseOutput;
+        private System.Windows.Forms.TextBox txtDashOutput;
+        private System.Windows.Forms.Label label10;
     }
 }
 

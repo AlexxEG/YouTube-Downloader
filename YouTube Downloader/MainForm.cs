@@ -378,6 +378,55 @@ namespace YouTube_Downloader
             }
         }
 
+        private void btnBrowseDashVideo_Click(object sender, EventArgs e)
+        {
+            openFileDialog1.FileName = Path.GetFileName(txtDashVideo.Text);
+
+            if (openFileDialog1.ShowDialog(this) == DialogResult.OK)
+            {
+                txtDashVideo.Text = openFileDialog1.FileName;
+            }
+        }
+
+        private void btnBrowseDashAudio_Click(object sender, EventArgs e)
+        {
+            openFileDialog1.FileName = Path.GetFileName(txtDashAudio.Text);
+
+            if (openFileDialog1.ShowDialog(this) == DialogResult.OK)
+            {
+                txtDashAudio.Text = openFileDialog1.FileName;
+            }
+        }
+
+        private void btnDashBrowseOutput_Click(object sender, EventArgs e)
+        {
+            if (saveFileDialog1.ShowDialog(this) == DialogResult.OK)
+            {
+                txtDashOutput.Text = saveFileDialog1.FileName;
+            }
+        }
+
+        private void btnDashCombine_Click(object sender, EventArgs e)
+        {
+            if (File.Exists(txtDashOutput.Text))
+            {
+                var filename = Path.GetFileName(txtDashOutput.Text);
+                var result = MessageBox.Show(this, "File '" + filename + "' already exists.\n\nOverwrite?",
+                    "Overwrite", MessageBoxButtons.YesNo);
+
+                if (result == DialogResult.No)
+                    return;
+            }
+
+            FfmpegHelper.CombineDash(txtDashVideo.Text, txtDashAudio.Text, txtDashOutput.Text);
+
+            txtDashVideo.Clear();
+            txtDashAudio.Clear();
+            txtDashOutput.Clear();
+
+            MessageBox.Show(this, "Combined sucessfully.");
+        }
+
         private void bwGetVideo_DoWork(object sender, DoWorkEventArgs e)
         {
             e.Result = YouTubeDLHelper.GetJSONInfo((string)e.Argument);
