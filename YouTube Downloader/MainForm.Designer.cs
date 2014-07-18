@@ -344,7 +344,7 @@
             this.groupBox3.Size = new System.Drawing.Size(584, 102);
             this.groupBox3.TabIndex = 8;
             this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Information";
+            this.groupBox3.Text = "Video Information";
             // 
             // lFileSize
             // 
