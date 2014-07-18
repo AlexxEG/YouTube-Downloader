@@ -29,7 +29,6 @@ namespace YouTube_Downloader.Classes
             using (var writer = new StreamWriter(Path.Combine(Application.StartupPath, "youtube-dl.log"), true))
             {
                 /* Log header. */
-                writer.WriteLine();
                 writer.WriteLine("[" + DateTime.Now + "]");
                 writer.WriteLine("url: " + url);
                 writer.WriteLine("cmd: " + arguments);
@@ -50,6 +49,7 @@ namespace YouTube_Downloader.Classes
                 }
 
                 writer.WriteLine("END");
+                writer.WriteLine();
             }
 
             process.WaitForExit();
