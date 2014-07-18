@@ -314,9 +314,9 @@ namespace YouTube_Downloader
         {
             if (!FfmpegHelper.CanConvertMP3(txtInput.Text))
             {
-                MessageBox.Show(this,
-                    "Can't convert input file to MP3. File doesn't appear to have audio.",
-                    "Missing Audio", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                string text = "Can't convert input file to MP3. File doesn't appear to have audio.";
+
+                MessageBox.Show(this, text, "Missing Audio", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
