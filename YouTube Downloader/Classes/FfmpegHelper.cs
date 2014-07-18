@@ -11,15 +11,15 @@ namespace YouTube_Downloader.Classes
 
     public class FfmpegHelper
     {
-        private const string Command_Combine_Dash = " -y -i \"{0}\" -i \"{1}\" -vcodec copy -acodec copy \"{2}\"";
-        private const string Command_Convert = " -y -i \"{0}\" -vn -f mp3 -ab 192k \"{1}\"";
-        private const string Command_Crop_From = " -y -ss {0} -i \"{1}\" -acodec copy{2} \"{3}\"";
-        private const string Command_Crop_From_To = " -y -ss {0} -i \"{1}\" -to {2} -acodec copy{3} \"{4}\"";
+        private const string Cmd_Combine_Dash = " -y -i \"{0}\" -i \"{1}\" -vcodec copy -acodec copy \"{2}\"";
+        private const string Cmd_Convert = " -y -i \"{0}\" -vn -f mp3 -ab 192k \"{1}\"";
+        private const string Cmd_Crop_From = " -y -ss {0} -i \"{1}\" -acodec copy{2} \"{3}\"";
+        private const string Cmd_Crop_From_To = " -y -ss {0} -i \"{1}\" -to {2} -acodec copy{3} \"{4}\"";
 
         public static void CombineDash(string video, string audio, string output)
         {
             string[] args = new string[] { video, audio, output };
-            string arguments = string.Format(FfmpegHelper.Command_Combine_Dash, args);
+            string arguments = string.Format(FfmpegHelper.Cmd_Combine_Dash, args);
 
             Process process = FfmpegHelper.StartProcess(arguments);
 
@@ -65,7 +65,7 @@ namespace YouTube_Downloader.Classes
             }
 
             string[] args = new string[] { input, output };
-            string arguments = string.Format(FfmpegHelper.Command_Convert, args);
+            string arguments = string.Format(FfmpegHelper.Cmd_Convert, args);
 
             Process process = FfmpegHelper.StartProcess(arguments);
 
@@ -169,7 +169,7 @@ namespace YouTube_Downloader.Classes
                 output
             };
 
-            string arguments = string.Format(Command_Crop_From, args);
+            string arguments = string.Format(Cmd_Crop_From, args);
 
             Process process = FfmpegHelper.StartProcess(arguments);
 
@@ -261,7 +261,7 @@ namespace YouTube_Downloader.Classes
                 output
             };
 
-            string arguments = string.Format(Command_Crop_From_To, args);
+            string arguments = string.Format(Cmd_Crop_From_To, args);
 
             Process process = FfmpegHelper.StartProcess(arguments);
 
