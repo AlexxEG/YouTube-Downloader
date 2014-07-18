@@ -331,7 +331,8 @@ namespace YouTube_Downloader
             }
 
             if (txtInput.Text == txtOutput.Text ||
-                Path.GetExtension(txtInput.Text) == Path.GetExtension(txtOutput.Text)) // If they match, the user probably wants to crop. Right?
+                // If they match, the user probably wants to crop. Right?
+                Path.GetExtension(txtInput.Text) == Path.GetExtension(txtOutput.Text))
             {
                 this.Crop(txtInput.Text, txtOutput.Text);
             }
