@@ -57,7 +57,6 @@ namespace YouTube_Downloader
                 selectedVideo.AbortUpdateFileSizes();
 
             SettingsEx.WindowStates[this.Name].SaveForm(this);
-
             SettingsEx.SaveToDirectories.Clear();
 
             string[] paths = new string[cbSaveTo.Items.Count];
@@ -65,9 +64,7 @@ namespace YouTube_Downloader
 
             SettingsEx.SaveToDirectories.AddRange(paths);
             SettingsEx.SelectedDirectory = cbSaveTo.SelectedIndex;
-
             SettingsEx.AutoConvert = chbAutoConvert.Checked;
-
             SettingsEx.Save();
 
             Application.Exit();
