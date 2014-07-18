@@ -11,9 +11,43 @@ namespace YouTube_Downloader.Classes
 
     public class FfmpegHelper
     {
+        private const string Command_Combine_Dash = " -y -i \"{0}\" -i \"{1}\" -vcodec copy -acodec copy \"{2}\"";
         private const string Command_Convert = " -y -i \"{0}\" -vn -f mp3 -ab 192k \"{1}\"";
         private const string Command_Crop_From = " -y -ss {0} -i \"{1}\" -acodec copy{2} \"{3}\"";
         private const string Command_Crop_From_To = " -y -ss {0} -i \"{1}\" -to {2} -acodec copy{3} \"{4}\"";
+
+        public static void CombineDash(string video, string audio, string output)
+        {
+            string[] args = new string[] { video, audio, output };
+            string arguments = string.Format(FfmpegHelper.Command_Combine_Dash, args);
+
+            Process process = FfmpegHelper.StartProcess(arguments);
+
+            string line = "";
+
+            /* Write output to log. */
+            using (var writer = new StreamWriter(Path.Combine(Application.StartupPath, "ffmpeg.log"), true))
+            {
+                /* Log header. */
+                writer.WriteLine("[" + DateTime.Now + "]");
+                writer.WriteLine("cmd: " + arguments);
+                writer.WriteLine("-");
+                writer.WriteLine("OUTPUT");
+
+                while ((line = process.StandardError.ReadLine()) != null)
+                {
+                    writer.WriteLine(line);
+                }
+
+                writer.WriteLine("END");
+                writer.WriteLine();
+            }
+
+            process.WaitForExit();
+
+            if (!process.HasExited)
+                process.Kill();
+        }
 
         public static void Convert(BackgroundWorker bw, string input, string output)
         {
