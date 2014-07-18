@@ -15,6 +15,50 @@ namespace YouTube_Downloader.Classes
         private const string Cmd_Convert = " -y -i \"{0}\" -vn -f mp3 -ab 192k \"{1}\"";
         private const string Cmd_Crop_From = " -y -ss {0} -i \"{1}\" -acodec copy{2} \"{3}\"";
         private const string Cmd_Crop_From_To = " -y -ss {0} -i \"{1}\" -to {2} -acodec copy{3} \"{4}\"";
+        private const string Cmd_Get_File_Info = " -i \"{0}\"";
+
+        public static bool CanConvertMP3(string file)
+        {
+            /* ToDo: Check for audio stream. */
+            string arguments = string.Format(Cmd_Get_File_Info, file);
+
+            Process process = StartProcess(arguments);
+
+            string line = "";
+            bool hasAudioStream = false;
+
+            /* Write output to log. */
+            using (var writer = new StreamWriter(Path.Combine(Application.StartupPath, "ffmpeg.log"), true))
+            {
+                /* Log header. */
+                writer.WriteLine("[" + DateTime.Now + "]");
+                writer.WriteLine("cmd: " + arguments);
+                writer.WriteLine("-");
+                writer.WriteLine("OUTPUT");
+
+                while ((line = process.StandardError.ReadLine()) != null)
+                {
+                    writer.WriteLine(line);
+                    line = line.Trim();
+
+                    if (line.StartsWith("Stream #") && line.Contains("Audio"))
+                    {
+                        /* File has audio stream. */
+                        hasAudioStream = true;
+                    }
+                }
+
+                writer.WriteLine("END");
+                writer.WriteLine();
+            }
+
+            process.WaitForExit();
+
+            if (!process.HasExited)
+                process.Kill();
+
+            return hasAudioStream;
+        }
 
         public static void CombineDash(string video, string audio, string output)
         {

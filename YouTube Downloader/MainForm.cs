@@ -312,6 +312,14 @@ namespace YouTube_Downloader
 
         private void btnConvert_Click(object sender, EventArgs e)
         {
+            if (!FfmpegHelper.CanConvertMP3(txtInput.Text))
+            {
+                MessageBox.Show(this,
+                    "Can't convert input file to MP3. File doesn't appear to have audio.",
+                    "Missing Audio", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             if (File.Exists(txtOutput.Text))
             {
                 var filename = Path.GetFileName(txtOutput.Text);
