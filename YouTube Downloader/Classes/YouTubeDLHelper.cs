@@ -33,6 +33,7 @@ namespace YouTube_Downloader.Classes
                 writer.WriteLine("[" + DateTime.Now + "]");
                 writer.WriteLine("url: " + url);
                 writer.WriteLine("cmd: " + arguments);
+                writer.WriteLine("-");
                 writer.WriteLine("OUTPUT");
 
                 while ((line = process.StandardOutput.ReadLine()) != null)
