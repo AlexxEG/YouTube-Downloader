@@ -41,47 +41,62 @@ namespace YouTube_Downloader.Classes
             double milliseconds = 0;
             string line = "";
 
-            while ((line = process.StandardError.ReadLine()) != null)
+            /* Write output to log. */
+            using (var writer = new StreamWriter(Path.Combine(Application.StartupPath, "ffmpeg.log"), true))
             {
-                // 'bw' is null, don't report any progress
-                if (bw != null && bw.WorkerReportsProgress)
+                /* Log header. */
+                writer.WriteLine("[" + DateTime.Now + "]");
+                writer.WriteLine("cmd: " + arguments);
+                writer.WriteLine("-");
+                writer.WriteLine("OUTPUT");
+
+                while ((line = process.StandardError.ReadLine()) != null)
                 {
-                    line = line.Trim();
+                    writer.WriteLine(line);
 
-                    if (line.StartsWith("Duration: "))
+                    // 'bw' is null, don't report any progress
+                    if (bw != null && bw.WorkerReportsProgress)
                     {
-                        int start = "Duration: ".Length;
-                        int length = "00:00:00.00".Length;
+                        line = line.Trim();
 
-                        string time = line.Substring(start, length);
+                        if (line.StartsWith("Duration: "))
+                        {
+                            int start = "Duration: ".Length;
+                            int length = "00:00:00.00".Length;
 
-                        milliseconds = TimeSpan.Parse(time).TotalMilliseconds;
-                    }
-                    else if (line == "Press [q] to stop, [?] for help")
-                    {
-                        started = true;
+                            string time = line.Substring(start, length);
 
-                        bw.ReportProgress(0);
-                    }
-                    else if (started && line.StartsWith("size="))
-                    {
-                        int start = line.IndexOf("time=") + 5;
-                        int length = "00:00:00.00".Length;
+                            milliseconds = TimeSpan.Parse(time).TotalMilliseconds;
+                        }
+                        else if (line == "Press [q] to stop, [?] for help")
+                        {
+                            started = true;
 
-                        string time = line.Substring(start, length);
+                            bw.ReportProgress(0);
+                        }
+                        else if (started && line.StartsWith("size="))
+                        {
+                            int start = line.IndexOf("time=") + 5;
+                            int length = "00:00:00.00".Length;
 
-                        double currentMilli = TimeSpan.Parse(time).TotalMilliseconds;
-                        double percentage = (currentMilli / milliseconds) * 100;
+                            string time = line.Substring(start, length);
 
-                        bw.ReportProgress(System.Convert.ToInt32(percentage));
-                    }
-                    else if (started && line == string.Empty)
-                    {
-                        started = false;
+                            double currentMilli = TimeSpan.Parse(time).TotalMilliseconds;
+                            double percentage = (currentMilli / milliseconds) * 100;
 
-                        bw.ReportProgress(100);
+                            bw.ReportProgress(System.Convert.ToInt32(percentage));
+                        }
+                        else if (started && line == string.Empty)
+                        {
+                            started = false;
+
+                            bw.ReportProgress(100);
+                        }
                     }
                 }
+
+                writer.WriteLine("END");
+                writer.WriteLine();
             }
 
             process.WaitForExit();
