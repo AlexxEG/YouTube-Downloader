@@ -49,6 +49,7 @@
     </Compile>
     <Compile Include="Classes\FfmpegHelper.cs" />
     <Compile Include="Classes\FileSizeFormatProvider.cs" />
+    <Compile Include="Classes\FileSizeUpdateEventArgs.cs" />
     <Compile Include="Classes\Helper.cs" />
     <Compile Include="Classes\OpenFolderDialog.cs" />
     <Compile Include="Classes\SettingsEx.cs" />

@@ -1,11 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Net;
-using System.Threading;
 using System.Windows.Forms;
 
 namespace YouTube_Downloader.Classes
@@ -117,18 +113,6 @@ namespace YouTube_Downloader.Classes
             writer.WriteLine("cmd: " + arguments);
             writer.WriteLine("-");
             writer.WriteLine("OUTPUT");
-        }
-    }
-
-    public delegate void FileSizeUpdateHandler(object sender, FileSizeUpdateEventArgs e);
-
-    public class FileSizeUpdateEventArgs : EventArgs
-    {
-        public VideoFormat VideoFormat { get; set; }
-
-        public FileSizeUpdateEventArgs(VideoFormat videoFormat)
-        {
-            this.VideoFormat = videoFormat;
         }
     }
 }
