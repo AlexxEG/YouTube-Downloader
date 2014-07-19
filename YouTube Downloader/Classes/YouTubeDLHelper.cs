@@ -14,6 +14,11 @@ namespace YouTube_Downloader.Classes
     {
         private const string Cmd_JSON_Info = " -o \"{0}\\%(title)s\" --no-playlist --skip-download --write-info-json \"{1}\"";
 
+        private static StreamWriter CreateLogWriter()
+        {
+            return new StreamWriter(Path.Combine(Application.StartupPath, "youtube-dl.log"), true);
+        }
+
         public static VideoInfo GetJSONInfo(string url)
         {
             string json_dir = Path.Combine(Application.StartupPath, "json");
@@ -26,14 +31,9 @@ namespace YouTube_Downloader.Classes
             string line = "";
 
             /* Write output to log. */
-            using (var writer = new StreamWriter(Path.Combine(Application.StartupPath, "youtube-dl.log"), true))
+            using (var writer = CreateLogWriter())
             {
-                /* Log header. */
-                writer.WriteLine("[" + DateTime.Now + "]");
-                writer.WriteLine("url: " + url);
-                writer.WriteLine("cmd: " + arguments);
-                writer.WriteLine("-");
-                writer.WriteLine("OUTPUT");
+                WriteHeader(writer, arguments, url);
 
                 while ((line = process.StandardOutput.ReadLine()) != null)
                 {
@@ -48,8 +48,7 @@ namespace YouTube_Downloader.Classes
                     }
                 }
 
-                writer.WriteLine("END");
-                writer.WriteLine();
+                WriteEnd(writer);
             }
 
             process.WaitForExit();
@@ -102,6 +101,22 @@ namespace YouTube_Downloader.Classes
             process.Start();
 
             return process;
+        }
+
+        private static void WriteEnd(StreamWriter writer)
+        {
+            writer.WriteLine("END");
+            writer.WriteLine();
+        }
+
+        private static void WriteHeader(StreamWriter writer, string arguments, string url)
+        {
+            /* Log header. */
+            writer.WriteLine("[" + DateTime.Now + "]");
+            writer.WriteLine("url: " + url);
+            writer.WriteLine("cmd: " + arguments);
+            writer.WriteLine("-");
+            writer.WriteLine("OUTPUT");
         }
     }
 

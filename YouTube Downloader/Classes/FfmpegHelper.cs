@@ -27,13 +27,9 @@ namespace YouTube_Downloader.Classes
             bool hasAudioStream = false;
 
             /* Write output to log. */
-            using (var writer = new StreamWriter(Path.Combine(Application.StartupPath, "ffmpeg.log"), true))
+            using (var writer = CreateLogWriter())
             {
-                /* Log header. */
-                writer.WriteLine("[" + DateTime.Now + "]");
-                writer.WriteLine("cmd: " + arguments);
-                writer.WriteLine("-");
-                writer.WriteLine("OUTPUT");
+                WriteHeader(writer, arguments);
 
                 while ((line = process.StandardError.ReadLine()) != null)
                 {
@@ -47,8 +43,7 @@ namespace YouTube_Downloader.Classes
                     }
                 }
 
-                writer.WriteLine("END");
-                writer.WriteLine();
+                WriteEnd(writer);
             }
 
             process.WaitForExit();
@@ -57,6 +52,11 @@ namespace YouTube_Downloader.Classes
                 process.Kill();
 
             return hasAudioStream;
+        }
+
+        private static StreamWriter CreateLogWriter()
+        {
+            return new StreamWriter(Path.Combine(Application.StartupPath, "ffmpeg.log"), true);
         }
 
         public static void CombineDash(string video, string audio, string output)
@@ -69,21 +69,16 @@ namespace YouTube_Downloader.Classes
             string line = "";
 
             /* Write output to log. */
-            using (var writer = new StreamWriter(Path.Combine(Application.StartupPath, "ffmpeg.log"), true))
+            using (var writer = CreateLogWriter())
             {
-                /* Log header. */
-                writer.WriteLine("[" + DateTime.Now + "]");
-                writer.WriteLine("cmd: " + arguments);
-                writer.WriteLine("-");
-                writer.WriteLine("OUTPUT");
+                WriteHeader(writer, arguments);
 
                 while ((line = process.StandardError.ReadLine()) != null)
                 {
                     writer.WriteLine(line);
                 }
 
-                writer.WriteLine("END");
-                writer.WriteLine();
+                WriteEnd(writer);
             }
 
             process.WaitForExit();
@@ -119,13 +114,9 @@ namespace YouTube_Downloader.Classes
             string line = "";
 
             /* Write output to log. */
-            using (var writer = new StreamWriter(Path.Combine(Application.StartupPath, "ffmpeg.log"), true))
+            using (var writer = CreateLogWriter())
             {
-                /* Log header. */
-                writer.WriteLine("[" + DateTime.Now + "]");
-                writer.WriteLine("cmd: " + arguments);
-                writer.WriteLine("-");
-                writer.WriteLine("OUTPUT");
+                WriteHeader(writer, arguments);
 
                 while ((line = process.StandardError.ReadLine()) != null)
                 {
@@ -172,8 +163,7 @@ namespace YouTube_Downloader.Classes
                     }
                 }
 
-                writer.WriteLine("END");
-                writer.WriteLine();
+                WriteEnd(writer);
             }
 
             process.WaitForExit();
@@ -453,6 +443,21 @@ namespace YouTube_Downloader.Classes
             process.Start();
 
             return process;
+        }
+
+        private static void WriteEnd(StreamWriter writer)
+        {
+            writer.WriteLine("END");
+            writer.WriteLine();
+        }
+
+        private static void WriteHeader(StreamWriter writer, string arguments)
+        {
+            /* Log header. */
+            writer.WriteLine("[" + DateTime.Now + "]");
+            writer.WriteLine("cmd: " + arguments);
+            writer.WriteLine("-");
+            writer.WriteLine("OUTPUT");
         }
     }
 }
