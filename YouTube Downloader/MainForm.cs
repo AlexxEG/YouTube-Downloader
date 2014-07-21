@@ -419,6 +419,22 @@ namespace YouTube_Downloader
 
         private void btnDashCombine_Click(object sender, EventArgs e)
         {
+            if (txtDashAudio.Text.ToLower() == txtDashVideo.Text.ToLower())
+            {
+                string text = "Audio & video is the same file.";
+
+                MessageBox.Show(this, text, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (!File.Exists(txtDashAudio.Text) || !File.Exists(txtDashVideo.Text))
+            {
+                string text = "One or more files doesn't exist anymore.";
+
+                MessageBox.Show(this, text, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             if (File.Exists(txtDashOutput.Text))
             {
                 string filename = Path.GetFileName(txtDashOutput.Text);
@@ -436,7 +452,7 @@ namespace YouTube_Downloader
             txtDashAudio.Clear();
             txtDashOutput.Clear();
 
-            MessageBox.Show(this, "Combined sucessfully.");
+            MessageBox.Show(this, "Combined sucessfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void bwGetVideo_DoWork(object sender, DoWorkEventArgs e)
