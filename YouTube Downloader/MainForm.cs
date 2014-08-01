@@ -144,7 +144,11 @@ namespace YouTube_Downloader
             /* Display file size. */
             VideoFormat format = (VideoFormat)cbQuality.SelectedItem;
 
-            if (format.FileSize == 0)
+            if (format == null)
+            {
+                lFileSize.Text = "";
+            }
+            else if (format.FileSize == 0)
             {
                 lFileSize.Text = "Getting file size...";
             }
