@@ -17,6 +17,62 @@ namespace YouTube_Downloader.Classes
         private const string Cmd_Crop_From_To = " -y -ss {0} -i \"{1}\" -to {2} -acodec copy{3} \"{4}\"";
         private const string Cmd_Get_File_Info = " -i \"{0}\"";
 
+        public static List<string> CanCombine(string audio, string video)
+        {
+            List<string> errors = new List<string>();
+            string argsAudio = string.Format(Cmd_Get_File_Info, audio);
+            string argsVideo = string.Format(Cmd_Get_File_Info, video);
+
+            Process process;
+
+            using (var writer = CreateLogWriter())
+            {
+                WriteHeader(writer, argsAudio);
+
+                using (process = StartProcess(argsAudio))
+                {
+                    string line = "";
+                    bool hasAudio = false;
+
+                    while ((line = process.StandardError.ReadLine()) != null)
+                    {
+                        writer.WriteLine(line);
+                        line = line.Trim();
+
+                        if (line.StartsWith("major_brand"))
+                        {
+                            string value = line.Split(':')[1].Trim();
+
+                            if (!value.Contains("dash"))
+                            {
+                                errors.Add("Audio doesn't appear to be a DASH file. Non-critical.");
+                            }
+                        }
+                        else if (line.StartsWith("Stream #"))
+                        {
+                            if (line.Contains("Audio"))
+                            {
+                                hasAudio = true;
+                            }
+                            else if (line.Contains("Video"))
+                            {
+                                errors.Add("Audio file also has a video stream.");
+                            }
+                        }
+                    }
+
+                    if (!hasAudio)
+                    {
+                        errors.Add("Audio file doesn't audio.");
+                    }
+                }
+
+                WriteEnd(writer);
+            }
+
+            return errors;
+        }
+
         public static bool CanConvertMP3(string file)
         {
             string arguments = string.Format(Cmd_Get_File_Info, file);
@@ -438,7 +494,7 @@ namespace YouTube_Downloader.Classes
             process.StartInfo.RedirectStandardError = true;
             process.StartInfo.CreateNoWindow = true;
             process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            process.StartInfo.FileName = Application.StartupPath + "\\ffmpeg";
+            process.StartInfo.FileName = Application.StartupPath + "\\ffmpeg.exe";
             process.StartInfo.Arguments = arguments;
             process.Start();
 

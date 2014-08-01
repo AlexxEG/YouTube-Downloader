@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using YouTube_Downloader.Classes;
@@ -437,6 +438,29 @@ namespace YouTube_Downloader
 
                 MessageBox.Show(this, text, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
+            }
+
+            var errors = FfmpegHelper.CanCombine(txtDashAudio.Text, txtDashVideo.Text);
+
+            if (errors.Count > 0)
+            {
+                StringBuilder sb = new StringBuilder();
+
+                sb.AppendLine("There are some errors, though they may be ignored depending on the severity.");
+                sb.AppendLine();
+
+                foreach (string error in errors)
+                {
+                    sb.AppendFormat(" - {0}" + Environment.NewLine, error);
+                }
+
+                sb.AppendLine();
+                sb.Append("Do you want to continue?");
+
+                if (MessageBox.Show(this, sb.ToString(), "", MessageBoxButtons.YesNo) == DialogResult.No)
+                {
+                    return;
+                }
             }
 
             if (File.Exists(txtDashOutput.Text))
