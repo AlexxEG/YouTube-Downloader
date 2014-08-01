@@ -4,6 +4,11 @@ namespace YouTube_Downloader.Classes
 {
     public class Helper
     {
+        public static string FormatFileSize(long size)
+        {
+            return string.Format(new FileSizeFormatProvider(), "{0:fs}", size);
+        }
+
         public static bool IsValidUrl(string url)
         {
             if (!url.ToLower().Contains("www.youtube.com/watch?"))

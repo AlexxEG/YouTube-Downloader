@@ -150,7 +150,7 @@ namespace YouTube_Downloader
             }
             else
             {
-                lFileSize.Text = FormatFileSize((cbQuality.SelectedItem as VideoFormat).FileSize);
+                lFileSize.Text = Helper.FormatFileSize((cbQuality.SelectedItem as VideoFormat).FileSize);
             }
         }
 
@@ -508,7 +508,7 @@ namespace YouTube_Downloader
             {
                 if (e.VideoFormat == cbQuality.SelectedItem)
                 {
-                    lFileSize.Text = FormatFileSize(e.VideoFormat.FileSize);
+                    lFileSize.Text = Helper.FormatFileSize(e.VideoFormat.FileSize);
                 }
             }
         }
@@ -909,11 +909,6 @@ namespace YouTube_Downloader
             lvQueue.AddEmbeddedControl(ll, 5, item.Index);
 
             item.Crop(input, output, start, end);
-        }
-
-        private string FormatFileSize(long size)
-        {
-            return string.Format(new FileSizeFormatProvider(), "{0:fs}", size);
         }
 
         private string FormatTitle(string title)
