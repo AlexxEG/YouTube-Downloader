@@ -35,6 +35,9 @@
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="HtmlAgilityPack">
+      <HintPath>.\HtmlAgilityPack.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\_Codes &amp; DLLs\Json60r3\Bin\Net45\Newtonsoft.Json.dll</HintPath>
@@ -74,6 +77,12 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UpdaterForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UpdaterForm.Designer.cs">
+      <DependentUpon>UpdaterForm.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -87,6 +96,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="UpdaterForm.resx">
+      <DependentUpon>UpdaterForm.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

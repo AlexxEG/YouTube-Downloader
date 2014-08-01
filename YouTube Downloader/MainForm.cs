@@ -539,6 +539,7 @@ namespace YouTube_Downloader
 
         MainMenu mainMenu1;
         MenuItem fileMenuItem;
+        MenuItem checkForUpdatesMenuItem;
         MenuItem exitMenuItem;
         MenuItem toolsMenuItem;
         MenuItem optionsMenuItem;
@@ -547,6 +548,8 @@ namespace YouTube_Downloader
         {
             MenuItem[] fileMenuItems = new MenuItem[]
             {
+                checkForUpdatesMenuItem = new MenuItem("&Check for updates...", checkForUpdatesMenuItem_Click),
+                new MenuItem("-"),
                 exitMenuItem = new MenuItem("&Exit", exitMenuItem_Click, Shortcut.CtrlQ)
             };
 
@@ -566,6 +569,11 @@ namespace YouTube_Downloader
             mainMenu1.MenuItems.Add(toolsMenuItem);
 
             this.Menu = mainMenu1;
+        }
+
+        private void checkForUpdatesMenuItem_Click(object sender, EventArgs e)
+        {
+            new UpdaterForm().ShowDialog(this);
         }
 
         private void exitMenuItem_Click(object sender, EventArgs e)
