@@ -19,4 +19,5 @@ A portable version can be found in [Releases](https://github.com/AlexxEG/YouTube
 ### Credits
 
 Thanks to Open Icon Library for the icon background. http://openiconlibrary.sourceforge.net/
+
 Thanks to VisualPharm for the download part of the icon. http://www.visualpharm.com/
