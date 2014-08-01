@@ -52,6 +52,9 @@ namespace YouTube_Downloader
             };
 
             string file = Path.Combine(Application.StartupPath, "ffmpeg.exe");
+            string dest = FFmpegDownloadUrl.Substring(FFmpegDownloadUrl.LastIndexOf('/') + 1);
+
+            dest = Path.Combine(Application.StartupPath, dest);
 
             client.DownloadProgressChanged += delegate(object sender, DownloadProgressChangedEventArgs e)
             {
@@ -59,6 +62,21 @@ namespace YouTube_Downloader
             };
             client.DownloadFileCompleted += delegate(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
             {
+                /* Extract ffmpeg.exe from downloaded archive. */
+                SevenZip.SevenZipExtractor.SetLibraryPath(Path.Combine(Application.StartupPath, "7za.dll"));
+
+                using (var extractor = new SevenZip.SevenZipExtractor(dest))
+                {
+                    using (var stream = File.Open(Path.Combine(Application.StartupPath, "ffmpeg.exe"), FileMode.Create))
+                    {
+                        string ffmpeg = Path.Combine(Path.GetFileNameWithoutExtension(dest), "bin", "ffmpeg.exe");
+
+                        extractor.ExtractFile(ffmpeg, stream);
+                    }
+                }
+
+                File.Delete(dest);
+
                 /* Set write time to online version to track current version. */
                 File.SetLastWriteTime(file, FFmpegOnlineVersion);
 
@@ -66,7 +84,8 @@ namespace YouTube_Downloader
                 this.SetControlText(lFFmpegInstalled, lFFmpegOnline.Text);
                 this.SetControlVisible(lFFmpegUpdateAvailable, false);
             };
-            client.DownloadFileAsync(new Uri(FFmpegDownloadUrl), file);
+
+            client.DownloadFileAsync(new Uri(FFmpegDownloadUrl), dest);
         }
 
         private void DownloadYoutubeDl()
@@ -91,6 +110,7 @@ namespace YouTube_Downloader
                 this.SetControlText(lYoutubeDlInstalled, lYoutubeDlOnline.Text);
                 this.SetControlVisible(lYoutubeDlUpdateAvailable, false);
             };
+
             client.DownloadFileAsync(new Uri(YouTubeDlDownloadUrl), file);
         }
 
