@@ -19,7 +19,44 @@ namespace YouTube_Downloader.Classes
 
         public static string FFmpegPath = Path.Combine(Application.StartupPath, "externals", "ffmpeg.exe");
 
-        public static List<string> CanCombine(string audio, string video)
+        public static bool CanConvertMP3(string file)
+        {
+            string arguments = string.Format(Cmd_Get_File_Info, file);
+
+            Process process = StartProcess(arguments);
+
+            string line = "";
+            bool hasAudioStream = false;
+
+            /* Write output to log. */
+            using (var writer = CreateLogWriter())
+            {
+                WriteHeader(writer, arguments);
+
+                while ((line = process.StandardError.ReadLine()) != null)
+                {
+                    writer.WriteLine(line);
+                    line = line.Trim();
+
+                    if (line.StartsWith("Stream #") && line.Contains("Audio"))
+                    {
+                        /* File has audio stream. */
+                        hasAudioStream = true;
+                    }
+                }
+
+                WriteEnd(writer);
+            }
+
+            process.WaitForExit();
+
+            if (!process.HasExited)
+                process.Kill();
+
+            return hasAudioStream;
+        }
+
+        public static List<string> CheckCombine(string audio, string video)
         {
             List<string> errors = new List<string>();
             string argsAudio = string.Format(Cmd_Get_File_Info, audio);
@@ -73,43 +110,6 @@ namespace YouTube_Downloader.Classes
             }
 
             return errors;
-        }
-
-        public static bool CanConvertMP3(string file)
-        {
-            string arguments = string.Format(Cmd_Get_File_Info, file);
-
-            Process process = StartProcess(arguments);
-
-            string line = "";
-            bool hasAudioStream = false;
-
-            /* Write output to log. */
-            using (var writer = CreateLogWriter())
-            {
-                WriteHeader(writer, arguments);
-
-                while ((line = process.StandardError.ReadLine()) != null)
-                {
-                    writer.WriteLine(line);
-                    line = line.Trim();
-
-                    if (line.StartsWith("Stream #") && line.Contains("Audio"))
-                    {
-                        /* File has audio stream. */
-                        hasAudioStream = true;
-                    }
-                }
-
-                WriteEnd(writer);
-            }
-
-            process.WaitForExit();
-
-            if (!process.HasExited)
-                process.Kill();
-
-            return hasAudioStream;
         }
 
         private static StreamWriter CreateLogWriter()

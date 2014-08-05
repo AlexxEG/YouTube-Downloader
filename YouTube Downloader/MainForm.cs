@@ -444,7 +444,7 @@ namespace YouTube_Downloader
                 return;
             }
 
-            var errors = FfmpegHelper.CanCombine(txtDashAudio.Text, txtDashVideo.Text);
+            var errors = FfmpegHelper.CheckCombine(txtDashAudio.Text, txtDashVideo.Text);
 
             if (errors.Count > 0)
             {
