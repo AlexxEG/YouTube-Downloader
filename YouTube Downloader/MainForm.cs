@@ -81,7 +81,11 @@ namespace YouTube_Downloader
             SettingsEx.WindowStates[this.Name].RestoreForm(this);
 
             cbSaveTo.Items.AddRange(SettingsEx.SaveToDirectories.ToArray());
-            cbSaveTo.SelectedIndex = SettingsEx.SelectedDirectory;
+
+            if (cbSaveTo.Items.Count > 0)
+            {
+                cbSaveTo.SelectedIndex = SettingsEx.SelectedDirectory;
+            }
 
             chbAutoConvert.Checked = SettingsEx.AutoConvert;
         }
