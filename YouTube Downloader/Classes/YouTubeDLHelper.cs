@@ -61,7 +61,10 @@ namespace YouTube_Downloader.Classes
 
             info.Duration = long.Parse(jObject["duration"].ToString());
             info.FullTitle = jObject["fulltitle"].ToString();
-            info.ThumbnailUrl = jObject["thumbnail"].ToString();
+
+            string displayId = jObject["display_id"].ToString();
+
+            info.ThumbnailUrl = string.Format("https://i.ytimg.com/vi/{0}/mqdefault.jpg", displayId);
             info.Url = url;
 
             JArray array = (JArray)jObject["formats"];
