@@ -134,7 +134,7 @@ namespace YouTube_Downloader
             else
             {
                 lTitle.Text = "-";
-                cbQuality.DataSource = null;
+                cbQuality.Items.Clear();
                 btnGetVideo.Enabled = txtYoutubeLink.Enabled = btnDownload.Enabled = cbQuality.Enabled = false;
                 videoThumbnail.Tag = null;
 
@@ -500,17 +500,15 @@ namespace YouTube_Downloader
 
             videoInfo.FileSizeUpdated += videoInfo_FileSizeUpdated;
 
-            cbQuality.DataSource = videoInfo.Formats;
-
-            foreach (VideoFormat format in cbQuality.Items)
+            foreach (VideoFormat format in videoInfo.Formats)
             {
-                /* Look for the mp4 format, because I assume it's more commonly used. */
-                if (format.Extension.Equals("mp4"))
-                {
-                    cbQuality.SelectedItem = format;
-                    break;
-                }
+                if (format.Extension.Contains("webm"))
+                    continue;
+
+                cbQuality.Items.Add(format);
             }
+
+            cbQuality.SelectedIndex = cbQuality.Items.Count - 1;
 
             lTitle.Text = FormatTitle(videoInfo.FullTitle);
 
