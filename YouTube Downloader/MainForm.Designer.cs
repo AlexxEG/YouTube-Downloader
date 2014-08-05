@@ -81,6 +81,13 @@
             this.label5 = new System.Windows.Forms.Label();
             this.queueTabPage = new System.Windows.Forms.TabPage();
             this.chbAutoConvert = new System.Windows.Forms.CheckBox();
+            this.lvQueue = new ListViewEmbeddedControls.ListViewEx();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.label11 = new System.Windows.Forms.Label();
@@ -96,13 +103,6 @@
             this.label8 = new System.Windows.Forms.Label();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.lvQueue = new ListViewEmbeddedControls.ListViewEx();
-            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -390,7 +390,7 @@
             this.videoThumbnail.Location = new System.Drawing.Point(6, 22);
             this.videoThumbnail.Name = "videoThumbnail";
             this.videoThumbnail.Size = new System.Drawing.Size(120, 68);
-            this.videoThumbnail.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.videoThumbnail.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.videoThumbnail.TabIndex = 4;
             this.videoThumbnail.TabStop = false;
             this.videoThumbnail.Paint += new System.Windows.Forms.PaintEventHandler(this.videoThumbnail_Paint);
@@ -461,7 +461,7 @@
             this.convertTabPage.Location = new System.Drawing.Point(4, 22);
             this.convertTabPage.Name = "convertTabPage";
             this.convertTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.convertTabPage.Size = new System.Drawing.Size(596, 281);
+            this.convertTabPage.Size = new System.Drawing.Size(596, 291);
             this.convertTabPage.TabIndex = 2;
             this.convertTabPage.Text = "Convert";
             this.convertTabPage.UseVisualStyleBackColor = true;
@@ -648,7 +648,7 @@
             this.queueTabPage.Location = new System.Drawing.Point(4, 22);
             this.queueTabPage.Name = "queueTabPage";
             this.queueTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.queueTabPage.Size = new System.Drawing.Size(596, 281);
+            this.queueTabPage.Size = new System.Drawing.Size(596, 291);
             this.queueTabPage.TabIndex = 1;
             this.queueTabPage.Text = "Queue";
             this.queueTabPage.UseVisualStyleBackColor = true;
@@ -664,13 +664,57 @@
             this.chbAutoConvert.Text = "Convert to MP3 automatically";
             this.chbAutoConvert.UseVisualStyleBackColor = true;
             // 
+            // lvQueue
+            // 
+            this.lvQueue.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lvQueue.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader2,
+            this.columnHeader3,
+            this.columnHeader4,
+            this.columnHeader5,
+            this.columnHeader6});
+            this.lvQueue.FullRowSelect = true;
+            this.lvQueue.Location = new System.Drawing.Point(6, 6);
+            this.lvQueue.Name = "lvQueue";
+            this.lvQueue.Size = new System.Drawing.Size(584, 246);
+            this.lvQueue.TabIndex = 2;
+            this.lvQueue.UseCompatibleStateImageBehavior = false;
+            this.lvQueue.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "Video";
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "Progress";
+            // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "Speed";
+            // 
+            // columnHeader4
+            // 
+            this.columnHeader4.Text = "Length";
+            // 
+            // columnHeader5
+            // 
+            this.columnHeader5.Text = "Size";
+            // 
+            // columnHeader6
+            // 
+            this.columnHeader6.Text = "Input";
+            // 
             // tabPage1
             // 
             this.tabPage1.Controls.Add(this.groupBox6);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(596, 281);
+            this.tabPage1.Size = new System.Drawing.Size(596, 291);
             this.tabPage1.TabIndex = 3;
             this.tabPage1.Text = "DASH";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -818,50 +862,6 @@
             // saveFileDialog1
             // 
             this.saveFileDialog1.Filter = "MP3 files|*.mp3|MP4 files|*.mp4|All files|*.*";
-            // 
-            // lvQueue
-            // 
-            this.lvQueue.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lvQueue.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader2,
-            this.columnHeader3,
-            this.columnHeader4,
-            this.columnHeader5,
-            this.columnHeader6});
-            this.lvQueue.FullRowSelect = true;
-            this.lvQueue.Location = new System.Drawing.Point(6, 6);
-            this.lvQueue.Name = "lvQueue";
-            this.lvQueue.Size = new System.Drawing.Size(584, 246);
-            this.lvQueue.TabIndex = 2;
-            this.lvQueue.UseCompatibleStateImageBehavior = false;
-            this.lvQueue.View = System.Windows.Forms.View.Details;
-            // 
-            // columnHeader1
-            // 
-            this.columnHeader1.Text = "Video";
-            // 
-            // columnHeader2
-            // 
-            this.columnHeader2.Text = "Progress";
-            // 
-            // columnHeader3
-            // 
-            this.columnHeader3.Text = "Speed";
-            // 
-            // columnHeader4
-            // 
-            this.columnHeader4.Text = "Length";
-            // 
-            // columnHeader5
-            // 
-            this.columnHeader5.Text = "Size";
-            // 
-            // columnHeader6
-            // 
-            this.columnHeader6.Text = "Input";
             // 
             // MainForm
             // 
