@@ -58,7 +58,9 @@ namespace YouTube_Downloader
 
             client.DownloadProgressChanged += delegate(object sender, DownloadProgressChangedEventArgs e)
             {
-                this.SetControlText(lFFmpegUpdateAvailable, string.Format("{0}/{1}", Helper.FormatFileSize(e.BytesReceived), Helper.FormatFileSize(e.TotalBytesToReceive)));
+                string progress = string.Format("{0}/{1}", Helper.FormatFileSize(e.BytesReceived), Helper.FormatFileSize(e.TotalBytesToReceive));
+
+                this.SetControlText(lFFmpegUpdateAvailable, progress);
             };
             client.DownloadFileCompleted += delegate(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
             {
@@ -67,11 +69,14 @@ namespace YouTube_Downloader
 
                 using (var extractor = new SevenZip.SevenZipExtractor(dest))
                 {
-                    using (var stream = File.Open(Path.Combine(Application.StartupPath, "ffmpeg.exe"), FileMode.Create))
+                    using (var stream = File.Open(file, FileMode.Create))
                     {
                         string ffmpeg = Path.Combine(Path.GetFileNameWithoutExtension(dest), "bin", "ffmpeg.exe");
 
                         extractor.ExtractFile(ffmpeg, stream);
+
+                        stream.Flush();
+                        stream.Close();
                     }
                 }
 
@@ -99,7 +104,9 @@ namespace YouTube_Downloader
 
             client.DownloadProgressChanged += delegate(object sender, DownloadProgressChangedEventArgs e)
             {
-                this.SetControlText(lYoutubeDlUpdateAvailable, string.Format("{0}/{1}", Helper.FormatFileSize(e.BytesReceived), Helper.FormatFileSize(e.TotalBytesToReceive)));
+                string progress = string.Format("{0}/{1}", Helper.FormatFileSize(e.BytesReceived), Helper.FormatFileSize(e.TotalBytesToReceive));
+
+                this.SetControlText(lYoutubeDlUpdateAvailable, progress);
             };
             client.DownloadFileCompleted += delegate(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
             {
