@@ -6,7 +6,7 @@ YouTube Downloader is a simple program to download & convert YouTube videos. Cur
 Download
 --------
 
-An installer & portable version can be found in [Releases](https://github.com/AlexxEG/YouTube_Downloader/releases)
+An installer (coming...) & portable version can be found in [Releases](https://github.com/AlexxEG/YouTube-Downloader/releases)
 
 Screenshots
 -----------
