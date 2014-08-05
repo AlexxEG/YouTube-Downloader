@@ -360,7 +360,7 @@ namespace YouTube_Downloader
 
         private void btnCheckAgain_Click(object sender, EventArgs e)
         {
-            Program.FFmpegAvailable = File.Exists(Path.Combine(Application.StartupPath, "ffmpeg.exe"));
+            Program.FFmpegAvailable = File.Exists(FfmpegHelper.FFmpegPath);
 
             groupBox2.Enabled = chbAutoConvert.Enabled = Program.FFmpegAvailable;
             lFFmpegMissing.Visible = btnCheckAgain.Visible = !Program.FFmpegAvailable;

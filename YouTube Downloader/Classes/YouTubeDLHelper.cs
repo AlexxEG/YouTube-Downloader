@@ -10,6 +10,8 @@ namespace YouTube_Downloader.Classes
     {
         private const string Cmd_JSON_Info = " -o \"{0}\\%(title)s\" --no-playlist --skip-download --write-info-json \"{1}\"";
 
+        public static string YouTubeDlPath = Path.Combine(Application.StartupPath, "externals", "youtube-dl.exe");
+
         private static StreamWriter CreateLogWriter()
         {
             return new StreamWriter(Path.Combine(Application.StartupPath, "youtube-dl.log"), true);
@@ -92,7 +94,7 @@ namespace YouTube_Downloader.Classes
             process.StartInfo.RedirectStandardError = true;
             process.StartInfo.CreateNoWindow = true;
             process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            process.StartInfo.FileName = Application.StartupPath + "\\youtube-dl.exe";
+            process.StartInfo.FileName = YouTubeDLHelper.YouTubeDlPath;
             process.StartInfo.Arguments = arguments;
             process.Start();
 

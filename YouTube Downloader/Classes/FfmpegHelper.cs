@@ -17,6 +17,8 @@ namespace YouTube_Downloader.Classes
         private const string Cmd_Crop_From_To = " -y -ss {0} -i \"{1}\" -to {2} -acodec copy{3} \"{4}\"";
         private const string Cmd_Get_File_Info = " -i \"{0}\"";
 
+        public static string FFmpegPath = Path.Combine(Application.StartupPath, "externals", "ffmpeg.exe");
+
         public static List<string> CanCombine(string audio, string video)
         {
             List<string> errors = new List<string>();
@@ -494,7 +496,7 @@ namespace YouTube_Downloader.Classes
             process.StartInfo.RedirectStandardError = true;
             process.StartInfo.CreateNoWindow = true;
             process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            process.StartInfo.FileName = Application.StartupPath + "\\ffmpeg.exe";
+            process.StartInfo.FileName = FfmpegHelper.FFmpegPath;
             process.StartInfo.Arguments = arguments;
             process.Start();
 
