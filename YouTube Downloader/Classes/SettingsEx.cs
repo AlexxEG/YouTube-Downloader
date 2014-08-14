@@ -8,9 +8,11 @@ namespace YouTube_Downloader
     public class SettingsEx
     {
         public static bool AutoConvert = false;
-        public static int PreferedQuality = 0;
         public static List<string> SaveToDirectories = new List<string>();
         public static int SelectedDirectory = 0;
+        public static int PreferedQualityPlaylist = 0;
+        public static bool UseDashPlaylist = false;
+        public static int SelectedDirectoryPlaylist = 0;
         public static Dictionary<string, WindowState> WindowStates = new Dictionary<string, WindowState>();
 
         public static void Load()
@@ -36,6 +38,21 @@ namespace YouTube_Downloader
                 if (properties.Attributes["auto_convert"] != null)
                 {
                     AutoConvert = bool.Parse(properties.Attributes["auto_convert"].Value);
+                }
+
+                if (properties.Attributes["prefered_quality_playlist"] != null)
+                {
+                    PreferedQualityPlaylist = int.Parse(properties.Attributes["prefered_quality_playlist"].Value);
+                }
+
+                if (properties.Attributes["use_dash_playlist"] != null)
+                {
+                    UseDashPlaylist = bool.Parse(properties.Attributes["use_dash_playlist"].Value);
+                }
+
+                if (properties.Attributes["selected_directory_playlist"] != null)
+                {
+                    SelectedDirectoryPlaylist = int.Parse(properties.Attributes["selected_directory_playlist"].Value);
                 }
             }
 
@@ -75,6 +92,9 @@ namespace YouTube_Downloader
                 w.WriteStartDocument();
                 w.WriteStartElement("properties");
                 w.WriteAttributeString("auto_convert", AutoConvert.ToString());
+                w.WriteAttributeString("prefered_quality_playlist", PreferedQualityPlaylist.ToString());
+                w.WriteAttributeString("use_dash_playlist", UseDashPlaylist.ToString());
+                w.WriteAttributeString("selected_directory_playlist", SelectedDirectoryPlaylist.ToString());
 
                 foreach (WindowState windowState in SettingsEx.WindowStates.Values)
                 {

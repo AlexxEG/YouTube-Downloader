@@ -505,6 +505,7 @@
             this.chbPlaylistDASH.TabIndex = 14;
             this.chbPlaylistDASH.Text = "DASH";
             this.chbPlaylistDASH.UseVisualStyleBackColor = true;
+            this.chbPlaylistDASH.CheckedChanged += new System.EventHandler(this.chbPlaylistDASH_CheckedChanged);
             // 
             // label14
             // 
@@ -570,6 +571,7 @@
             this.cbPlaylistSaveTo.Name = "cbPlaylistSaveTo";
             this.cbPlaylistSaveTo.Size = new System.Drawing.Size(481, 21);
             this.cbPlaylistSaveTo.TabIndex = 9;
+            this.cbPlaylistSaveTo.SelectedIndexChanged += new System.EventHandler(this.cbPlaylistSaveTo_SelectedIndexChanged);
             // 
             // label12
             // 

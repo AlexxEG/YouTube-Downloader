@@ -96,7 +96,7 @@ namespace YouTube_Downloader.Classes
 
             int index = -1;
 
-            switch (SettingsEx.PreferedQuality)
+            switch (SettingsEx.PreferedQualityPlaylist)
             {
                 case PreferedQualityMedium:
                     if ((index = qualities.IndexOf("720p")) > -1)

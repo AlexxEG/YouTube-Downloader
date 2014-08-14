@@ -82,15 +82,22 @@ namespace YouTube_Downloader
             SettingsEx.WindowStates[this.Name].RestoreForm(this);
 
             cbSaveTo.Items.AddRange(SettingsEx.SaveToDirectories.ToArray());
+            cbPlaylistSaveTo.Items.AddRange(SettingsEx.SaveToDirectories.ToArray());
 
             if (cbSaveTo.Items.Count > 0)
             {
                 cbSaveTo.SelectedIndex = SettingsEx.SelectedDirectory;
             }
 
+            if (cbPlaylistSaveTo.Items.Count > 0)
+            {
+                cbPlaylistSaveTo.SelectedIndex = SettingsEx.SelectedDirectoryPlaylist;
+            }
+
             chbAutoConvert.Checked = SettingsEx.AutoConvert;
 
-            cbPlaylistQuality.SelectedIndex = 0;
+            cbPlaylistQuality.SelectedIndex = SettingsEx.PreferedQualityPlaylist;
+            chbPlaylistDASH.Checked = SettingsEx.UseDashPlaylist;
         }
 
         private void MainForm_Shown(object sender, EventArgs e)
@@ -668,6 +675,21 @@ namespace YouTube_Downloader
             }
         }
 
+        private void cbPlaylistSaveTo_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SettingsEx.SelectedDirectoryPlaylist = cbPlaylistSaveTo.SelectedIndex;
+        }
+
+        private void cbPlaylistQuality_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SettingsEx.PreferedQualityPlaylist = cbPlaylistQuality.SelectedIndex;
+        }
+
+        private void chbPlaylistDASH_CheckedChanged(object sender, EventArgs e)
+        {
+            SettingsEx.UseDashPlaylist = chbPlaylistDASH.Checked;
+        }
+
         #endregion
 
         #region mainMenu1
@@ -1124,11 +1146,6 @@ namespace YouTube_Downloader
             FileInfo info = new FileInfo(file);
 
             return string.Format(new FileSizeFormatProvider(), "{0:fs}", info.Length);
-        }
-
-        private void cbPlaylistQuality_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            SettingsEx.PreferedQuality = cbPlaylistQuality.SelectedIndex;
         }
     }
 
