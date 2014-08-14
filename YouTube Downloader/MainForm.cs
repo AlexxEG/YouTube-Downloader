@@ -653,7 +653,7 @@ namespace YouTube_Downloader
                 ll.LinkClicked += linkLabel_LinkClicked;
                 lvQueue.AddEmbeddedControl(ll, 5, item.Index);
 
-                item.Download(txtPlaylistLink.Text, path);
+                item.Download(txtPlaylistLink.Text, path, chbPlaylistDASH.Checked);
 
                 tabControl1.SelectedTab = queueTabPage;
             }
@@ -1567,6 +1567,9 @@ namespace YouTube_Downloader
          * 
          * - Show combining operation in status so that multiple instances doesn't access log file
          * - Use the combining time to get content length since it takes time.
+         * - Only download audio if DASH is selected.
+         * - Reset controls when starting new video.
+         * - Show operation result in 'Speed' column when done.
          */
 
         public string Input { get; set; }
@@ -1620,6 +1623,8 @@ namespace YouTube_Downloader
         private bool failed = false;
         private bool successful = false;
 
+        private bool useDash = false;
+
         public PlaylistOperation()
         {
             this.Text = "Getting playlist info...";
@@ -1627,11 +1632,13 @@ namespace YouTube_Downloader
             this.SubItems.AddRange(new string[] { "", "", "", "", "" });
         }
 
-        public void Download(string url, string output)
+        public void Download(string url, string output, bool dash)
         {
             this.Input = url;
             this.Output = output;
             this.SubItems[5].Text = this.Input;
+
+            useDash = dash;
 
             worker = new BackgroundWorker();
             worker.WorkerReportsProgress = true;
@@ -1654,32 +1661,48 @@ namespace YouTube_Downloader
             {
                 count++;
 
-                VideoFormat audioFormat = Helper.GetAudioFormat(video);
-                VideoFormat videoFormat = Helper.GetPreferedFormat(video);
+                VideoFormat videoFormat = Helper.GetPreferedFormat(video, useDash);
 
                 this.SetText(string.Format("({0}/{1}) {2}", count, reader.Playlist.OnlineCount, video.Title));
                 this.SetItemText(this.SubItems[3], Helper.FormatVideoLength(video.Duration));
                 this.SetItemText(this.SubItems[4], Helper.FormatFileSize(videoFormat.FileSize));
 
-                /* Add '_audio' & '_video' to end file so  */
-                string finalFile = Path.Combine(this.Output, Helper.FormatTitle(videoFormat.VideoInfo.Title) + "." + videoFormat.Extension);
-                string videoFile = Path.Combine(this.Output, Path.GetFileNameWithoutExtension(finalFile)) + "_video." + videoFormat.Extension;
-                string audioFile = Path.Combine(this.Output, Path.GetFileNameWithoutExtension(finalFile)) + "_audio.m4a";
-
                 downloader = new FileDownloader(true);
                 downloader.LocalDirectory = this.Output;
 
-                FileDownloader.FileInfo[] fileInfos = new FileDownloader.FileInfo[2]
+                FileDownloader.FileInfo[] fileInfos;
+
+                string finalFile = Path.Combine(this.Output, Helper.FormatTitle(videoFormat.VideoInfo.Title) + "." + videoFormat.Extension);
+
+                if (!useDash)
                 {
-                    new FileDownloader.FileInfo(audioFormat.DownloadUrl)
+                    fileInfos = new FileDownloader.FileInfo[1]
                     {
-                        Name = Path.GetFileName(audioFile)
-                    },
-                    new FileDownloader.FileInfo(videoFormat.DownloadUrl)
+                        new FileDownloader.FileInfo(videoFormat.DownloadUrl)
+                        {
+                            Name = Path.GetFileName(finalFile)
+                        }
+                    };
+                }
+                else
+                {
+                    VideoFormat audioFormat = Helper.GetAudioFormat(video);
+                    /* Add '_audio' & '_video' to end of filename. */
+                    string audioFile = Path.Combine(this.Output, Path.GetFileNameWithoutExtension(finalFile)) + "_audio.m4a";
+                    string videoFile = Path.Combine(this.Output, Path.GetFileNameWithoutExtension(finalFile)) + "_video." + videoFormat.Extension;
+
+                    fileInfos = new FileDownloader.FileInfo[2]
                     {
-                        Name = Path.GetFileName(videoFile)
-                    }
-                };
+                        new FileDownloader.FileInfo(videoFormat.DownloadUrl)
+                        {
+                            Name = Path.GetFileName(videoFile)
+                        },
+                        new FileDownloader.FileInfo(audioFormat.DownloadUrl)
+                        {
+                            Name = Path.GetFileName(audioFile)
+                        }
+                    };
+                }
 
                 downloader.Files.AddRange(fileInfos);
 
@@ -1703,7 +1726,7 @@ namespace YouTube_Downloader
             {
                 successful = false;
             }
-            else
+            else if (useDash)
             {
                 /* Queue DASH combine on a new thread so next download can start. */
                 string audioFile = Path.Combine(downloader.LocalDirectory, downloader.Files[0].Name);

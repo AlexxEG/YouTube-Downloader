@@ -82,9 +82,9 @@ namespace YouTube_Downloader.Classes
             return null;
         }
 
-        public static VideoFormat GetPreferedFormat(VideoInfo video)
+        public static VideoFormat GetPreferedFormat(VideoInfo video, bool dash)
         {
-            VideoFormat[] qualities = Helper.GetVideoFormats(video);
+            VideoFormat[] qualities = Helper.GetVideoFormats(video, dash);
 
             /* 
              * Find a format based on user's preference.
@@ -99,13 +99,13 @@ namespace YouTube_Downloader.Classes
             switch (SettingsEx.PreferedQualityPlaylist)
             {
                 case PreferedQualityMedium:
-                    if ((index = qualities.IndexOf("720p")) > -1)
+                    if ((index = qualities.IndexOf("720", dash)) > -1)
                     {
                         return qualities[index];
                     }
                     break;
                 case PreferedQualityLow:
-                    if ((index = qualities.IndexOf("360p")) > -1)
+                    if ((index = qualities.IndexOf("360", dash)) > -1)
                     {
                         return qualities[index];
                     }
@@ -117,16 +117,26 @@ namespace YouTube_Downloader.Classes
             return qualities[index];
         }
 
-        public static VideoFormat[] GetVideoFormats(VideoInfo video)
+        public static VideoFormat[] GetVideoFormats(VideoInfo video, bool dash)
         {
             var formats = new List<VideoFormat>();
 
             foreach (VideoFormat format in video.Formats)
             {
-                if (!format.Extension.Contains("mp4") || !format.Format.Contains("DASH"))
+                /* Exclude DASH videos. */
+                if (!dash && format.Format.Contains("DASH"))
+                {
                     continue;
+                }
+                /* Only include .mp4 DASH videos. */
+                else if (dash && !(format.Extension.Contains("mp4") || format.Format.Contains("DASH")))
+                {
+                    continue;
+                }
 
-                if (Regex.IsMatch(format.Format, "(144|240|360|480|720|1080|1440|2160)p"))
+                string pattern = dash ? "(144|240|360|480|720|1080|1440|2160)p" : @"^\d*\s*-\s*\d+x\d+$";
+
+                if (Regex.IsMatch(format.Format, pattern))
                 {
                     formats.Add(format);
                 }
@@ -185,14 +195,16 @@ namespace YouTube_Downloader.Classes
 
     static class VideoFormatArrayExtensions
     {
-        public static int IndexOf(this VideoFormat[] thiz, string format)
+        public static int IndexOf(this VideoFormat[] thiz, string format, bool dash)
         {
             for (int i = 0; i < thiz.Length; i++)
             {
                 VideoFormat f = thiz[i];
 
+                string pattern = dash ? "^.* - " + format + "p.*$" : @"^\d*\s*-\s*\d+x" + format + "$";
+
                 /* Ignore '(DASH video)' suffix. */
-                if (Regex.IsMatch(f.Format, "^.* - " + format + ".*$"))
+                if (Regex.IsMatch(f.Format, pattern))
                     return i;
             }
 
