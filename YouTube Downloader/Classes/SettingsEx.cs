@@ -8,6 +8,7 @@ namespace YouTube_Downloader
     public class SettingsEx
     {
         public static bool AutoConvert = false;
+        public static int PreferedQuality = 0;
         public static List<string> SaveToDirectories = new List<string>();
         public static int SelectedDirectory = 0;
         public static Dictionary<string, WindowState> WindowStates = new Dictionary<string, WindowState>();

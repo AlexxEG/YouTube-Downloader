@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualBasic.ApplicationServices;
+﻿using DeDauwJeroen;
+using Microsoft.VisualBasic.ApplicationServices;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,6 +13,13 @@ namespace YouTube_Downloader
     {
         public static bool FFmpegAvailable = true;
 
+        /// <summary>
+        /// Store running downloaders that can be stopped automatically when closing application.
+        /// </summary>
+        public static List<FileDownloader> RunningDownloaders = new List<FileDownloader>();
+        /// <summary>
+        /// Store running background workers that can be stopped automatically when closing application.
+        /// </summary>
         public static List<BackgroundWorker> RunningWorkers = new List<BackgroundWorker>();
 
         /// <summary>
@@ -22,7 +30,7 @@ namespace YouTube_Downloader
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
-            Program.FFmpegAvailable = File.Exists(FfmpegHelper.FFmpegPath);
+            Program.FFmpegAvailable = File.Exists(FFmpegHelper.FFmpegPath);
 
             new App().Run(args);
         }

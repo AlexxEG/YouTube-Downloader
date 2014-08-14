@@ -1,23 +1,29 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace YouTube_Downloader.Classes
 {
     public class YouTubeDLHelper
     {
-        private const string Cmd_JSON_Info = " -o \"{0}\\%(title)s\" --no-playlist --skip-download --write-info-json \"{1}\"";
+        public const string Cmd_JSON_Info = " -o \"{0}\\%(title)s\" --no-playlist --skip-download --write-info-json \"{1}\"";
+        public const string Cmd_JSON_Info_Playlist = " -i -o json\\playlist-{0}\\%(playlist_index)s-%(title)s --restrict-filenames --skip-download --write-info-json \"{1}\"";
 
         public static string YouTubeDlPath = Path.Combine(Application.StartupPath, "externals", "youtube-dl.exe");
 
-        private static StreamWriter CreateLogWriter()
+        public static StreamWriter CreateLogWriter()
         {
-            return new StreamWriter(Path.Combine(Application.StartupPath, "youtube-dl.log"), true);
+            return new StreamWriter(Path.Combine(Application.StartupPath, "youtube-dl.log"), true)
+                {
+                    AutoFlush = true
+                };
         }
 
-        public static VideoInfo GetJSONInfo(string url)
+        public static VideoInfo GetVideoInfo(string url)
         {
             string json_dir = Path.Combine(Application.StartupPath, "json");
             /* Fill in json directory & video url. */
@@ -31,7 +37,7 @@ namespace YouTube_Downloader.Classes
             /* Write output to log. */
             using (var writer = CreateLogWriter())
             {
-                WriteHeader(writer, arguments, url);
+                WriteLogHeader(writer, arguments, url);
 
                 while ((line = process.StandardOutput.ReadLine()) != null)
                 {
@@ -46,7 +52,7 @@ namespace YouTube_Downloader.Classes
                     }
                 }
 
-                WriteEnd(writer);
+                WriteLogEnd(writer);
             }
 
             process.WaitForExit();
@@ -60,7 +66,7 @@ namespace YouTube_Downloader.Classes
             JObject jObject = JObject.Parse(json);
 
             info.Duration = long.Parse(jObject["duration"].ToString());
-            info.FullTitle = jObject["fulltitle"].ToString();
+            info.Title = jObject["fulltitle"].ToString();
 
             string displayId = jObject["display_id"].ToString();
 
@@ -84,10 +90,101 @@ namespace YouTube_Downloader.Classes
             return info;
         }
 
+        public static Playlist GetPlaylist(string url)
+        {
+            string json_dir = Path.Combine(Application.StartupPath, "json");
+            string playlist_id = Helper.GetPlaylistId(url);
+            string arguments = string.Format(Cmd_JSON_Info_Playlist, playlist_id, url);
+
+            Process process = StartProcess(arguments);
+
+            List<string> jsonFiles = new List<string>();
+            string line = string.Empty;
+
+            /* Playlist properties. */
+            string name = "";
+            int onlineCount = 0;
+
+            /* Write output to log. */
+            using (var writer = CreateLogWriter())
+            {
+                WriteLogHeader(writer, arguments, url);
+
+                while ((line = process.StandardOutput.ReadLine()) != null)
+                {
+                    writer.WriteLine(line);
+
+                    line = line.Trim();
+
+                    /* Store file path. */
+                    if (line.StartsWith("[info] Writing video description metadata as JSON to:"))
+                    {
+                        string file = line.Substring(line.IndexOf(":") + 1).Trim();
+
+                        jsonFiles.Add(Path.Combine(Application.StartupPath, file));
+                    }
+                    /* Get the playlist count, so  */
+                    else if (line.StartsWith("[youtube:playlist] playlist"))
+                    {
+                        string txt = line.Split(':')[2].Trim();
+                        /* Get the count. */
+                        string pattern = "^Collected (\\d+) video ids \\(downloading \\d+ of them\\)$";
+
+                        /* Get name between '[youtube:playlist] playlist ' & next ':'. */
+                        name = Regex.Match(line, "\\[youtube:playlist] playlist (.*):").Groups[1].Value;
+                        onlineCount = int.Parse(Regex.Match(txt, pattern).Groups[1].Value);
+                    }
+                }
+
+                WriteLogEnd(writer);
+            }
+
+            process.WaitForExit();
+
+            if (!process.HasExited)
+                process.Kill();
+
+            var videos = new List<VideoInfo>();
+
+            foreach (string json_file in jsonFiles)
+            {
+                /* Parse JSON */
+                VideoInfo info = new VideoInfo();
+                string json = File.ReadAllText(json_file);
+                JObject jObject = JObject.Parse(json);
+
+                info.Duration = long.Parse(jObject["duration"].ToString());
+                info.Title = jObject["fulltitle"].ToString();
+
+                string displayId = jObject["display_id"].ToString();
+
+                info.ThumbnailUrl = string.Format("https://i.ytimg.com/vi/{0}/mqdefault.jpg", displayId);
+                info.Url = url;
+
+                JArray array = (JArray)jObject["formats"];
+
+                foreach (JToken token in array)
+                {
+                    VideoFormat format = new VideoFormat(info);
+
+                    format.DownloadUrl = token["url"].ToString();
+                    format.Extension = token["ext"].ToString();
+                    format.Format = token["format"].ToString();
+                    format.UpdateFileSize();
+
+                    info.Formats.Add(format);
+                }
+
+                videos.Add(info);
+            }
+
+            return new Playlist(playlist_id, name, onlineCount, videos);
+        }
+
         /// <summary>
         /// Creates a Process with the given arguments, then returns it after it has started.
         /// </summary>
-        private static Process StartProcess(string arguments)
+        public static Process StartProcess(string arguments)
         {
             Process process = new Process();
 
@@ -104,19 +201,20 @@ namespace YouTube_Downloader.Classes
             return process;
         }
 
-        private static void WriteEnd(StreamWriter writer)
+        public static void WriteLogEnd(StreamWriter writer)
         {
-            writer.WriteLine("END");
+            writer.WriteLine();
+            writer.WriteLine();
             writer.WriteLine();
         }
 
-        private static void WriteHeader(StreamWriter writer, string arguments, string url)
+        public static void WriteLogHeader(StreamWriter writer, string arguments, string url)
         {
             /* Log header. */
             writer.WriteLine("[" + DateTime.Now + "]");
             writer.WriteLine("url: " + url);
             writer.WriteLine("cmd: " + arguments);
-            writer.WriteLine("-");
+            writer.WriteLine();
             writer.WriteLine("OUTPUT");
         }
     }

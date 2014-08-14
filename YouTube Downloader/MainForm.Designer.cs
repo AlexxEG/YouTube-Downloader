@@ -63,6 +63,17 @@
             this.downloadTabPage = new System.Windows.Forms.TabPage();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.label7 = new System.Windows.Forms.Label();
+            this.playlistTabPage = new System.Windows.Forms.TabPage();
+            this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.chbPlaylistDASH = new System.Windows.Forms.CheckBox();
+            this.label14 = new System.Windows.Forms.Label();
+            this.cbPlaylistQuality = new System.Windows.Forms.ComboBox();
+            this.btnPlaylistBrowse = new System.Windows.Forms.Button();
+            this.btnPlaylistDownload = new System.Windows.Forms.Button();
+            this.label13 = new System.Windows.Forms.Label();
+            this.cbPlaylistSaveTo = new System.Windows.Forms.ComboBox();
+            this.label12 = new System.Windows.Forms.Label();
+            this.txtPlaylistLink = new System.Windows.Forms.TextBox();
             this.convertTabPage = new System.Windows.Forms.TabPage();
             this.btnCheckAgain = new System.Windows.Forms.Button();
             this.lFFmpegMissing = new System.Windows.Forms.Label();
@@ -88,7 +99,7 @@
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.dashTabPage = new System.Windows.Forms.TabPage();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.label11 = new System.Windows.Forms.Label();
             this.btnDashBrowseOutput = new System.Windows.Forms.Button();
@@ -110,11 +121,13 @@
             this.tabControl1.SuspendLayout();
             this.downloadTabPage.SuspendLayout();
             this.groupBox5.SuspendLayout();
+            this.playlistTabPage.SuspendLayout();
+            this.groupBox7.SuspendLayout();
             this.convertTabPage.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.queueTabPage.SuspendLayout();
-            this.tabPage1.SuspendLayout();
+            this.dashTabPage.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -410,9 +423,10 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.downloadTabPage);
+            this.tabControl1.Controls.Add(this.playlistTabPage);
             this.tabControl1.Controls.Add(this.convertTabPage);
             this.tabControl1.Controls.Add(this.queueTabPage);
-            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.dashTabPage);
             this.tabControl1.Location = new System.Drawing.Point(12, 12);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -452,6 +466,129 @@
             this.label7.Size = new System.Drawing.Size(572, 46);
             this.label7.TabIndex = 0;
             this.label7.Text = resources.GetString("label7.Text");
+            // 
+            // playlistTabPage
+            // 
+            this.playlistTabPage.Controls.Add(this.groupBox7);
+            this.playlistTabPage.Location = new System.Drawing.Point(4, 22);
+            this.playlistTabPage.Name = "playlistTabPage";
+            this.playlistTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.playlistTabPage.Size = new System.Drawing.Size(596, 291);
+            this.playlistTabPage.TabIndex = 4;
+            this.playlistTabPage.Text = "Playlist";
+            this.playlistTabPage.UseVisualStyleBackColor = true;
+            // 
+            // groupBox7
+            // 
+            this.groupBox7.Controls.Add(this.chbPlaylistDASH);
+            this.groupBox7.Controls.Add(this.label14);
+            this.groupBox7.Controls.Add(this.cbPlaylistQuality);
+            this.groupBox7.Controls.Add(this.btnPlaylistBrowse);
+            this.groupBox7.Controls.Add(this.btnPlaylistDownload);
+            this.groupBox7.Controls.Add(this.label13);
+            this.groupBox7.Controls.Add(this.cbPlaylistSaveTo);
+            this.groupBox7.Controls.Add(this.label12);
+            this.groupBox7.Controls.Add(this.txtPlaylistLink);
+            this.groupBox7.Location = new System.Drawing.Point(6, 6);
+            this.groupBox7.Name = "groupBox7";
+            this.groupBox7.Size = new System.Drawing.Size(584, 159);
+            this.groupBox7.TabIndex = 0;
+            this.groupBox7.TabStop = false;
+            this.groupBox7.Text = "YouTube Playlist";
+            // 
+            // chbPlaylistDASH
+            // 
+            this.chbPlaylistDASH.AutoSize = true;
+            this.chbPlaylistDASH.Location = new System.Drawing.Point(522, 76);
+            this.chbPlaylistDASH.Name = "chbPlaylistDASH";
+            this.chbPlaylistDASH.Size = new System.Drawing.Size(56, 17);
+            this.chbPlaylistDASH.TabIndex = 14;
+            this.chbPlaylistDASH.Text = "DASH";
+            this.chbPlaylistDASH.UseVisualStyleBackColor = true;
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(6, 76);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(39, 13);
+            this.label14.TabIndex = 13;
+            this.label14.Text = "Quality";
+            // 
+            // cbPlaylistQuality
+            // 
+            this.cbPlaylistQuality.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbPlaylistQuality.FormattingEnabled = true;
+            this.cbPlaylistQuality.Items.AddRange(new object[] {
+            "Highest",
+            "Medium",
+            "Low"});
+            this.cbPlaylistQuality.Location = new System.Drawing.Point(60, 73);
+            this.cbPlaylistQuality.Name = "cbPlaylistQuality";
+            this.cbPlaylistQuality.Size = new System.Drawing.Size(456, 21);
+            this.cbPlaylistQuality.TabIndex = 12;
+            this.cbPlaylistQuality.SelectedIndexChanged += new System.EventHandler(this.cbPlaylistQuality_SelectedIndexChanged);
+            // 
+            // btnPlaylistBrowse
+            // 
+            this.btnPlaylistBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnPlaylistBrowse.Location = new System.Drawing.Point(547, 45);
+            this.btnPlaylistBrowse.Name = "btnPlaylistBrowse";
+            this.btnPlaylistBrowse.Size = new System.Drawing.Size(31, 23);
+            this.btnPlaylistBrowse.TabIndex = 11;
+            this.btnPlaylistBrowse.Text = "...";
+            this.btnPlaylistBrowse.UseVisualStyleBackColor = true;
+            this.btnPlaylistBrowse.Click += new System.EventHandler(this.btnPlaylistBrowse_Click);
+            // 
+            // btnPlaylistDownload
+            // 
+            this.btnPlaylistDownload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnPlaylistDownload.Enabled = false;
+            this.btnPlaylistDownload.Location = new System.Drawing.Point(503, 130);
+            this.btnPlaylistDownload.Name = "btnPlaylistDownload";
+            this.btnPlaylistDownload.Size = new System.Drawing.Size(75, 23);
+            this.btnPlaylistDownload.TabIndex = 8;
+            this.btnPlaylistDownload.Text = "Download";
+            this.btnPlaylistDownload.UseVisualStyleBackColor = true;
+            this.btnPlaylistDownload.Click += new System.EventHandler(this.btnPlaylistDownload_Click);
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(6, 50);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(48, 13);
+            this.label13.TabIndex = 10;
+            this.label13.Text = "Save To";
+            // 
+            // cbPlaylistSaveTo
+            // 
+            this.cbPlaylistSaveTo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbPlaylistSaveTo.FormattingEnabled = true;
+            this.cbPlaylistSaveTo.Location = new System.Drawing.Point(60, 46);
+            this.cbPlaylistSaveTo.Name = "cbPlaylistSaveTo";
+            this.cbPlaylistSaveTo.Size = new System.Drawing.Size(481, 21);
+            this.cbPlaylistSaveTo.TabIndex = 9;
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(6, 22);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(27, 13);
+            this.label12.TabIndex = 5;
+            this.label12.Text = "Link";
+            // 
+            // txtPlaylistLink
+            // 
+            this.txtPlaylistLink.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtPlaylistLink.Location = new System.Drawing.Point(60, 19);
+            this.txtPlaylistLink.Name = "txtPlaylistLink";
+            this.txtPlaylistLink.Size = new System.Drawing.Size(518, 20);
+            this.txtPlaylistLink.TabIndex = 4;
+            this.txtPlaylistLink.TextChanged += new System.EventHandler(this.txtPlaylistLink_TextChanged);
             // 
             // convertTabPage
             // 
@@ -708,16 +845,16 @@
             // 
             this.columnHeader6.Text = "Input";
             // 
-            // tabPage1
+            // dashTabPage
             // 
-            this.tabPage1.Controls.Add(this.groupBox6);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(596, 291);
-            this.tabPage1.TabIndex = 3;
-            this.tabPage1.Text = "DASH";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            this.dashTabPage.Controls.Add(this.groupBox6);
+            this.dashTabPage.Location = new System.Drawing.Point(4, 22);
+            this.dashTabPage.Name = "dashTabPage";
+            this.dashTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.dashTabPage.Size = new System.Drawing.Size(596, 291);
+            this.dashTabPage.TabIndex = 3;
+            this.dashTabPage.Text = "DASH";
+            this.dashTabPage.UseVisualStyleBackColor = true;
             // 
             // groupBox6
             // 
@@ -885,6 +1022,9 @@
             this.tabControl1.ResumeLayout(false);
             this.downloadTabPage.ResumeLayout(false);
             this.groupBox5.ResumeLayout(false);
+            this.playlistTabPage.ResumeLayout(false);
+            this.groupBox7.ResumeLayout(false);
+            this.groupBox7.PerformLayout();
             this.convertTabPage.ResumeLayout(false);
             this.convertTabPage.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -893,7 +1033,7 @@
             this.groupBox4.PerformLayout();
             this.queueTabPage.ResumeLayout(false);
             this.queueTabPage.PerformLayout();
-            this.tabPage1.ResumeLayout(false);
+            this.dashTabPage.ResumeLayout(false);
             this.groupBox6.ResumeLayout(false);
             this.groupBox6.PerformLayout();
             this.ResumeLayout(false);
@@ -963,7 +1103,7 @@
         private System.Windows.Forms.Label lFileSize;
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TabPage dashTabPage;
         private System.Windows.Forms.GroupBox groupBox6;
         private System.Windows.Forms.Button btnDashCombine;
         private System.Windows.Forms.Button btnBrowseDashAudio;
@@ -976,6 +1116,17 @@
         private System.Windows.Forms.TextBox txtDashOutput;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.TabPage playlistTabPage;
+        private System.Windows.Forms.GroupBox groupBox7;
+        private System.Windows.Forms.Button btnPlaylistBrowse;
+        private System.Windows.Forms.Button btnPlaylistDownload;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.ComboBox cbPlaylistSaveTo;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.TextBox txtPlaylistLink;
+        private System.Windows.Forms.CheckBox chbPlaylistDASH;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.ComboBox cbPlaylistQuality;
     }
 }
 

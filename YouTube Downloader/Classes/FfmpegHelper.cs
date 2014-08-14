@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace YouTube_Downloader.Classes
 {
     public enum FileType { Audio, Error, Video }
 
-    public class FfmpegHelper
+    public class FFmpegHelper
     {
         private const string Cmd_Combine_Dash = " -y -i \"{0}\" -i \"{1}\" -vcodec copy -acodec copy \"{2}\"";
         private const string Cmd_Convert = " -y -i \"{0}\" -vn -f mp3 -ab 192k \"{1}\"";
@@ -120,9 +121,9 @@ namespace YouTube_Downloader.Classes
         public static void CombineDash(string video, string audio, string output)
         {
             string[] args = new string[] { video, audio, output };
-            string arguments = string.Format(FfmpegHelper.Cmd_Combine_Dash, args);
+            string arguments = string.Format(FFmpegHelper.Cmd_Combine_Dash, args);
 
-            Process process = FfmpegHelper.StartProcess(arguments);
+            Process process = FFmpegHelper.StartProcess(arguments);
 
             string line = "";
 
@@ -145,6 +146,25 @@ namespace YouTube_Downloader.Classes
                 process.Kill();
         }
 
+        public static void CombineDashThread(string video, string audio, string output)
+        {
+            new Thread(() =>
+                {
+                    if (video == output)
+                    {
+                        string dest = Path.Combine(
+                            Path.GetDirectoryName(video),
+                            Path.GetFileNameWithoutExtension(video)) + "_video." + Path.GetExtension(video);
+
+                        File.Move(video, dest);
+
+                        video = dest;
+                    }
+
+                    FFmpegHelper.CombineDash(video, audio, output);
+                }).Start();
+        }
+
         public static void Convert(BackgroundWorker bw, string input, string output)
         {
             bool deleteInput = false;
@@ -161,9 +181,9 @@ namespace YouTube_Downloader.Classes
             }
 
             string[] args = new string[] { input, output };
-            string arguments = string.Format(FfmpegHelper.Cmd_Convert, args);
+            string arguments = string.Format(FFmpegHelper.Cmd_Convert, args);
 
-            Process process = FfmpegHelper.StartProcess(arguments);
+            Process process = FFmpegHelper.StartProcess(arguments);
 
             bw.ReportProgress(0, process);
 
@@ -262,7 +282,7 @@ namespace YouTube_Downloader.Classes
 
             string arguments = string.Format(Cmd_Crop_From, args);
 
-            Process process = FfmpegHelper.StartProcess(arguments);
+            Process process = FFmpegHelper.StartProcess(arguments);
 
             bw.ReportProgress(0, process);
 
@@ -354,7 +374,7 @@ namespace YouTube_Downloader.Classes
 
             string arguments = string.Format(Cmd_Crop_From_To, args);
 
-            Process process = FfmpegHelper.StartProcess(arguments);
+            Process process = FFmpegHelper.StartProcess(arguments);
 
             bw.ReportProgress(0, process);
 
@@ -496,7 +516,7 @@ namespace YouTube_Downloader.Classes
             process.StartInfo.RedirectStandardError = true;
             process.StartInfo.CreateNoWindow = true;
             process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            process.StartInfo.FileName = FfmpegHelper.FFmpegPath;
+            process.StartInfo.FileName = FFmpegHelper.FFmpegPath;
             process.StartInfo.Arguments = arguments;
             process.Start();
 

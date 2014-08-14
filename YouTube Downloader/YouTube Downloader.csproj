@@ -53,21 +53,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Classes\AbortableBackgroundWorker.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Classes\FfmpegHelper.cs" />
+    <Compile Include="DeDauwJeroen\FileDownloader.cs" />
     <Compile Include="Classes\FileSizeFormatProvider.cs" />
     <Compile Include="Classes\FileSizeUpdateEventArgs.cs" />
     <Compile Include="Classes\Helper.cs" />
     <Compile Include="Classes\OpenFolderDialog.cs" />
+    <Compile Include="Classes\Playlist.cs" />
+    <Compile Include="Classes\PlaylistReader.cs" />
     <Compile Include="Classes\SettingsEx.cs" />
     <Compile Include="Classes\VideoFormat.cs" />
     <Compile Include="Classes\VideoInfo.cs" />
     <Compile Include="Classes\WindowState.cs" />
-    <Compile Include="Classes\FileDownloader.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Classes\YouTubeDLHelper.cs" />
     <Compile Include="Controls\ListViewEx.cs">
       <SubType>Component</SubType>
