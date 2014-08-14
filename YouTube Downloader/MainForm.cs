@@ -1567,10 +1567,9 @@ namespace YouTube_Downloader
          * 
          * - Show combining operation in status so that multiple instances doesn't access log file
          * - Use the combining time to get content length since it takes time.
-         * - Only download audio if DASH is selected.
-         * - Reset controls when starting new video.
-         * - Show operation result in 'Speed' column when done.
          */
+
+        private const int Reset_Controls = 1;
 
         public string Input { get; set; }
         public string Output { get; set; }
@@ -1613,6 +1612,8 @@ namespace YouTube_Downloader
         }
 
         public event OperationEventHandler OperationComplete;
+        private delegate void SetTextDelegate(string text);
+        private delegate void SetItemTextDelegate(ListViewSubItem item, string text);
 
         private FileDownloader downloader;
 
@@ -1649,6 +1650,81 @@ namespace YouTube_Downloader
             worker.RunWorkerAsync();
 
             Program.RunningWorkers.Add(worker);
+        }
+
+        public void Pause()
+        {
+            downloader.Pause();
+        }
+
+        public void Resume()
+        {
+            downloader.Resume();
+        }
+
+        public bool Stop()
+        {
+            try
+            {
+                downloader.Stop(false);
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private ProgressBar GetProgressBar()
+        {
+            return (ProgressBar)((ListViewEx)this.ListView).GetEmbeddedControl(1, this.Index);
+        }
+
+        private void OnOperationComplete(OperationEventArgs e)
+        {
+            if (OperationComplete != null)
+                OperationComplete(this, e);
+        }
+
+        private void RefreshStatus()
+        {
+            if (successful)
+            {
+                this.SubItems[2].Text = "Completed";
+            }
+            else if (downloader.IsPaused)
+            {
+                this.SubItems[2].Text = "Paused";
+            }
+            else if (downloader.HasBeenCanceled)
+            {
+                this.SubItems[2].Text = "Canceled";
+            }
+        }
+
+        private void SetText(string text)
+        {
+            if (this.ListView.InvokeRequired)
+            {
+                this.ListView.Invoke(new SetTextDelegate(SetText), text);
+            }
+            else
+            {
+                this.Text = text;
+            }
+        }
+
+        private void SetItemText(ListViewSubItem item, string text)
+        {
+            if (this.ListView.InvokeRequired)
+            {
+                this.ListView.Invoke(new SetItemTextDelegate(SetItemText), item, text);
+            }
+            else
+            {
+                item.Text = text;
+            }
         }
 
         private void worker_DoWork(object sender, DoWorkEventArgs e)
@@ -1715,9 +1791,34 @@ namespace YouTube_Downloader
 
                 Program.RunningDownloaders.Add(downloader);
 
-                while (Program.RunningDownloaders.Contains(downloader))
+                /* If downloader is busy or paused, wait till it's done. */
+                while (downloader.IsBusy || downloader.IsPaused)
                     Thread.Sleep(200);
+
+                worker.ReportProgress(Reset_Controls);
             }
+        }
+
+        private void worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            switch (e.ProgressPercentage)
+            {
+                case Reset_Controls:
+                    this.GetProgressBar().Value = 0;
+                    break;
+            }
+        }
+
+        private void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (!failed)
+                successful = true;
+
+            RefreshStatus();
+
+            Program.RunningWorkers.Remove(worker);
+
+            OnOperationComplete(new OperationEventArgs(this, this.Status));
         }
 
         private void downloader_Completed(object sender, EventArgs e)
@@ -1774,9 +1875,7 @@ namespace YouTube_Downloader
                     this.SubItems[1].Text = downloader.TotalPercentage() + " %";
                     this.SubItems[2].Text = speed + ETA;
 
-                    ProgressBar progressBar = (ProgressBar)((ListViewEx)this.ListView).GetEmbeddedControl(1, this.Index);
-
-                    progressBar.Value = (int)downloader.TotalPercentage();
+                    this.GetProgressBar().Value = (int)downloader.TotalPercentage();
 
                     RefreshStatus();
                 }
@@ -1785,93 +1884,6 @@ namespace YouTube_Downloader
                 {
                     processing = false;
                 }
-            }
-        }
-
-        private void worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-
-        }
-
-        private void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            RefreshStatus();
-
-            Program.RunningWorkers.Remove(worker);
-
-            OnOperationComplete(new OperationEventArgs(this, this.Status));
-        }
-
-        private void OnOperationComplete(OperationEventArgs e)
-        {
-            if (OperationComplete != null)
-                OperationComplete(this, e);
-        }
-
-        private void RefreshStatus()
-        {
-            if (successful)
-            {
-                this.SubItems[2].Text = "Completed";
-            }
-            else if (downloader.IsPaused)
-            {
-                this.SubItems[2].Text = "Paused";
-            }
-            else if (downloader.HasBeenCanceled)
-            {
-                this.SubItems[2].Text = "Canceled";
-            }
-        }
-
-        public void Pause()
-        {
-            downloader.Pause();
-        }
-
-        public void Resume()
-        {
-            downloader.Resume();
-        }
-
-        public bool Stop()
-        {
-            try
-            {
-                downloader.Stop(false);
-
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        private delegate void SetTextDelegate(string text);
-        private delegate void SetItemTextDelegate(ListViewSubItem item, string text);
-
-        private void SetText(string text)
-        {
-            if (this.ListView.InvokeRequired)
-            {
-                this.ListView.Invoke(new SetTextDelegate(SetText), text);
-            }
-            else
-            {
-                this.Text = text;
-            }
-        }
-
-        private void SetItemText(ListViewSubItem item, string text)
-        {
-            if (this.ListView.InvokeRequired)
-            {
-                this.ListView.Invoke(new SetItemTextDelegate(SetItemText), item, text);
-            }
-            else
-            {
-                item.Text = text;
             }
         }
     }
