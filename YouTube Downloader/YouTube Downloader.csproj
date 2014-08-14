@@ -53,7 +53,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Classes\FfmpegHelper.cs" />
+    <Compile Include="Classes\FFmpegHelper.cs" />
     <Compile Include="DeDauwJeroen\FileDownloader.cs" />
     <Compile Include="Classes\FileSizeFormatProvider.cs" />
     <Compile Include="Classes\FileSizeUpdateEventArgs.cs" />
