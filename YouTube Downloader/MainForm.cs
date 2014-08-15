@@ -1580,23 +1580,28 @@ namespace YouTube_Downloader
                 if (downloader == null)
                     return OperationStatus.None;
 
-                if (downloader.HasBeenCanceled) /* Canceled */
+                /* Canceled */
+                if (downloader.HasBeenCanceled)
                 {
                     return OperationStatus.Canceled;
                 }
+                /* Successful */
                 else if (successful)
                 {
                     return OperationStatus.Success;
                 }
+                /* Failed */
                 else if (failed)
                 {
                     return OperationStatus.Failed;
                 }
+                /* Paused */
                 else if (downloader.IsPaused)
                 {
                     return OperationStatus.Paused;
                 }
-                else if (!downloader.IsPaused) /* Downloading */
+                /* Downloading */
+                else if (!downloader.IsPaused)
                 {
                     return OperationStatus.Working;
                 }
