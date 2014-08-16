@@ -38,7 +38,7 @@ namespace YouTube_Downloader
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (IsWorking())
+            if (this.IsWorking())
             {
                 string text = "Files are being downloaded/converted/cut.\n\nAre you sure you want to quit?";
 
@@ -48,7 +48,7 @@ namespace YouTube_Downloader
                 {
                     // Hide form while waiting for threads to finish,
                     // except downloads which will abort.
-                    CancelOperations();
+                    this.CancelOperations();
                 }
 
                 e.Cancel = true;
