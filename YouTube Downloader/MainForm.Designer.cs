@@ -272,6 +272,7 @@
             this.btnToDo.Size = new System.Drawing.Size(75, 23);
             this.btnToDo.TabIndex = 2;
             this.btnToDo.UseVisualStyleBackColor = true;
+            this.btnToDo.Visible = false;
             // 
             // btnExit
             // 
