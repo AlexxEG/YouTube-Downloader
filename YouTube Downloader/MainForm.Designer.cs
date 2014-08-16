@@ -1009,6 +1009,7 @@
             this.ClientSize = new System.Drawing.Size(628, 387);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.panel1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(644, 425);
             this.Name = "MainForm";
             this.Text = "YouTube Downloader";
