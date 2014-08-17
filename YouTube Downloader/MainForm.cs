@@ -11,6 +11,11 @@ using System.Threading;
 using System.Windows.Forms;
 using YouTube_Downloader.Classes;
 
+/* ToDo: 
+ *
+ * - Automatically download DASH audio when downloading DASH video and combine them, also automatically.
+ */
+
 namespace YouTube_Downloader
 {
     public partial class MainForm : Form
@@ -345,14 +350,7 @@ namespace YouTube_Downloader
 
             videoInfo.FileSizeUpdated += videoInfo_FileSizeUpdated;
 
-            foreach (VideoFormat format in videoInfo.Formats)
-            {
-                if (format.Extension.Contains("webm"))
-                    continue;
-
-                cbQuality.Items.Add(format);
-            }
-
+            cbQuality.Items.AddRange(this.CheckFormats(videoInfo.Formats));
             cbQuality.SelectedIndex = cbQuality.Items.Count - 1;
 
             lTitle.Text = Helper.FormatTitle(videoInfo.Title);
@@ -370,6 +368,27 @@ namespace YouTube_Downloader
             videoThumbnail.ImageLocation = videoInfo.ThumbnailUrl;
 
             Program.RunningWorkers.Remove(bwGetVideo);
+        }
+
+        /// <summary>
+        /// Removes unsupported &amp; unnecessary formats.
+        /// </summary>
+        /// <param name="list">The list of VideoFormat to check.</param>
+        private VideoFormat[] CheckFormats(IList<VideoFormat> list)
+        {
+            List<VideoFormat> formats = (List<VideoFormat>)list;
+
+            for (int i = formats.Count - 1; i >= 0; i--)
+            {
+                VideoFormat f = formats[i];
+
+                if (f.Extension.Contains("webm"))
+                    formats.RemoveAt(i);
+                else if (f.Format.Contains("audio only (DASH audio)"))
+                    formats.RemoveAt(i);
+            }
+
+            return formats.ToArray();
         }
 
         private void videoInfo_FileSizeUpdated(object sender, FileSizeUpdateEventArgs e)
