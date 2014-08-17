@@ -893,6 +893,12 @@ namespace YouTube_Downloader
 
         #endregion
 
+        public void InsertVideo(string url)
+        {
+            txtYoutubeLink.Text = url;
+            btnGetVideo.PerformClick();
+        }
+
         private void CancelOperations()
         {
             this.Hide();
@@ -1065,12 +1071,6 @@ namespace YouTube_Downloader
             lvQueue.AddEmbeddedControl(ll, 5, item.Index);
 
             item.Crop(input, output, start, end);
-        }
-
-        public void InsertVideo(string url)
-        {
-            txtYoutubeLink.Text = url;
-            btnGetVideo.PerformClick();
         }
 
         private bool IsWorking()
