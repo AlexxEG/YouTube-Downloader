@@ -472,38 +472,14 @@ namespace YouTube_Downloader
 
         private void btnDownload_Click(object sender, EventArgs e)
         {
-            string path = string.Empty;
+            string path = cbSaveTo.Text;
 
-            try
-            {
-                path = cbSaveTo.Text;
-
-                if (path == string.Empty)
-                {
-                    MessageBox.Show(this, "Download path is empty.");
-                    return;
-                }
-
-                if (!Directory.Exists(path))
-                {
-                    if (MessageBox.Show(this, "Download path doesn't exists.\n\nDo you want to create it?", "Missing Folder", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                    {
-                        Directory.CreateDirectory(path);
-                    }
-                    else
-                    {
-                        return;
-                    }
-                }
-
-                if (!cbSaveTo.Items.Contains(path))
-                    cbSaveTo.Items.Add(path);
-            }
-            catch
-            {
-                MessageBox.Show("Couldn't create directory.");
+            /* Make sure download directory exists. */
+            if (!this.ValidateDownloadDirectory(path))
                 return;
-            }
+
+            if (!cbSaveTo.Items.Contains(path))
+                cbSaveTo.Items.Add(path);
 
             try
             {
@@ -1165,6 +1141,37 @@ namespace YouTube_Downloader
             FileInfo info = new FileInfo(file);
 
             return string.Format(new FileSizeFormatProvider(), "{0:fs}", info.Length);
+        }
+
+        private bool ValidateDownloadDirectory(string directory)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(directory))
+                {
+                    MessageBox.Show(this, "Download path is empty.");
+                }
+                else if (Directory.Exists(directory))
+                {
+                    return true;
+                }
+                else
+                {
+                    string text = "Download path doesn't exists.\n\nDo you want to create it?";
+
+                    if (MessageBox.Show(this, text, "Missing Folder", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    {
+                        Directory.CreateDirectory(directory);
+                        return true;
+                    }
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Couldn't create directory.");
+            }
+
+            return false;
         }
     }
 
