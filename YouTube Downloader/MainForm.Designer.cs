@@ -426,8 +426,8 @@
             this.tabControl1.Controls.Add(this.downloadTabPage);
             this.tabControl1.Controls.Add(this.playlistTabPage);
             this.tabControl1.Controls.Add(this.convertTabPage);
-            this.tabControl1.Controls.Add(this.queueTabPage);
             this.tabControl1.Controls.Add(this.dashTabPage);
+            this.tabControl1.Controls.Add(this.queueTabPage);
             this.tabControl1.Location = new System.Drawing.Point(12, 12);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
