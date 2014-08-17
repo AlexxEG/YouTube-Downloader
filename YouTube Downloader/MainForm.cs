@@ -505,7 +505,7 @@ namespace YouTube_Downloader
                 item.SubItems.Add("");
                 item.SubItems.Add("");
                 item.SubItems.Add(Helper.FormatVideoLength(tempFormat.VideoInfo.Duration));
-                item.SubItems.Add(string.Format(new FileSizeFormatProvider(), "{0:fs}", tempFormat.FileSize));
+                item.SubItems.Add(Helper.FormatFileSize(tempFormat.FileSize));
                 item.SubItems.Add(tempFormat.VideoInfo.Url);
                 item.OperationComplete += downloadItem_OperationComplete;
 
