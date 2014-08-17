@@ -877,7 +877,7 @@ namespace YouTube_Downloader
 
             if (files.Count > 0)
             {
-                DeleteFiles(files.ToArray());
+                Helper.DeleteFiles(files.ToArray());
             }
         }
 
@@ -987,7 +987,7 @@ namespace YouTube_Downloader
             item.SubItems.Add("");
             item.SubItems.Add("Converting");
             item.SubItems.Add(Helper.FormatVideoLength(FFmpegHelper.GetDuration(input)));
-            item.SubItems.Add(GetFileSize(input));
+            item.SubItems.Add(Helper.GetFileSize(input));
             item.SubItems.Add("");
 
             lvQueue.Items.Add(item);
@@ -1041,7 +1041,7 @@ namespace YouTube_Downloader
             item.SubItems.Add("");
             item.SubItems.Add("Cropping");
             item.SubItems.Add(Helper.FormatVideoLength(FFmpegHelper.GetDuration(input)));
-            item.SubItems.Add(GetFileSize(input));
+            item.SubItems.Add(Helper.GetFileSize(input));
             item.SubItems.Add("");
 
             lvQueue.Items.Add(item);
@@ -1093,54 +1093,6 @@ namespace YouTube_Downloader
                 lvi.Selected = false;
 
             item.Selected = true;
-        }
-
-        public static void DeleteFiles(params string[] files)
-        {
-            new Thread(delegate()
-            {
-                var dict = new Dictionary<string, int>();
-                var keys = new List<string>();
-
-                foreach (string file in files)
-                {
-                    dict.Add(file, 0);
-                    keys.Add(file);
-                }
-
-                while (dict.Count > 0)
-                {
-                    foreach (string key in keys)
-                    {
-                        try
-                        {
-                            File.Delete(key);
-
-                            dict.Remove(key);
-                        }
-                        catch
-                        {
-                            if (dict[key] == 10)
-                            {
-                                dict.Remove(key);
-                            }
-                            else
-                            {
-                                dict[key]++;
-                            }
-                        }
-                    }
-
-                    Thread.Sleep(2000);
-                }
-            }).Start();
-        }
-
-        public static string GetFileSize(string file)
-        {
-            FileInfo info = new FileInfo(file);
-
-            return string.Format(new FileSizeFormatProvider(), "{0:fs}", info.Length);
         }
 
         private bool ValidateDownloadDirectory(string directory)
@@ -1293,7 +1245,7 @@ namespace YouTube_Downloader
         private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             this.SubItems[2].Text = "Success";
-            this.SubItems[4].Text = MainForm.GetFileSize(this.Output);
+            this.SubItems[4].Text = Helper.GetFileSize(this.Output);
 
             this.Status = OperationStatus.Success;
 
@@ -1394,7 +1346,7 @@ namespace YouTube_Downloader
         {
             this.SubItems[2].Text = "Success";
             this.SubItems[3].Text = Helper.FormatVideoLength(FFmpegHelper.GetDuration(this.Input));
-            this.SubItems[4].Text = MainForm.GetFileSize(this.Output);
+            this.SubItems[4].Text = Helper.GetFileSize(this.Output);
 
             this.Status = OperationStatus.Success;
 

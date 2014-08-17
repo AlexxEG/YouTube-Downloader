@@ -251,7 +251,7 @@ namespace YouTube_Downloader.Classes
 
             if (deleteInput)
             {
-                MainForm.DeleteFiles(input);
+                Helper.DeleteFiles(input);
             }
         }
 
@@ -340,7 +340,7 @@ namespace YouTube_Downloader.Classes
 
             if (deleteInput)
             {
-                MainForm.DeleteFiles(input);
+                Helper.DeleteFiles(input);
             }
         }
 
@@ -425,7 +425,7 @@ namespace YouTube_Downloader.Classes
 
             if (deleteInput)
             {
-                MainForm.DeleteFiles(input);
+                Helper.DeleteFiles(input);
             }
         }
 

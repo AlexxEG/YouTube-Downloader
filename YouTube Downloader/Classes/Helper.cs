@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace YouTube_Downloader.Classes
 {
@@ -9,6 +11,51 @@ namespace YouTube_Downloader.Classes
         public const int PreferedQualityHighest = 0;
         public const int PreferedQualityMedium = 1;
         public const int PreferedQualityLow = 2;
+
+        /// <summary>
+        /// Attempts to delete given file(s), ignoring exceptions for 10 tries, with 2 second delay between each try.
+        /// </summary>
+        /// <param name="files">The files to delete.</param>
+        public static void DeleteFiles(params string[] files)
+        {
+            new Thread(delegate()
+            {
+                var dict = new Dictionary<string, int>();
+                var keys = new List<string>();
+
+                foreach (string file in files)
+                {
+                    dict.Add(file, 0);
+                    keys.Add(file);
+                }
+
+                while (dict.Count > 0)
+                {
+                    foreach (string key in keys)
+                    {
+                        try
+                        {
+                            File.Delete(key);
+
+                            dict.Remove(key);
+                        }
+                        catch
+                        {
+                            if (dict[key] == 10)
+                            {
+                                dict.Remove(key);
+                            }
+                            else
+                            {
+                                dict[key]++;
+                            }
+                        }
+                    }
+
+                    Thread.Sleep(2000);
+                }
+            }).Start();
+        }
 
         public static string FormatFileSize(long size)
         {
@@ -63,6 +110,13 @@ namespace YouTube_Downloader.Classes
             long remainBytes = totalBytes - downloadedBytes;
 
             return remainBytes / speed;
+        }
+
+        public static string GetFileSize(string file)
+        {
+            FileInfo info = new FileInfo(file);
+
+            return Helper.FormatFileSize(info.Length);
         }
 
         public static string GetPlaylistId(string url)
