@@ -6,6 +6,7 @@ namespace YouTube_Downloader.Classes
 {
     public class VideoFormat
     {
+        public bool DASH { get; set; }
         public string DownloadUrl { get; set; }
         public string Extension { get; set; }
         public long FileSize { get; set; }

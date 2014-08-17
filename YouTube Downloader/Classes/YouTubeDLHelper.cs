@@ -60,34 +60,7 @@ namespace YouTube_Downloader.Classes
             if (!process.HasExited)
                 process.Kill();
 
-            /* Parse JSON */
-            VideoInfo info = new VideoInfo();
-            string json = File.ReadAllText(json_file);
-            JObject jObject = JObject.Parse(json);
-
-            info.Duration = long.Parse(jObject["duration"].ToString());
-            info.Title = jObject["fulltitle"].ToString();
-
-            string displayId = jObject["display_id"].ToString();
-
-            info.ThumbnailUrl = string.Format("https://i.ytimg.com/vi/{0}/mqdefault.jpg", displayId);
-            info.Url = url;
-
-            JArray array = (JArray)jObject["formats"];
-
-            foreach (JToken token in array)
-            {
-                VideoFormat format = new VideoFormat(info);
-
-                format.DownloadUrl = token["url"].ToString();
-                format.Extension = token["ext"].ToString();
-                format.Format = token["format"].ToString();
-                format.UpdateFileSize();
-
-                info.Formats.Add(format);
-            }
-
-            return info;
+            return VideoInfo.DeserializeJson(json_file);
         }
 
         public static Playlist GetPlaylist(string url)

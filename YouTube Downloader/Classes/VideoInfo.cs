@@ -86,6 +86,11 @@ namespace YouTube_Downloader.Classes
             {
                 VideoFormat format = new VideoFormat(info);
 
+                JToken format_note = token.SelectToken("format_note");
+
+                if (format_note != null && format_note.ToString().Contains("DASH"))
+                    format.DASH = true;
+
                 format.DownloadUrl = token["url"].ToString();
                 format.Extension = token["ext"].ToString();
                 format.Format = token["format"].ToString();
