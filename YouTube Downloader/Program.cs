@@ -58,14 +58,13 @@ namespace YouTube_Downloader
 
         public static void SaveException(Exception ex)
         {
-            string directory = Path.Combine(Application.StartupPath, "StackTraces");
+            string directory = Path.Combine(GetLocalAppDataFolder(), "stack traces");
 
             if (!Directory.Exists(directory))
                 Directory.CreateDirectory(directory);
 
-            string file = string.Format("{0}\\StackTraces\\stackTrace.{1}.log",
-                Application.StartupPath,
-                DateTime.Now.ToString("yyyy_MM_dd-HH_mm_ss"));
+            string dateFormat = "yyyy_MM_dd-HH_mm_ss";
+            string file = string.Format("{0}\\stackTrace.{1}.log", directory, DateTime.Now.ToString(dateFormat));
 
             File.WriteAllText(file, ex.ToString());
         }
