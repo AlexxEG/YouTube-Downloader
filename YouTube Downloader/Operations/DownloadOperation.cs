@@ -307,6 +307,7 @@ namespace YouTube_Downloader.Operations
 
                     if (!this.Wait())
                     {
+                        /* Only update text once per second. */
                         string speed = string.Format(new FileSizeFormatProvider(), "{0:s}", downloader.DownloadSpeed);
                         long longETA = Helper.GetETA(downloader.DownloadSpeed, downloader.TotalSize, downloader.TotalProgress);
                         string ETA = longETA == 0 ? "" : "  [ " + FormatLeftTime.Format(((long)longETA) * 1000) + " ]";
