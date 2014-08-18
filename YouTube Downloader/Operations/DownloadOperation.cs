@@ -2,6 +2,7 @@
 using ListViewEmbeddedControls;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 using YouTube_Downloader.Classes;
@@ -10,6 +11,11 @@ namespace YouTube_Downloader.Operations
 {
     public class DownloadOperation : ListViewItem, IOperation, IDisposable
     {
+        /// <summary>
+        /// The amount of time to wait for progress updates in milliseconds.
+        /// </summary>
+        private const int ProgressDelay = 1000;
+
         public string Input { get; set; }
         public string Output { get; set; }
         public OperationStatus Status
@@ -51,13 +57,17 @@ namespace YouTube_Downloader.Operations
         }
 
         public event OperationEventHandler OperationComplete;
-        private FileDownloader downloader;
 
-        private bool dash = false;
+        FileDownloader downloader;
+        BackgroundWorker combiner;
 
         /* downloader statuses */
-        private bool failed = false;
-        private bool successful = false;
+        bool failed = false;
+        bool successful = false;
+
+        bool dash = false;
+        bool processing;
+        Stopwatch sw;
 
         public DownloadOperation(string text)
             : base(text)
@@ -85,6 +95,11 @@ namespace YouTube_Downloader.Operations
                 {
                     downloader.Dispose();
                     downloader = null;
+                }
+                if (combiner != null)
+                {
+                    combiner.Dispose();
+                    combiner = null;
                 }
                 OperationComplete = null;
             }
@@ -185,63 +200,29 @@ namespace YouTube_Downloader.Operations
             }
         }
 
-        #region downloader
-
-        private bool processing;
-
-        private void downloader_ProgressChanged(object sender, EventArgs e)
+        private void Combine()
         {
-            if (processing)
-                return;
+            string audio = downloader.LocalDirectory + "\\" + downloader.Files[0].Name;
+            string video = downloader.LocalDirectory + "\\" + downloader.Files[1].Name;
 
-            if (ListView.InvokeRequired)
-                ListView.Invoke(new ProgressChangedEventHandler(downloader_ProgressChanged), sender, e);
-            else
-            {
-                try
-                {
-                    processing = true;
+            this.SubItems[2].Text = "Combining...";
+            this.GetProgressBar().Value = this.GetProgressBar().Minimum;
+            this.GetProgressBar().Style = ProgressBarStyle.Marquee;
+            this.GetProgressBar().MarqueeAnimationSpeed = 30;
 
-                    string speed = string.Format(new FileSizeFormatProvider(), "{0:s}", downloader.DownloadSpeed);
-                    long longETA = Helper.GetETA(downloader.DownloadSpeed, downloader.TotalSize, downloader.TotalProgress);
-                    string ETA = longETA == 0 ? "" : "  [ " + FormatLeftTime.Format(((long)longETA) * 1000) + " ]";
+            Program.RunningWorkers.Add(combiner);
 
-                    this.SubItems[1].Text = downloader.TotalPercentage() + " %";
-                    this.SubItems[2].Text = speed + ETA;
+            combiner = new BackgroundWorker();
+            combiner.DoWork += combiner_DoWork;
+            combiner.RunWorkerCompleted += combiner_RunWorkerCompleted;
 
-                    ProgressBar progressBar = (ProgressBar)((ListViewEx)this.ListView).GetEmbeddedControl(1, this.Index);
-
-                    progressBar.Value = (int)downloader.TotalPercentage();
-
-                    RefreshStatus();
-                }
-                catch { }
-                finally { processing = false; }
-            }
+            combiner.RunWorkerAsync(new string[] { audio, video });
         }
 
-        private void downloader_Completed(object sender, EventArgs e)
+        private ProgressBar GetProgressBar()
         {
-            if (!failed)
-                successful = true;
-
-            if (dash)
-            {
-                string audio = downloader.LocalDirectory + "\\" + downloader.Files[0].Name;
-                string video = downloader.LocalDirectory + "\\" + downloader.Files[1].Name;
-
-                /* ToDo: Show the combining operation in 'Speed' column. */
-                FFmpegHelper.CombineDash(video, audio, this.Output);
-            }
-
-            RefreshStatus();
-
-            Program.RunningDownloaders.Remove(downloader);
-
-            OnOperationComplete(new OperationEventArgs(this, this.Status));
+            return (ProgressBar)((ListViewEx)this.ListView).GetEmbeddedControl(1, this.Index);
         }
-
-        #endregion
 
         private void RefreshStatus()
         {
@@ -263,6 +244,107 @@ namespace YouTube_Downloader.Operations
         {
             if (OperationComplete != null)
                 OperationComplete(this, e);
+        }
+
+        private bool Wait()
+        {
+            /* Limit the progress update to once a second,
+             * to avoid flickering. */
+            if (sw == null || !sw.IsRunning)
+            {
+                sw = new Stopwatch();
+                sw.Start();
+                return true;
+            }
+            else if (sw.ElapsedMilliseconds < ProgressDelay)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private void combiner_DoWork(object sender, DoWorkEventArgs e)
+        {
+            string[] arguments = e.Argument as string[];
+            string audio = arguments[0];
+            string video = arguments[1];
+
+            FFmpegHelper.CombineDash(video, audio, this.Output);
+
+            /* Delete the separate audio & video files. */
+            Helper.DeleteFiles(arguments);
+        }
+
+        private void combiner_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (!failed)
+                successful = true;
+
+            this.GetProgressBar().Style = ProgressBarStyle.Continuous;
+            this.GetProgressBar().MarqueeAnimationSpeed = 0;
+            this.GetProgressBar().Value = this.GetProgressBar().Maximum;
+
+            RefreshStatus();
+
+            Program.RunningWorkers.Remove(combiner);
+
+            OnOperationComplete(new OperationEventArgs(this, this.Status));
+        }
+
+        private void downloader_ProgressChanged(object sender, EventArgs e)
+        {
+            if (processing)
+                return;
+
+            if (ListView.InvokeRequired)
+                ListView.Invoke(new ProgressChangedEventHandler(downloader_ProgressChanged), sender, e);
+            else
+            {
+                try
+                {
+                    processing = true;
+
+                    if (!this.Wait())
+                    {
+                        string speed = string.Format(new FileSizeFormatProvider(), "{0:s}", downloader.DownloadSpeed);
+                        long longETA = Helper.GetETA(downloader.DownloadSpeed, downloader.TotalSize, downloader.TotalProgress);
+                        string ETA = longETA == 0 ? "" : "  [ " + FormatLeftTime.Format(((long)longETA) * 1000) + " ]";
+
+                        this.SubItems[1].Text = downloader.TotalPercentage() + " %";
+                        this.SubItems[2].Text = speed + ETA;
+
+                        sw.Restart();
+                    }
+
+                    this.GetProgressBar().Value = (int)downloader.TotalPercentage();
+
+                    RefreshStatus();
+                }
+                catch { }
+                finally { processing = false; }
+            }
+        }
+
+        private void downloader_Completed(object sender, EventArgs e)
+        {
+            sw.Stop();
+
+            if (dash)
+            {
+                this.Combine();
+            }
+            else
+            {
+                if (!failed)
+                    successful = true;
+
+                RefreshStatus();
+
+                Program.RunningDownloaders.Remove(downloader);
+
+                OnOperationComplete(new OperationEventArgs(this, this.Status));
+            }
         }
     }
 }
