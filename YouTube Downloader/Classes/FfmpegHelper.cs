@@ -177,17 +177,9 @@ namespace YouTube_Downloader.Classes
 
         public static void Convert(BackgroundWorker bw, string input, string output)
         {
-            bool deleteInput = false;
-
             if (input == output)
             {
-                string dest = Path.Combine(Path.GetDirectoryName(input), System.Guid.NewGuid().ToString());
-                dest += Path.GetExtension(input);
-
-                File.Move(input, dest);
-
-                input = dest;
-                deleteInput = true;
+                throw new Exception("Input & output can't be the same.");
             }
 
             string[] args = new string[] { input, output };
@@ -258,26 +250,13 @@ namespace YouTube_Downloader.Classes
 
             if (!process.HasExited)
                 process.Kill();
-
-            if (deleteInput)
-            {
-                Helper.DeleteFiles(input);
-            }
         }
 
         public static void Crop(BackgroundWorker bw, string input, string output, string start)
         {
-            bool deleteInput = false;
-
             if (input == output)
             {
-                string dest = Path.Combine(Path.GetDirectoryName(input), System.Guid.NewGuid().ToString());
-                dest += Path.GetExtension(input);
-
-                File.Move(input, dest);
-
-                input = dest;
-                deleteInput = true;
+                throw new Exception("Input & output can't be the same.");
             }
 
             TimeSpan from = TimeSpan.Parse(start);
@@ -347,26 +326,13 @@ namespace YouTube_Downloader.Classes
 
             if (!process.HasExited)
                 process.Kill();
-
-            if (deleteInput)
-            {
-                Helper.DeleteFiles(input);
-            }
         }
 
         public static void Crop(BackgroundWorker bw, string input, string output, string start, string end)
         {
-            bool deleteInput = false;
-
             if (input == output)
             {
-                string dest = Path.Combine(Path.GetDirectoryName(input), System.Guid.NewGuid().ToString());
-                dest += Path.GetExtension(input);
-
-                File.Move(input, dest);
-
-                input = dest;
-                deleteInput = true;
+                throw new Exception("Input & output can't be the same.");
             }
 
             TimeSpan from = TimeSpan.Parse(start);
@@ -432,11 +398,6 @@ namespace YouTube_Downloader.Classes
 
             if (!process.HasExited)
                 process.Kill();
-
-            if (deleteInput)
-            {
-                Helper.DeleteFiles(input);
-            }
         }
 
         public static TimeSpan GetDuration(string input)
