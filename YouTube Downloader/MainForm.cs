@@ -15,7 +15,6 @@ using YouTube_Downloader.Properties;
  * - Handle aborting operations better when closing form.
  * - Combine DASH audio & video size to get total when downloading. (Get total filesize from downloader?)
  * - Handle DASH audio & video the same way for playlists as single videos does.
- * - Move all files that gets created (logs, json files, stacktraces) to local app data (Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)
  */
 
 namespace YouTube_Downloader
