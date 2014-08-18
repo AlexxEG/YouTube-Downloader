@@ -1162,7 +1162,7 @@ namespace YouTube_Downloader
 
     public delegate void OperationEventHandler(object sender, OperationEventArgs e);
 
-    public class ConvertOperation : ListViewItem, IOperation
+    public class ConvertOperation : ListViewItem, IOperation, IDisposable
     {
         public string Input { get; set; }
         public string Output { get; set; }
@@ -1173,6 +1173,12 @@ namespace YouTube_Downloader
         public ConvertOperation(string text)
             : base(text)
         {
+        }
+
+        ~ConvertOperation()
+        {
+            // Finalizer calls Dispose(false)
+            Dispose(false);
         }
 
         public void Convert(string input, string output, string start, string end)
@@ -1192,6 +1198,30 @@ namespace YouTube_Downloader
             Program.RunningWorkers.Add(backgroundWorker);
 
             this.Status = OperationStatus.Working;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                // Free managed resources
+                if (backgroundWorker != null)
+                {
+                    backgroundWorker.Dispose();
+                    backgroundWorker = null;
+                }
+                if (process != null)
+                {
+                    process.Dispose();
+                    process = null;
+                }
+            }
         }
 
         public bool Stop()
@@ -1271,7 +1301,7 @@ namespace YouTube_Downloader
         }
     }
 
-    public class CroppingOperation : ListViewItem, IOperation
+    public class CroppingOperation : ListViewItem, IOperation, IDisposable
     {
         public string Input { get; set; }
         public string Output { get; set; }
@@ -1282,6 +1312,12 @@ namespace YouTube_Downloader
         public CroppingOperation(string text)
             : base(text)
         {
+        }
+
+        ~CroppingOperation()
+        {
+            // Finalizer calls Dispose(false)
+            Dispose(false);
         }
 
         public void Crop(string input, string output, string start, string end)
@@ -1301,6 +1337,30 @@ namespace YouTube_Downloader
             Program.RunningWorkers.Add(backgroundWorker);
 
             this.Status = OperationStatus.Working;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                // Free managed resources
+                if (backgroundWorker != null)
+                {
+                    backgroundWorker.Dispose();
+                    backgroundWorker = null;
+                }
+                if (process != null)
+                {
+                    process.Dispose();
+                    process = null;
+                }
+            }
         }
 
         public bool Stop()
@@ -1372,7 +1432,7 @@ namespace YouTube_Downloader
         }
     }
 
-    public class DownloadOperation : ListViewItem, IOperation
+    public class DownloadOperation : ListViewItem, IOperation, IDisposable
     {
         public string Input { get; set; }
         public string Output { get; set; }
@@ -1426,6 +1486,31 @@ namespace YouTube_Downloader
         public DownloadOperation(string text)
             : base(text)
         {
+        }
+
+        ~DownloadOperation()
+        {
+            // Finalizer calls Dispose(false)
+            Dispose(false);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                // Free managed resources
+                if (downloader != null)
+                {
+                    downloader.Dispose();
+                    downloader = null;
+                }
+            }
         }
 
         public void Download(string url, string output)
@@ -1604,7 +1689,7 @@ namespace YouTube_Downloader
         }
     }
 
-    public class PlaylistOperation : ListViewItem, IOperation
+    public class PlaylistOperation : ListViewItem, IOperation, IDisposable
     {
         /* ToDo:
          * 
@@ -1679,6 +1764,36 @@ namespace YouTube_Downloader
             this.Text = "Getting playlist info...";
             /* Fill sub items. */
             this.SubItems.AddRange(new string[] { "", "", "", "", "" });
+        }
+
+        ~PlaylistOperation()
+        {
+            // Finalizer calls Dispose(false)
+            Dispose(false);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                // Free managed resources
+                if (worker != null)
+                {
+                    worker.Dispose();
+                    worker = null;
+                }
+                if (downloader != null)
+                {
+                    downloader.Dispose();
+                    downloader = null;
+                }
+            }
         }
 
         public void Download(string url, string output, bool dash)
