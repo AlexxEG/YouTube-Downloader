@@ -61,8 +61,6 @@
             this.label3 = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.downloadTabPage = new System.Windows.Forms.TabPage();
-            this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.label7 = new System.Windows.Forms.Label();
             this.playlistTabPage = new System.Windows.Forms.TabPage();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
             this.chbPlaylistDASH = new System.Windows.Forms.CheckBox();
@@ -92,8 +90,6 @@
             this.label5 = new System.Windows.Forms.Label();
             this.queueTabPage = new System.Windows.Forms.TabPage();
             this.chbAutoConvert = new System.Windows.Forms.CheckBox();
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.lvQueue = new ListViewEmbeddedControls.ListViewEx();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -101,13 +97,14 @@
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.groupBox1.SuspendLayout();
             this.bottomPanel.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.videoThumbnail)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.downloadTabPage.SuspendLayout();
-            this.groupBox5.SuspendLayout();
             this.playlistTabPage.SuspendLayout();
             this.groupBox7.SuspendLayout();
             this.convertTabPage.SuspendLayout();
@@ -420,7 +417,6 @@
             // 
             // downloadTabPage
             // 
-            this.downloadTabPage.Controls.Add(this.groupBox5);
             this.downloadTabPage.Controls.Add(this.groupBox1);
             this.downloadTabPage.Controls.Add(this.groupBox3);
             this.downloadTabPage.Location = new System.Drawing.Point(4, 22);
@@ -430,27 +426,6 @@
             this.downloadTabPage.TabIndex = 0;
             this.downloadTabPage.Text = "Download";
             this.downloadTabPage.UseVisualStyleBackColor = true;
-            // 
-            // groupBox5
-            // 
-            this.groupBox5.Controls.Add(this.label7);
-            this.groupBox5.Location = new System.Drawing.Point(6, 194);
-            this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(584, 71);
-            this.groupBox5.TabIndex = 9;
-            this.groupBox5.TabStop = false;
-            this.groupBox5.Text = "DASH Information";
-            // 
-            // label7
-            // 
-            this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.label7.Location = new System.Drawing.Point(6, 19);
-            this.label7.Margin = new System.Windows.Forms.Padding(3);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(572, 46);
-            this.label7.TabIndex = 0;
-            this.label7.Text = resources.GetString("label7.Text");
             // 
             // playlistTabPage
             // 
@@ -788,14 +763,6 @@
             this.chbAutoConvert.Text = "Convert to MP3 automatically";
             this.chbAutoConvert.UseVisualStyleBackColor = true;
             // 
-            // openFileDialog1
-            // 
-            this.openFileDialog1.Filter = "MP4 files|*.mp4|MP3 files|*.mp3|All files|*.*";
-            // 
-            // saveFileDialog1
-            // 
-            this.saveFileDialog1.Filter = "MP3 files|*.mp3|MP4 files|*.mp4|All files|*.*";
-            // 
             // lvQueue
             // 
             this.lvQueue.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -840,6 +807,14 @@
             // 
             this.columnHeader6.Text = "Input";
             // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.Filter = "MP4 files|*.mp4|MP3 files|*.mp3|All files|*.*";
+            // 
+            // saveFileDialog1
+            // 
+            this.saveFileDialog1.Filter = "MP3 files|*.mp3|MP4 files|*.mp4|All files|*.*";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -862,7 +837,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.videoThumbnail)).EndInit();
             this.tabControl1.ResumeLayout(false);
             this.downloadTabPage.ResumeLayout(false);
-            this.groupBox5.ResumeLayout(false);
             this.playlistTabPage.ResumeLayout(false);
             this.groupBox7.ResumeLayout(false);
             this.groupBox7.PerformLayout();
@@ -939,8 +913,6 @@
         private System.Windows.Forms.Label lFFmpegMissing;
         private System.Windows.Forms.Button btnCheckAgain;
         private System.Windows.Forms.Label lFileSize;
-        private System.Windows.Forms.GroupBox groupBox5;
-        private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TabPage playlistTabPage;
         private System.Windows.Forms.GroupBox groupBox7;
         private System.Windows.Forms.Button btnPlaylistBrowse;
