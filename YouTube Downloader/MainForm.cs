@@ -125,10 +125,10 @@ namespace YouTube_Downloader
             this.Close();
         }
 
-        private void panel1_Paint(object sender, PaintEventArgs e)
+        private void bottomPanel_Paint(object sender, PaintEventArgs e)
         {
             // Draw line on top of panel.
-            e.Graphics.DrawLine(new Pen(Color.Silver, 2), new Point(0, 1), new Point(panel1.Width, 1));
+            e.Graphics.DrawLine(new Pen(Color.Silver, 2), new Point(0, 1), new Point(bottomPanel.Width, 1));
         }
 
         private void linkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

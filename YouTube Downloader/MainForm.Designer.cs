@@ -40,7 +40,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.btnDownload = new System.Windows.Forms.Button();
             this.cbQuality = new System.Windows.Forms.ComboBox();
-            this.panel1 = new System.Windows.Forms.Panel();
+            this.bottomPanel = new System.Windows.Forms.Panel();
             this.btnToDo = new System.Windows.Forms.Button();
             this.btnExit = new System.Windows.Forms.Button();
             this.bwGetVideo = new System.ComponentModel.BackgroundWorker();
@@ -92,6 +92,8 @@
             this.label5 = new System.Windows.Forms.Label();
             this.queueTabPage = new System.Windows.Forms.TabPage();
             this.chbAutoConvert = new System.Windows.Forms.CheckBox();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.lvQueue = new ListViewEmbeddedControls.ListViewEx();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -99,10 +101,8 @@
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.groupBox1.SuspendLayout();
-            this.panel1.SuspendLayout();
+            this.bottomPanel.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.videoThumbnail)).BeginInit();
             this.tabControl1.SuspendLayout();
@@ -235,19 +235,19 @@
             this.cbQuality.TabIndex = 1;
             this.cbQuality.SelectedIndexChanged += new System.EventHandler(this.cbQuality_SelectedIndexChanged);
             // 
-            // panel1
+            // bottomPanel
             // 
-            this.panel1.BackColor = System.Drawing.Color.Gainsboro;
-            this.panel1.Controls.Add(this.btnToDo);
-            this.panel1.Controls.Add(this.btnExit);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 341);
-            this.panel1.Margin = new System.Windows.Forms.Padding(3, 9, 3, 3);
-            this.panel1.Name = "panel1";
-            this.panel1.Padding = new System.Windows.Forms.Padding(5);
-            this.panel1.Size = new System.Drawing.Size(628, 46);
-            this.panel1.TabIndex = 1;
-            this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
+            this.bottomPanel.BackColor = System.Drawing.Color.Gainsboro;
+            this.bottomPanel.Controls.Add(this.btnToDo);
+            this.bottomPanel.Controls.Add(this.btnExit);
+            this.bottomPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.bottomPanel.Location = new System.Drawing.Point(0, 341);
+            this.bottomPanel.Margin = new System.Windows.Forms.Padding(3, 9, 3, 3);
+            this.bottomPanel.Name = "bottomPanel";
+            this.bottomPanel.Padding = new System.Windows.Forms.Padding(5);
+            this.bottomPanel.Size = new System.Drawing.Size(628, 46);
+            this.bottomPanel.TabIndex = 1;
+            this.bottomPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.bottomPanel_Paint);
             // 
             // btnToDo
             // 
@@ -788,6 +788,14 @@
             this.chbAutoConvert.Text = "Convert to MP3 automatically";
             this.chbAutoConvert.UseVisualStyleBackColor = true;
             // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.Filter = "MP4 files|*.mp4|MP3 files|*.mp3|All files|*.*";
+            // 
+            // saveFileDialog1
+            // 
+            this.saveFileDialog1.Filter = "MP3 files|*.mp3|MP4 files|*.mp4|All files|*.*";
+            // 
             // lvQueue
             // 
             this.lvQueue.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -832,21 +840,13 @@
             // 
             this.columnHeader6.Text = "Input";
             // 
-            // openFileDialog1
-            // 
-            this.openFileDialog1.Filter = "MP4 files|*.mp4|MP3 files|*.mp3|All files|*.*";
-            // 
-            // saveFileDialog1
-            // 
-            this.saveFileDialog1.Filter = "MP3 files|*.mp3|MP4 files|*.mp4|All files|*.*";
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(628, 387);
             this.Controls.Add(this.tabControl1);
-            this.Controls.Add(this.panel1);
+            this.Controls.Add(this.bottomPanel);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(644, 425);
             this.Name = "MainForm";
@@ -856,7 +856,7 @@
             this.Shown += new System.EventHandler(this.MainForm_Shown);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            this.panel1.ResumeLayout(false);
+            this.bottomPanel.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.videoThumbnail)).EndInit();
@@ -884,7 +884,7 @@
         private System.Windows.Forms.Button btnGetVideo;
         private System.Windows.Forms.ComboBox cbQuality;
         private System.Windows.Forms.TextBox txtYoutubeLink;
-        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel bottomPanel;
         private System.Windows.Forms.Button btnToDo;
         private System.Windows.Forms.Button btnExit;
         private System.Windows.Forms.Button btnPaste;
