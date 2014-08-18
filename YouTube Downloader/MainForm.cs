@@ -10,6 +10,7 @@ using System.Threading;
 using System.Windows.Forms;
 using YouTube_Downloader.Classes;
 using YouTube_Downloader.Operations;
+using YouTube_Downloader.Properties;
 
 /* ToDo: 
  *
@@ -64,15 +65,17 @@ namespace YouTube_Downloader
                 selectedVideo.AbortUpdateFileSizes();
 
             SettingsEx.WindowStates[this.Name].SaveForm(this);
-            SettingsEx.SaveToDirectories.Clear();
+            Settings.Default.SaveToDirectories.Clear();
 
             string[] paths = new string[cbSaveTo.Items.Count];
             cbSaveTo.Items.CopyTo(paths, 0);
 
-            SettingsEx.SaveToDirectories.AddRange(paths);
-            SettingsEx.SelectedDirectory = cbSaveTo.SelectedIndex;
-            SettingsEx.AutoConvert = chbAutoConvert.Checked;
-            SettingsEx.Save();
+            Settings.Default.SaveToDirectories.AddRange(paths);
+            Settings.Default.SelectedDirectory = cbSaveTo.SelectedIndex;
+            Settings.Default.AutoConvert = chbAutoConvert.Checked;
+            Settings.Default.Save();
+
+            Settings.Default.Save();
 
             Application.Exit();
         }
@@ -86,23 +89,42 @@ namespace YouTube_Downloader
 
             SettingsEx.WindowStates[this.Name].RestoreForm(this);
 
-            cbSaveTo.Items.AddRange(SettingsEx.SaveToDirectories.ToArray());
-            cbPlaylistSaveTo.Items.AddRange(SettingsEx.SaveToDirectories.ToArray());
+            /* Upgrade settings between new versions. 
+             * 
+             * More information: http://www.ngpixel.com/2011/05/05/c-keep-user-settings-between-versions/ */
+            if (Settings.Default.UpdateSettings)
+            {
+                Settings.Default.Upgrade();
+                Settings.Default.UpdateSettings = false;
+                Settings.Default.Save();
+            }
+
+            string[] directories = new string[Settings.Default.SaveToDirectories.Count];
+
+            Settings.Default.SaveToDirectories.CopyTo(directories, 0);
+
+            cbSaveTo.Items.AddRange(directories);
+            cbPlaylistSaveTo.Items.AddRange(directories);
 
             if (cbSaveTo.Items.Count > 0)
             {
-                cbSaveTo.SelectedIndex = SettingsEx.SelectedDirectory;
+                cbSaveTo.SelectedIndex = Settings.Default.SelectedDirectory;
             }
 
             if (cbPlaylistSaveTo.Items.Count > 0)
             {
-                cbPlaylistSaveTo.SelectedIndex = SettingsEx.SelectedDirectoryPlaylist;
+                cbPlaylistSaveTo.SelectedIndex = Settings.Default.SelectedDirectoryPlaylist;
             }
 
-            chbAutoConvert.Checked = SettingsEx.AutoConvert;
+            chbAutoConvert.Checked = Settings.Default.AutoConvert;
 
-            cbPlaylistQuality.SelectedIndex = SettingsEx.PreferedQualityPlaylist;
-            chbPlaylistDASH.Checked = SettingsEx.UseDashPlaylist;
+            cbPlaylistQuality.SelectedIndex = Settings.Default.PreferedQualityPlaylist;
+            chbPlaylistDASH.Checked = Settings.Default.UseDashPlaylist;
+
+            if (!string.IsNullOrEmpty(Settings.Default.LastYouTubeUrl))
+            {
+                txtYoutubeLink.Text = Settings.Default.LastYouTubeUrl;
+            }
         }
 
         private void MainForm_Shown(object sender, EventArgs e)
@@ -218,6 +240,8 @@ namespace YouTube_Downloader
                     "Invalid URL", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             else
             {
+                Settings.Default.LastYouTubeUrl = txtYoutubeLink.Text;
+
                 lTitle.Text = "-";
                 cbQuality.Items.Clear();
                 btnGetVideo.Enabled = txtYoutubeLink.Enabled = btnDownload.Enabled = cbQuality.Enabled = false;
@@ -472,17 +496,17 @@ namespace YouTube_Downloader
 
         private void cbPlaylistSaveTo_SelectedIndexChanged(object sender, EventArgs e)
         {
-            SettingsEx.SelectedDirectoryPlaylist = cbPlaylistSaveTo.SelectedIndex;
+            Settings.Default.SelectedDirectoryPlaylist = cbPlaylistSaveTo.SelectedIndex;
         }
 
         private void cbPlaylistQuality_SelectedIndexChanged(object sender, EventArgs e)
         {
-            SettingsEx.PreferedQualityPlaylist = cbPlaylistQuality.SelectedIndex;
+            Settings.Default.PreferedQualityPlaylist = cbPlaylistQuality.SelectedIndex;
         }
 
         private void chbPlaylistDASH_CheckedChanged(object sender, EventArgs e)
         {
-            SettingsEx.UseDashPlaylist = chbPlaylistDASH.Checked;
+            Settings.Default.UseDashPlaylist = chbPlaylistDASH.Checked;
         }
 
         #endregion

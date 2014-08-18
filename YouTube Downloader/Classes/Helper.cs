@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
+using YouTube_Downloader.Properties;
 
 namespace YouTube_Downloader.Classes
 {
@@ -150,7 +151,7 @@ namespace YouTube_Downloader.Classes
 
             int index = -1;
 
-            switch (SettingsEx.PreferedQualityPlaylist)
+            switch (Settings.Default.PreferedQualityPlaylist)
             {
                 case PreferedQualityMedium:
                     if ((index = qualities.IndexOf("720", dash)) > -1)
