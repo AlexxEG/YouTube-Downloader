@@ -13,7 +13,7 @@ using YouTube_Downloader.Classes;
 
 /* ToDo: 
  *
- * - Automatically download DASH audio when downloading DASH video and combine them, also automatically.
+ * - Clean up after combining.
  */
 
 namespace YouTube_Downloader
@@ -376,7 +376,7 @@ namespace YouTube_Downloader
         /// <param name="list">The list of VideoFormat to check.</param>
         private VideoFormat[] CheckFormats(IList<VideoFormat> list)
         {
-            List<VideoFormat> formats = (List<VideoFormat>)list;
+            List<VideoFormat> formats = new List<VideoFormat>(list);
 
             for (int i = formats.Count - 1; i >= 0; i--)
             {
@@ -527,9 +527,17 @@ namespace YouTube_Downloader
                     Tag = tempFormat.VideoInfo.Url
                 };
                 ll.LinkClicked += linkLabel_LinkClicked;
+
                 lvQueue.AddEmbeddedControl(ll, 5, item.Index);
 
-                item.Download(tempFormat.DownloadUrl, Path.Combine(path, filename));
+                if (!tempFormat.DASH)
+                    item.Download(tempFormat.DownloadUrl, Path.Combine(path, filename));
+                else
+                {
+                    VideoFormat audio = Helper.GetAudioFormat(selectedVideo);
+
+                    item.DownloadDASH(audio.DownloadUrl, tempFormat.DownloadUrl, Path.Combine(path, filename));
+                }
 
                 tabControl1.SelectedTab = queueTabPage;
             }
@@ -1409,6 +1417,8 @@ namespace YouTube_Downloader
         public event OperationEventHandler OperationComplete;
         private FileDownloader downloader;
 
+        private bool dash = false;
+
         /* downloader statuses */
         private bool failed = false;
         private bool successful = false;
@@ -1421,9 +1431,10 @@ namespace YouTube_Downloader
         public void Download(string url, string output)
         {
             this.Input = url;
+            this.Output = output;
+
             string folder = Path.GetDirectoryName(output);
             string file = Path.GetFileName(output).Trim();
-            this.Output = Path.Combine(folder, file);
 
             /* Reset some variables in-case downloader is restarted. */
             failed = successful = false;
@@ -1441,6 +1452,48 @@ namespace YouTube_Downloader
             downloader.Completed += downloader_Completed;
             downloader.FileDownloadFailed += delegate { failed = true; };
             downloader.FileDownloadSucceeded += delegate { successful = true; };
+            downloader.Start();
+
+            Program.RunningDownloaders.Add(downloader);
+        }
+
+        public void DownloadDASH(string audio, string video, string output)
+        {
+            dash = true;
+
+            this.Input = string.Format("{0}|{1}", audio, video);
+            this.Output = output;
+
+            string folder = Path.GetDirectoryName(output);
+            string file = Path.GetFileName(output).Trim();
+
+            failed = successful = false;
+
+            downloader = new FileDownloader(true);
+            downloader.LocalDirectory = folder;
+
+            FileDownloader.FileInfo[] fileInfos = new FileDownloader.FileInfo[2]
+            {
+                new FileDownloader.FileInfo(audio)
+                {
+                    Name = Path.GetFileNameWithoutExtension(output) + "_audio" + Path.GetExtension(output)
+                },
+                new FileDownloader.FileInfo(video)
+                {
+                    Name = Path.GetFileNameWithoutExtension(output) + "_video" + Path.GetExtension(output)
+                }
+            };
+
+            downloader.Files.AddRange(fileInfos);
+            downloader.ProgressChanged += downloader_ProgressChanged;
+            downloader.Completed += downloader_Completed;
+            downloader.FileDownloadFailed += delegate
+            {
+                /* If one or more files fail, whole operation failed. Might handle it more
+                 * elegantly in the future. */
+                failed = true;
+                downloader.Stop(false);
+            };
             downloader.Start();
 
             Program.RunningDownloaders.Add(downloader);
@@ -1507,6 +1560,18 @@ namespace YouTube_Downloader
 
         private void downloader_Completed(object sender, EventArgs e)
         {
+            if (!failed)
+                successful = true;
+
+            if (dash)
+            {
+                string audio = downloader.LocalDirectory + "\\" + downloader.Files[0].Name;
+                string video = downloader.LocalDirectory + "\\" + downloader.Files[1].Name;
+
+                /* ToDo: Show the combining operation in 'Speed' column. */
+                FFmpegHelper.CombineDash(video, audio, this.Output);
+            }
+
             RefreshStatus();
 
             Program.RunningDownloaders.Remove(downloader);
