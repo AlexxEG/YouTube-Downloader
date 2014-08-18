@@ -27,11 +27,16 @@ namespace YouTube_Downloader.Classes
         {
             if (request != null)
                 request.Abort();
+
+            if (updateFileSizeThread != null)
+                updateFileSizeThread.Abort();
         }
+
+        Thread updateFileSizeThread;
 
         public void UpdateFileSize()
         {
-            new Thread(() =>
+            updateFileSizeThread = new Thread(() =>
             {
                 HttpWebResponse response = null;
 
@@ -57,7 +62,8 @@ namespace YouTube_Downloader.Classes
                     if (response != null)
                         response.Close();
                 }
-            }).Start();
+            });
+            updateFileSizeThread.Start();
         }
 
         public override string ToString()
