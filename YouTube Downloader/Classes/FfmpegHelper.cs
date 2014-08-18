@@ -115,7 +115,17 @@ namespace YouTube_Downloader.Classes
 
         private static StreamWriter CreateLogWriter()
         {
-            return new StreamWriter(Path.Combine(Application.StartupPath, "ffmpeg.log"), true);
+            string folder = Path.Combine(Program.GetLocalAppDataFolder(), "logs");
+
+            if (!Directory.Exists(folder))
+                Directory.CreateDirectory(folder);
+
+            StreamWriter writer = new StreamWriter(Path.Combine(folder, "ffmpeg.log"), true)
+            {
+                AutoFlush = true
+            };
+
+            return writer;
         }
 
         public static void CombineDash(string video, string audio, string output)
@@ -525,7 +535,8 @@ namespace YouTube_Downloader.Classes
 
         private static void WriteEnd(StreamWriter writer)
         {
-            writer.WriteLine("END");
+            writer.WriteLine();
+            writer.WriteLine();
             writer.WriteLine();
         }
 
@@ -534,7 +545,7 @@ namespace YouTube_Downloader.Classes
             /* Log header. */
             writer.WriteLine("[" + DateTime.Now + "]");
             writer.WriteLine("cmd: " + arguments);
-            writer.WriteLine("-");
+            writer.WriteLine();
             writer.WriteLine("OUTPUT");
         }
     }

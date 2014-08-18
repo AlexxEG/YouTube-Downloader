@@ -11,6 +11,8 @@ namespace YouTube_Downloader
 {
     static class Program
     {
+        public const string Name = "YouTube Downloader";
+
         public static bool FFmpegAvailable = true;
 
         /// <summary>
@@ -38,6 +40,20 @@ namespace YouTube_Downloader
         static void CurrentDomain_UnhandledException(object sender, System.UnhandledExceptionEventArgs e)
         {
             Program.SaveException((Exception)e.ExceptionObject);
+        }
+
+        /// <summary>
+        /// Returns the local app data directory for this program. Also makes sure the directory exists.
+        /// </summary>
+        /// <returns></returns>
+        public static string GetLocalAppDataFolder()
+        {
+            string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), Program.Name);
+
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+
+            return path;
         }
 
         public static void SaveException(Exception ex)

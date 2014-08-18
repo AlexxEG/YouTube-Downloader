@@ -17,10 +17,17 @@ namespace YouTube_Downloader.Classes
 
         public static StreamWriter CreateLogWriter()
         {
-            return new StreamWriter(Path.Combine(Application.StartupPath, "youtube-dl.log"), true)
-                {
-                    AutoFlush = true
-                };
+            string folder = Path.Combine(Program.GetLocalAppDataFolder(), "logs");
+
+            if (!Directory.Exists(folder))
+                Directory.CreateDirectory(folder);
+
+            StreamWriter writer = new StreamWriter(Path.Combine(folder, "youtube-dl.log"), true)
+            {
+                AutoFlush = true
+            };
+
+            return writer;
         }
 
         public static VideoInfo GetVideoInfo(string url)
