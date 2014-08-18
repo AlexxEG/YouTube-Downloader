@@ -131,104 +131,6 @@ namespace YouTube_Downloader
             e.Graphics.DrawLine(new Pen(Color.Silver, 2), new Point(0, 1), new Point(panel1.Width, 1));
         }
 
-        private void btnBrowseInput_Click(object sender, EventArgs e)
-        {
-            openFileDialog1.FileName = Path.GetFileName(txtInput.Text);
-
-            if (openFileDialog1.ShowDialog(this) == DialogResult.OK)
-            {
-                txtInput.Text = openFileDialog1.FileName;
-
-                if (txtOutput.Text == string.Empty)
-                {
-                    // Suggest file name
-                    string output = Path.GetDirectoryName(openFileDialog1.FileName);
-
-                    output = Path.Combine(output, Path.GetFileNameWithoutExtension(openFileDialog1.FileName));
-                    output += ".mp3";
-
-                    txtOutput.Text = output;
-                }
-            }
-        }
-
-        private void btnBrowseOutput_Click(object sender, EventArgs e)
-        {
-            if (File.Exists(txtInput.Text))
-            {
-                saveFileDialog1.FileName = Path.GetFileName(txtInput.Text);
-            }
-            else
-            {
-                saveFileDialog1.FileName = Path.GetFileName(txtOutput.Text);
-            }
-
-            if (saveFileDialog1.ShowDialog(this) == DialogResult.OK)
-            {
-                txtOutput.Text = saveFileDialog1.FileName;
-            }
-        }
-
-        private void btnConvert_Click(object sender, EventArgs e)
-        {
-            if (!FFmpegHelper.CanConvertMP3(txtInput.Text))
-            {
-                string text = "Can't convert input file to MP3. File doesn't appear to have audio.";
-
-                MessageBox.Show(this, text, "Missing Audio", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            if (File.Exists(txtOutput.Text))
-            {
-                string filename = Path.GetFileName(txtOutput.Text);
-                string text = "File '" + filename + "' already exists.\n\nOverwrite?";
-
-                if (MessageBox.Show(this, text, "Overwrite", MessageBoxButtons.YesNo) == DialogResult.No)
-                {
-                    return;
-                }
-
-            }
-
-            if (txtInput.Text == txtOutput.Text ||
-                // If they match, the user probably wants to crop. Right?
-                Path.GetExtension(txtInput.Text) == Path.GetExtension(txtOutput.Text))
-            {
-                this.Crop(txtInput.Text, txtOutput.Text);
-            }
-            else
-            {
-                this.Convert(txtInput.Text, txtOutput.Text, true);
-            }
-
-            txtInput.Clear();
-            txtOutput.Clear();
-
-            tabControl1.SelectedTab = queueTabPage;
-        }
-
-        private void btnCheckAgain_Click(object sender, EventArgs e)
-        {
-            Program.FFmpegAvailable = File.Exists(FFmpegHelper.FFmpegPath);
-
-            groupBox2.Enabled = chbAutoConvert.Enabled = Program.FFmpegAvailable;
-            lFFmpegMissing.Visible = btnCheckAgain.Visible = !Program.FFmpegAvailable;
-
-            MessageBox.Show(this, Program.FFmpegAvailable ? "Found FFmmpeg, enabling related functions." : "Did not find FFmpeg.");
-        }
-
-        private void chbCropFrom_CheckedChanged(object sender, EventArgs e)
-        {
-            mtxtFrom.Enabled = chbCropTo.Enabled = chbCropFrom.Checked;
-            mtxtTo.Enabled = chbCropFrom.Checked && chbCropTo.Checked;
-        }
-
-        private void chbCropTo_CheckedChanged(object sender, EventArgs e)
-        {
-            mtxtTo.Enabled = chbCropTo.Checked;
-        }
-
         private void linkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             try
@@ -294,24 +196,6 @@ namespace YouTube_Downloader
                 {
                     lFileSize.Text = Helper.FormatFileSize(e.VideoFormat.FileSize);
                 }
-            }
-        }
-
-        private void videoThumbnail_Paint(object sender, PaintEventArgs e)
-        {
-            if (videoThumbnail.Tag != null)
-            {
-                string length = (string)videoThumbnail.Tag;
-                Font mFont = new Font(this.Font.Name, 10.0F, FontStyle.Bold, GraphicsUnit.Point);
-                SizeF mSize = e.Graphics.MeasureString(length, mFont);
-                Rectangle mRec = new Rectangle((int)(videoThumbnail.Width - mSize.Width - 6),
-                                               (int)(videoThumbnail.Height - mSize.Height - 6),
-                                               (int)(mSize.Width + 2),
-                                               (int)(mSize.Height + 2));
-
-                e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(200, Color.Black)), mRec);
-                e.Graphics.DrawString(length, mFont, new SolidBrush(Color.Gainsboro), new PointF((videoThumbnail.Width - mSize.Width - 5),
-                    (videoThumbnail.Height - mSize.Height - 5)));
             }
         }
 
@@ -432,6 +316,24 @@ namespace YouTube_Downloader
                 tabControl1.SelectedTab = queueTabPage;
             }
             catch (Exception ex) { MessageBox.Show(this, ex.Message, ex.Source, MessageBoxButtons.OK, MessageBoxIcon.Error); }
+        }
+
+        private void videoThumbnail_Paint(object sender, PaintEventArgs e)
+        {
+            if (videoThumbnail.Tag != null)
+            {
+                string length = (string)videoThumbnail.Tag;
+                Font mFont = new Font(this.Font.Name, 10.0F, FontStyle.Bold, GraphicsUnit.Point);
+                SizeF mSize = e.Graphics.MeasureString(length, mFont);
+                Rectangle mRec = new Rectangle((int)(videoThumbnail.Width - mSize.Width - 6),
+                                               (int)(videoThumbnail.Height - mSize.Height - 6),
+                                               (int)(mSize.Width + 2),
+                                               (int)(mSize.Height + 2));
+
+                e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(200, Color.Black)), mRec);
+                e.Graphics.DrawString(length, mFont, new SolidBrush(Color.Gainsboro), new PointF((videoThumbnail.Width - mSize.Width - 5),
+                    (videoThumbnail.Height - mSize.Height - 5)));
+            }
         }
 
         private void cbQuality_SelectedIndexChanged(object sender, EventArgs e)
@@ -581,6 +483,108 @@ namespace YouTube_Downloader
         private void chbPlaylistDASH_CheckedChanged(object sender, EventArgs e)
         {
             SettingsEx.UseDashPlaylist = chbPlaylistDASH.Checked;
+        }
+
+        #endregion
+
+        #region Convert Tab
+
+        private void btnBrowseInput_Click(object sender, EventArgs e)
+        {
+            openFileDialog1.FileName = Path.GetFileName(txtInput.Text);
+
+            if (openFileDialog1.ShowDialog(this) == DialogResult.OK)
+            {
+                txtInput.Text = openFileDialog1.FileName;
+
+                if (txtOutput.Text == string.Empty)
+                {
+                    // Suggest file name
+                    string output = Path.GetDirectoryName(openFileDialog1.FileName);
+
+                    output = Path.Combine(output, Path.GetFileNameWithoutExtension(openFileDialog1.FileName));
+                    output += ".mp3";
+
+                    txtOutput.Text = output;
+                }
+            }
+        }
+
+        private void btnBrowseOutput_Click(object sender, EventArgs e)
+        {
+            if (File.Exists(txtInput.Text))
+            {
+                saveFileDialog1.FileName = Path.GetFileName(txtInput.Text);
+            }
+            else
+            {
+                saveFileDialog1.FileName = Path.GetFileName(txtOutput.Text);
+            }
+
+            if (saveFileDialog1.ShowDialog(this) == DialogResult.OK)
+            {
+                txtOutput.Text = saveFileDialog1.FileName;
+            }
+        }
+
+        private void btnConvert_Click(object sender, EventArgs e)
+        {
+            if (!FFmpegHelper.CanConvertMP3(txtInput.Text))
+            {
+                string text = "Can't convert input file to MP3. File doesn't appear to have audio.";
+
+                MessageBox.Show(this, text, "Missing Audio", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (File.Exists(txtOutput.Text))
+            {
+                string filename = Path.GetFileName(txtOutput.Text);
+                string text = "File '" + filename + "' already exists.\n\nOverwrite?";
+
+                if (MessageBox.Show(this, text, "Overwrite", MessageBoxButtons.YesNo) == DialogResult.No)
+                {
+                    return;
+                }
+
+            }
+
+            if (txtInput.Text == txtOutput.Text ||
+                // If they match, the user probably wants to crop. Right?
+                Path.GetExtension(txtInput.Text) == Path.GetExtension(txtOutput.Text))
+            {
+                this.Crop(txtInput.Text, txtOutput.Text);
+            }
+            else
+            {
+                this.Convert(txtInput.Text, txtOutput.Text, true);
+            }
+
+            txtInput.Clear();
+            txtOutput.Clear();
+
+            tabControl1.SelectedTab = queueTabPage;
+        }
+
+        private void btnCheckAgain_Click(object sender, EventArgs e)
+        {
+            Program.FFmpegAvailable = File.Exists(FFmpegHelper.FFmpegPath);
+
+            groupBox2.Enabled = chbAutoConvert.Enabled = Program.FFmpegAvailable;
+            lFFmpegMissing.Visible = btnCheckAgain.Visible = !Program.FFmpegAvailable;
+
+            MessageBox.Show(this, Program.FFmpegAvailable ? "Found FFmmpeg, enabling related functions." : "Did not find FFmpeg.");
+        }
+
+        private void chbCropFrom_CheckedChanged(object sender, EventArgs e)
+        {
+            mtxtFrom.Enabled = chbCropTo.Enabled = chbCropFrom.Checked;
+            mtxtTo.Enabled = chbCropFrom.Checked && chbCropTo.Checked;
+        }
+
+        private void chbCropTo_CheckedChanged(object sender, EventArgs e)
+        {
+            mtxtTo.Enabled = chbCropTo.Checked;
         }
 
         #endregion
