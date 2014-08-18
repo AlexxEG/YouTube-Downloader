@@ -370,27 +370,6 @@ namespace YouTube_Downloader
             Program.RunningWorkers.Remove(bwGetVideo);
         }
 
-        /// <summary>
-        /// Removes unsupported &amp; unnecessary formats.
-        /// </summary>
-        /// <param name="list">The list of VideoFormat to check.</param>
-        private VideoFormat[] CheckFormats(IList<VideoFormat> list)
-        {
-            List<VideoFormat> formats = new List<VideoFormat>(list);
-
-            for (int i = formats.Count - 1; i >= 0; i--)
-            {
-                VideoFormat f = formats[i];
-
-                if (f.Extension.Contains("webm"))
-                    formats.RemoveAt(i);
-                else if (f.Format.Contains("audio only (DASH audio)"))
-                    formats.RemoveAt(i);
-            }
-
-            return formats.ToArray();
-        }
-
         private void videoInfo_FileSizeUpdated(object sender, FileSizeUpdateEventArgs e)
         {
             /* Display the updated file size if the selected item was updated. */
@@ -1132,6 +1111,27 @@ namespace YouTube_Downloader
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Removes unsupported &amp; unnecessary formats.
+        /// </summary>
+        /// <param name="list">The list of VideoFormat to check.</param>
+        private VideoFormat[] CheckFormats(IList<VideoFormat> list)
+        {
+            List<VideoFormat> formats = new List<VideoFormat>(list);
+
+            for (int i = formats.Count - 1; i >= 0; i--)
+            {
+                VideoFormat f = formats[i];
+
+                if (f.Extension.Contains("webm"))
+                    formats.RemoveAt(i);
+                else if (f.Format.Contains("audio only (DASH audio)"))
+                    formats.RemoveAt(i);
+            }
+
+            return formats.ToArray();
         }
     }
 
