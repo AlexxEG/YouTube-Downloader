@@ -1221,6 +1221,7 @@ namespace YouTube_Downloader
                     process.Dispose();
                     process = null;
                 }
+                OperationComplete = null;
             }
         }
 
@@ -1360,6 +1361,7 @@ namespace YouTube_Downloader
                     process.Dispose();
                     process = null;
                 }
+                OperationComplete = null;
             }
         }
 
@@ -1510,6 +1512,7 @@ namespace YouTube_Downloader
                     downloader.Dispose();
                     downloader = null;
                 }
+                OperationComplete = null;
             }
         }
 
@@ -1793,6 +1796,7 @@ namespace YouTube_Downloader
                     downloader.Dispose();
                     downloader = null;
                 }
+                OperationComplete = null;
             }
         }
 
