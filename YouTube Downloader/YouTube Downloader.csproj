@@ -61,7 +61,6 @@
     <Compile Include="Classes\OpenFolderDialog.cs" />
     <Compile Include="Classes\Playlist.cs" />
     <Compile Include="Classes\PlaylistReader.cs" />
-    <Compile Include="Classes\SettingsEx.cs" />
     <Compile Include="Classes\VideoFormat.cs" />
     <Compile Include="Classes\VideoInfo.cs" />
     <Compile Include="Classes\WindowState.cs" />

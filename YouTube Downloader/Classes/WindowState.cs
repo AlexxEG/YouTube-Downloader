@@ -3,10 +3,70 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
+using System.Xml.Serialization;
 
-namespace YouTube_Downloader
+namespace YouTube_Downloader.Classes
 {
-    public class WindowState
+    public class WindowStates : IXmlSerializable
+    {
+        Dictionary<string, WindowState> windowStates;
+
+        public WindowStates()
+        {
+            windowStates = new Dictionary<string, WindowState>();
+        }
+
+        public void Add(string form, WindowState windowState)
+        {
+            this.windowStates.Add(form, windowState);
+        }
+
+        public bool Contains(string form)
+        {
+            return this.windowStates.ContainsKey(form);
+        }
+
+        public WindowState Get(string form)
+        {
+            return this.windowStates[form];
+        }
+
+        public System.Xml.Schema.XmlSchema GetSchema()
+        {
+            return null;
+        }
+
+        public void ReadXml(System.Xml.XmlReader reader)
+        {
+            bool booIsEmpty = reader.IsEmptyElement;
+
+            reader.ReadStartElement();
+
+            if (booIsEmpty)
+                return;
+
+            while (reader.MoveToContent() == XmlNodeType.Element && reader.LocalName == "WindowState")
+            {
+                string strWindowName = reader["name"];
+
+                XmlSerializer xsrWindowState = new XmlSerializer(typeof(WindowState));
+                windowStates.Add(strWindowName, (WindowState)xsrWindowState.Deserialize(reader));
+
+                windowStates.ToString();
+            }
+        }
+
+        public void WriteXml(System.Xml.XmlWriter writer)
+        {
+            foreach (KeyValuePair<string, WindowState> kvpWindowState in windowStates)
+            {
+                XmlSerializer xsrLocationInfo = new XmlSerializer(typeof(WindowState));
+                xsrLocationInfo.Serialize(writer, kvpWindowState.Value);
+            }
+        }
+    }
+
+    public class WindowState : IXmlSerializable
     {
         public string FormName { get; set; }
         public Dictionary<string, int> ColumnSizes { get; set; }
@@ -14,6 +74,15 @@ namespace YouTube_Downloader
         public Point Location { get; set; }
         public Size Size { get; set; }
         public FormWindowState FormWindowState { get; set; }
+
+        public WindowState()
+        {
+            this.ColumnSizes = new Dictionary<string, int>();
+            this.SplitterSizes = new Dictionary<string, int>();
+            this.Location = Point.Empty;
+            this.Size = Size.Empty;
+            this.FormWindowState = FormWindowState.Normal;
+        }
 
         public WindowState(string formName)
         {
@@ -23,42 +92,6 @@ namespace YouTube_Downloader
             this.Location = Point.Empty;
             this.Size = Size.Empty;
             this.FormWindowState = FormWindowState.Normal;
-        }
-
-        public WindowState(XmlNode node)
-        {
-            string formName = node.Attributes["name"].Value;
-            Point location = new Point(int.Parse(node.Attributes["x"].Value), int.Parse(node.Attributes["y"].Value));
-            Size size = new Size(int.Parse(node.Attributes["width"].Value), int.Parse(node.Attributes["height"].Value));
-            FormWindowState state = (FormWindowState)Enum.Parse(typeof(FormWindowState), node.Attributes["windowState"].Value, true);
-
-            this.FormName = formName;
-            this.Location = location;
-            this.Size = size;
-            this.FormWindowState = state;
-            this.ColumnSizes = new Dictionary<string, int>();
-            this.SplitterSizes = new Dictionary<string, int>();
-
-            foreach (XmlNode childNode in node.ChildNodes)
-            {
-                switch (childNode.Name)
-                {
-                    case "column":
-                        string columnName = childNode.Attributes["name"].Value;
-                        int width = int.Parse(childNode.Attributes["width"].Value);
-
-                        this.ColumnSizes.Add(columnName, width);
-                        break;
-                    case "splitter":
-                        string splitterName = childNode.Attributes["name"].Value;
-                        int distance = int.Parse(childNode.Attributes["distance"].Value);
-
-                        this.SplitterSizes.Add(splitterName, distance);
-                        break;
-                    default:
-                        continue;
-                }
-            }
         }
 
         private ICollection<ColumnHeader> GetColumns(Control.ControlCollection controls)
@@ -190,9 +223,49 @@ namespace YouTube_Downloader
             }
         }
 
-        public void SerializeXml(XmlWriter writer)
+        public System.Xml.Schema.XmlSchema GetSchema()
         {
-            writer.WriteStartElement("form");
+            return null;
+        }
+
+        public void ReadXml(System.Xml.XmlReader reader)
+        {
+            bool booIsEmpty = reader.IsEmptyElement;
+
+            if (booIsEmpty)
+                return;
+
+            this.FormName = reader.GetAttribute("name");
+            this.Location = new Point(int.Parse(reader.GetAttribute("x")), int.Parse(reader.GetAttribute("y")));
+            this.Size = new Size(int.Parse(reader.GetAttribute("width")), int.Parse(reader.GetAttribute("height")));
+            this.FormWindowState = (FormWindowState)Enum.Parse(typeof(FormWindowState), reader.GetAttribute("windowState"), true);
+
+            while (reader.Read())
+            {
+                switch (reader.LocalName)
+                {
+                    case "column":
+                        {
+                            string name = reader.GetAttribute("name");
+                            int width = int.Parse(reader.GetAttribute("width"));
+
+                            this.ColumnSizes.Add(name, width);
+                            break;
+                        }
+                    case "splitter":
+                        {
+                            string name = reader.GetAttribute("name");
+                            int distance = int.Parse(reader.GetAttribute("distance"));
+
+                            this.SplitterSizes.Add(name, distance);
+                            break;
+                        }
+                }
+            }
+        }
+
+        public void WriteXml(System.Xml.XmlWriter writer)
+        {
             writer.WriteAttributeString("name", this.FormName);
             writer.WriteAttributeString("x", this.Location.X.ToString());
             writer.WriteAttributeString("y", this.Location.Y.ToString());
@@ -215,8 +288,6 @@ namespace YouTube_Downloader
                 writer.WriteAttributeString("distance", pair.Value.ToString());
                 writer.WriteEndElement();
             }
-
-            writer.WriteEndElement();
         }
     }
 }

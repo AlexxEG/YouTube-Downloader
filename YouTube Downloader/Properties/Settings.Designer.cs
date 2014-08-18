@@ -117,5 +117,16 @@ namespace YouTube_Downloader.Properties {
                 this["UpdateSettings"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::YouTube_Downloader.Classes.WindowStates WindowStates {
+            get {
+                return ((global::YouTube_Downloader.Classes.WindowStates)(this["WindowStates"]));
+            }
+            set {
+                this["WindowStates"] = value;
+            }
+        }
     }
 }

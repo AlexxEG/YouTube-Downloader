@@ -1,12 +1,9 @@
-﻿using DeDauwJeroen;
-using ListViewEmbeddedControls;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Threading;
 using System.Windows.Forms;
 using YouTube_Downloader.Classes;
 using YouTube_Downloader.Operations;
@@ -14,7 +11,7 @@ using YouTube_Downloader.Properties;
 
 /* ToDo: 
  *
- * - Clean up after combining.
+ * - Clean up after combining when downloading playlist.
  */
 
 namespace YouTube_Downloader
@@ -32,8 +29,6 @@ namespace YouTube_Downloader
             InitializeMainMenu();
 
             lvQueue.ContextMenu = contextMenu1;
-
-            SettingsEx.Load();
         }
 
         public MainForm(string[] args)
@@ -64,7 +59,7 @@ namespace YouTube_Downloader
             if (selectedVideo != null)
                 selectedVideo.AbortUpdateFileSizes();
 
-            SettingsEx.WindowStates[this.Name].SaveForm(this);
+            Settings.Default.WindowStates.Get(this.Name).SaveForm(this);
             Settings.Default.SaveToDirectories.Clear();
 
             string[] paths = new string[cbSaveTo.Items.Count];
@@ -82,13 +77,6 @@ namespace YouTube_Downloader
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            if (!SettingsEx.WindowStates.ContainsKey(this.Name))
-            {
-                SettingsEx.WindowStates.Add(this.Name, new WindowState(this.Name));
-            }
-
-            SettingsEx.WindowStates[this.Name].RestoreForm(this);
-
             /* Upgrade settings between new versions. 
              * 
              * More information: http://www.ngpixel.com/2011/05/05/c-keep-user-settings-between-versions/ */
@@ -97,6 +85,23 @@ namespace YouTube_Downloader
                 Settings.Default.Upgrade();
                 Settings.Default.UpdateSettings = false;
                 Settings.Default.Save();
+            }
+
+            if (Settings.Default.WindowStates == null)
+            {
+                Settings.Default.WindowStates = new WindowStates();
+            }
+
+            if (!Settings.Default.WindowStates.Contains(this.Name))
+            {
+                Settings.Default.WindowStates.Add(this.Name, new WindowState(this.Name));
+            }
+
+            Settings.Default.WindowStates.Get(this.Name).RestoreForm(this);
+
+            if (Settings.Default.SaveToDirectories == null)
+            {
+                Settings.Default.SaveToDirectories = new System.Collections.Specialized.StringCollection();
             }
 
             string[] directories = new string[Settings.Default.SaveToDirectories.Count];
