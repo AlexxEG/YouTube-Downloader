@@ -36,8 +36,11 @@ namespace YouTube_Downloader.Classes
                     {
                         try
                         {
-                            File.Delete(key);
+                            if (File.Exists(key))
+                                File.Delete(key);
 
+                            // Remove file from dictionary since it either got deleted
+                            // or it doesn't exist anymore.
                             dict.Remove(key);
                         }
                         catch
