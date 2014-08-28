@@ -15,6 +15,7 @@ using YouTube_Downloader.Properties;
  * - Handle aborting operations better when closing form.
  * - Make sure OperationStatus is set for operations in BackgroundWorker.DoWork.
  * - Add proxy settings to Options.
+ * - Ignore .webm files when downloading videos & playlists.
  */
 
 namespace YouTube_Downloader
