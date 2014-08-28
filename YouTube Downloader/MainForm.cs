@@ -230,7 +230,7 @@ namespace YouTube_Downloader
             string path = cbSaveTo.Text;
 
             /* Make sure download directory exists. */
-            if (!this.ValidateDownloadDirectory(path))
+            if (!this.ValidateDirectory(path))
                 return;
 
             if (!cbSaveTo.Items.Contains(path))
@@ -370,40 +370,16 @@ namespace YouTube_Downloader
 
         private void btnPlaylistDownload_Click(object sender, EventArgs e)
         {
-            string path = string.Empty;
+            string path = cbPlaylistSaveTo.Text;
 
-            try
-            {
-                path = cbPlaylistSaveTo.Text;
-
-                if (path == string.Empty)
-                {
-                    MessageBox.Show(this, "Download path is empty.");
-                    return;
-                }
-
-                if (!Directory.Exists(path))
-                {
-                    if (MessageBox.Show(this, "Download path doesn't exists.\n\nDo you want to create it?", "Missing Folder", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                    {
-                        Directory.CreateDirectory(path);
-                    }
-                    else
-                    {
-                        return;
-                    }
-                }
-
-                if (!cbPlaylistSaveTo.Items.Contains(path))
-                    cbPlaylistSaveTo.Items.Add(path);
-
-                settings.LastPlaylistUrl = path;
-            }
-            catch
-            {
-                MessageBox.Show("Couldn't create directory.");
+            /* Make sure download directory exists. */
+            if (!this.ValidateDirectory(path))
                 return;
-            }
+
+            if (!cbPlaylistSaveTo.Items.Contains(path))
+                cbPlaylistSaveTo.Items.Add(path);
+
+            settings.LastPlaylistUrl = path;
 
             try
             {
@@ -975,7 +951,7 @@ namespace YouTube_Downloader
             item.Selected = true;
         }
 
-        private bool ValidateDownloadDirectory(string directory)
+        private bool ValidateDirectory(string directory)
         {
             try
             {
