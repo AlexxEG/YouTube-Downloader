@@ -780,7 +780,7 @@ namespace YouTube_Downloader
                 }
                 catch
                 {
-                    MessageBox.Show(this, "Cropping information error.");
+                    MessageBox.Show(this, "Converting information error.");
                     return;
                 }
             }
