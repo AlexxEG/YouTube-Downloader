@@ -167,7 +167,7 @@ namespace YouTube_Downloader
 
         private void videoInfo_FileSizeUpdated(object sender, FileSizeUpdateEventArgs e)
         {
-            /* Display the updated file size if the selected item was updated. */
+            // Display the updated file size if the selected item was updated.
             if (lFileSize.InvokeRequired)
             {
                 lFileSize.Invoke(new UpdateFileSize(videoInfo_FileSizeUpdated), sender, e);
@@ -179,6 +179,9 @@ namespace YouTube_Downloader
                     lFileSize.Text = Helper.FormatFileSize(e.VideoFormat.FileSize);
                 }
             }
+
+            // Remove event handler.
+            (sender as VideoInfo).FileSizeUpdated -= videoInfo_FileSizeUpdated;
         }
 
         #region Download Tab
