@@ -81,56 +81,7 @@ namespace YouTube_Downloader
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            /* Upgrade settings between new versions. 
-             * 
-             * More information: http://www.ngpixel.com/2011/05/05/c-keep-user-settings-between-versions/ */
-            if (settings.UpdateSettings)
-            {
-                settings.Upgrade();
-                settings.UpdateSettings = false;
-                settings.Save();
-            }
-
-            if (settings.WindowStates == null)
-            {
-                settings.WindowStates = new WindowStates();
-            }
-
-            if (!settings.WindowStates.Contains(this.Name))
-            {
-                settings.WindowStates.Add(this.Name, new WindowState(this.Name));
-            }
-
-            settings.WindowStates.Get(this.Name).RestoreForm(this);
-
-            if (settings.SaveToDirectories == null)
-            {
-                settings.SaveToDirectories = new System.Collections.Specialized.StringCollection();
-            }
-
-            string[] directories = new string[settings.SaveToDirectories.Count];
-
-            settings.SaveToDirectories.CopyTo(directories, 0);
-
-            cbSaveTo.Items.AddRange(directories);
-            cbPlaylistSaveTo.Items.AddRange(directories);
-
-            if (cbSaveTo.Items.Count > 0)
-            {
-                cbSaveTo.SelectedIndex = settings.SelectedDirectory;
-            }
-
-            if (cbPlaylistSaveTo.Items.Count > 0)
-            {
-                cbPlaylistSaveTo.SelectedIndex = settings.SelectedDirectoryPlaylist;
-            }
-
-            chbAutoConvert.Checked = settings.AutoConvert;
-            cbPlaylistQuality.SelectedIndex = settings.PreferedQualityPlaylist;
-            chbPlaylistDASH.Checked = settings.UseDashPlaylist;
-
-            if (settings.LastYouTubeUrl != null) txtYoutubeLink.Text = settings.LastYouTubeUrl;
-            if (settings.LastPlaylistUrl != null) txtPlaylistLink.Text = settings.LastPlaylistUrl;
+            LoadSettings();
         }
 
         private void MainForm_Shown(object sender, EventArgs e)
@@ -955,6 +906,65 @@ namespace YouTube_Downloader
                 }
             }
             return false;
+        }
+
+        private void LoadSettings()
+        {
+            // Upgrade settings between new versions. 
+            // More information: http://www.ngpixel.com/2011/05/05/c-keep-user-settings-between-versions/
+            if (settings.UpdateSettings)
+            {
+                settings.Upgrade();
+                settings.UpdateSettings = false;
+                settings.Save();
+            }
+
+            // Initialize WindowStates collection if null
+            if (settings.WindowStates == null)
+            {
+                settings.WindowStates = new WindowStates();
+            }
+
+            // Add WindowState for form if WindowStates doesn't have a entry for it
+            if (!settings.WindowStates.Contains(this.Name))
+            {
+                settings.WindowStates.Add(this.Name, new WindowState(this.Name));
+            }
+
+            // Restore form location, size & window state, if not null
+            settings.WindowStates.Get(this.Name).RestoreForm(this);
+
+            // Initialize StringCollection if null
+            if (settings.SaveToDirectories == null)
+            {
+                settings.SaveToDirectories = new System.Collections.Specialized.StringCollection();
+            }
+
+            // Copy StringCollection to string array
+            string[] directories = new string[settings.SaveToDirectories.Count];
+
+            settings.SaveToDirectories.CopyTo(directories, 0);
+
+            // Add string array to ComboBoxes
+            cbSaveTo.Items.AddRange(directories);
+            cbPlaylistSaveTo.Items.AddRange(directories);
+
+            // Restore ComboBox.SelectedIndex if it's not empty
+            if (cbSaveTo.Items.Count > 0)
+                cbSaveTo.SelectedIndex = settings.SelectedDirectory;
+
+            if (cbPlaylistSaveTo.Items.Count > 0)
+                cbPlaylistSaveTo.SelectedIndex = settings.SelectedDirectoryPlaylist;
+
+            cbPlaylistQuality.SelectedIndex = settings.PreferedQualityPlaylist;
+
+            // Restore CheckBox.Checked
+            chbAutoConvert.Checked = settings.AutoConvert;
+            chbPlaylistDASH.Checked = settings.UseDashPlaylist;
+
+            // Restore last used links
+            if (settings.LastYouTubeUrl != null) txtYoutubeLink.Text = settings.LastYouTubeUrl;
+            if (settings.LastPlaylistUrl != null) txtPlaylistLink.Text = settings.LastPlaylistUrl;
         }
 
         private void SelectOneItem(ListViewItem item)
