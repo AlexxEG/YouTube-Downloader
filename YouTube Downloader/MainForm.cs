@@ -782,30 +782,12 @@ namespace YouTube_Downloader
 
             if (crop && chbCropFrom.Checked)
             {
-                try
-                {
-                    // Fill in empty space with zeros
-                    mtxtFrom.Text = mtxtFrom.Text.Replace(' ', '0');
-                    while (mtxtFrom.Text.Length < 12) mtxtFrom.Text += "0";
-
-                    // Get TimeSpan object
-                    start = (TimeSpan)mtxtFrom.ValidateText();
-
-                    if (chbCropTo.Enabled && chbCropTo.Checked)
-                    {
-                        // Fill in empty space with zeros
-                        mtxtTo.Text = mtxtTo.Text.Replace(' ', '0');
-                        while (mtxtTo.Text.Length < 12) mtxtTo.Text += "0";
-
-                        // Get TimeSpan object
-                        end = (TimeSpan)mtxtTo.ValidateText();
-                    }
-                }
-                catch
-                {
-                    MessageBox.Show(this, "Converting information error.");
+                // Validate cropping input. Shows error messages automatically.
+                if (!this.ValidateCropping())
                     return;
-                }
+
+                start = (TimeSpan)mtxtFrom.ValidateText();
+                end = (TimeSpan)mtxtTo.ValidateText();
             }
 
             var item = new ConvertOperation(Path.GetFileName(output));
@@ -846,33 +828,12 @@ namespace YouTube_Downloader
         /// <param name="output">The path to save cropped file.</param>
         private void Crop(string input, string output)
         {
-            TimeSpan start, end;
-            start = end = TimeSpan.MinValue;
-
-            try
-            {
-                // Fill in empty space with zeros
-                mtxtFrom.Text = mtxtFrom.Text.Replace(' ', '0');
-                while (mtxtFrom.Text.Length < 12) mtxtFrom.Text += "0";
-
-                // Get TimeSpan object
-                start = (TimeSpan)mtxtFrom.ValidateText();
-
-                if (chbCropTo.Enabled && chbCropTo.Checked)
-                {
-                    // Fill in empty space with zeros
-                    mtxtTo.Text = mtxtTo.Text.Replace(' ', '0');
-                    while (mtxtTo.Text.Length < 12) mtxtTo.Text += "0";
-
-                    // Get TimeSpan object
-                    end = (TimeSpan)mtxtTo.ValidateText();
-                }
-            }
-            catch
-            {
-                MessageBox.Show(this, "Cropping information error.");
+            // Validate cropping input. Shows error messages automatically.
+            if (!this.ValidateCropping())
                 return;
-            }
+
+            TimeSpan start = (TimeSpan)mtxtFrom.ValidateText();
+            TimeSpan end = (TimeSpan)mtxtTo.ValidateText();
 
             CroppingOperation item = new CroppingOperation(Path.GetFileName(output));
 
@@ -994,6 +955,39 @@ namespace YouTube_Downloader
                 lvi.Selected = false;
 
             item.Selected = true;
+        }
+
+        /// <summary>
+        /// Returns true if cropping information can be validated. Fills empty space with zeros.
+        /// </summary>
+        private bool ValidateCropping()
+        {
+            try
+            {
+                // Fill in empty space with zeros
+                mtxtFrom.Text = mtxtFrom.Text.Replace(' ', '0');
+                while (mtxtFrom.Text.Length < 12) mtxtFrom.Text += "0";
+
+                // Validate TimeSpan object
+                mtxtFrom.ValidateText();
+
+                if (chbCropTo.Enabled && chbCropTo.Checked)
+                {
+                    // Fill in empty space with zeros
+                    mtxtTo.Text = mtxtTo.Text.Replace(' ', '0');
+                    while (mtxtTo.Text.Length < 12) mtxtTo.Text += "0";
+
+                    // Validate TimeSpan object
+                    mtxtTo.ValidateText();
+                }
+
+                return true;
+            }
+            catch
+            {
+                MessageBox.Show(this, "Cropping information error.");
+                return false;
+            }
         }
 
         /// <summary>
