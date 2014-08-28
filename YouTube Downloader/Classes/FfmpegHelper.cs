@@ -233,18 +233,16 @@ namespace YouTube_Downloader.Classes
                 process.Kill();
         }
 
-        public static void Crop(BackgroundWorker bw, string input, string output, string start)
+        public static void Crop(BackgroundWorker bw, string input, string output, TimeSpan start)
         {
             if (input == output)
             {
                 throw new Exception("Input & output can't be the same.");
             }
 
-            TimeSpan from = TimeSpan.Parse(start);
-
             string[] args = new string[]
             {
-                string.Format("{0:00}:{1:00}:{2:00}.{3:000}", from.Hours, from.Minutes, from.Seconds, from.Milliseconds),
+                string.Format("{0:00}:{1:00}:{2:00}.{3:000}", start.Hours, start.Minutes, start.Seconds, start.Milliseconds),
                 input,
                 GetFileType(input) == FileType.Video ? " -vcodec copy" : "",
                 output
@@ -309,20 +307,18 @@ namespace YouTube_Downloader.Classes
                 process.Kill();
         }
 
-        public static void Crop(BackgroundWorker bw, string input, string output, string start, string end)
+        public static void Crop(BackgroundWorker bw, string input, string output, TimeSpan start, TimeSpan end)
         {
             if (input == output)
             {
                 throw new Exception("Input & output can't be the same.");
             }
 
-            TimeSpan from = TimeSpan.Parse(start);
-            TimeSpan to = TimeSpan.Parse(end);
-            TimeSpan length = new TimeSpan((long)Math.Abs(from.Ticks - to.Ticks));
+            TimeSpan length = new TimeSpan((long)Math.Abs(start.Ticks - end.Ticks));
 
             string[] args = new string[]
             {
-                string.Format("{0:00}:{1:00}:{2:00}.{3:000}", from.Hours, from.Minutes, from.Seconds, from.Milliseconds),
+                string.Format("{0:00}:{1:00}:{2:00}.{3:000}", start.Hours, start.Minutes, start.Seconds, start.Milliseconds),
                 input,
                 string.Format("{0:00}:{1:00}:{2:00}.{3:000}", length.Hours, length.Minutes, length.Seconds, length.Milliseconds),
                 GetFileType(input) == FileType.Video ? " -vcodec copy" : "",
@@ -346,7 +342,7 @@ namespace YouTube_Downloader.Classes
                 {
                     line = line.Trim();
 
-                    milliseconds = TimeSpan.Parse(end).TotalMilliseconds;
+                    milliseconds = end.TotalMilliseconds;
 
                     if (line == "Press [q] to stop, [?] for help")
                     {

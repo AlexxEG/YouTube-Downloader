@@ -83,7 +83,7 @@ namespace YouTube_Downloader.Operations
         /// <param name="output">The path to save the cropped file.</param>
         /// <param name="start">The start position to crop in 00:00:00.000 format.</param>
         /// <param name="end">The end position to crop in 00:00:00.000 format.</param>
-        public void Crop(string input, string output, string start, string end)
+        public void Crop(string input, string output, TimeSpan start, TimeSpan end)
         {
             this.Input = input;
             this.Output = output;
@@ -226,20 +226,20 @@ namespace YouTube_Downloader.Operations
         #region backgroundWorker
 
         private BackgroundWorker backgroundWorker;
-        private string cropStart = string.Empty;
-        private string cropEnd = string.Empty;
+        private TimeSpan cropStart = TimeSpan.MinValue;
+        private TimeSpan cropEnd = TimeSpan.MinValue;
         private Process process;
 
         private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             try
             {
-                if (cropEnd == string.Empty)
+                if (cropEnd == TimeSpan.MinValue)
                     FFmpegHelper.Crop(backgroundWorker, this.Input, this.Output, cropStart);
                 else
                     FFmpegHelper.Crop(backgroundWorker, this.Input, this.Output, cropStart, cropEnd);
 
-                cropStart = cropEnd = string.Empty;
+                cropStart = cropEnd = TimeSpan.MinValue;
 
                 if (backgroundWorker.CancellationPending)
                 {

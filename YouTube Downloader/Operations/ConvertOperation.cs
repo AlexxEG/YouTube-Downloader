@@ -83,7 +83,7 @@ namespace YouTube_Downloader.Operations
         /// <param name="output">The path to save the converted file.</param>
         /// <param name="start">The start position to crop in 00:00:00.000 format. Can be null to not crop.</param>
         /// <param name="end">The end position to crop in 00:00:00.000 format. Can be null to crop to end, or not at all if start is also null.</param>
-        public void Convert(string input, string output, string start, string end)
+        public void Convert(string input, string output, TimeSpan start, TimeSpan end)
         {
             this.Input = input;
             this.Output = output;
@@ -227,8 +227,8 @@ namespace YouTube_Downloader.Operations
         #region backgroundWorker
 
         private BackgroundWorker backgroundWorker;
-        private string converterStart = string.Empty;
-        private string converterEnd = string.Empty;
+        private TimeSpan converterStart = TimeSpan.MinValue;
+        private TimeSpan converterEnd = TimeSpan.MinValue;
         private Process process;
 
         private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -237,9 +237,9 @@ namespace YouTube_Downloader.Operations
             {
                 FFmpegHelper.Convert(backgroundWorker, this.Input, this.Output);
 
-                if (!backgroundWorker.CancellationPending && !string.IsNullOrEmpty(converterStart))
+                if (!backgroundWorker.CancellationPending && converterStart != TimeSpan.MinValue)
                 {
-                    if (string.IsNullOrEmpty(converterEnd))
+                    if (converterEnd == TimeSpan.MinValue)
                     {
                         FFmpegHelper.Crop(backgroundWorker, this.Output, this.Output, converterStart);
                     }
@@ -249,7 +249,7 @@ namespace YouTube_Downloader.Operations
                     }
                 }
 
-                this.converterStart = this.converterEnd = string.Empty;
+                this.converterStart = this.converterEnd = TimeSpan.MinValue;
 
                 if (backgroundWorker.CancellationPending)
                 {

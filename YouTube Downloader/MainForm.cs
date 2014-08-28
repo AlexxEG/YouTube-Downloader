@@ -33,6 +33,9 @@ namespace YouTube_Downloader
             InitializeMainMenu();
 
             lvQueue.ContextMenu = contextMenu1;
+
+            mtxtTo.ValidatingType = typeof(TimeSpan);
+            mtxtFrom.ValidatingType = typeof(TimeSpan);
         }
 
         public MainForm(string[] args)
@@ -774,21 +777,28 @@ namespace YouTube_Downloader
         /// <param name="crop">True if converted file should be cropped.</param>
         private void Convert(string input, string output, bool crop)
         {
-            string start = string.Empty;
-            string end = string.Empty;
+            TimeSpan start, end;
+            start = end = TimeSpan.MinValue;
 
             if (crop && chbCropFrom.Checked)
             {
                 try
                 {
-                    // Call 'ValidateText().ToString()' because it will throw a
-                    // exception if there is a error in the text.
-                    mtxtFrom.ValidateText().ToString();
-                    start = mtxtFrom.Text;
+                    // Fill in empty space with zeros
+                    mtxtFrom.Text = mtxtFrom.Text.Replace(' ', '0');
+                    while (mtxtFrom.Text.Length < 12) mtxtFrom.Text += "0";
+
+                    // Get TimeSpan object
+                    start = (TimeSpan)mtxtFrom.ValidateText();
+
                     if (chbCropTo.Enabled && chbCropTo.Checked)
                     {
-                        mtxtTo.ValidateText().ToString();
-                        end = mtxtTo.Text;
+                        // Fill in empty space with zeros
+                        mtxtTo.Text = mtxtTo.Text.Replace(' ', '0');
+                        while (mtxtTo.Text.Length < 12) mtxtTo.Text += "0";
+
+                        // Get TimeSpan object
+                        end = (TimeSpan)mtxtTo.ValidateText();
                     }
                 }
                 catch
@@ -836,19 +846,26 @@ namespace YouTube_Downloader
         /// <param name="output">The path to save cropped file.</param>
         private void Crop(string input, string output)
         {
-            string start = string.Empty;
-            string end = string.Empty;
+            TimeSpan start, end;
+            start = end = TimeSpan.MinValue;
 
             try
             {
-                // Call 'ValidateText().ToString()' because it will throw a
-                // exception if there is a error in the text.
-                mtxtFrom.ValidateText().ToString();
-                start = mtxtFrom.Text;
+                // Fill in empty space with zeros
+                mtxtFrom.Text = mtxtFrom.Text.Replace(' ', '0');
+                while (mtxtFrom.Text.Length < 12) mtxtFrom.Text += "0";
+
+                // Get TimeSpan object
+                start = (TimeSpan)mtxtFrom.ValidateText();
+
                 if (chbCropTo.Enabled && chbCropTo.Checked)
                 {
-                    mtxtTo.ValidateText().ToString();
-                    end = mtxtTo.Text;
+                    // Fill in empty space with zeros
+                    mtxtTo.Text = mtxtTo.Text.Replace(' ', '0');
+                    while (mtxtTo.Text.Length < 12) mtxtTo.Text += "0";
+
+                    // Get TimeSpan object
+                    end = (TimeSpan)mtxtTo.ValidateText();
                 }
             }
             catch
