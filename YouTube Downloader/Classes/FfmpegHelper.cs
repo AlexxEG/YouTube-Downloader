@@ -8,8 +8,6 @@ using System.Windows.Forms;
 
 namespace YouTube_Downloader.Classes
 {
-    public enum FileType { Audio, Error, Video }
-
     public class FFmpegHelper
     {
         private const string Cmd_Combine_Dash = " -y -i \"{0}\" -i \"{1}\" -vcodec copy -acodec copy \"{2}\"";
@@ -17,6 +15,8 @@ namespace YouTube_Downloader.Classes
         private const string Cmd_Crop_From = " -y -ss {0} -i \"{1}\" -acodec copy{2} \"{3}\"";
         private const string Cmd_Crop_From_To = " -y -ss {0} -i \"{1}\" -to {2} -acodec copy{3} \"{4}\"";
         private const string Cmd_Get_File_Info = " -i \"{0}\"";
+
+        public enum FileType { Audio, Error, Video }
 
         public static string FFmpegPath = Path.Combine(Application.StartupPath, "externals", "ffmpeg.exe");
 
