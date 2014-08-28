@@ -128,5 +128,17 @@ namespace YouTube_Downloader.Properties {
                 this["WindowStates"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LastPlaylistUrl {
+            get {
+                return ((string)(this["LastPlaylistUrl"]));
+            }
+            set {
+                this["LastPlaylistUrl"] = value;
+            }
+        }
     }
 }

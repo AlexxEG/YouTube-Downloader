@@ -1,11 +1,8 @@
-﻿using DeDauwJeroen;
-using Microsoft.VisualBasic.ApplicationServices;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
-using System.Windows.Forms;
 using YouTube_Downloader.Classes;
+using YouTube_Downloader.Operations;
 
 namespace YouTube_Downloader
 {
@@ -16,13 +13,9 @@ namespace YouTube_Downloader
         public static bool FFmpegAvailable = true;
 
         /// <summary>
-        /// Store running downloaders that can be stopped automatically when closing application.
+        /// Store running operations that can be stopped automatically when closing application.
         /// </summary>
-        public static List<FileDownloader> RunningDownloaders = new List<FileDownloader>();
-        /// <summary>
-        /// Store running background workers that can be stopped automatically when closing application.
-        /// </summary>
-        public static List<BackgroundWorker> RunningWorkers = new List<BackgroundWorker>();
+        public static List<IOperation> RunningOperations = new List<IOperation>();
 
         /// <summary>
         /// The main entry point for the application.
@@ -33,6 +26,8 @@ namespace YouTube_Downloader
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
             Program.FFmpegAvailable = File.Exists(FFmpegHelper.FFmpegPath);
+
+            System.Net.ServicePointManager.DefaultConnectionLimit = 10;
 
             new App().Run(args);
         }
@@ -45,8 +40,7 @@ namespace YouTube_Downloader
         /// <summary>
         /// Returns the local app data directory for this program. Also makes sure the directory exists.
         /// </summary>
-        /// <returns></returns>
-        public static string GetLocalAppDataFolder()
+        public static string GetAppDataDirectory()
         {
             string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), Program.Name);
 
@@ -56,9 +50,35 @@ namespace YouTube_Downloader
             return path;
         }
 
+        /// <summary>
+        /// Returns the json directory for this program. Also makes sure the directory exists.
+        /// </summary>
+        public static string GetJsonDirectory()
+        {
+            string path = Path.Combine(GetAppDataDirectory(), "json");
+
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+
+            return path;
+        }
+
+        /// <summary>
+        /// Returns the logs directory for this program. Also makes sure the directory exists.
+        /// </summary>
+        public static string GetLogsDirectory()
+        {
+            string path = Path.Combine(GetAppDataDirectory(), "logs");
+
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+
+            return path;
+        }
+
         public static void SaveException(Exception ex)
         {
-            string directory = Path.Combine(GetLocalAppDataFolder(), "stack traces");
+            string directory = Path.Combine(GetAppDataDirectory(), "stack traces");
 
             if (!Directory.Exists(directory))
                 Directory.CreateDirectory(directory);
@@ -67,39 +87,6 @@ namespace YouTube_Downloader
             string file = string.Format("{0}\\stackTrace.{1}.log", directory, DateTime.Now.ToString(dateFormat));
 
             File.WriteAllText(file, ex.ToString());
-        }
-    }
-
-    public class App : WindowsFormsApplicationBase
-    {
-        public App()
-        {
-            this.IsSingleInstance = true;
-            this.EnableVisualStyles = true;
-            this.ShutdownStyle = ShutdownMode.AfterMainFormCloses;
-        }
-
-        protected override void OnCreateMainForm()
-        {
-            string[] args = new string[this.CommandLineArgs.Count];
-
-            this.CommandLineArgs.CopyTo(args, 0);
-
-            if (this.CommandLineArgs.Count > 0)
-                this.MainForm = new MainForm(args);
-            else
-                this.MainForm = new MainForm();
-        }
-
-        protected override void OnStartupNextInstance(StartupNextInstanceEventArgs eventArgs)
-        {
-            eventArgs.BringToForeground = true;
-            base.OnStartupNextInstance(eventArgs);
-            if (eventArgs.CommandLine.Count > 0)
-            {
-                MainForm mainForm = (MainForm)this.MainForm;
-                mainForm.InsertVideo(eventArgs.CommandLine[0]);
-            }
         }
     }
 }

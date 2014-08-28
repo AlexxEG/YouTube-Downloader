@@ -17,7 +17,7 @@ namespace YouTube_Downloader.Classes
 
         public static StreamWriter CreateLogWriter()
         {
-            string folder = Path.Combine(Program.GetLocalAppDataFolder(), "logs");
+            string folder = Program.GetLogsDirectory();
 
             if (!Directory.Exists(folder))
                 Directory.CreateDirectory(folder);
@@ -32,7 +32,7 @@ namespace YouTube_Downloader.Classes
 
         public static VideoInfo GetVideoInfo(string url)
         {
-            string json_dir = Path.Combine(Program.GetLocalAppDataFolder(), "json");
+            string json_dir = Program.GetJsonDirectory();
 
             if (!Directory.Exists(json_dir))
                 Directory.CreateDirectory(json_dir);
@@ -76,7 +76,7 @@ namespace YouTube_Downloader.Classes
 
         public static Playlist GetPlaylist(string url)
         {
-            string json_dir = Path.Combine(Program.GetLocalAppDataFolder(), "json");
+            string json_dir = Program.GetJsonDirectory();
 
             if (!Directory.Exists(json_dir))
                 Directory.CreateDirectory(json_dir);

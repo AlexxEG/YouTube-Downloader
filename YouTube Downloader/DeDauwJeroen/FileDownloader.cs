@@ -305,9 +305,9 @@ namespace DeDauwJeroen
                 bgwDownloader.ReportProgress((Int32)InvokeType.CalculatingFileNrRaiser, fileNr + 1);
                 try
                 {
-                    HttpWebRequest webReq = (HttpWebRequest)WebRequest.Create(this.Files[fileNr].Path);
+                    WebRequest webReq = (WebRequest)WebRequest.Create(this.Files[fileNr].Path);
                     webReq.Proxy = null;
-                    HttpWebResponse webResp = (HttpWebResponse)webReq.GetResponse();
+                    WebResponse webResp = (WebResponse)webReq.GetResponse();
                     m_totalSize += webResp.ContentLength;
                     webResp.Close();
                 }
@@ -337,14 +337,14 @@ namespace DeDauwJeroen
 
             FileStream writer = new FileStream(this.LocalDirectory + "\\" + file.Name, System.IO.FileMode.Create);
 
-            HttpWebRequest webReq;
-            HttpWebResponse webResp = null;
+            WebRequest webReq;
+            WebResponse webResp = null;
 
             try
             {
-                webReq = (HttpWebRequest)System.Net.WebRequest.Create(this.Files[fileNr].Path);
+                webReq = (WebRequest)System.Net.WebRequest.Create(this.Files[fileNr].Path);
                 webReq.Proxy = null;
-                webResp = (HttpWebResponse)webReq.GetResponse();
+                webResp = (WebResponse)webReq.GetResponse();
 
                 size = webResp.ContentLength;
             }

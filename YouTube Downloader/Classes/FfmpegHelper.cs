@@ -115,7 +115,7 @@ namespace YouTube_Downloader.Classes
 
         private static StreamWriter CreateLogWriter()
         {
-            string folder = Path.Combine(Program.GetLocalAppDataFolder(), "logs");
+            string folder = Program.GetLogsDirectory();
 
             if (!Directory.Exists(folder))
                 Directory.CreateDirectory(folder);
@@ -154,25 +154,6 @@ namespace YouTube_Downloader.Classes
 
             if (!process.HasExited)
                 process.Kill();
-        }
-
-        public static void CombineDashThread(string video, string audio, string output)
-        {
-            new Thread(() =>
-                {
-                    if (video == output)
-                    {
-                        string dest = Path.Combine(
-                            Path.GetDirectoryName(video),
-                            Path.GetFileNameWithoutExtension(video)) + "_video." + Path.GetExtension(video);
-
-                        File.Move(video, dest);
-
-                        video = dest;
-                    }
-
-                    FFmpegHelper.CombineDash(video, audio, output);
-                }).Start();
         }
 
         public static void Convert(BackgroundWorker bw, string input, string output)

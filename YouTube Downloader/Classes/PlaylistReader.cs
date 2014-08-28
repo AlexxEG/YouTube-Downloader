@@ -28,7 +28,8 @@ namespace YouTube_Downloader.Classes
             string playlist_id = Helper.GetPlaylistId(url);
             int onlineCount = 0;
 
-            string arguments = string.Format(YouTubeDLHelper.Cmd_JSON_Info_Playlist, playlist_id, url);
+            string json_dir = Program.GetJsonDirectory();
+            string arguments = string.Format(YouTubeDLHelper.Cmd_JSON_Info_Playlist, json_dir, playlist_id, url);
 
             youtubeDl = YouTubeDLHelper.StartProcess(arguments);
 
@@ -68,11 +69,12 @@ namespace YouTube_Downloader.Classes
                 Match m;
 
                 /* New json found, break & create a VideoInfo instance. */
-                if ((m = Regex.Match(line, @"^\[info\].*JSON.*:\s*(.*)$")).Success)
+                if ((m = Regex.Match(line, @"^\[info\].*JSON.*:\s(.*)$")).Success)
                 {
-                    string file = m.Groups[1].Value;
+                    string file = m.Groups[1].Value.Trim();
 
-                    json_path = Path.Combine(Application.StartupPath, file);
+                    // json_path = Path.Combine(Application.StartupPath, file);
+                    json_path = file;
                     /* Read another line to release json file from youtube-dl (hopefully...). */
                     break;
                 }

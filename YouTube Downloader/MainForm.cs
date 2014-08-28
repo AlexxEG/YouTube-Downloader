@@ -11,10 +11,9 @@ using YouTube_Downloader.Properties;
 
 /* ToDo: 
  *
- * - Clean up after combining when downloading playlist.
+ * - Get file size for DownloadOperation
  * - Handle aborting operations better when closing form.
- * - Combine DASH audio & video size to get total when downloading. (Get total filesize from downloader?)
- * - Handle DASH audio & video the same way for playlists as single videos does.
+ * - Make sure OperationStatus is set for operations in BackgroundWorker.DoWork.
  */
 
 namespace YouTube_Downloader
@@ -23,6 +22,8 @@ namespace YouTube_Downloader
     {
         private string[] args;
         private VideoInfo selectedVideo;
+        private List<BackgroundWorker> RunningWorkers = new List<BackgroundWorker>();
+        private Settings settings = Settings.Default;
 
         private delegate void UpdateFileSize(object sender, FileSizeUpdateEventArgs e);
 
@@ -62,18 +63,18 @@ namespace YouTube_Downloader
             if (selectedVideo != null)
                 selectedVideo.AbortUpdateFileSizes();
 
-            Settings.Default.WindowStates.Get(this.Name).SaveForm(this);
-            Settings.Default.SaveToDirectories.Clear();
+            settings.WindowStates.Get(this.Name).SaveForm(this);
+            settings.SaveToDirectories.Clear();
 
             string[] paths = new string[cbSaveTo.Items.Count];
             cbSaveTo.Items.CopyTo(paths, 0);
 
-            Settings.Default.SaveToDirectories.AddRange(paths);
-            Settings.Default.SelectedDirectory = cbSaveTo.SelectedIndex;
-            Settings.Default.AutoConvert = chbAutoConvert.Checked;
-            Settings.Default.Save();
+            settings.SaveToDirectories.AddRange(paths);
+            settings.SelectedDirectory = cbSaveTo.SelectedIndex;
+            settings.AutoConvert = chbAutoConvert.Checked;
+            settings.Save();
 
-            Settings.Default.Save();
+            settings.Save();
 
             Application.Exit();
         }
@@ -83,56 +84,53 @@ namespace YouTube_Downloader
             /* Upgrade settings between new versions. 
              * 
              * More information: http://www.ngpixel.com/2011/05/05/c-keep-user-settings-between-versions/ */
-            if (Settings.Default.UpdateSettings)
+            if (settings.UpdateSettings)
             {
-                Settings.Default.Upgrade();
-                Settings.Default.UpdateSettings = false;
-                Settings.Default.Save();
+                settings.Upgrade();
+                settings.UpdateSettings = false;
+                settings.Save();
             }
 
-            if (Settings.Default.WindowStates == null)
+            if (settings.WindowStates == null)
             {
-                Settings.Default.WindowStates = new WindowStates();
+                settings.WindowStates = new WindowStates();
             }
 
-            if (!Settings.Default.WindowStates.Contains(this.Name))
+            if (!settings.WindowStates.Contains(this.Name))
             {
-                Settings.Default.WindowStates.Add(this.Name, new WindowState(this.Name));
+                settings.WindowStates.Add(this.Name, new WindowState(this.Name));
             }
 
-            Settings.Default.WindowStates.Get(this.Name).RestoreForm(this);
+            settings.WindowStates.Get(this.Name).RestoreForm(this);
 
-            if (Settings.Default.SaveToDirectories == null)
+            if (settings.SaveToDirectories == null)
             {
-                Settings.Default.SaveToDirectories = new System.Collections.Specialized.StringCollection();
+                settings.SaveToDirectories = new System.Collections.Specialized.StringCollection();
             }
 
-            string[] directories = new string[Settings.Default.SaveToDirectories.Count];
+            string[] directories = new string[settings.SaveToDirectories.Count];
 
-            Settings.Default.SaveToDirectories.CopyTo(directories, 0);
+            settings.SaveToDirectories.CopyTo(directories, 0);
 
             cbSaveTo.Items.AddRange(directories);
             cbPlaylistSaveTo.Items.AddRange(directories);
 
             if (cbSaveTo.Items.Count > 0)
             {
-                cbSaveTo.SelectedIndex = Settings.Default.SelectedDirectory;
+                cbSaveTo.SelectedIndex = settings.SelectedDirectory;
             }
 
             if (cbPlaylistSaveTo.Items.Count > 0)
             {
-                cbPlaylistSaveTo.SelectedIndex = Settings.Default.SelectedDirectoryPlaylist;
+                cbPlaylistSaveTo.SelectedIndex = settings.SelectedDirectoryPlaylist;
             }
 
-            chbAutoConvert.Checked = Settings.Default.AutoConvert;
+            chbAutoConvert.Checked = settings.AutoConvert;
+            cbPlaylistQuality.SelectedIndex = settings.PreferedQualityPlaylist;
+            chbPlaylistDASH.Checked = settings.UseDashPlaylist;
 
-            cbPlaylistQuality.SelectedIndex = Settings.Default.PreferedQualityPlaylist;
-            chbPlaylistDASH.Checked = Settings.Default.UseDashPlaylist;
-
-            if (!string.IsNullOrEmpty(Settings.Default.LastYouTubeUrl))
-            {
-                txtYoutubeLink.Text = Settings.Default.LastYouTubeUrl;
-            }
+            if (settings.LastYouTubeUrl != null) txtYoutubeLink.Text = settings.LastYouTubeUrl;
+            if (settings.LastPlaylistUrl != null) txtPlaylistLink.Text = settings.LastPlaylistUrl;
         }
 
         private void MainForm_Shown(object sender, EventArgs e)
@@ -210,7 +208,7 @@ namespace YouTube_Downloader
             btnDownload.Enabled = true;
             videoThumbnail.ImageLocation = videoInfo.ThumbnailUrl;
 
-            Program.RunningWorkers.Remove(bwGetVideo);
+            RunningWorkers.Remove(bwGetVideo);
         }
 
         private void videoInfo_FileSizeUpdated(object sender, FileSizeUpdateEventArgs e)
@@ -248,7 +246,7 @@ namespace YouTube_Downloader
                     "Invalid URL", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             else
             {
-                Settings.Default.LastYouTubeUrl = txtYoutubeLink.Text;
+                settings.LastYouTubeUrl = txtYoutubeLink.Text;
 
                 lTitle.Text = "-";
                 cbQuality.Items.Clear();
@@ -257,7 +255,7 @@ namespace YouTube_Downloader
 
                 bwGetVideo.RunWorkerAsync(txtYoutubeLink.Text);
 
-                Program.RunningWorkers.Add(bwGetVideo);
+                RunningWorkers.Add(bwGetVideo);
             }
         }
 
@@ -447,6 +445,8 @@ namespace YouTube_Downloader
 
                 if (!cbPlaylistSaveTo.Items.Contains(path))
                     cbPlaylistSaveTo.Items.Add(path);
+
+                settings.LastPlaylistUrl = path;
             }
             catch
             {
@@ -504,17 +504,17 @@ namespace YouTube_Downloader
 
         private void cbPlaylistSaveTo_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Settings.Default.SelectedDirectoryPlaylist = cbPlaylistSaveTo.SelectedIndex;
+            settings.SelectedDirectoryPlaylist = cbPlaylistSaveTo.SelectedIndex;
         }
 
         private void cbPlaylistQuality_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Settings.Default.PreferedQualityPlaylist = cbPlaylistQuality.SelectedIndex;
+            settings.PreferedQualityPlaylist = cbPlaylistQuality.SelectedIndex;
         }
 
         private void chbPlaylistDASH_CheckedChanged(object sender, EventArgs e)
         {
-            Settings.Default.UseDashPlaylist = chbPlaylistDASH.Checked;
+            settings.UseDashPlaylist = chbPlaylistDASH.Checked;
         }
 
         #endregion
@@ -680,24 +680,31 @@ namespace YouTube_Downloader
                 return;
             }
 
-            bool hasDownloadItem = false;
+            bool canOpen = false, canPause = false, canResume = false, canStop = false, canConvert = false;
 
-            // Check if SelectedItems contains a DownloadListViewItem,
-            // which means Converting, Pause & Resume should be available.
-            foreach (var item in lvQueue.SelectedItems)
+            foreach (IOperation item in lvQueue.SelectedItems)
             {
-                if (item is DownloadOperation)
-                {
-                    hasDownloadItem = true;
-                    break;
-                }
+                if (item.CanOpen())
+                    canOpen = true;
+
+                if (item.CanPause())
+                    canPause = true;
+
+                if (item.CanResume())
+                    canResume = true;
+
+                if (item.CanStop())
+                    canStop = true;
+
+                if (item is DownloadOperation && item.Status == OperationStatus.Success)
+                    canConvert = true;
             }
 
-            if (!hasDownloadItem)
-            {
-                convertToMP3MenuItem.Enabled = false;
-                resumeMenuItem.Visible = pauseMenuItem.Visible = false;
-            }
+            openMenuItem.Enabled = canOpen;
+            pauseMenuItem.Enabled = canPause;
+            resumeMenuItem.Enabled = canResume;
+            stopMenuItem.Enabled = canStop;
+            convertToMP3MenuItem.Enabled = canConvert;
         }
 
         private void contextMenu1_Collapse(object sender, EventArgs e)
@@ -715,14 +722,7 @@ namespace YouTube_Downloader
 
             foreach (IOperation operation in lvQueue.SelectedItems)
             {
-                try
-                {
-                    Process.Start(operation.Output);
-                }
-                catch
-                {
-                    fails++;
-                }
+                if (operation.CanOpen() && !operation.Open()) fails++;
             }
 
             if (fails > 0)
@@ -737,14 +737,7 @@ namespace YouTube_Downloader
 
             foreach (IOperation operation in lvQueue.SelectedItems)
             {
-                try
-                {
-                    Process.Start(Path.GetDirectoryName(operation.Output));
-                }
-                catch
-                {
-                    fails++;
-                }
+                if (!operation.OpenContainingFolder()) fails++;
             }
 
             if (fails > 0)
@@ -755,11 +748,11 @@ namespace YouTube_Downloader
 
         private void convertToMP3MenuItem_Click(object sender, EventArgs e)
         {
-            foreach (var item in lvQueue.SelectedItems)
+            foreach (IOperation operation in lvQueue.SelectedItems)
             {
-                if (item is DownloadOperation)
+                if (operation is DownloadOperation && operation.Status == OperationStatus.Success)
                 {
-                    string input = (item as DownloadOperation).Output;
+                    string input = (operation as DownloadOperation).Output;
                     string output = Path.GetDirectoryName(input) + "\\" + Path.GetFileNameWithoutExtension(input) + ".mp3";
 
                     txtInput.Text = input;
@@ -772,56 +765,35 @@ namespace YouTube_Downloader
 
         private void resumeMenuItem_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem item in lvQueue.SelectedItems)
+            foreach (IOperation operation in lvQueue.SelectedItems)
             {
-                if (item is DownloadOperation)
-                {
-                    (item as DownloadOperation).Resume();
-                }
+                if (operation.CanResume()) operation.Resume();
             }
         }
 
         private void pauseMenuItem_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem item in lvQueue.SelectedItems)
+            foreach (IOperation operation in lvQueue.SelectedItems)
             {
-                if (item is DownloadOperation)
-                {
-                    (item as DownloadOperation).Pause();
-                }
+                if (operation.CanPause()) operation.Pause();
             }
         }
 
         private void stopMenuItem_Click(object sender, EventArgs e)
         {
-            List<string> files = new List<string>();
-
             foreach (IOperation operation in lvQueue.SelectedItems)
             {
-                if (operation.Status != OperationStatus.Success)
-                {
-                    operation.Stop();
-
-                    if (File.Exists(operation.Output))
-                    {
-                        files.Add(operation.Output);
-                    }
-                }
-            }
-
-            if (files.Count > 0)
-            {
-                Helper.DeleteFiles(files.ToArray());
+                if (operation.CanStop()) operation.Stop(false, true);
             }
         }
 
         private void removeMenuItem_Click(object sender, EventArgs e)
         {
-            stopMenuItem.PerformClick();
-
-            while (lvQueue.SelectedItems.Count > 0)
+            for (int i = lvQueue.SelectedItems.Count; i-- > 0; )
             {
-                lvQueue.SelectedItems[0].Remove();
+                IOperation operation = (IOperation)lvQueue.SelectedItems[i];
+
+                operation.Stop(true, true);
             }
         }
 
@@ -840,57 +812,21 @@ namespace YouTube_Downloader
             // Store files & attempts in Dictionary.
             Dictionary<string, int> files = new Dictionary<string, int>();
 
-            foreach (ListViewItem item in lvQueue.Items)
+            foreach (IOperation operation in Program.RunningOperations)
             {
-                IOperation operation = (IOperation)item;
-
-                if (operation.Stop())
-                {
-                    if (!(operation.Status == OperationStatus.Success))
-                    {
-                        if (!files.ContainsKey(operation.Output))
-                        {
-                            files.Add(operation.Output, 0);
-                        }
-                    }
-                }
+                /* Stop & delete unfinished files. */
+                operation.Stop(false, true);
             }
 
-            bool done = false;
-
-            while (!done)
+            foreach (BackgroundWorker worker in RunningWorkers)
             {
-                // If there are no files left & all BackgroundWorkers are done,
-                // then it's safe to exit the application.
-                if (files.Count < 1 && Program.RunningWorkers.Count < 1)
-                {
-                    done = true;
-                }
+                if (worker.WorkerSupportsCancellation)
+                    worker.CancelAsync();
+            }
 
-                string[] keys = new string[files.Count];
-
-                files.Keys.CopyTo(keys, 0);
-
-                foreach (string key in keys)
-                {
-                    int attempts = files[key];
-
-                    if (attempts < 10)
-                    {
-                        try
-                        {
-                            File.Delete(key);
-
-                            files.Remove(key);
-                        }
-                        catch
-                        {
-                            files[key]++;
-                        }
-                    }
-                }
-
-                Application.DoEvents();
+            while (Program.RunningOperations.Count > 0 || RunningWorkers.Count > 0)
+            {
+                /* Wait for everything to finish. */
             }
 
             this.Close();
@@ -1081,31 +1017,4 @@ namespace YouTube_Downloader
             return formats.ToArray();
         }
     }
-
-    public enum OperationStatus { Canceled, Failed, None, Paused, Success, Working }
-
-    public interface IOperation
-    {
-        string Input { get; set; }
-        string Output { get; set; }
-        OperationStatus Status { get; set; }
-
-        event OperationEventHandler OperationComplete;
-
-        bool Stop();
-    }
-
-    public class OperationEventArgs : EventArgs
-    {
-        public ListViewItem Item { get; set; }
-        public OperationStatus Status { get; set; }
-
-        public OperationEventArgs(ListViewItem item, OperationStatus status)
-        {
-            this.Item = item;
-            this.Status = status;
-        }
-    }
-
-    public delegate void OperationEventHandler(object sender, OperationEventArgs e);
 }

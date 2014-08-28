@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Windows.Forms;
 using YouTube_Downloader.Classes;
 
@@ -9,11 +10,13 @@ namespace YouTube_Downloader.Operations
 {
     public class CroppingOperation : ListViewItem, IOperation, IDisposable
     {
-        public string Input { get; set; }
-        public string Output { get; set; }
-        public OperationStatus Status { get; set; }
+        public string Input { get; private set; }
+        public string Output { get; private set; }
+        public OperationStatus Status { get; private set; }
 
         public event OperationEventHandler OperationComplete;
+
+        bool remove;
 
         public CroppingOperation(string text)
             : base(text)
@@ -24,6 +27,29 @@ namespace YouTube_Downloader.Operations
         {
             // Finalizer calls Dispose(false)
             Dispose(false);
+        }
+
+        public bool CanOpen()
+        {
+            return this.Status == OperationStatus.Success;
+        }
+
+        public bool CanPause()
+        {
+            /* Doesn't support pausing. */
+            return false;
+        }
+
+        public bool CanResume()
+        {
+            /* Doesn't support resuming. */
+            return false;
+        }
+
+        public bool CanStop()
+        {
+            /* Can stop if working. */
+            return this.Status == OperationStatus.Working;
         }
 
         public void Crop(string input, string output, string start, string end)
@@ -40,7 +66,7 @@ namespace YouTube_Downloader.Operations
             backgroundWorker.RunWorkerCompleted += backgroundWorker_RunWorkerCompleted;
             backgroundWorker.RunWorkerAsync();
 
-            Program.RunningWorkers.Add(backgroundWorker);
+            Program.RunningOperations.Add(this);
 
             this.Status = OperationStatus.Working;
         }
@@ -70,22 +96,79 @@ namespace YouTube_Downloader.Operations
             }
         }
 
-        public bool Stop()
+        public bool Open()
         {
             try
             {
-                if (process != null && !process.HasExited)
-                    process.StandardInput.WriteLine("\x71");
-
-                this.Status = OperationStatus.Canceled;
-                this.SubItems[2].Text = "Stopped";
-
-                return true;
+                Process.Start(this.Output);
             }
             catch
             {
                 return false;
             }
+            return true;
+        }
+
+        public bool OpenContainingFolder()
+        {
+            try
+            {
+                Process.Start(Path.GetDirectoryName(this.Output));
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public void Pause()
+        {
+            throw new NotSupportedException();
+        }
+
+        public void Resume()
+        {
+            throw new NotSupportedException();
+        }
+
+        public bool Stop(bool remove)
+        {
+            this.remove = remove;
+
+            if (this.Status == OperationStatus.Paused || this.Status == OperationStatus.Working)
+            {
+                try
+                {
+                    backgroundWorker.CancelAsync();
+
+                    if (process != null && !process.HasExited)
+                        process.StandardInput.WriteLine("\x71");
+
+                    this.Status = OperationStatus.Canceled;
+                    this.RefreshStatus();
+                }
+                catch (Exception ex)
+                {
+                    Program.SaveException(ex);
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public bool Stop(bool remove, bool deleteUnfinishedFiles)
+        {
+            bool success = this.Stop(remove);
+
+            if (deleteUnfinishedFiles && !(this.Status == OperationStatus.Success))
+            {
+                if (File.Exists(this.Output))
+                    Helper.DeleteFiles(this.Output);
+            }
+
+            return success;
         }
 
         #region backgroundWorker
@@ -97,40 +180,89 @@ namespace YouTube_Downloader.Operations
 
         private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            if (cropEnd == string.Empty)
-                FFmpegHelper.Crop(backgroundWorker, this.Input, this.Output, cropStart);
-            else
-                FFmpegHelper.Crop(backgroundWorker, this.Input, this.Output, cropStart, cropEnd);
+            try
+            {
+                if (cropEnd == string.Empty)
+                    FFmpegHelper.Crop(backgroundWorker, this.Input, this.Output, cropStart);
+                else
+                    FFmpegHelper.Crop(backgroundWorker, this.Input, this.Output, cropStart, cropEnd);
 
-            cropStart = cropEnd = string.Empty;
+                cropStart = cropEnd = string.Empty;
+
+                if (backgroundWorker.CancellationPending)
+                {
+                    e.Result = OperationStatus.Canceled;
+                }
+                else
+                {
+                    e.Result = OperationStatus.Success;
+                }
+            }
+            catch (Exception ex)
+            {
+                Program.SaveException(ex);
+                e.Result = OperationStatus.Failed;
+            }
         }
 
         private void backgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            ProgressBar pb = (ProgressBar)((ListViewEx)this.ListView).GetEmbeddedControl(1, this.Index);
-
-            pb.Value = e.ProgressPercentage;
+            this.GetProgressBar().Value = e.ProgressPercentage;
 
             if (e.UserState is Process)
             {
+                // FFmpegHelper will return the ffmpeg process so it can be used to cancel.
                 this.process = (Process)e.UserState;
             }
         }
 
         private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            this.SubItems[2].Text = "Success";
-            this.SubItems[3].Text = Helper.FormatVideoLength(FFmpegHelper.GetDuration(this.Input));
-            this.SubItems[4].Text = Helper.GetFileSize(this.Output);
+            this.Status = (OperationStatus)e.Result;
+            this.RefreshStatus();
 
-            this.Status = OperationStatus.Success;
+            if (this.Status == OperationStatus.Success)
+            {
+                this.SubItems[3].Text = Helper.FormatVideoLength(FFmpegHelper.GetDuration(this.Input));
+                this.SubItems[4].Text = Helper.GetFileSize(this.Output);
+            }
 
-            Program.RunningWorkers.Remove(backgroundWorker);
+            Program.RunningOperations.Remove(this);
 
             OnOperationComplete(new OperationEventArgs(this, this.Status));
+
+            if (this.remove && this.ListView != null)
+            {
+                this.Remove();
+            }
         }
 
         #endregion
+
+        private ProgressBar GetProgressBar()
+        {
+            return (ProgressBar)((ListViewEx)this.ListView).GetEmbeddedControl(1, this.Index);
+        }
+
+        private void RefreshStatus()
+        {
+            if (this.Status == OperationStatus.Canceled)
+            {
+                this.SubItems[2].Text = "Canceled";
+            }
+            else if (this.Status == OperationStatus.Failed)
+            {
+                this.SubItems[2].Text = "Failed";
+            }
+            else if (this.Status == OperationStatus.Success)
+            {
+                this.SubItems[2].Text = "Completed";
+            }
+            else
+            {
+                this.SubItems[2].Text = "???";
+            }
+        }
 
         private void OnOperationComplete(OperationEventArgs e)
         {
