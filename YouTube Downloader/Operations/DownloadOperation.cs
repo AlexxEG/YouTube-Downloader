@@ -17,10 +17,22 @@ namespace YouTube_Downloader.Operations
         /// </summary>
         private const int ProgressDelay = 1000;
 
+        /// <summary>
+        /// Gets the video download url input.
+        /// </summary>
         public string Input { get; private set; }
+        /// <summary>
+        /// Gets the output directory.
+        /// </summary>
         public string Output { get; private set; }
+        /// <summary>
+        /// Gets the operation status.
+        /// </summary>
         public OperationStatus Status { get; private set; }
 
+        /// <summary>
+        /// Occurs when the operation is complete.
+        /// </summary>
         public event OperationEventHandler OperationComplete;
 
         bool dash, processing, remove;
@@ -38,23 +50,35 @@ namespace YouTube_Downloader.Operations
             Dispose(false);
         }
 
+        /// <summary>
+        /// Returns whether the output can be opened.
+        /// </summary>
         public bool CanOpen()
         {
             return this.Status == OperationStatus.Success;
         }
 
+        /// <summary>
+        /// Returns whether the operation can be paused.
+        /// </summary>
         public bool CanPause()
         {
             /* Only downloader can pause. */
             return downloader.CanPause && this.Status == OperationStatus.Working;
         }
 
+        /// <summary>
+        /// Returns whether the operation can be resumed.
+        /// </summary>
         public bool CanResume()
         {
             /* Only downloader can resume. */
             return downloader.CanResume && this.Status == OperationStatus.Paused;
         }
 
+        /// <summary>
+        /// Returns whether the operation can be stopped.
+        /// </summary>
         public bool CanStop()
         {
             /* Only downloader can stop. */
@@ -86,6 +110,11 @@ namespace YouTube_Downloader.Operations
             }
         }
 
+        /// <summary>
+        /// Starts the video download.
+        /// </summary>
+        /// <param name="url">The video download url.</param>
+        /// <param name="output">The output file to save video.</param>
         public void Download(string url, string output)
         {
             this.Input = url;
@@ -117,6 +146,12 @@ namespace YouTube_Downloader.Operations
             Program.RunningOperations.Add(this);
         }
 
+        /// <summary>
+        /// Starts the DASH video download.
+        /// </summary>
+        /// <param name="audio">The audio download url.</param>
+        /// <param name="video">The video download url.</param>
+        /// <param name="output">The output file to save video.</param>
         public void DownloadDASH(string audio, string video, string output)
         {
             dash = true;
@@ -158,6 +193,9 @@ namespace YouTube_Downloader.Operations
             Program.RunningOperations.Add(this);
         }
 
+        /// <summary>
+        /// Opens the output file.
+        /// </summary>
         public bool Open()
         {
             try
@@ -171,6 +209,9 @@ namespace YouTube_Downloader.Operations
             return true;
         }
 
+        /// <summary>
+        /// Opens the output directory.
+        /// </summary>
         public bool OpenContainingFolder()
         {
             try
@@ -184,6 +225,9 @@ namespace YouTube_Downloader.Operations
             return true;
         }
 
+        /// <summary>
+        /// Pauses the operation.
+        /// </summary>
         public void Pause()
         {
             downloader.Pause();
@@ -191,6 +235,9 @@ namespace YouTube_Downloader.Operations
             this.Status = OperationStatus.Paused;
         }
 
+        /// <summary>
+        /// Resumes the operation.
+        /// </summary>
         public void Resume()
         {
             downloader.Resume();
@@ -198,6 +245,10 @@ namespace YouTube_Downloader.Operations
             this.Status = OperationStatus.Working;
         }
 
+        /// <summary>
+        /// Stops the operation.
+        /// </summary>
+        /// <param name="remove">True to remove the operation from it's ListView.</param>
         public bool Stop(bool remove)
         {
             this.remove = remove;
@@ -209,6 +260,11 @@ namespace YouTube_Downloader.Operations
             return true;
         }
 
+        /// <summary>
+        /// Stops the operation.
+        /// </summary>
+        /// <param name="remove">True to remove the operation from it's ListView.</param>
+        /// <param name="deleteUnfinishedFiles">True to delete unfinished files.</param>
         public bool Stop(bool remove, bool deleteUnfinishedFiles)
         {
             bool success = this.Stop(remove);
@@ -357,6 +413,9 @@ namespace YouTube_Downloader.Operations
 
         #endregion
 
+        /// <summary>
+        /// Combines DASH audio &amp; video, and returns true if it was successful.
+        /// </summary>
         private void Combine()
         {
             string audio = downloader.LocalDirectory + "\\" + downloader.Files[0].Name;
@@ -374,6 +433,9 @@ namespace YouTube_Downloader.Operations
             combiner.RunWorkerAsync(new string[] { audio, video });
         }
 
+        /// <summary>
+        /// Returns the operation's ProgressBar.
+        /// </summary>
         private ProgressBar GetProgressBar()
         {
             return (ProgressBar)((ListViewEx)this.ListView).GetEmbeddedControl(1, this.Index);

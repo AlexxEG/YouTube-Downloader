@@ -36,6 +36,9 @@ namespace YouTube_Downloader.Operations
         /// </summary>
         public OperationStatus Status { get; private set; }
 
+        /// <summary>
+        /// Occurs when the operation is complete.
+        /// </summary>
         public event OperationEventHandler OperationComplete;
 
         bool combining, processing, remove, useDash;
@@ -58,7 +61,7 @@ namespace YouTube_Downloader.Operations
         }
 
         /// <summary>
-        /// Returns whether output can currently be opened.
+        /// Returns whether the output can be opened.
         /// </summary>
         public bool CanOpen()
         {
@@ -67,7 +70,7 @@ namespace YouTube_Downloader.Operations
         }
 
         /// <summary>
-        /// Returns whether operation can be paused.
+        /// Returns whether the operation can be paused.
         /// </summary>
         public bool CanPause()
         {
@@ -75,7 +78,7 @@ namespace YouTube_Downloader.Operations
         }
 
         /// <summary>
-        /// Returns whether operation can be resumed.
+        /// Returns whether the operation can be resumed.
         /// </summary>
         public bool CanResume()
         {
@@ -83,7 +86,7 @@ namespace YouTube_Downloader.Operations
         }
 
         /// <summary>
-        /// Returns whether operation can be stopped.
+        /// Returns whether the operation can be stopped.
         /// </summary>
         public bool CanStop()
         {
@@ -167,7 +170,7 @@ namespace YouTube_Downloader.Operations
         }
 
         /// <summary>
-        /// Pauses the download.
+        /// Pauses the operation.
         /// </summary>
         public void Pause()
         {
@@ -180,7 +183,7 @@ namespace YouTube_Downloader.Operations
         }
 
         /// <summary>
-        /// Resumes the download.
+        /// Resumes the operation.
         /// </summary>
         public void Resume()
         {
@@ -193,7 +196,7 @@ namespace YouTube_Downloader.Operations
         }
 
         /// <summary>
-        /// Stops the download.
+        /// Stops the operation.
         /// </summary>
         /// <param name="remove">True to remove the operation from it's ListView.</param>
         public bool Stop(bool remove)
@@ -217,7 +220,7 @@ namespace YouTube_Downloader.Operations
         }
 
         /// <summary>
-        /// Stops the download.
+        /// Stops the operation.
         /// </summary>
         /// <param name="remove">True to remove the operation from it's ListView.</param>
         /// <param name="deleteUnfinishedFiles">True to delete unfinished files.</param>
@@ -514,7 +517,6 @@ namespace YouTube_Downloader.Operations
         /// <summary>
         /// Returns the operation's ProgressBar.
         /// </summary>
-        /// <returns></returns>
         private ProgressBar GetProgressBar()
         {
             return (ProgressBar)((ListViewEx)this.ListView).GetEmbeddedControl(1, this.Index);

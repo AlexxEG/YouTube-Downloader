@@ -26,24 +26,24 @@
         /// <returns></returns>
         bool Open();
         /// <summary>
-        /// Opens the containing folder of the output.
+        /// Opens the containing folder of the output file(s).
         /// </summary>
         bool OpenContainingFolder();
         /// <summary>
-        /// Pauses the operation if supported.
+        /// Pauses the operation if supported &amp; available.
         /// </summary>
         void Pause();
         /// <summary>
-        /// Resumes the operation if supported.
+        /// Resumes the operation if supported &amp; available.
         /// </summary>
         void Resume();
         /// <summary>
-        /// Stops the operation.
+        /// Stops the operation if supported &amp; available.
         /// </summary>
         /// <param name="remove">Remove operation from it's ListView if set to true.</param>
         bool Stop(bool remove);
         /// <summary>
-        /// Stops the operation.
+        /// Stops the operation if supported &amp; available.
         /// </summary>
         /// <param name="remove">Remove operation from it's ListView if set to true.</param>
         /// <param name="deleteUnfinishedFiles">Delete unfinished files if set to true.</param>

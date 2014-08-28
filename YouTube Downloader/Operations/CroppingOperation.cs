@@ -10,10 +10,22 @@ namespace YouTube_Downloader.Operations
 {
     public class CroppingOperation : ListViewItem, IOperation, IDisposable
     {
+        /// <summary>
+        /// Gets the input file path.
+        /// </summary>
         public string Input { get; private set; }
+        /// <summary>
+        /// Gets the output file path.
+        /// </summary>
         public string Output { get; private set; }
+        /// <summary>
+        /// Gets the operation status.
+        /// </summary>
         public OperationStatus Status { get; private set; }
 
+        /// <summary>
+        /// Occurs when the operation is complete.
+        /// </summary>
         public event OperationEventHandler OperationComplete;
 
         bool remove;
@@ -29,29 +41,48 @@ namespace YouTube_Downloader.Operations
             Dispose(false);
         }
 
+        /// <summary>
+        /// Returns whether the output can be opened.
+        /// </summary>
         public bool CanOpen()
         {
             return this.Status == OperationStatus.Success;
         }
 
+        /// <summary>
+        /// Returns whether the operation can be paused.
+        /// </summary>
         public bool CanPause()
         {
-            /* Doesn't support pausing. */
+            // Doesn't support pausing.
             return false;
         }
 
+        /// <summary>
+        /// Returns whether the operation can be resumed.
+        /// </summary>
         public bool CanResume()
         {
             /* Doesn't support resuming. */
             return false;
         }
 
+        /// <summary>
+        /// Returns whether the operation can be stopped.
+        /// </summary>
         public bool CanStop()
         {
             /* Can stop if working. */
             return this.Status == OperationStatus.Working;
         }
 
+        /// <summary>
+        /// Starts the cropping operation.
+        /// </summary>
+        /// <param name="input">The file to crop.</param>
+        /// <param name="output">The path to save the cropped file.</param>
+        /// <param name="start">The start position to crop in 00:00:00.000 format.</param>
+        /// <param name="end">The end position to crop in 00:00:00.000 format.</param>
         public void Crop(string input, string output, string start, string end)
         {
             this.Input = input;
@@ -96,6 +127,9 @@ namespace YouTube_Downloader.Operations
             }
         }
 
+        /// <summary>
+        /// Opens the output file.
+        /// </summary>
         public bool Open()
         {
             try
@@ -109,6 +143,9 @@ namespace YouTube_Downloader.Operations
             return true;
         }
 
+        /// <summary>
+        /// Opens the output directory.
+        /// </summary>
         public bool OpenContainingFolder()
         {
             try
@@ -122,16 +159,26 @@ namespace YouTube_Downloader.Operations
             return true;
         }
 
+        /// <summary>
+        /// Not supported.
+        /// </summary>
         public void Pause()
         {
             throw new NotSupportedException();
         }
 
+        /// <summary>
+        /// Not supported.
+        /// </summary>
         public void Resume()
         {
             throw new NotSupportedException();
         }
 
+        /// <summary>
+        /// Stops the operation.
+        /// </summary>
+        /// <param name="remove">True to remove the operation from it's ListView.</param>
         public bool Stop(bool remove)
         {
             this.remove = remove;
@@ -158,6 +205,11 @@ namespace YouTube_Downloader.Operations
             return true;
         }
 
+        /// <summary>
+        /// Stops the operation.
+        /// </summary>
+        /// <param name="remove">True to remove the operation from it's ListView.</param>
+        /// <param name="deleteUnfinishedFiles">True to delete unfinished files.</param>
         public bool Stop(bool remove, bool deleteUnfinishedFiles)
         {
             bool success = this.Stop(remove);
@@ -239,6 +291,9 @@ namespace YouTube_Downloader.Operations
 
         #endregion
 
+        /// <summary>
+        /// Returns the operation's ProgressBar.
+        /// </summary>
         private ProgressBar GetProgressBar()
         {
             return (ProgressBar)((ListViewEx)this.ListView).GetEmbeddedControl(1, this.Index);
