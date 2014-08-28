@@ -11,9 +11,10 @@ using YouTube_Downloader.Properties;
 
 /* ToDo: 
  *
- * - Get file size for DownloadOperation
+ * - Get file size for DownloadOperation.
  * - Handle aborting operations better when closing form.
  * - Make sure OperationStatus is set for operations in BackgroundWorker.DoWork.
+ * - Add proxy settings to Options.
  */
 
 namespace YouTube_Downloader
