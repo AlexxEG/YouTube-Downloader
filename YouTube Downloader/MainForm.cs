@@ -726,12 +726,19 @@ namespace YouTube_Downloader
 
         #endregion
 
+        /// <summary>
+        /// Inserts a video url & click the 'Get Video' button automatically.
+        /// </summary>
+        /// <param name="url">The url to insert.</param>
         public void InsertVideo(string url)
         {
             txtYoutubeLink.Text = url;
             btnGetVideo.PerformClick();
         }
 
+        /// <summary>
+        /// Cancels all active IOperations.
+        /// </summary>
         private void CancelOperations()
         {
             this.Hide();
@@ -759,6 +766,12 @@ namespace YouTube_Downloader
             this.Close();
         }
 
+        /// <summary>
+        /// Starts a ConvertOperation.
+        /// </summary>
+        /// <param name="input">The file to convert.</param>
+        /// <param name="output">The path to save converted file.</param>
+        /// <param name="crop">True if converted file should be cropped.</param>
         private void Convert(string input, string output, bool crop)
         {
             string start = string.Empty;
@@ -816,6 +829,11 @@ namespace YouTube_Downloader
             item.Convert(input, output, start, end);
         }
 
+        /// <summary>
+        /// Starts a CroppingOperation.
+        /// </summary>
+        /// <param name="input">The file to crop.</param>
+        /// <param name="output">The path to save cropped file.</param>
         private void Crop(string input, string output)
         {
             string start = string.Empty;
@@ -871,7 +889,7 @@ namespace YouTube_Downloader
         }
 
         /// <summary>
-        /// Returns true if there is working operation(s) currently.
+        /// Returns true if there is a working IOperation.
         /// </summary>
         private bool IsWorking()
         {
