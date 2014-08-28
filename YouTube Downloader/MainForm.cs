@@ -870,6 +870,9 @@ namespace YouTube_Downloader
             item.Crop(input, output, start, end);
         }
 
+        /// <summary>
+        /// Returns true if there is working operation(s) currently.
+        /// </summary>
         private bool IsWorking()
         {
             foreach (ListViewItem item in lvQueue.Items)
@@ -884,6 +887,9 @@ namespace YouTube_Downloader
             return false;
         }
 
+        /// <summary>
+        /// Loads & applies all application settings.
+        /// </summary>
         private void LoadSettings()
         {
             // Upgrade settings between new versions. 
@@ -943,14 +949,22 @@ namespace YouTube_Downloader
             if (settings.LastPlaylistUrl != null) txtPlaylistLink.Text = settings.LastPlaylistUrl;
         }
 
+        /// <summary>
+        /// Deselects all other items in given ListViewItem's ListView except the given item.
+        /// </summary>
+        /// <param name="item">The ListViewItem to select.</param>
         private void SelectOneItem(ListViewItem item)
         {
-            foreach (ListViewItem lvi in lvQueue.Items)
+            foreach (ListViewItem lvi in item.ListView.Items)
                 lvi.Selected = false;
 
             item.Selected = true;
         }
 
+        /// <summary>
+        /// Returns true if directory is not null & exists. Prompts the user to create directory if it doesn't exist.
+        /// </summary>
+        /// <param name="directory">The directory to validate.</param>
         private bool ValidateDirectory(string directory)
         {
             try
