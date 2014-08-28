@@ -222,7 +222,7 @@ namespace YouTube_Downloader.Classes
         }
     }
 
-    public static class FormatLeftTime
+    static class FormatLeftTime
     {
         private static string[] TimeUnitsNames = { "Milli", "Sec", "Min", "Hour", "Day", "Month", "Year", "Decade", "Century" };
         private static int[] TimeUnitsValue = { 1000, 60, 60, 24, 30, 12, 10, 10 };//refrernce unit is milli
