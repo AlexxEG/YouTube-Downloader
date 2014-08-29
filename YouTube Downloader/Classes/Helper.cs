@@ -253,14 +253,14 @@ namespace YouTube_Downloader.Classes
     {
         public static int IndexOf(this VideoFormat[] thiz, string format, bool dash)
         {
+            Regex regex = new Regex(dash ? "^.* - " + format + "p.*$" : @"^\d*\s*-\s*\d+x" + format + "$");
+
             for (int i = 0; i < thiz.Length; i++)
             {
                 VideoFormat f = thiz[i];
 
-                string pattern = dash ? "^.* - " + format + "p.*$" : @"^\d*\s*-\s*\d+x" + format + "$";
-
                 /* Ignore '(DASH video)' suffix. */
-                if (Regex.IsMatch(f.Format, pattern))
+                if (regex.IsMatch(f.Format))
                     return i;
             }
 
