@@ -144,8 +144,7 @@ namespace YouTube_Downloader.Classes
         {
             VideoFormat[] qualities = Helper.GetVideoFormats(video, dash);
 
-            /* 
-             * Find a format based on user's preference.
+            /* Find a format based on user's preference.
              * 
              * Highest  : Self-explanatory
              * Medium   : 720p or highest
@@ -178,23 +177,22 @@ namespace YouTube_Downloader.Classes
         public static VideoFormat[] GetVideoFormats(VideoInfo video, bool dash)
         {
             var formats = new List<VideoFormat>();
+            Regex regex = new Regex(dash ? "(144|240|360|480|720|1080|1440|2160)p" : @"^\d*\s*-\s*\d+x\d+$");
 
             foreach (VideoFormat format in video.Formats)
             {
-                /* Exclude DASH videos. */
-                if (!dash && format.Format.Contains("DASH"))
+                // Exclude DASH videos if dash is false.
+                if (!dash && format.DASH)
                 {
                     continue;
                 }
-                /* Only include .mp4 DASH videos. */
-                else if (dash && !(format.Extension.Contains("mp4") || format.Format.Contains("DASH")))
+                // Only include .mp4 DASH videos if dash is true.
+                else if (dash && !format.DASH || !format.Extension.Contains("mp4"))
                 {
                     continue;
                 }
 
-                string pattern = dash ? "(144|240|360|480|720|1080|1440|2160)p" : @"^\d*\s*-\s*\d+x\d+$";
-
-                if (Regex.IsMatch(format.Format, pattern))
+                if (regex.IsMatch(format.Format))
                 {
                     formats.Add(format);
                 }
