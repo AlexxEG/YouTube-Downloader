@@ -251,6 +251,12 @@ namespace YouTube_Downloader.Classes
 
     static class VideoFormatArrayExtensions
     {
+        /// <summary>
+        /// Returns the index of the given format in a array.
+        /// </summary>
+        /// <param name="thiz">The VideoFormat array to search.</param>
+        /// <param name="format">The video format to find.</param>
+        /// <param name="dash">True to find DASH format, false if otherwise.</param>
         public static int IndexOf(this VideoFormat[] thiz, string format, bool dash)
         {
             Regex regex = new Regex(dash ? "^.* - " + format + "p.*$" : @"^\d*\s*-\s*\d+x" + format + "$");
