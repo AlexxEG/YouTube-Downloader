@@ -306,7 +306,6 @@ namespace DeDauwJeroen
                 try
                 {
                     WebRequest webReq = (WebRequest)WebRequest.Create(this.Files[fileNr].Path);
-                    webReq.Proxy = null;
                     WebResponse webResp = (WebResponse)webReq.GetResponse();
                     m_totalSize += webResp.ContentLength;
                     webResp.Close();
@@ -343,7 +342,6 @@ namespace DeDauwJeroen
             try
             {
                 webReq = (WebRequest)System.Net.WebRequest.Create(this.Files[fileNr].Path);
-                webReq.Proxy = null;
                 webResp = (WebResponse)webReq.GetResponse();
 
                 size = webResp.ContentLength;

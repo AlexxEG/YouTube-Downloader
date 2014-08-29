@@ -44,7 +44,6 @@ namespace YouTube_Downloader.Classes
                 {
                     request = (HttpWebRequest)HttpWebRequest.Create(this.DownloadUrl);
                     request.Method = "HEAD";
-                    request.Proxy = null;
                     response = (HttpWebResponse)request.GetResponse();
                     long bytes = response.ContentLength;
 

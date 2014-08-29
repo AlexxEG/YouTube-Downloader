@@ -14,7 +14,6 @@ using YouTube_Downloader.Properties;
  * - Get file size for DownloadOperation.
  * - Handle aborting operations better when closing form.
  * - Make sure OperationStatus is set for operations in BackgroundWorker.DoWork.
- * - Add proxy settings to Options.
  * - Ignore .webm files when downloading videos & playlists.
  */
 
