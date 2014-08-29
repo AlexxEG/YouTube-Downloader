@@ -208,7 +208,7 @@ namespace YouTube_Downloader.Classes
             return regex.IsMatch(url);
         }
 
-        public static bool IsValidUrl(string url)
+        public static bool IsValidYouTubeUrl(string url)
         {
             if (!url.ToLower().Contains("www.youtube.com/watch?"))
                 return false;
