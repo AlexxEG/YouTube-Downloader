@@ -147,7 +147,7 @@ namespace YouTube_Downloader
             cbQuality.Items.AddRange(this.CheckFormats(videoInfo.Formats));
             cbQuality.SelectedIndex = cbQuality.Items.Count - 1;
 
-            lTitle.Text = Helper.FormatTitle(videoInfo.Title);
+            txtTitle.Text = Helper.FormatTitle(videoInfo.Title);
 
             TimeSpan videoLength = TimeSpan.FromSeconds(videoInfo.Duration);
             if (videoLength.Hours > 0)
@@ -204,7 +204,7 @@ namespace YouTube_Downloader
             {
                 settings.LastYouTubeUrl = txtYoutubeLink.Text;
 
-                lTitle.Text = "-";
+                txtTitle.Text = string.Empty;
                 cbQuality.Items.Clear();
                 btnGetVideo.Enabled = txtYoutubeLink.Enabled = btnDownload.Enabled = cbQuality.Enabled = false;
                 videoThumbnail.Tag = null;

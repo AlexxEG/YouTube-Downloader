@@ -56,7 +56,6 @@
             this.removeMenuItem = new System.Windows.Forms.MenuItem();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.lFileSize = new System.Windows.Forms.Label();
-            this.lTitle = new System.Windows.Forms.Label();
             this.videoThumbnail = new System.Windows.Forms.PictureBox();
             this.label3 = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
@@ -90,6 +89,9 @@
             this.label5 = new System.Windows.Forms.Label();
             this.queueTabPage = new System.Windows.Forms.TabPage();
             this.chbAutoConvert = new System.Windows.Forms.CheckBox();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.txtTitle = new System.Windows.Forms.TextBox();
             this.lvQueue = new ListViewEmbeddedControls.ListViewEx();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -97,8 +99,6 @@
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.groupBox1.SuspendLayout();
             this.bottomPanel.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -171,7 +171,7 @@
             // btnBrowse
             // 
             this.btnBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBrowse.Location = new System.Drawing.Point(466, 73);
+            this.btnBrowse.Location = new System.Drawing.Point(547, 73);
             this.btnBrowse.Name = "btnBrowse";
             this.btnBrowse.Size = new System.Drawing.Size(31, 23);
             this.btnBrowse.TabIndex = 7;
@@ -184,34 +184,34 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(132, 76);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(48, 13);
+            this.label1.Size = new System.Drawing.Size(44, 13);
             this.label1.TabIndex = 6;
-            this.label1.Text = "Save To";
+            this.label1.Text = "Save to";
             // 
             // cbSaveTo
             // 
             this.cbSaveTo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cbSaveTo.FormattingEnabled = true;
-            this.cbSaveTo.Location = new System.Drawing.Point(191, 74);
+            this.cbSaveTo.Location = new System.Drawing.Point(212, 74);
             this.cbSaveTo.Name = "cbSaveTo";
-            this.cbSaveTo.Size = new System.Drawing.Size(269, 21);
+            this.cbSaveTo.Size = new System.Drawing.Size(329, 21);
             this.cbSaveTo.TabIndex = 5;
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(132, 22);
+            this.label4.Location = new System.Drawing.Point(132, 23);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(30, 13);
+            this.label4.Size = new System.Drawing.Size(74, 13);
             this.label4.TabIndex = 4;
-            this.label4.Text = "Title:";
+            this.label4.Text = "Title/Filename";
             // 
             // btnDownload
             // 
             this.btnDownload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnDownload.Enabled = false;
-            this.btnDownload.Location = new System.Drawing.Point(503, 73);
+            this.btnDownload.Location = new System.Drawing.Point(503, 102);
             this.btnDownload.Name = "btnDownload";
             this.btnDownload.Size = new System.Drawing.Size(75, 23);
             this.btnDownload.TabIndex = 3;
@@ -226,9 +226,9 @@
             this.cbQuality.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbQuality.Enabled = false;
             this.cbQuality.FormattingEnabled = true;
-            this.cbQuality.Location = new System.Drawing.Point(191, 46);
+            this.cbQuality.Location = new System.Drawing.Point(212, 46);
             this.cbQuality.Name = "cbQuality";
-            this.cbQuality.Size = new System.Drawing.Size(269, 21);
+            this.cbQuality.Size = new System.Drawing.Size(329, 21);
             this.cbQuality.TabIndex = 1;
             this.cbQuality.SelectedIndexChanged += new System.EventHandler(this.cbQuality_SelectedIndexChanged);
             // 
@@ -344,8 +344,8 @@
             // 
             this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox3.Controls.Add(this.txtTitle);
             this.groupBox3.Controls.Add(this.lFileSize);
-            this.groupBox3.Controls.Add(this.lTitle);
             this.groupBox3.Controls.Add(this.videoThumbnail);
             this.groupBox3.Controls.Add(this.label3);
             this.groupBox3.Controls.Add(this.label4);
@@ -356,7 +356,7 @@
             this.groupBox3.Controls.Add(this.cbSaveTo);
             this.groupBox3.Location = new System.Drawing.Point(6, 86);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(584, 102);
+            this.groupBox3.Size = new System.Drawing.Size(584, 131);
             this.groupBox3.TabIndex = 8;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Video Information";
@@ -369,15 +369,6 @@
             this.lFileSize.Name = "lFileSize";
             this.lFileSize.Size = new System.Drawing.Size(0, 13);
             this.lFileSize.TabIndex = 11;
-            // 
-            // lTitle
-            // 
-            this.lTitle.AutoSize = true;
-            this.lTitle.Location = new System.Drawing.Point(188, 22);
-            this.lTitle.Name = "lTitle";
-            this.lTitle.Size = new System.Drawing.Size(10, 13);
-            this.lTitle.TabIndex = 10;
-            this.lTitle.Text = "-";
             // 
             // videoThumbnail
             // 
@@ -763,6 +754,23 @@
             this.chbAutoConvert.Text = "Convert to MP3 automatically";
             this.chbAutoConvert.UseVisualStyleBackColor = true;
             // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.Filter = "MP4 files|*.mp4|MP3 files|*.mp3|All files|*.*";
+            // 
+            // saveFileDialog1
+            // 
+            this.saveFileDialog1.Filter = "MP3 files|*.mp3|MP4 files|*.mp4|All files|*.*";
+            // 
+            // txtTitle
+            // 
+            this.txtTitle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtTitle.Location = new System.Drawing.Point(212, 20);
+            this.txtTitle.Name = "txtTitle";
+            this.txtTitle.Size = new System.Drawing.Size(329, 20);
+            this.txtTitle.TabIndex = 12;
+            // 
             // lvQueue
             // 
             this.lvQueue.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -806,14 +814,6 @@
             // columnHeader6
             // 
             this.columnHeader6.Text = "Input";
-            // 
-            // openFileDialog1
-            // 
-            this.openFileDialog1.Filter = "MP4 files|*.mp4|MP3 files|*.mp3|All files|*.*";
-            // 
-            // saveFileDialog1
-            // 
-            this.saveFileDialog1.Filter = "MP3 files|*.mp3|MP4 files|*.mp4|All files|*.*";
             // 
             // MainForm
             // 
@@ -892,7 +892,6 @@
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage downloadTabPage;
         private System.Windows.Forms.TabPage queueTabPage;
-        private System.Windows.Forms.Label lTitle;
         private System.Windows.Forms.TabPage convertTabPage;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.GroupBox groupBox4;
@@ -924,6 +923,7 @@
         private System.Windows.Forms.CheckBox chbPlaylistDASH;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.ComboBox cbPlaylistQuality;
+        private System.Windows.Forms.TextBox txtTitle;
     }
 }
 
