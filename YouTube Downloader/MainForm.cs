@@ -11,7 +11,6 @@ using YouTube_Downloader.Properties;
 
 /* ToDo: 
  *
- * - Get file size for DownloadOperation.
  * - Handle aborting operations better when closing form.
  * - Make sure OperationStatus is set for operations in BackgroundWorker.DoWork.
  */
