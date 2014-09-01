@@ -181,9 +181,6 @@ namespace YouTube_Downloader
                     lFileSize.Text = Helper.FormatFileSize(e.VideoFormat.FileSize);
                 }
             }
-
-            // Remove event handler.
-            (sender as VideoInfo).FileSizeUpdated -= videoInfo_FileSizeUpdated;
         }
 
         #region Download Tab
