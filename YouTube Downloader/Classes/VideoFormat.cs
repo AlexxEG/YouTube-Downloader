@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace YouTube_Downloader.Classes
 {
@@ -13,7 +14,8 @@ namespace YouTube_Downloader.Classes
         public string Format { get; set; }
         public VideoInfo VideoInfo { get; set; }
 
-        private HttpWebRequest request;
+        private WebRequest request;
+        private CancellationTokenSource cts;
 
         public VideoFormat(VideoInfo videoInfo)
         {
@@ -28,46 +30,86 @@ namespace YouTube_Downloader.Classes
             if (request != null)
                 request.Abort();
 
-            if (updateFileSizeThread != null)
-                updateFileSizeThread.Abort();
+            if (cts != null)
+                cts.Cancel();
         }
 
-        Thread updateFileSizeThread;
-
-        public void UpdateFileSize()
+        public async void UpdateFileSizeAsync()
         {
-            updateFileSizeThread = new Thread(() =>
+            WebResponse response = null;
+
+            cts = new CancellationTokenSource();
+
+            try
             {
-                HttpWebResponse response = null;
+                request = WebRequest.Create(this.DownloadUrl);
+                request.Method = "HEAD";
+                response = await request.GetResponseAsync(cts.Token);
 
-                try
-                {
-                    request = (HttpWebRequest)HttpWebRequest.Create(this.DownloadUrl);
-                    request.Method = "HEAD";
-                    response = (HttpWebResponse)request.GetResponse();
-                    long bytes = response.ContentLength;
+                long bytes = response.ContentLength;
 
-                    this.FileSize = bytes;
+                this.FileSize = bytes;
 
-                    this.VideoInfo.OnFileSizeUpdated(this);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                    Console.WriteLine("Aborted update file size");
-                }
-                finally
-                {
-                    if (response != null)
-                        response.Close();
-                }
-            });
-            updateFileSizeThread.Start();
+                this.VideoInfo.OnFileSizeUpdated(this);
+            }
+            catch (OperationCanceledException e)
+            {
+                Console.WriteLine(e);
+                Console.WriteLine("Canceled update file size");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                Console.WriteLine("Update file size error");
+            }
+            finally
+            {
+                if (response != null)
+                    response.Close();
+
+                cts.Dispose();
+                cts = null;
+            }
         }
 
         public override string ToString()
         {
             return this.Format.Split('-')[1].Trim() + " (." + this.Extension + ")";
+        }
+    }
+
+    // Source: http://stackoverflow.com/a/19215782
+    static class Extensions
+    {
+        /// <summary>
+        /// Same as WebRequest.GetResponseAsync, but supports CancellationToken.
+        /// </summary>
+        public static async Task<WebResponse> GetResponseAsync(this WebRequest request, CancellationToken ct)
+        {
+            using (ct.Register(() => request.Abort(), useSynchronizationContext: false))
+            {
+                try
+                {
+                    var response = await request.GetResponseAsync();
+                    ct.ThrowIfCancellationRequested();
+                    return (WebResponse)response;
+                }
+                catch (WebException ex)
+                {
+                    // WebException is thrown when request.Abort() is called,
+                    // but there may be many other reasons,
+                    // propagate the WebException to the caller correctly
+
+                    if (ct.IsCancellationRequested)
+                    {
+                        // the WebException will be available as Exception.InnerException
+                        throw new OperationCanceledException(ex.Message, ex, ct);
+                    }
+
+                    // cancellation hasn't been requested, rethrow the original WebException
+                    throw;
+                }
+            }
         }
     }
 }

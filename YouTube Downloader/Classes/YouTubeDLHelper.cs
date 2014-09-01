@@ -158,7 +158,7 @@ namespace YouTube_Downloader.Classes
                     format.DownloadUrl = token["url"].ToString();
                     format.Extension = token["ext"].ToString();
                     format.Format = token["format"].ToString();
-                    format.UpdateFileSize();
+                    format.UpdateFileSizeAsync();
 
                     info.Formats.Add(format);
                 }
