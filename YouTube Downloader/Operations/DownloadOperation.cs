@@ -4,6 +4,7 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using YouTube_Downloader.Classes;
 using YouTube_Downloader.Delegates;
@@ -165,15 +166,16 @@ namespace YouTube_Downloader.Operations
             downloader = new FileDownloader(true);
             downloader.LocalDirectory = folder;
 
+            Regex regex = new Regex(@"^\w:.*\\(.*)(\..*)$");
             FileDownloader.FileInfo[] fileInfos = new FileDownloader.FileInfo[2]
             {
                 new FileDownloader.FileInfo(audio)
                 {
-                    Name = Path.GetFileNameWithoutExtension(output) + "_audio" + Path.GetExtension(output)
+                    Name = regex.Replace(output, "$1_audio$2")
                 },
                 new FileDownloader.FileInfo(video)
                 {
-                    Name = Path.GetFileNameWithoutExtension(output) + "_video" + Path.GetExtension(output)
+                    Name = regex.Replace(output, "$1_video$2")
                 }
             };
 
