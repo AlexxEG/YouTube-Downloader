@@ -235,9 +235,13 @@ namespace YouTube_Downloader
 
         private void btnDownload_Click(object sender, EventArgs e)
         {
+            // Validate the filename first, since it can change within the validation method.
+            if (!this.ValidateFilename(txtTitle.Text))
+                return;
+
             string path = cbSaveTo.Text;
 
-            /* Make sure download directory exists. */
+            // Make sure download directory exists & title doesn't contain illegal file path characters
             if (!this.ValidateDirectory(path))
                 return;
 
@@ -247,7 +251,7 @@ namespace YouTube_Downloader
             try
             {
                 VideoFormat tempFormat = cbQuality.SelectedItem as VideoFormat;
-                string filename = string.Format("{0}.{1}", Helper.FormatTitle(tempFormat.VideoInfo.Title), tempFormat.Extension);
+                string filename = string.Format("{0}.{1}", txtTitle.Text, tempFormat.Extension);
 
                 if (File.Exists(Path.Combine(path, filename)))
                 {
@@ -1028,6 +1032,38 @@ namespace YouTube_Downloader
             }
 
             return false;
+        }
+
+        private bool ValidateFilename(string filename)
+        {
+            bool valid = true;
+            char[] illegalChars = Path.GetInvalidFileNameChars();
+
+            foreach (char ch in illegalChars)
+            {
+                // filename contains illegal characters, ask to format title.
+                if (filename.Contains(ch.ToString()))
+                {
+                    valid = false;
+                    break;
+                }
+            }
+
+            if (!valid)
+            {
+                string newFilename = Helper.FormatTitle(filename);
+                string text = "Filename contains illegal characters, do you want to automatically remove these characters?\n\n" +
+                    "New filename: \"" + newFilename + "\"\n\n" +
+                    "Clicking 'No' will cancel the download.";
+
+                if (MessageBox.Show(this, text, "", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    txtTitle.Text = newFilename;
+                    valid = true;
+                }
+            }
+
+            return valid;
         }
 
         /// <summary>
