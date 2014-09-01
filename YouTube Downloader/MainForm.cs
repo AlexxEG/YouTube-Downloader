@@ -15,7 +15,6 @@ using YouTube_Downloader.Properties;
  * - Handle aborting operations better when closing form.
  * - Make sure OperationStatus is set for operations in BackgroundWorker.DoWork.
  * - Ignore .webm files when downloading videos & playlists.
- * - Fix regex making finished DASH files end up with 2 dots at end of filename.
  */
 
 namespace YouTube_Downloader
