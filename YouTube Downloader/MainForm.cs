@@ -35,6 +35,9 @@ namespace YouTube_Downloader
 
             mtxtTo.ValidatingType = typeof(TimeSpan);
             mtxtFrom.ValidatingType = typeof(TimeSpan);
+
+            // Remove file size label text, should be empty when first starting.
+            lFileSize.Text = string.Empty;
         }
 
         public MainForm(string[] args)

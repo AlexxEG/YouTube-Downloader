@@ -55,6 +55,7 @@
             this.stopMenuItem = new System.Windows.Forms.MenuItem();
             this.removeMenuItem = new System.Windows.Forms.MenuItem();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.txtTitle = new System.Windows.Forms.TextBox();
             this.lFileSize = new System.Windows.Forms.Label();
             this.videoThumbnail = new System.Windows.Forms.PictureBox();
             this.label3 = new System.Windows.Forms.Label();
@@ -91,7 +92,6 @@
             this.chbAutoConvert = new System.Windows.Forms.CheckBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.txtTitle = new System.Windows.Forms.TextBox();
             this.lvQueue = new ListViewEmbeddedControls.ListViewEx();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -361,14 +361,24 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Video Information";
             // 
+            // txtTitle
+            // 
+            this.txtTitle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtTitle.Location = new System.Drawing.Point(212, 20);
+            this.txtTitle.Name = "txtTitle";
+            this.txtTitle.Size = new System.Drawing.Size(329, 20);
+            this.txtTitle.TabIndex = 12;
+            // 
             // lFileSize
             // 
             this.lFileSize.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lFileSize.AutoSize = true;
             this.lFileSize.Location = new System.Drawing.Point(466, 49);
             this.lFileSize.Name = "lFileSize";
-            this.lFileSize.Size = new System.Drawing.Size(0, 13);
+            this.lFileSize.Size = new System.Drawing.Size(44, 13);
             this.lFileSize.TabIndex = 11;
+            this.lFileSize.Text = "File size";
             // 
             // videoThumbnail
             // 
@@ -761,15 +771,6 @@
             // saveFileDialog1
             // 
             this.saveFileDialog1.Filter = "MP3 files|*.mp3|MP4 files|*.mp4|All files|*.*";
-            // 
-            // txtTitle
-            // 
-            this.txtTitle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtTitle.Location = new System.Drawing.Point(212, 20);
-            this.txtTitle.Name = "txtTitle";
-            this.txtTitle.Size = new System.Drawing.Size(329, 20);
-            this.txtTitle.TabIndex = 12;
             // 
             // lvQueue
             // 
