@@ -317,7 +317,11 @@ namespace YouTube_Downloader.Classes
             {
                 VideoFormat f = thiz[i];
 
-                /* Ignore '(DASH video)' suffix. */
+                // Skip .webm files
+                if (f.Extension.Contains("webm"))
+                    continue;
+
+                // Ignore '(DASH video)' suffix
                 if (regex.IsMatch(f.Format))
                     return i;
             }
