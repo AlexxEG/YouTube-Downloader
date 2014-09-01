@@ -228,7 +228,7 @@
             this.cbQuality.FormattingEnabled = true;
             this.cbQuality.Location = new System.Drawing.Point(212, 46);
             this.cbQuality.Name = "cbQuality";
-            this.cbQuality.Size = new System.Drawing.Size(329, 21);
+            this.cbQuality.Size = new System.Drawing.Size(248, 21);
             this.cbQuality.TabIndex = 1;
             this.cbQuality.SelectedIndexChanged += new System.EventHandler(this.cbQuality_SelectedIndexChanged);
             // 
