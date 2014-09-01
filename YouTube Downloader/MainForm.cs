@@ -236,7 +236,7 @@ namespace YouTube_Downloader
         private void btnDownload_Click(object sender, EventArgs e)
         {
             // Validate the filename, checking for illegal characters. 
-            // Also prompt the user to remove these characters automatically.
+            // Prompts the user to remove these characters automatically.
             if (!this.ValidateFilename(txtTitle.Text))
                 return;
 
