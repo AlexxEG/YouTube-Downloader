@@ -235,13 +235,15 @@ namespace YouTube_Downloader
 
         private void btnDownload_Click(object sender, EventArgs e)
         {
-            // Validate the filename first, since it can change within the validation method.
+            // Validate the filename, checking for illegal characters. 
+            // Also prompt the user to remove these characters automatically.
             if (!this.ValidateFilename(txtTitle.Text))
                 return;
 
             string path = cbSaveTo.Text;
 
-            // Make sure download directory exists & title doesn't contain illegal file path characters
+            // Make sure download directory exists, 
+            // prompting the user to create it if it doesn't.
             if (!this.ValidateDirectory(path))
                 return;
 
@@ -1034,6 +1036,10 @@ namespace YouTube_Downloader
             return false;
         }
 
+        /// <summary>
+        /// Returns true if the filename doesn't contain illegal characters, or has been formatted after prompting user.
+        /// </summary>
+        /// <param name="filename">The filename to validate.</param>
         private bool ValidateFilename(string filename)
         {
             bool valid = true;
