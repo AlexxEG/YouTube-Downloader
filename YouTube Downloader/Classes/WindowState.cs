@@ -69,6 +69,10 @@ namespace YouTube_Downloader.Classes
 
             foreach (ColumnHeader col in GetColumns(form.Controls))
             {
+                // Skip column if Name is null or empty, since it can't be identified.
+                if (string.IsNullOrEmpty(col.ListView.Name))
+                    continue;
+
                 string key = string.Format("{0} - {1}", col.ListView.Name, col.DisplayIndex);
 
                 if (this.ColumnSizes.ContainsKey(key))
@@ -84,6 +88,10 @@ namespace YouTube_Downloader.Classes
             foreach (SplitContainer splitContainer in GetSplitContainers(form.Controls))
             {
                 string key = splitContainer.Name;
+
+                // Skip container if Name is null or empty, since it can't be identified.
+                if (string.IsNullOrEmpty(key))
+                    continue;
 
                 if (this.SplitterSizes.ContainsKey(key))
                 {
