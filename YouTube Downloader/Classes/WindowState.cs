@@ -8,30 +8,39 @@ namespace YouTube_Downloader.Classes
 {
     public class WindowState : IXmlSerializable
     {
-        public string FormName { get; set; }
-        public Dictionary<string, int> ColumnSizes { get; set; }
-        public Dictionary<string, int> SplitterSizes { get; set; }
-        public Point Location { get; set; }
+        /// <summary>
+        /// Gets the <see cref="System.Windows.Forms.Form"/> name.
+        /// </summary>
+        public string FormName { get; private set; }
+        /// <summary>
+        /// Gets or sets the saved <see cref="System.Windows.Forms.Form"/> size.
+        /// </summary>
         public Size Size { get; set; }
+        /// <summary>
+        /// Gets or sets the saved <see cref="System.Windows.Forms.Form"/> location.
+        /// </summary>
+        public Point Location { get; set; }
+        /// <summary>
+        /// Gets or sets the saved <see cref="System.Windows.Forms.Form"/> window state.
+        /// </summary>
         public FormWindowState FormWindowState { get; set; }
-
-        public WindowState()
-        {
-            this.ColumnSizes = new Dictionary<string, int>();
-            this.SplitterSizes = new Dictionary<string, int>();
-            this.Location = Point.Empty;
-            this.Size = Size.Empty;
-            this.FormWindowState = FormWindowState.Normal;
-        }
+        /// <summary>
+        /// Gets list of saved <see cref="System.Windows.Forms.ColumnHeader"/> widths.
+        /// </summary>
+        public Dictionary<string, int> ColumnWidths { get; set; }
+        /// <summary>
+        /// Gets list of saved <see cref="System.Windows.Forms.SplitContainer"/> splitter distances.
+        /// </summary>
+        public Dictionary<string, int> SplitterDistances { get; set; }
 
         public WindowState(string formName)
         {
             this.FormName = formName;
-            this.ColumnSizes = new Dictionary<string, int>();
-            this.SplitterSizes = new Dictionary<string, int>();
-            this.Location = Point.Empty;
             this.Size = Size.Empty;
+            this.Location = Point.Empty;
             this.FormWindowState = FormWindowState.Normal;
+            this.ColumnWidths = new Dictionary<string, int>();
+            this.SplitterDistances = new Dictionary<string, int>();
         }
 
         /// <summary>
@@ -87,13 +96,13 @@ namespace YouTube_Downloader.Classes
 
                 string key = string.Format("{0} - {1}", col.ListView.Name, col.DisplayIndex);
 
-                if (this.ColumnSizes.ContainsKey(key))
+                if (this.ColumnWidths.ContainsKey(key))
                 {
-                    this.ColumnSizes[key] = col.Width;
+                    this.ColumnWidths[key] = col.Width;
                 }
                 else
                 {
-                    this.ColumnSizes.Add(key, col.Width);
+                    this.ColumnWidths.Add(key, col.Width);
                 }
             }
 
@@ -105,13 +114,13 @@ namespace YouTube_Downloader.Classes
                 if (string.IsNullOrEmpty(key))
                     continue;
 
-                if (this.SplitterSizes.ContainsKey(key))
+                if (this.SplitterDistances.ContainsKey(key))
                 {
-                    this.SplitterSizes[key] = splitContainer.SplitterDistance;
+                    this.SplitterDistances[key] = splitContainer.SplitterDistance;
                 }
                 else
                 {
-                    this.SplitterSizes.Add(key, splitContainer.SplitterDistance);
+                    this.SplitterDistances.Add(key, splitContainer.SplitterDistance);
                 }
             }
         }
@@ -142,7 +151,7 @@ namespace YouTube_Downloader.Classes
                             string name = reader.GetAttribute("name");
                             int width = int.Parse(reader.GetAttribute("width"));
 
-                            this.ColumnSizes.Add(name, width);
+                            this.ColumnWidths.Add(name, width);
                             break;
                         }
                     case "splitter":
@@ -150,7 +159,7 @@ namespace YouTube_Downloader.Classes
                             string name = reader.GetAttribute("name");
                             int distance = int.Parse(reader.GetAttribute("distance"));
 
-                            this.SplitterSizes.Add(name, distance);
+                            this.SplitterDistances.Add(name, distance);
                             break;
                         }
                 }
@@ -166,7 +175,7 @@ namespace YouTube_Downloader.Classes
             writer.WriteAttributeString("height", this.Size.Height.ToString());
             writer.WriteAttributeString("windowState", this.FormWindowState.ToString());
 
-            foreach (KeyValuePair<string, int> pair in this.ColumnSizes)
+            foreach (KeyValuePair<string, int> pair in this.ColumnWidths)
             {
                 writer.WriteStartElement("column");
                 writer.WriteAttributeString("name", pair.Key);
@@ -174,7 +183,7 @@ namespace YouTube_Downloader.Classes
                 writer.WriteEndElement();
             }
 
-            foreach (KeyValuePair<string, int> pair in this.SplitterSizes)
+            foreach (KeyValuePair<string, int> pair in this.SplitterDistances)
             {
                 writer.WriteStartElement("splitter");
                 writer.WriteAttributeString("name", pair.Key);
@@ -246,9 +255,9 @@ namespace YouTube_Downloader.Classes
             {
                 string key = string.Format("{0} - {1}", col.ListView.Name, col.DisplayIndex);
 
-                if (this.ColumnSizes.ContainsKey(key))
+                if (this.ColumnWidths.ContainsKey(key))
                 {
-                    col.Width = this.ColumnSizes[key];
+                    col.Width = this.ColumnWidths[key];
                 }
             }
         }
@@ -264,9 +273,9 @@ namespace YouTube_Downloader.Classes
             {
                 string key = splitContainer.Name;
 
-                if (this.SplitterSizes.ContainsKey(key))
+                if (this.SplitterDistances.ContainsKey(key))
                 {
-                    splitContainer.SplitterDistance = this.SplitterSizes[key];
+                    splitContainer.SplitterDistance = this.SplitterDistances[key];
                 }
             }
         }
