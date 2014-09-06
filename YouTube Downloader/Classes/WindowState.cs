@@ -34,47 +34,6 @@ namespace YouTube_Downloader.Classes
             this.FormWindowState = FormWindowState.Normal;
         }
 
-        private ICollection<ColumnHeader> GetColumns(Control.ControlCollection controls)
-        {
-            List<ColumnHeader> columns = new List<ColumnHeader>();
-
-            foreach (Control c in controls)
-            {
-                if (c is ListView)
-                {
-                    foreach (ColumnHeader col in (c as ListView).Columns)
-                    {
-                        columns.Add(col);
-                    }
-                }
-                else if (c.Controls.Count > 0)
-                {
-                    columns.AddRange(GetColumns(c.Controls));
-                }
-            }
-
-            return columns.ToArray();
-        }
-
-        private ICollection<SplitContainer> GetSplitContainers(Control.ControlCollection controls)
-        {
-            List<SplitContainer> columns = new List<SplitContainer>();
-
-            foreach (Control c in controls)
-            {
-                if (c is SplitContainer)
-                {
-                    columns.Add((SplitContainer)c);
-                }
-                else if (c.Controls.Count > 0)
-                {
-                    columns.AddRange(GetSplitContainers(c.Controls));
-                }
-            }
-
-            return columns.ToArray();
-        }
-
         public void RestoreForm(Form form)
         {
             if (!this.Location.IsEmpty)
@@ -91,32 +50,6 @@ namespace YouTube_Downloader.Classes
 
             RestoreColumns(form);
             RestoreSplitContainers(form);
-        }
-
-        private void RestoreColumns(Form form)
-        {
-            foreach (ColumnHeader col in GetColumns(form.Controls))
-            {
-                string key = string.Format("{0} - {1}", col.ListView.Name, col.DisplayIndex);
-
-                if (this.ColumnSizes.ContainsKey(key))
-                {
-                    col.Width = this.ColumnSizes[key];
-                }
-            }
-        }
-
-        private void RestoreSplitContainers(Form form)
-        {
-            foreach (SplitContainer splitContainer in GetSplitContainers(form.Controls))
-            {
-                string key = splitContainer.Name;
-
-                if (this.SplitterSizes.ContainsKey(key))
-                {
-                    splitContainer.SplitterDistance = this.SplitterSizes[key];
-                }
-            }
         }
 
         public void SaveForm(Form form)
@@ -227,6 +160,73 @@ namespace YouTube_Downloader.Classes
                 writer.WriteAttributeString("name", pair.Key);
                 writer.WriteAttributeString("distance", pair.Value.ToString());
                 writer.WriteEndElement();
+            }
+        }
+
+        private ICollection<ColumnHeader> GetColumns(Control.ControlCollection controls)
+        {
+            List<ColumnHeader> columns = new List<ColumnHeader>();
+
+            foreach (Control c in controls)
+            {
+                if (c is ListView)
+                {
+                    foreach (ColumnHeader col in (c as ListView).Columns)
+                    {
+                        columns.Add(col);
+                    }
+                }
+                else if (c.Controls.Count > 0)
+                {
+                    columns.AddRange(GetColumns(c.Controls));
+                }
+            }
+
+            return columns.ToArray();
+        }
+
+        private ICollection<SplitContainer> GetSplitContainers(Control.ControlCollection controls)
+        {
+            List<SplitContainer> columns = new List<SplitContainer>();
+
+            foreach (Control c in controls)
+            {
+                if (c is SplitContainer)
+                {
+                    columns.Add((SplitContainer)c);
+                }
+                else if (c.Controls.Count > 0)
+                {
+                    columns.AddRange(GetSplitContainers(c.Controls));
+                }
+            }
+
+            return columns.ToArray();
+        }
+
+        private void RestoreColumns(Form form)
+        {
+            foreach (ColumnHeader col in GetColumns(form.Controls))
+            {
+                string key = string.Format("{0} - {1}", col.ListView.Name, col.DisplayIndex);
+
+                if (this.ColumnSizes.ContainsKey(key))
+                {
+                    col.Width = this.ColumnSizes[key];
+                }
+            }
+        }
+
+        private void RestoreSplitContainers(Form form)
+        {
+            foreach (SplitContainer splitContainer in GetSplitContainers(form.Controls))
+            {
+                string key = splitContainer.Name;
+
+                if (this.SplitterSizes.ContainsKey(key))
+                {
+                    splitContainer.SplitterDistance = this.SplitterSizes[key];
+                }
             }
         }
     }
