@@ -36,7 +36,6 @@ namespace YouTube_Downloader.Classes
         /// <summary>
         /// Initializes a new instance of the <see cref="WindowState"/> class.
         /// </summary>
-        /// <param name="formName"></param>
         public WindowState(string formName)
         {
             this.FormName = formName;
