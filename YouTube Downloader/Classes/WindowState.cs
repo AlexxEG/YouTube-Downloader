@@ -34,6 +34,12 @@ namespace YouTube_Downloader.Classes
             this.FormWindowState = FormWindowState.Normal;
         }
 
+        /// <summary>
+        /// Restores <see cref="System.Windows.Forms.Form"/>'s
+        /// size, location and window state. Also restores <see cref="System.Windows.Forms.ColumnHeader"/>
+        /// width and <see cref="System.Windows.Forms.SplitContainer"/> splitter distance.
+        /// </summary>
+        /// <param name="form">The <see cref="System.Windows.Forms.Form"/> to restore.</param>
         public void RestoreForm(Form form)
         {
             if (!this.Location.IsEmpty)
@@ -52,6 +58,12 @@ namespace YouTube_Downloader.Classes
             RestoreSplitContainers(form);
         }
 
+        /// <summary>
+        /// Saves <see cref="System.Windows.Forms.Form"/>'s
+        /// size, location and window state. Also saves <see cref="System.Windows.Forms.ColumnHeader"/>
+        /// width and <see cref="System.Windows.Forms.SplitContainer"/> splitter distance.
+        /// </summary>
+        /// <param name="form">The <see cref="System.Windows.Forms.Form"/> to save.</param>
         public void SaveForm(Form form)
         {
             if (!(form.WindowState == FormWindowState.Maximized))
@@ -171,6 +183,12 @@ namespace YouTube_Downloader.Classes
             }
         }
 
+        /// <summary>
+        /// Returns all <see cref="System.Windows.Forms.ColumnHeader"/> in
+        /// <see cref="System.Windows.Forms.ListView"/> by looking through given
+        /// <see cref="System.Windows.Forms.Control.ControlCollection"/>.
+        /// </summary>
+        /// <param name="controls">The <see cref="System.Windows.Forms.Control.ControlCollection"/> to look through.</param>
         private ICollection<ColumnHeader> GetColumns(Control.ControlCollection controls)
         {
             List<ColumnHeader> columns = new List<ColumnHeader>();
@@ -193,6 +211,11 @@ namespace YouTube_Downloader.Classes
             return columns.ToArray();
         }
 
+        /// <summary>
+        /// Returns all <see cref="System.Windows.Forms.SplitContainer"/> in given
+        /// <see cref="System.Windows.Forms.Control.ControlCollection"/>.
+        /// </summary>
+        /// <param name="controls">The <see cref="System.Windows.Forms.Control.ControlCollection"/> to look through.</param>
         private ICollection<SplitContainer> GetSplitContainers(Control.ControlCollection controls)
         {
             List<SplitContainer> columns = new List<SplitContainer>();
@@ -212,6 +235,11 @@ namespace YouTube_Downloader.Classes
             return columns.ToArray();
         }
 
+        /// <summary>
+        /// Restores all <see cref="System.Windows.Forms.ColumnHeader.Width"/> in
+        /// <see cref="System.Windows.Forms.Form"/>.
+        /// </summary>
+        /// <param name="form">The <see cref="System.Windows.Forms.Form"/> to restore columns from.</param>
         private void RestoreColumns(Form form)
         {
             foreach (ColumnHeader col in GetColumns(form.Controls))
@@ -225,6 +253,11 @@ namespace YouTube_Downloader.Classes
             }
         }
 
+        /// <summary>
+        /// Restores all <see cref="System.Windows.Forms.SplitContainer.SplitterDistance"/> in
+        /// <see cref="System.Windows.Forms.Form"/>.
+        /// </summary>
+        /// <param name="form">The <see cref="System.Windows.Forms.Form"/> to restore columns from.</param>
         private void RestoreSplitContainers(Form form)
         {
             foreach (SplitContainer splitContainer in GetSplitContainers(form.Controls))
