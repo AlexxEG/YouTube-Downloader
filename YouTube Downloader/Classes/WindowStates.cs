@@ -13,6 +13,14 @@ namespace YouTube_Downloader.Classes
             windowStates = new Dictionary<string, WindowState>();
         }
 
+        public WindowState this[string form]
+        {
+            get
+            {
+                return windowStates[form];
+            }
+        }
+
         public void Add(string form, WindowState windowState)
         {
             this.windowStates.Add(form, windowState);
@@ -21,11 +29,6 @@ namespace YouTube_Downloader.Classes
         public bool Contains(string form)
         {
             return this.windowStates.ContainsKey(form);
-        }
-
-        public WindowState Get(string form)
-        {
-            return this.windowStates[form];
         }
 
         public System.Xml.Schema.XmlSchema GetSchema()

@@ -68,7 +68,7 @@ namespace YouTube_Downloader
             if (selectedVideo != null)
                 selectedVideo.AbortUpdateFileSizes();
 
-            settings.WindowStates.Get(this.Name).SaveForm(this);
+            settings.WindowStates[this.Name].SaveForm(this);
             settings.SaveToDirectories.Clear();
 
             string[] paths = new string[cbSaveTo.Items.Count];
@@ -918,7 +918,7 @@ namespace YouTube_Downloader
             }
 
             // Restore form location, size & window state, if not null
-            settings.WindowStates.Get(this.Name).RestoreForm(this);
+            settings.WindowStates[this.Name].RestoreForm(this);
 
             // Initialize StringCollection if null
             if (settings.SaveToDirectories == null)
