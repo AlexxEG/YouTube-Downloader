@@ -1,4 +1,4 @@
-//Copyright (c) 2011 Josip Medved <jmedved@jmedved.com>  http://www.jmedved.com
+// Copyright (c) 2011 Josip Medved <jmedved@jmedved.com>  http://www.jmedved.com
 
 using System;
 using System.IO;
