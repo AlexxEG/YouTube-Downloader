@@ -82,10 +82,10 @@ namespace YouTube_Downloader.Classes
         /// Adds a new <see cref="WindowState"/> to handle <see cref="System.Windows.Forms.Form"/>.
         /// </summary>
         /// <param name="form">The <see cref="System.Windows.Forms.Form"/> name.</param>
-        public void Add(string form, WindowState windowState)
+        public void Add(string form)
         {
             new List<string>().Contains("");
-            this.windowStates.Add(form, windowState);
+            this.windowStates.Add(form, new WindowState(form));
         }
 
         /// <summary>

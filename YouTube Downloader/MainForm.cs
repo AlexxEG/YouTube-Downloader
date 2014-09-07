@@ -914,7 +914,7 @@ namespace YouTube_Downloader
             // Add WindowState for form if WindowStates doesn't have a entry for it
             if (!settings.WindowStates.Contains(this.Name))
             {
-                settings.WindowStates.Add(this.Name, new WindowState(this.Name));
+                settings.WindowStates.Add(this.Name);
             }
 
             // Restore form location, size & window state, if not null
