@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Xml;
+using System.Xml.Schema;
 using System.Xml.Serialization;
 
 namespace YouTube_Downloader.Classes
@@ -128,12 +130,21 @@ namespace YouTube_Downloader.Classes
             }
         }
 
-        public System.Xml.Schema.XmlSchema GetSchema()
+        #region IXmlSerializable Members
+
+        /// <summary>
+        /// Method that returns schema information.  Not implemented.
+        /// </summary>
+        XmlSchema IXmlSerializable.GetSchema()
         {
             return null;
         }
 
-        public void ReadXml(System.Xml.XmlReader reader)
+        /// <summary>
+        /// Reads Xml when the <see cref="WindowState"/> is to be deserialized 
+        /// from a stream.</summary>
+        /// <param name="reader">The stream from which the object will be deserialized.</param>
+        void IXmlSerializable.ReadXml(XmlReader reader)
         {
             bool booIsEmpty = reader.IsEmptyElement;
 
@@ -169,7 +180,11 @@ namespace YouTube_Downloader.Classes
             }
         }
 
-        public void WriteXml(System.Xml.XmlWriter writer)
+        /// <summary>
+        /// Writes Xml articulating the current state of the <see cref="WindowState"/>
+        /// object.</summary>
+        /// <param name="writer">The stream to which this object will be serialized.</param>
+        void IXmlSerializable.WriteXml(XmlWriter writer)
         {
             writer.WriteAttributeString("name", this.FormName);
             writer.WriteAttributeString("x", this.Location.X.ToString());
@@ -194,6 +209,8 @@ namespace YouTube_Downloader.Classes
                 writer.WriteEndElement();
             }
         }
+
+        #endregion
 
         /// <summary>
         /// Returns all <see cref="System.Windows.Forms.ColumnHeader"/> in
