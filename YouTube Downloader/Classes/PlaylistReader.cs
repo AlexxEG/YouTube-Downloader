@@ -83,7 +83,7 @@ namespace YouTube_Downloader.Classes
             if (line == null)
             {
                 /* End of stream. */
-                YouTubeDLHelper.WriteLogEnd(log);
+                YouTubeDLHelper.WriteLogFooter(log);
 
                 youtubeDl.WaitForExit();
 

@@ -63,7 +63,7 @@ namespace YouTube_Downloader.Classes
                     }
                 }
 
-                WriteLogEnd(writer);
+                WriteLogFooter(writer);
             }
 
             process.WaitForExit();
@@ -124,7 +124,7 @@ namespace YouTube_Downloader.Classes
                     }
                 }
 
-                WriteLogEnd(writer);
+                WriteLogFooter(writer);
             }
 
             process.WaitForExit();
@@ -189,7 +189,7 @@ namespace YouTube_Downloader.Classes
             return process;
         }
 
-        public static void WriteLogEnd(StreamWriter writer)
+        public static void WriteLogFooter(StreamWriter writer)
         {
             writer.WriteLine();
             writer.WriteLine();
