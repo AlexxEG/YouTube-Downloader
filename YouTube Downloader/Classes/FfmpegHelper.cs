@@ -17,8 +17,15 @@ namespace YouTube_Downloader.Classes
 
         public enum FileType { Audio, Error, Video }
 
+        /// <summary>
+        /// Gets the path to FFmpeg executable.
+        /// </summary>
         public static string FFmpegPath = Path.Combine(Application.StartupPath, "externals", "ffmpeg.exe");
 
+        /// <summary>
+        /// Returns true if given file can be converted to a MP3 file, false otherwise.
+        /// </summary>
+        /// <param name="file">The file to check.</param>
         public static bool CanConvertMP3(string file)
         {
             string arguments = string.Format(Cmd_Get_File_Info, file);
@@ -56,6 +63,11 @@ namespace YouTube_Downloader.Classes
             return hasAudioStream;
         }
 
+        /// <summary>
+        /// Returns true if given audio &amp; video file can be combined, false otherwise.
+        /// </summary>
+        /// <param name="audio">The input audio file.</param>
+        /// <param name="video">The input video file.</param>
         public static List<string> CheckCombine(string audio, string video)
         {
             List<string> errors = new List<string>();
@@ -112,6 +124,9 @@ namespace YouTube_Downloader.Classes
             return errors;
         }
 
+        /// <summary>
+        /// Opens a <see cref="System.IO.StreamWriter"/> for FFmpeg log file.
+        /// </summary>
         private static StreamWriter CreateLogWriter()
         {
             string folder = Program.GetLogsDirectory();
@@ -127,6 +142,12 @@ namespace YouTube_Downloader.Classes
             return writer;
         }
 
+        /// <summary>
+        /// Combines DASH audio &amp; video to a single MP4 file.
+        /// </summary>
+        /// <param name="video">The input video file.</param>
+        /// <param name="audio">The input audio file.</param>
+        /// <param name="output">Where to save the output file.</param>
         public static void CombineDash(string video, string audio, string output)
         {
             string[] args = new string[] { video, audio, output };
@@ -155,6 +176,13 @@ namespace YouTube_Downloader.Classes
                 process.Kill();
         }
 
+        /// <summary>
+        /// Converts file to MP3, reporting progress to given <see cref="System.ComponentModel.BackgroundWorker"/>.
+        /// Possibly more formats in the future.
+        /// </summary>
+        /// <param name="bw">The <see cref="System.ComponentModel.BackgroundWorker"/> to report progress to. Can be null.</param>
+        /// <param name="input">The input file.</param>
+        /// <param name="output">Where to save the output file.</param>
         public static void Convert(BackgroundWorker bw, string input, string output)
         {
             if (input == output)
@@ -232,6 +260,13 @@ namespace YouTube_Downloader.Classes
                 process.Kill();
         }
 
+        /// <summary>
+        /// Crops file from given start position to end, reporting progress to given <see cref="System.ComponentModel.BackgroundWorker"/>.
+        /// </summary>
+        /// <param name="bw">The <see cref="System.ComponentModel.BackgroundWorker"/> to report progress to. Can be null.</param>
+        /// <param name="input">The input file.</param>
+        /// <param name="output">Where to save the output file.</param>
+        /// <param name="start">The <see cref="System.TimeSpan"/> start position.</param>
         public static void Crop(BackgroundWorker bw, string input, string output, TimeSpan start)
         {
             if (input == output)
@@ -306,6 +341,14 @@ namespace YouTube_Downloader.Classes
                 process.Kill();
         }
 
+        /// <summary>
+        /// Crops file from given start position to given end position, reporting progress to given <see cref="System.ComponentModel.BackgroundWorker"/>.
+        /// </summary>
+        /// <param name="bw">The <see cref="System.ComponentModel.BackgroundWorker"/> to report progress to. Can be null.</param>
+        /// <param name="input">The input file.</param>
+        /// <param name="output">Where to save the output file.</param>
+        /// <param name="start">The <see cref="System.TimeSpan"/> start position.</param>
+        /// <param name="end">The <see cref="System.TimeSpan"/> end position.</param>
         public static void Crop(BackgroundWorker bw, string input, string output, TimeSpan start, TimeSpan end)
         {
             if (input == output)
@@ -376,15 +419,18 @@ namespace YouTube_Downloader.Classes
                 process.Kill();
         }
 
-        public static TimeSpan GetDuration(string input)
+        /// <summary>
+        /// Returns the <see cref="System.TimeSpan"/> duration of the given file.
+        /// </summary>
+        /// <param name="file">The file to get <see cref="System.TimeSpan"/> duration from.</param>
+        public static TimeSpan GetDuration(string file)
         {
             TimeSpan result = TimeSpan.Zero;
-            string arguments = string.Format(" -i \"{0}\"", input);
-
+            string arguments = string.Format(" -i \"{0}\"", file);
             Process process = StartProcess(arguments);
-
             List<string> lines = new List<string>();
 
+            // Read to EOS, storing each line.
             while (!process.StandardError.EndOfStream)
             {
                 lines.Add(process.StandardError.ReadLine().Trim());
@@ -392,6 +438,8 @@ namespace YouTube_Downloader.Classes
 
             foreach (var line in lines)
             {
+                // Example line, including whitespace:
+                //  Duration: 00:00:00.00, start: 0.000000, bitrate: *** kb/s
                 if (line.StartsWith("Duration"))
                 {
                     string[] split = line.Split(' ', ',');
@@ -409,15 +457,18 @@ namespace YouTube_Downloader.Classes
             return result;
         }
 
-        public static FileType GetFileType(string input)
+        /// <summary>
+        /// Returns the <see cref="FileType"/> of the given file.
+        /// </summary>
+        /// <param name="file">The file to get <see cref="FileType"/> from.</param>
+        public static FileType GetFileType(string file)
         {
             FileType result = FileType.Error;
-            string arguments = string.Format(" -i \"{0}\"", input);
-
+            string arguments = string.Format(" -i \"{0}\"", file);
             Process process = StartProcess(arguments);
-
             List<string> lines = new List<string>();
 
+            // Read to EOS, storing each line.
             while (!process.StandardError.EndOfStream)
             {
                 lines.Add(process.StandardError.ReadLine().Trim());
@@ -425,17 +476,21 @@ namespace YouTube_Downloader.Classes
 
             foreach (var line in lines)
             {
+                // Example lines, including whitespace:
+                //    Stream #0:0(und): Video: h264 ([33][0][0][0] / 0x0021), yuv420p, 320x240 [SAR 717:716 DAR 239:179], q=2-31, 242 kb/s, 29.01 fps, 90k tbn, 90k tbc (default)
+                //    Stream #0:1(eng): Audio: vorbis ([221][0][0][0] / 0x00DD), 44100 Hz, stereo (default)
                 if (line.StartsWith("Stream #"))
                 {
                     if (line.Contains("Video: "))
                     {
+                        // File contains video stream, so it's a video file, possibly without audio.
                         result = FileType.Video;
                         break;
                     }
                     else if (line.Contains("Audio: "))
                     {
-                        // File contains audio stream, so if a video stream
-                        // is not found it's a audio file.
+                        // File contains audio stream. Keep looking for a video stream,
+                        // and if found it's probably a video file, and an audio file if not.
                         result = FileType.Audio;
                     }
                 }
@@ -450,9 +505,9 @@ namespace YouTube_Downloader.Classes
         }
 
         /// <summary>
-        /// Creates a Process with the given arguments, then returns
-        /// it after it has started.
+        /// Creates a Process with the given arguments, then returns it after it has started.
         /// </summary>
+        /// <param name="arguments">The process arguments.</param>
         private static Process StartProcess(string arguments)
         {
             Process process = new Process();
@@ -470,16 +525,27 @@ namespace YouTube_Downloader.Classes
             return process;
         }
 
+        /// <summary>
+        /// Writes log footer to <see cref="StreamWriter"/>.
+        /// </summary>
+        /// <param name="writer">The <see cref="StreamWriter"/> to write to.</param>
         private static void WriteLogFooter(StreamWriter writer)
         {
+            // Write log footer to stream.
+            // Possibly write elapsed time and/or error in future.
             writer.WriteLine();
             writer.WriteLine();
             writer.WriteLine();
         }
 
+        /// <summary>
+        /// Writes log header to <see cref="StreamWriter"/>.
+        /// </summary>
+        /// <param name="writer">The <see cref="StreamWriter"/> to write to.</param>
+        /// <param name="arguments">The arguments to log in header.</param>
         private static void WriteLogHeader(StreamWriter writer, string arguments)
         {
-            /* Log header. */
+            // Write log header to stream
             writer.WriteLine("[" + DateTime.Now + "]");
             writer.WriteLine("cmd: " + arguments);
             writer.WriteLine();
