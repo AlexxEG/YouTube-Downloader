@@ -30,50 +30,6 @@ namespace YouTube_Downloader.Classes
             return writer;
         }
 
-        public static VideoInfo GetVideoInfo(string url)
-        {
-            string json_dir = Program.GetJsonDirectory();
-
-            if (!Directory.Exists(json_dir))
-                Directory.CreateDirectory(json_dir);
-
-            /* Fill in json directory & video url. */
-            string arguments = string.Format(Cmd_JSON_Info, json_dir, url);
-
-            Process process = StartProcess(arguments);
-
-            string json_file = "";
-            string line = "";
-
-            /* Write output to log. */
-            using (var writer = CreateLogWriter())
-            {
-                WriteLogHeader(writer, arguments, url);
-
-                while ((line = process.StandardOutput.ReadLine()) != null)
-                {
-                    writer.WriteLine(line);
-
-                    line = line.Trim();
-
-                    if (line.StartsWith("[info] Writing video description metadata as JSON to:"))
-                    {
-                        /* Store file path. */
-                        json_file = line.Substring(line.IndexOf(":") + 1).Trim();
-                    }
-                }
-
-                WriteLogFooter(writer);
-            }
-
-            process.WaitForExit();
-
-            if (!process.HasExited)
-                process.Kill();
-
-            return VideoInfo.DeserializeJson(json_file);
-        }
-
         public static Playlist GetPlaylist(string url)
         {
             string json_dir = Program.GetJsonDirectory();
@@ -167,6 +123,50 @@ namespace YouTube_Downloader.Classes
             }
 
             return new Playlist(playlist_id, name, onlineCount, videos);
+        }
+
+        public static VideoInfo GetVideoInfo(string url)
+        {
+            string json_dir = Program.GetJsonDirectory();
+
+            if (!Directory.Exists(json_dir))
+                Directory.CreateDirectory(json_dir);
+
+            /* Fill in json directory & video url. */
+            string arguments = string.Format(Cmd_JSON_Info, json_dir, url);
+
+            Process process = StartProcess(arguments);
+
+            string json_file = "";
+            string line = "";
+
+            /* Write output to log. */
+            using (var writer = CreateLogWriter())
+            {
+                WriteLogHeader(writer, arguments, url);
+
+                while ((line = process.StandardOutput.ReadLine()) != null)
+                {
+                    writer.WriteLine(line);
+
+                    line = line.Trim();
+
+                    if (line.StartsWith("[info] Writing video description metadata as JSON to:"))
+                    {
+                        /* Store file path. */
+                        json_file = line.Substring(line.IndexOf(":") + 1).Trim();
+                    }
+                }
+
+                WriteLogFooter(writer);
+            }
+
+            process.WaitForExit();
+
+            if (!process.HasExited)
+                process.Kill();
+
+            return VideoInfo.DeserializeJson(json_file);
         }
 
         /// <summary>
