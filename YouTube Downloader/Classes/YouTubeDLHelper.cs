@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace YouTube_Downloader.Classes
 {
-    public class YouTubeDLHelper
+    public class YoutubeDlHelper
     {
         public const string Cmd_JSON_Info = " -o \"{0}\\%(title)s\" --no-playlist --skip-download --write-info-json \"{1}\"";
         public const string Cmd_JSON_Info_Playlist = " -i -o \"{0}\\playlist-{1}\\%(playlist_index)s-%(title)s\" --restrict-filenames --skip-download --write-info-json \"{2}\"";
@@ -182,7 +182,7 @@ namespace YouTube_Downloader.Classes
             process.StartInfo.RedirectStandardError = true;
             process.StartInfo.CreateNoWindow = true;
             process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            process.StartInfo.FileName = YouTubeDLHelper.YouTubeDlPath;
+            process.StartInfo.FileName = YoutubeDlHelper.YouTubeDlPath;
             process.StartInfo.Arguments = arguments;
             process.Start();
 

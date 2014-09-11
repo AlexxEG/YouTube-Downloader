@@ -28,14 +28,14 @@ namespace YouTube_Downloader.Classes
             int onlineCount = 0;
 
             string json_dir = Program.GetJsonDirectory();
-            string arguments = string.Format(YouTubeDLHelper.Cmd_JSON_Info_Playlist, json_dir, playlist_id, url);
+            string arguments = string.Format(YoutubeDlHelper.Cmd_JSON_Info_Playlist, json_dir, playlist_id, url);
 
-            youtubeDl = YouTubeDLHelper.StartProcess(arguments);
+            youtubeDl = YoutubeDlHelper.StartProcess(arguments);
 
             /* Write output to log. */
-            log = YouTubeDLHelper.CreateLogWriter();
+            log = YoutubeDlHelper.CreateLogWriter();
 
-            YouTubeDLHelper.WriteLogHeader(log, arguments, url);
+            YoutubeDlHelper.WriteLogHeader(log, arguments, url);
 
             reader = youtubeDl.StandardOutput;
 
@@ -83,7 +83,7 @@ namespace YouTube_Downloader.Classes
             if (line == null)
             {
                 /* End of stream. */
-                YouTubeDLHelper.WriteLogFooter(log);
+                YoutubeDlHelper.WriteLogFooter(log);
 
                 youtubeDl.WaitForExit();
 

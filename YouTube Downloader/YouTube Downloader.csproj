@@ -66,7 +66,7 @@
     <Compile Include="Classes\VideoFormat.cs" />
     <Compile Include="Classes\VideoInfo.cs" />
     <Compile Include="Classes\WindowState.cs" />
-    <Compile Include="Classes\YouTubeDLHelper.cs" />
+    <Compile Include="Classes\YoutubeDlHelper.cs" />
     <Compile Include="Controls\ListViewEx.cs">
       <SubType>Component</SubType>
     </Compile>
