@@ -36,6 +36,18 @@ namespace YouTube_Downloader.Classes
         public Dictionary<string, int> SplitterDistances { get; set; }
 
         /// <summary>
+        /// Used by IXmlSerializable, shouldn't be used.
+        /// </summary>
+        private WindowState()
+        {
+            this.ColumnWidths = new Dictionary<string, int>();
+            this.SplitterDistances = new Dictionary<string, int>();
+            this.Location = Point.Empty;
+            this.Size = Size.Empty;
+            this.FormWindowState = FormWindowState.Normal;
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="WindowState"/> class.
         /// </summary>
         public WindowState(string formName)
