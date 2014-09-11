@@ -41,11 +41,6 @@
         /// Stops the operation if supported &amp; available.
         /// </summary>
         /// <param name="remove">Remove operation from it's ListView if set to true.</param>
-        bool Stop(bool remove);
-        /// <summary>
-        /// Stops the operation if supported &amp; available.
-        /// </summary>
-        /// <param name="remove">Remove operation from it's ListView if set to true.</param>
         /// <param name="deleteUnfinishedFiles">Delete unfinished files if set to true.</param>
         bool Stop(bool remove, bool deleteUnfinishedFiles);
 
