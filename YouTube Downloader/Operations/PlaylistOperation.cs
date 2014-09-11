@@ -1,6 +1,4 @@
-﻿using DeDauwJeroen;
-using ListViewEmbeddedControls;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -8,6 +6,8 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
+using DeDauwJeroen;
+using ListViewEmbeddedControls;
 using YouTube_Downloader.Classes;
 using YouTube_Downloader.Delegates;
 
@@ -199,7 +199,8 @@ namespace YouTube_Downloader.Operations
         /// Stops the operation.
         /// </summary>
         /// <param name="remove">True to remove the operation from it's ListView.</param>
-        public bool Stop(bool remove)
+        /// <param name="cleanup">True to delete unfinished files.</param>
+        public bool Stop(bool remove, bool cleanup)
         {
             this.remove = remove;
 
@@ -216,19 +217,7 @@ namespace YouTube_Downloader.Operations
 
             this.Status = OperationStatus.Canceled;
 
-            return true;
-        }
-
-        /// <summary>
-        /// Stops the operation.
-        /// </summary>
-        /// <param name="remove">True to remove the operation from it's ListView.</param>
-        /// <param name="deleteUnfinishedFiles">True to delete unfinished files.</param>
-        public bool Stop(bool remove, bool deleteUnfinishedFiles)
-        {
-            bool success = this.Stop(remove);
-
-            if (deleteUnfinishedFiles)
+            if (cleanup)
             {
                 if (downloader != null && downloader.Files.Count > 0)
                 {
@@ -243,7 +232,7 @@ namespace YouTube_Downloader.Operations
                 }
             }
 
-            return success;
+            return true;
         }
 
         #region worker

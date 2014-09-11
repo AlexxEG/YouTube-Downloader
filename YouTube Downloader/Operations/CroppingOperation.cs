@@ -1,9 +1,9 @@
-﻿using ListViewEmbeddedControls;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
+using ListViewEmbeddedControls;
 using YouTube_Downloader.Classes;
 
 namespace YouTube_Downloader.Operations
@@ -179,8 +179,11 @@ namespace YouTube_Downloader.Operations
         /// Stops the operation.
         /// </summary>
         /// <param name="remove">True to remove the operation from it's ListView.</param>
-        public bool Stop(bool remove)
+        /// <param name="cleanup">True to delete unfinished files.</param>
+        public bool Stop(bool remove, bool cleanup)
         {
+            bool success = true;
+
             this.remove = remove;
 
             if (this.Status == OperationStatus.Paused || this.Status == OperationStatus.Working)
@@ -202,19 +205,7 @@ namespace YouTube_Downloader.Operations
                 }
             }
 
-            return true;
-        }
-
-        /// <summary>
-        /// Stops the operation.
-        /// </summary>
-        /// <param name="remove">True to remove the operation from it's ListView.</param>
-        /// <param name="deleteUnfinishedFiles">True to delete unfinished files.</param>
-        public bool Stop(bool remove, bool deleteUnfinishedFiles)
-        {
-            bool success = this.Stop(remove);
-
-            if (deleteUnfinishedFiles && !(this.Status == OperationStatus.Success))
+            if (cleanup && !(this.Status == OperationStatus.Success))
             {
                 if (File.Exists(this.Output))
                     Helper.DeleteFiles(this.Output);
