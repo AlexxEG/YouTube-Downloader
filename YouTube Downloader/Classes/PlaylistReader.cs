@@ -15,13 +15,6 @@ namespace YouTube_Downloader.Classes
 
         public PlaylistReader(string url)
         {
-            /* ToDo:
-             * 
-             * Start process
-             * Start log writer
-             * Store playlist info (name, id, count)
-             */
-
             /* Playlist properties. */
             string name = string.Empty;
             string playlist_id = Helper.GetPlaylistId(url);
