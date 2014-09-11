@@ -42,6 +42,9 @@ namespace YouTube_Downloader.Operations
         public DownloadOperation(string text)
             : base(text)
         {
+            sw = new Stopwatch();
+            sw.Start();
+
             this.Status = OperationStatus.None;
         }
 
@@ -251,33 +254,29 @@ namespace YouTube_Downloader.Operations
         /// Stops the operation.
         /// </summary>
         /// <param name="remove">True to remove the operation from it's ListView.</param>
-        public bool Stop(bool remove)
+        /// <param name="cleanup">True to delete unfinished files.</param>
+        public bool Stop(bool remove, bool cleanup)
         {
             this.remove = remove;
 
-            downloader.Stop(false);
+            // Stop downloader if still running.
+            if (downloader != null && downloader.CanStop)
+                downloader.Stop(false);
 
-            this.Status = OperationStatus.Canceled;
+            // Don't set status to canceled if already successful.
+            if (this.Status != OperationStatus.Success)
+                this.Status = OperationStatus.Canceled;
 
-            return true;
-        }
-
-        /// <summary>
-        /// Stops the operation.
-        /// </summary>
-        /// <param name="remove">True to remove the operation from it's ListView.</param>
-        /// <param name="deleteUnfinishedFiles">True to delete unfinished files.</param>
-        public bool Stop(bool remove, bool deleteUnfinishedFiles)
-        {
-            bool success = this.Stop(remove);
-
-            if (deleteUnfinishedFiles && !(this.Status == OperationStatus.Success))
+            // Cleanup if cleanup is true and download wasn't successful.
+            if (cleanup && this.Status != OperationStatus.Success)
             {
                 if (File.Exists(this.Output))
                     Helper.DeleteFiles(this.Output);
             }
 
-            return success;
+            OnOperationComplete();
+
+            return true;
         }
 
         #region combiner
@@ -314,16 +313,7 @@ namespace YouTube_Downloader.Operations
             this.GetProgressBar().MarqueeAnimationSpeed = 0;
             this.GetProgressBar().Value = this.GetProgressBar().Maximum;
 
-            RefreshStatus();
-
-            Program.RunningOperations.Remove(this);
-
-            OnOperationComplete(new OperationEventArgs(this, this.Status));
-
-            if (this.remove && this.ListView != null)
-            {
-                this.Remove();
-            }
+            OnOperationComplete();
         }
 
         #endregion
@@ -335,14 +325,15 @@ namespace YouTube_Downloader.Operations
         private void downloader_Canceled(object sender, EventArgs e)
         {
             // Pass the event along to a almost identical event handler.
-            downloader_Completed(sender, e);
+            this.Status = OperationStatus.Canceled;
+
+            OnOperationComplete();
         }
 
         private void downloader_Completed(object sender, EventArgs e)
         {
-            sw.Stop();
-
-            if (!(this.Status == OperationStatus.Failed))
+            // Set status to successful if no download(s) failed.
+            if (this.Status != OperationStatus.Failed)
                 this.Status = OperationStatus.Success;
 
             if (dash && this.Status == OperationStatus.Success)
@@ -351,14 +342,7 @@ namespace YouTube_Downloader.Operations
             }
             else
             {
-                RefreshStatus();
-                Program.RunningOperations.Remove(this);
-                OnOperationComplete(new OperationEventArgs(this, this.Status));
-
-                if (this.remove && this.ListView != null)
-                {
-                    this.Remove();
-                }
+                OnOperationComplete();
             }
         }
 
@@ -378,6 +362,9 @@ namespace YouTube_Downloader.Operations
         private void downloader_ProgressChanged(object sender, EventArgs e)
         {
             if (processing)
+                return;
+
+            if (this.ListView == null)
                 return;
 
             if (ListView.InvokeRequired)
@@ -471,24 +458,27 @@ namespace YouTube_Downloader.Operations
             }
         }
 
-        private void OnOperationComplete(OperationEventArgs e)
+        private void OnOperationComplete()
         {
+            sw.Stop();
+
+            // Status should already be handled at some point before this.
+            RefreshStatus();
+            Program.RunningOperations.Remove(this);
+
+            // Remove from it's ListView if conditions is met.
+            if (this.remove && this.ListView != null)
+                this.Remove();
+
             if (OperationComplete != null)
-                OperationComplete(this, e);
+                OperationComplete(this, new OperationEventArgs(this, this.Status));
 
             Console.WriteLine(this.GetType().Name + ": Operation complete, status: " + this.Status);
         }
 
         private bool Wait()
         {
-            /* Limit the progress update to once a second,
-             * to avoid flickering. */
-            if (sw == null)
-                sw = new Stopwatch();
-
-            if (!sw.IsRunning)
-                sw.Restart();
-
+            // Limit the progress update to once a second to avoid flickering.
             return sw.ElapsedMilliseconds < ProgressDelay;
         }
     }
