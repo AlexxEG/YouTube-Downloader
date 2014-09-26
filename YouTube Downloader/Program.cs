@@ -21,7 +21,7 @@ namespace YouTube_Downloader
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
@@ -32,7 +32,10 @@ namespace YouTube_Downloader
             new App().Run(args);
         }
 
-        static void CurrentDomain_UnhandledException(object sender, System.UnhandledExceptionEventArgs e)
+        /// <summary>
+        /// Automatically saves unhandled Exceptions.
+        /// </summary>
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             Program.SaveException((Exception)e.ExceptionObject);
         }
@@ -76,6 +79,10 @@ namespace YouTube_Downloader
             return path;
         }
 
+        /// <summary>
+        /// Saves given Exception's stack trace to a readable file in the local application data folder.
+        /// </summary>
+        /// <param name="ex">The Exception to save.</param>
         public static void SaveException(Exception ex)
         {
             string directory = Path.Combine(GetAppDataDirectory(), "stack traces");
