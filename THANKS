@@ -1,8 +1,0 @@
-Thanks to akramKamal on CodeProject for providing the code for downloading videos,
-and thanks to fracturedsoul & sweetgugly in the comments for improving it. (Link to the CodeProject article: http://www.codeproject.com/Tips/323771/YouTube-Downloader-Using-Csharp-NET)
-
-Thanks to ffmpeg for providing the method for converting video to MP3. (http://www.ffmpeg.org/)
-
-Thanks to Josip Medved for the OpenFolderDialog class. (Think it got it from here, but don't remember. http://www.jmedved.com/2011/12/openfolderdialog/)
-
-Thanks to mav.northwind for the ListViewEx with embedded controls. (http://www.codeproject.com/Articles/9188/Embedding-Controls-in-a-ListView)
