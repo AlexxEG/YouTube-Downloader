@@ -94,6 +94,11 @@ namespace YouTube_Downloader.Classes
                 format.DownloadUrl = token["url"].ToString();
                 format.Extension = token["ext"].ToString();
                 format.Format = token["format"].ToString();
+
+                // Check for 60fps videos. If there is no 'fps' token, default to 30fps.
+                JToken fps = token.SelectToken("fps", false);
+
+                format.FPS = fps == null ? "30" : fps.ToString();
                 format.UpdateFileSizeAsync();
 
                 info.Formats.Add(format);

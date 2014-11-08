@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,6 +13,7 @@ namespace YouTube_Downloader.Classes
         public string Extension { get; set; }
         public long FileSize { get; set; }
         public string Format { get; set; }
+        public string FPS { get; set; }
         public VideoInfo VideoInfo { get; set; }
 
         private WebRequest request;
@@ -74,7 +76,12 @@ namespace YouTube_Downloader.Classes
 
         public override string ToString()
         {
-            return this.Format.Split('-')[1].Trim() + " (." + this.Extension + ")";
+            string text = string.Format("{0} (.{1})", Format.Split('-')[1].Trim(), this.Extension);
+
+            if (FPS != "30")
+                text = Regex.Replace(text, @"^(\d+x\d+)(\s.*)$", "$1x" + FPS + "$2");
+
+            return text;
         }
     }
 
