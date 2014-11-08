@@ -38,6 +38,13 @@ namespace YouTube_Downloader.Classes
 
         public async void UpdateFileSizeAsync()
         {
+            if (this.FileSize > 0)
+            {
+                // Probably already got the file size from .json file.
+                this.VideoInfo.OnFileSizeUpdated(this);
+                return;
+            }
+
             WebResponse response = null;
 
             cts = new CancellationTokenSource();
