@@ -95,6 +95,12 @@ namespace YouTube_Downloader.Classes
                 format.Extension = token["ext"].ToString();
                 format.Format = token["format"].ToString();
 
+                // Check for abr token (audio bit rate?)
+                JToken abr = token.SelectToken("abr");
+
+                if (abr != null)
+                    format.AudioBitRate = int.Parse(abr.ToString());
+
                 // Check for filesize token
                 JToken filesize = token.SelectToken("filesize");
 

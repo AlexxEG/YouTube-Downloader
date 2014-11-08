@@ -8,6 +8,7 @@ namespace YouTube_Downloader.Classes
 {
     public class VideoFormat
     {
+        public int AudioBitRate { get; set; }
         public bool DASH { get; set; }
         public string DownloadUrl { get; set; }
         public string Extension { get; set; }
@@ -21,6 +22,7 @@ namespace YouTube_Downloader.Classes
 
         public VideoFormat(VideoInfo videoInfo)
         {
+            this.AudioBitRate = -1;
             this.VideoInfo = videoInfo;
         }
 

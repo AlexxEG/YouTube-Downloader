@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using YouTube_Downloader.Properties;
@@ -166,12 +167,22 @@ namespace YouTube_Downloader.Classes
         /// <param name="video">The video to get audio format from.</param>
         public static VideoFormat GetAudioFormat(VideoInfo video)
         {
+            List<VideoFormat> audio = new List<VideoFormat>();
+
             foreach (VideoFormat f in video.Formats)
             {
                 if (f.Format.Contains("audio only (DASH audio)"))
-                    return f;
+                {
+                    audio.Add(f);
+                }
             }
-            return null;
+
+            // Return null if no audio is found.
+            if (audio.Count == 0)
+                return null;
+
+            // Return either the one with the highest audio bit rate, or the last found one.
+            return audio.OrderBy(a => a.AudioBitRate).Last();
         }
 
         /// <summary>
