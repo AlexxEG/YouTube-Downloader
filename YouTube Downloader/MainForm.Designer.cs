@@ -90,8 +90,6 @@
             this.label5 = new System.Windows.Forms.Label();
             this.queueTabPage = new System.Windows.Forms.TabPage();
             this.chbAutoConvert = new System.Windows.Forms.CheckBox();
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.lvQueue = new ListViewEmbeddedControls.ListViewEx();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -99,6 +97,8 @@
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.groupBox1.SuspendLayout();
             this.bottomPanel.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -757,20 +757,12 @@
             // 
             this.chbAutoConvert.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chbAutoConvert.AutoSize = true;
-            this.chbAutoConvert.Location = new System.Drawing.Point(6, 258);
+            this.chbAutoConvert.Location = new System.Drawing.Point(6, 268);
             this.chbAutoConvert.Name = "chbAutoConvert";
             this.chbAutoConvert.Size = new System.Drawing.Size(164, 17);
             this.chbAutoConvert.TabIndex = 3;
             this.chbAutoConvert.Text = "Convert to MP3 automatically";
             this.chbAutoConvert.UseVisualStyleBackColor = true;
-            // 
-            // openFileDialog1
-            // 
-            this.openFileDialog1.Filter = "MP4 files|*.mp4|MP3 files|*.mp3|All files|*.*";
-            // 
-            // saveFileDialog1
-            // 
-            this.saveFileDialog1.Filter = "MP3 files|*.mp3|MP4 files|*.mp4|All files|*.*";
             // 
             // lvQueue
             // 
@@ -787,7 +779,7 @@
             this.lvQueue.FullRowSelect = true;
             this.lvQueue.Location = new System.Drawing.Point(6, 6);
             this.lvQueue.Name = "lvQueue";
-            this.lvQueue.Size = new System.Drawing.Size(584, 246);
+            this.lvQueue.Size = new System.Drawing.Size(584, 256);
             this.lvQueue.TabIndex = 2;
             this.lvQueue.UseCompatibleStateImageBehavior = false;
             this.lvQueue.View = System.Windows.Forms.View.Details;
@@ -815,6 +807,14 @@
             // columnHeader6
             // 
             this.columnHeader6.Text = "Input";
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.Filter = "MP4 files|*.mp4|MP3 files|*.mp3|All files|*.*";
+            // 
+            // saveFileDialog1
+            // 
+            this.saveFileDialog1.Filter = "MP3 files|*.mp3|MP4 files|*.mp4|All files|*.*";
             // 
             // MainForm
             // 
