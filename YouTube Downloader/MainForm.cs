@@ -1079,7 +1079,7 @@ namespace YouTube_Downloader
 
                 if (f.Extension.Contains("webm"))
                     formats.RemoveAt(i);
-                else if (f.Format.Contains("audio only (DASH audio)"))
+                else if (f.AudioOnly)
                     formats.RemoveAt(i);
             }
 

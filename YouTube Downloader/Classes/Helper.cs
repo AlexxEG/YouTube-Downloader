@@ -169,19 +169,14 @@ namespace YouTube_Downloader.Classes
         {
             List<VideoFormat> audio = new List<VideoFormat>();
 
-            foreach (VideoFormat f in video.Formats)
-            {
-                if (f.Format.Contains("audio only (DASH audio)"))
-                {
-                    audio.Add(f);
-                }
-            }
+            // Add all audio only formats
+            audio.AddRange(audio.FindAll(f => f.AudioOnly == true));
 
-            // Return null if no audio is found.
+            // Return null if no audio is found
             if (audio.Count == 0)
                 return null;
 
-            // Return either the one with the highest audio bit rate, or the last found one.
+            // Return either the one with the highest audio bit rate, or the last found one
             return audio.OrderBy(a => a.AudioBitRate).Last();
         }
 

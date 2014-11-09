@@ -9,6 +9,7 @@ namespace YouTube_Downloader.Classes
     public class VideoFormat
     {
         public int AudioBitRate { get; set; }
+        public bool AudioOnly { get; set; }
         public bool DASH { get; set; }
         public string DownloadUrl { get; set; }
         public string Extension { get; set; }

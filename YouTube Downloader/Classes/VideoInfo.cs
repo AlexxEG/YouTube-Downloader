@@ -95,6 +95,9 @@ namespace YouTube_Downloader.Classes
                 format.Extension = token["ext"].ToString();
                 format.Format = token["format"].ToString();
 
+                // Check if format is audio only
+                format.AudioOnly = format.Format.Contains("audio only");
+
                 // Check for abr token (audio bit rate?)
                 JToken abr = token.SelectToken("abr");
 
