@@ -124,9 +124,7 @@ namespace YouTube_Downloader
                 if (tag == null)
                     return;
 
-                string link = (string)tag;
-
-                Process.Start(link);
+                Process.Start((string)tag);
             }
             catch
             {
