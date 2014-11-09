@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Windows.Forms;
 using YouTube_Downloader.Classes;
 using YouTube_Downloader.Operations;
 
@@ -24,6 +25,7 @@ namespace YouTube_Downloader
         private static void Main(string[] args)
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            Application.SetCompatibleTextRenderingDefault(false);
 
             Program.FFmpegAvailable = File.Exists(FFmpegHelper.FFmpegPath);
 
