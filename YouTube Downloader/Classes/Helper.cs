@@ -227,25 +227,22 @@ namespace YouTube_Downloader.Classes
         public static VideoFormat[] GetVideoFormats(VideoInfo video, bool dash)
         {
             var formats = new List<VideoFormat>();
-            Regex regex = new Regex(dash ? "(144|240|360|480|720|1080|1440|2160)p" : @"^\d*\s*-\s*\d+x\d+$");
 
             foreach (VideoFormat format in video.Formats)
             {
+                // Skip audio only formats
+                if (format.AudioOnly)
+                    continue;
+
                 // Exclude DASH videos if dash is false.
                 if (!dash && format.DASH)
-                {
                     continue;
-                }
-                // Only include .mp4 DASH videos if dash is true.
-                else if (dash && !format.DASH || !format.Extension.Contains("mp4"))
-                {
-                    continue;
-                }
 
-                if (regex.IsMatch(format.Format))
-                {
-                    formats.Add(format);
-                }
+                // Only include .mp4 DASH videos if dash is true.
+                if (dash && !format.DASH || !format.Extension.Contains("mp4"))
+                    continue;
+
+                formats.Add(format);
             }
 
             return formats.ToArray();
