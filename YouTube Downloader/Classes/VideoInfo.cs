@@ -8,12 +8,30 @@ namespace YouTube_Downloader.Classes
 {
     public class VideoInfo
     {
-        public long Duration { get; set; }
-        public string ID { get; set; }
-        public string Title { get; set; }
-        public string ThumbnailUrl { get; set; }
-        public string Url { get; set; }
-        public IList<VideoFormat> Formats { get; set; }
+        /// <summary>
+        /// Gets the video duration in seconds.
+        /// </summary>
+        public long Duration { get; private set; }
+        /// <summary>
+        /// Gets the video ID.
+        /// </summary>
+        public string ID { get; private set; }
+        /// <summary>
+        /// Gets the video title.
+        /// </summary>
+        public string Title { get; private set; }
+        /// <summary>
+        /// Gets the video thumbnail url.
+        /// </summary>
+        public string ThumbnailUrl { get; private set; }
+        /// <summary>
+        /// Gets the video url.
+        /// </summary>
+        public string Url { get; private set; }
+        /// <summary>
+        /// Gets all the available formats.
+        /// </summary>
+        public IList<VideoFormat> Formats { get; private set; }
 
         public event FileSizeUpdateHandler FileSizeUpdated;
 
