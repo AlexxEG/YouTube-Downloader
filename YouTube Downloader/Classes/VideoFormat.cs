@@ -3,29 +3,61 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 
 namespace YouTube_Downloader.Classes
 {
     public class VideoFormat
     {
-        public int AudioBitRate { get; set; }
-        public bool AudioOnly { get; set; }
-        public bool DASH { get; set; }
-        public string DownloadUrl { get; set; }
-        public string Extension { get; set; }
-        public long FileSize { get; set; }
-        public string Format { get; set; }
-        public string FPS { get; set; }
-        public VideoInfo VideoInfo { get; set; }
+        /// <summary>
+        /// Gets the audio bit rate. Returns -1 if not defined.
+        /// </summary>
+        public int AudioBitRate { get; private set; }
+        /// <summary>
+        /// Gets whether the format is audio only.
+        /// </summary>
+        public bool AudioOnly { get; private set; }
+        /// <summary>
+        /// Gets whether the format is a DASH format.
+        /// </summary>
+        public bool DASH { get; private set; }
+        /// <summary>
+        /// Gets the download url.
+        /// </summary>
+        public string DownloadUrl { get; private set; }
+        /// <summary>
+        /// Gets the file extension, excluding the period.
+        /// </summary>
+        public string Extension { get; private set; }
+        /// <summary>
+        /// Gets the file size as bytes count.
+        /// </summary>
+        public long FileSize { get; private set; }
+        /// <summary>
+        /// Gets the format text.
+        /// </summary>
+        public string Format { get; private set; }
+        /// <summary>
+        /// Gets the frames per second. Null if not defined.
+        /// </summary>
+        public string FPS { get; private set; }
+        /// <summary>
+        /// Gets the associated VideoInfo.
+        /// </summary>
+        public VideoInfo VideoInfo { get; private set; }
 
         private WebRequest request;
         private CancellationTokenSource cts;
 
-        public VideoFormat(VideoInfo videoInfo)
+        public VideoFormat(VideoInfo videoInfo, JToken token)
         {
             this.AudioBitRate = -1;
             this.VideoInfo = videoInfo;
+
+            this.DeserializeJson(token);
         }
+
+        #region Update file size methods
 
         /// <summary>
         /// Aborts request for file size.
@@ -39,6 +71,9 @@ namespace YouTube_Downloader.Classes
                 cts.Cancel();
         }
 
+        /// <summary>
+        /// Starts a WebRequest to update the file size.
+        /// </summary>
         public async void UpdateFileSizeAsync()
         {
             if (this.FileSize > 0)
@@ -82,6 +117,41 @@ namespace YouTube_Downloader.Classes
                 cts.Dispose();
                 cts = null;
             }
+        }
+
+        #endregion
+
+        private void DeserializeJson(JToken token)
+        {
+            JToken format_note = token.SelectToken("format_note");
+
+            if (format_note != null && format_note.ToString().Contains("DASH"))
+                this.DASH = true;
+
+            this.DownloadUrl = token["url"].ToString();
+            this.Extension = token["ext"].ToString();
+            this.Format = token["format"].ToString();
+
+            // Check if format is audio only
+            this.AudioOnly = this.Format.Contains("audio only");
+
+            // Check for abr token (audio bit rate?)
+            JToken abr = token.SelectToken("abr");
+
+            if (abr != null)
+                this.AudioBitRate = int.Parse(abr.ToString());
+
+            // Check for filesize token
+            JToken filesize = token.SelectToken("filesize");
+
+            if (filesize != null)
+                this.FileSize = long.Parse(filesize.ToString());
+
+            // Check for 60fps videos. If there is no 'fps' token, default to 30fps.
+            JToken fps = token.SelectToken("fps", false);
+
+            this.FPS = fps == null ? "30" : fps.ToString();
+            this.UpdateFileSizeAsync();
         }
 
         public override string ToString()

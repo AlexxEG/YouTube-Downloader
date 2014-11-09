@@ -1,10 +1,10 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using Newtonsoft.Json.Linq;
 
 namespace YouTube_Downloader.Classes
 {
@@ -109,14 +109,7 @@ namespace YouTube_Downloader.Classes
 
                 foreach (JToken token in array)
                 {
-                    VideoFormat format = new VideoFormat(info);
-
-                    format.DownloadUrl = token["url"].ToString();
-                    format.Extension = token["ext"].ToString();
-                    format.Format = token["format"].ToString();
-                    format.UpdateFileSizeAsync();
-
-                    info.Formats.Add(format);
+                    info.Formats.Add(new VideoFormat(info, token));
                 }
 
                 videos.Add(info);

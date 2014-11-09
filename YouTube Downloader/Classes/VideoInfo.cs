@@ -1,8 +1,8 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using Newtonsoft.Json.Linq;
 
 namespace YouTube_Downloader.Classes
 {
@@ -84,39 +84,7 @@ namespace YouTube_Downloader.Classes
 
             foreach (JToken token in array)
             {
-                VideoFormat format = new VideoFormat(info);
-
-                JToken format_note = token.SelectToken("format_note");
-
-                if (format_note != null && format_note.ToString().Contains("DASH"))
-                    format.DASH = true;
-
-                format.DownloadUrl = token["url"].ToString();
-                format.Extension = token["ext"].ToString();
-                format.Format = token["format"].ToString();
-
-                // Check if format is audio only
-                format.AudioOnly = format.Format.Contains("audio only");
-
-                // Check for abr token (audio bit rate?)
-                JToken abr = token.SelectToken("abr");
-
-                if (abr != null)
-                    format.AudioBitRate = int.Parse(abr.ToString());
-
-                // Check for filesize token
-                JToken filesize = token.SelectToken("filesize");
-
-                if (filesize != null)
-                    format.FileSize = long.Parse(filesize.ToString());
-
-                // Check for 60fps videos. If there is no 'fps' token, default to 30fps.
-                JToken fps = token.SelectToken("fps", false);
-
-                format.FPS = fps == null ? "30" : fps.ToString();
-                format.UpdateFileSizeAsync();
-
-                info.Formats.Add(format);
+                info.Formats.Add(new VideoFormat(info, token));
             }
 
             return info;
