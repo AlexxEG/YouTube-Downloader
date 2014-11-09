@@ -33,6 +33,9 @@ namespace YouTube_Downloader.Classes
         /// </summary>
         public IList<VideoFormat> Formats { get; private set; }
 
+        /// <summary>
+        /// Occurs when one of the format's file size has been updated.
+        /// </summary>
         public event FileSizeUpdateHandler FileSizeUpdated;
 
         public VideoInfo(string json_file)
