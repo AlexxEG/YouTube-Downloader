@@ -254,16 +254,15 @@ namespace YouTube_Downloader
 
                 if (File.Exists(Path.Combine(path, filename)))
                 {
-                    DialogResult result = MessageBox.Show(this, "File '" + filename + "' already exists\n\nOverwrite?", "Overwrite?", MessageBoxButtons.YesNo);
+                    DialogResult result = MessageBox.Show(this,
+                        string.Format("File '{1}' already exists.{0}{0}Overwrite?", Environment.NewLine, filename),
+                        "Overwrite?",
+                        MessageBoxButtons.YesNo);
 
-                    if (result == DialogResult.Yes)
-                    {
-                        File.Delete(Path.Combine(path, filename));
-                    }
-                    else if (result == DialogResult.No)
-                    {
+                    if (result == DialogResult.No)
                         return;
-                    }
+
+                    File.Delete(Path.Combine(path, filename));
                 }
 
                 DownloadOperation item = new DownloadOperation(Path.GetFileName(filename));
