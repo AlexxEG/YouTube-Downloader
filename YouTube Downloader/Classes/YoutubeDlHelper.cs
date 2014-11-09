@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using Newtonsoft.Json.Linq;
 
 namespace YouTube_Downloader.Classes
 {
@@ -28,94 +27,6 @@ namespace YouTube_Downloader.Classes
             };
 
             return writer;
-        }
-
-        public static Playlist GetPlaylist(string url)
-        {
-            string json_dir = Program.GetJsonDirectory();
-
-            if (!Directory.Exists(json_dir))
-                Directory.CreateDirectory(json_dir);
-
-            string playlist_id = Helper.GetPlaylistId(url);
-            string arguments = string.Format(Cmd_JSON_Info_Playlist, json_dir, playlist_id, url);
-
-            Process process = StartProcess(arguments);
-
-            List<string> jsonFiles = new List<string>();
-            string line = string.Empty;
-
-            /* Playlist properties. */
-            string name = "";
-            int onlineCount = 0;
-
-            /* Write output to log. */
-            using (var writer = CreateLogWriter())
-            {
-                WriteLogHeader(writer, arguments, url);
-
-                while ((line = process.StandardOutput.ReadLine()) != null)
-                {
-                    writer.WriteLine(line);
-
-                    line = line.Trim();
-
-                    /* Store file path. */
-                    if (line.StartsWith("[info] Writing video description metadata as JSON to:"))
-                    {
-                        string file = line.Substring(line.IndexOf(":") + 1).Trim();
-
-                        jsonFiles.Add(Path.Combine(Application.StartupPath, file));
-                    }
-                    /* Get the playlist count, so  */
-                    else if (line.StartsWith("[youtube:playlist] playlist"))
-                    {
-                        string txt = line.Split(':')[2].Trim();
-                        /* Get the count. */
-                        string pattern = "^Collected (\\d+) video ids \\(downloading \\d+ of them\\)$";
-
-                        /* Get name between '[youtube:playlist] playlist ' & next ':'. */
-                        name = Regex.Match(line, "\\[youtube:playlist] playlist (.*):").Groups[1].Value;
-                        onlineCount = int.Parse(Regex.Match(txt, pattern).Groups[1].Value);
-                    }
-                }
-
-                WriteLogFooter(writer);
-            }
-
-            process.WaitForExit();
-
-            if (!process.HasExited)
-                process.Kill();
-
-            var videos = new List<VideoInfo>();
-
-            foreach (string json_file in jsonFiles)
-            {
-                /* Parse JSON */
-                VideoInfo info = new VideoInfo();
-                string json = File.ReadAllText(json_file);
-                JObject jObject = JObject.Parse(json);
-
-                info.Duration = long.Parse(jObject["duration"].ToString());
-                info.Title = jObject["fulltitle"].ToString();
-
-                string displayId = jObject["display_id"].ToString();
-
-                info.ThumbnailUrl = string.Format("https://i.ytimg.com/vi/{0}/mqdefault.jpg", displayId);
-                info.Url = url;
-
-                JArray array = (JArray)jObject["formats"];
-
-                foreach (JToken token in array)
-                {
-                    info.Formats.Add(new VideoFormat(info, token));
-                }
-
-                videos.Add(info);
-            }
-
-            return new Playlist(playlist_id, name, onlineCount, videos);
         }
 
         public static VideoInfo GetVideoInfo(string url)
@@ -159,7 +70,7 @@ namespace YouTube_Downloader.Classes
             if (!process.HasExited)
                 process.Kill();
 
-            return VideoInfo.DeserializeJson(json_file);
+            return new VideoInfo(json_file);
         }
 
         /// <summary>

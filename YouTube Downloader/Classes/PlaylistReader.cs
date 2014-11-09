@@ -86,7 +86,7 @@ namespace YouTube_Downloader.Classes
                 return null;
             }
 
-            VideoInfo video = VideoInfo.DeserializeJson(json_path);
+            VideoInfo video = new VideoInfo(json_path);
 
             this.Playlist.Videos.Add(video);
 
