@@ -753,12 +753,9 @@ namespace YouTube_Downloader
         {
             this.Hide();
 
-            // Store files & attempts in Dictionary.
-            Dictionary<string, int> files = new Dictionary<string, int>();
-
             foreach (IOperation operation in Program.RunningOperations)
             {
-                /* Stop & delete unfinished files. */
+                // Stop & delete unfinished files
                 operation.Stop(false, true);
             }
 
@@ -770,7 +767,7 @@ namespace YouTube_Downloader
 
             while (Program.RunningOperations.Count > 0 || RunningWorkers.Count > 0)
             {
-                /* Wait for everything to finish. */
+                // Wait for everything to finish
             }
 
             this.Close();
