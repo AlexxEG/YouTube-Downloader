@@ -314,7 +314,9 @@ namespace YouTube_Downloader.Classes
         /// <param name="dash">True to find DASH format, false if otherwise.</param>
         public static int IndexOf(this VideoFormat[] thiz, string format, bool dash)
         {
-            Regex regex = new Regex(dash ? "^.* - " + format + "p.*$" : @"^\d*\s*-\s*\d+x" + format + "$");
+            string pattern = @"^\d*\s-\s\d*x" + format + "$";
+            string patternDASH = @"^\d*\s-\s\d*x" + format + @"\s\(DASH video\)$";
+            Regex regex = new Regex(dash ? patternDASH : pattern);
 
             for (int i = 0; i < thiz.Length; i++)
             {
