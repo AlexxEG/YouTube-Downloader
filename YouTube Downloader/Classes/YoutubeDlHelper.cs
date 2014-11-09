@@ -10,7 +10,7 @@ namespace YouTube_Downloader.Classes
 {
     public class YoutubeDlHelper
     {
-        public const string Cmd_JSON_Info = " -o \"{0}\\%(title)s\" --no-playlist --skip-download --write-info-json \"{1}\"";
+        public const string Cmd_JSON_Info = " -o \"{0}\\%(title)s\" --no-playlist --skip-download --restrict-filenames --write-info-json \"{1}\"";
         public const string Cmd_JSON_Info_Playlist = " -i -o \"{0}\\playlist-{1}\\%(playlist_index)s-%(title)s\" --restrict-filenames --skip-download --write-info-json \"{2}\"";
 
         public static string YouTubeDlPath = Path.Combine(Application.StartupPath, "externals", "youtube-dl.exe");
