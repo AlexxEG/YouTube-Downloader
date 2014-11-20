@@ -31,7 +31,7 @@ namespace YouTube_Downloader.Classes
         /// <summary>
         /// Gets all the available formats.
         /// </summary>
-        public IList<VideoFormat> Formats { get; private set; }
+        public List<VideoFormat> Formats { get; private set; }
 
         /// <summary>
         /// Occurs when one of the format's file size has been updated.

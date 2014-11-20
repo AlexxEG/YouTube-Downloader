@@ -170,7 +170,7 @@ namespace YouTube_Downloader.Classes
             List<VideoFormat> audio = new List<VideoFormat>();
 
             // Add all audio only formats
-            audio.AddRange(audio.FindAll(f => f.AudioOnly == true));
+            audio.AddRange(video.Formats.FindAll(f => f.AudioOnly == true));
 
             // Return null if no audio is found
             if (audio.Count == 0)
