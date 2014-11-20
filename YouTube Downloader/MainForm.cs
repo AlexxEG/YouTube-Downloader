@@ -304,7 +304,12 @@ namespace YouTube_Downloader
 
                 tabControl1.SelectedTab = queueTabPage;
             }
-            catch (Exception ex) { MessageBox.Show(this, ex.Message, ex.Source, MessageBoxButtons.OK, MessageBoxIcon.Error); }
+            catch (Exception ex) 
+            {
+                Program.SaveException(ex);
+
+                MessageBox.Show(this, ex.Message, ex.Source, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void videoThumbnail_Paint(object sender, PaintEventArgs e)
