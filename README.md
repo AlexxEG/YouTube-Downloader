@@ -1,12 +1,12 @@
 YouTube Downloader
 ==================
 
-YouTube Downloader is a simple program to download & convert YouTube videos. Currently it only converts to MP3 using [FFmpeg](http://www.ffmpeg.org/).
+YouTube Downloader is a program to download & convert YouTube videos and playlists using [youtube-dl](http://rg3.github.io/youtube-dl/) & [FFmpeg](http://www.ffmpeg.org/). Currently it only converts to MP3.
 
 Download
 --------
 
-An installer (coming...) & portable version can be found in [Releases](https://github.com/AlexxEG/YouTube-Downloader/releases)
+An installer & portable version can be found in [Releases](https://github.com/AlexxEG/YouTube-Downloader/releases).
 
 Screenshots
 -----------
