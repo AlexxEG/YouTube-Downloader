@@ -269,7 +269,13 @@ namespace YouTube_Downloader
                 item.SubItems.Add("");
                 item.SubItems.Add("");
                 item.SubItems.Add(Helper.FormatVideoLength(tempFormat.VideoInfo.Duration));
-                item.SubItems.Add(Helper.FormatFileSize(tempFormat.FileSize));
+
+                // Combine video and audio file size if the format is DASH and not AudioOnly
+                if (tempFormat.DASH && !tempFormat.AudioOnly)
+                    item.SubItems.Add(Helper.FormatFileSize(tempFormat.FileSize + Helper.GetAudioFormat(tempFormat.VideoInfo).FileSize));
+                else
+                    item.SubItems.Add(Helper.FormatFileSize(tempFormat.FileSize));
+
                 item.SubItems.Add(tempFormat.VideoInfo.Url);
                 item.OperationComplete += downloadItem_OperationComplete;
 
@@ -294,7 +300,7 @@ namespace YouTube_Downloader
 
                 lvQueue.AddEmbeddedControl(ll, 5, item.Index);
 
-                if (!tempFormat.DASH)
+                if (tempFormat.AudioOnly || !tempFormat.DASH)
                     item.Download(tempFormat.DownloadUrl, Path.Combine(path, filename));
                 else
                 {
@@ -1088,8 +1094,6 @@ namespace YouTube_Downloader
                 VideoFormat f = formats[i];
 
                 if (f.Extension.Contains("webm"))
-                    formats.RemoveAt(i);
-                else if (f.AudioOnly)
                     formats.RemoveAt(i);
             }
 
