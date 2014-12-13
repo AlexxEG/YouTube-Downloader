@@ -168,13 +168,13 @@ namespace YouTube_Downloader
 
         private void videoInfo_FileSizeUpdated(object sender, FileSizeUpdateEventArgs e)
         {
-            // Display the updated file size if the selected item was updated.
             if (lFileSize.InvokeRequired)
             {
                 lFileSize.Invoke(new UpdateFileSize(videoInfo_FileSizeUpdated), sender, e);
             }
             else
             {
+                // Display the updated file size if the selected item was updated.
                 if (e.VideoFormat == cbQuality.SelectedItem)
                 {
                     lFileSize.Text = Helper.FormatFileSize(e.VideoFormat.FileSize);
