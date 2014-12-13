@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace YouTube_Downloader.Classes
@@ -10,7 +11,15 @@ namespace YouTube_Downloader.Classes
     public class FFmpegHelper
     {
         private const string Cmd_Combine_Dash = " -y -i \"{0}\" -i \"{1}\" -vcodec copy -acodec copy \"{2}\"";
-        private const string Cmd_Convert = " -y -i \"{0}\" -vn -f mp3 -ab 192k \"{1}\"";
+        /* Cmd_Convert options:
+         *
+         * -y  - Overwrite output file without asking
+         * -i  - Input file name
+         * -vn - Disables video recording.
+         * -f  - Forces file format, but isn't needed if output has .mp3 extensions
+         * -ab - Sets the audio bitrate
+         */
+        private const string Cmd_Convert = " -y -i \"{0}\" -vn -f mp3 -ab {1}k \"{2}\"";
         private const string Cmd_Crop_From = " -y -ss {0} -i \"{1}\" -acodec copy{2} \"{3}\"";
         private const string Cmd_Crop_From_To = " -y -ss {0} -i \"{1}\" -to {2} -acodec copy{3} \"{4}\"";
         private const string Cmd_Get_File_Info = " -i \"{0}\"";
@@ -190,7 +199,7 @@ namespace YouTube_Downloader.Classes
                 throw new Exception("Input & output can't be the same.");
             }
 
-            string[] args = new string[] { input, output };
+            string[] args = new string[] { input, GetBitRate(input).ToString(), output };
             string arguments = string.Format(FFmpegHelper.Cmd_Convert, args);
 
             Process process = FFmpegHelper.StartProcess(arguments);
@@ -417,6 +426,37 @@ namespace YouTube_Downloader.Classes
 
             if (!process.HasExited)
                 process.Kill();
+        }
+
+        public static int GetBitRate(string file)
+        {
+            int result = -1;
+            string arguments = string.Format(" -i \"{0}\"", file);
+            Process process = StartProcess(arguments);
+            List<string> lines = new List<string>();
+
+            // Read to EOS, storing each line
+            while (!process.StandardError.EndOfStream)
+                lines.Add(process.StandardError.ReadLine().Trim());
+
+            foreach (string line in lines)
+            {
+                if (line.StartsWith("Stream"))
+                {
+                    Regex regex = new Regex(@"^Stream\s#\d:\d.*\s(\d+)\skb/s.*$");
+                    Match m = regex.Match(line);
+
+                    if (m.Success)
+                        result = int.Parse(m.Groups[1].Value);
+                }
+            }
+
+            process.WaitForExit();
+
+            if (!process.HasExited)
+                process.Kill();
+
+            return result;
         }
 
         /// <summary>
