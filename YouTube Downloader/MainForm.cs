@@ -13,6 +13,8 @@ using YouTube_Downloader.Properties;
  *
  * - Handle aborting operations better when closing form.
  * - Make sure OperationStatus is set for operations in BackgroundWorker.DoWork.
+ * - Include audio size in file size preview
+ * - Allow to only download audio
  */
 
 namespace YouTube_Downloader
