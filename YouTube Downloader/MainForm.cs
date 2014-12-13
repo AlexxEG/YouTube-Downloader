@@ -13,7 +13,6 @@ using YouTube_Downloader.Properties;
  *
  * - Handle aborting operations better when closing form.
  * - Make sure OperationStatus is set for operations in BackgroundWorker.DoWork.
- * - Include audio size in file size preview
  * - Allow to only download audio
  */
 
@@ -306,7 +305,7 @@ namespace YouTube_Downloader
 
                 tabControl1.SelectedTab = queueTabPage;
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 Program.SaveException(ex);
 
@@ -334,7 +333,7 @@ namespace YouTube_Downloader
 
         private void cbQuality_SelectedIndexChanged(object sender, EventArgs e)
         {
-            /* Display file size. */
+            // Display file size.
             VideoFormat format = (VideoFormat)cbQuality.SelectedItem;
 
             if (format == null)
@@ -347,7 +346,13 @@ namespace YouTube_Downloader
             }
             else
             {
-                lFileSize.Text = Helper.FormatFileSize((cbQuality.SelectedItem as VideoFormat).FileSize);
+                long total = format.FileSize;
+
+                // If the format is DASH and not a AudioOnly format, combine audio and video size.
+                if (format.DASH && !format.AudioOnly)
+                    total += Helper.GetAudioFormat(format.VideoInfo).FileSize;
+
+                lFileSize.Text = Helper.FormatFileSize(total);
             }
         }
 
