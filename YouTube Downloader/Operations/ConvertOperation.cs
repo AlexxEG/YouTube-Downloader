@@ -206,11 +206,13 @@ namespace YouTube_Downloader.Operations
                 }
             }
 
-            if (cleanup && !(this.Status == OperationStatus.Success))
+            if (cleanup && this.Status != OperationStatus.Success)
             {
                 if (File.Exists(this.Output))
                     Helper.DeleteFiles(this.Output);
             }
+
+            OnOperationComplete(new OperationEventArgs(this, this.Status));
 
             return success;
         }
@@ -321,8 +323,18 @@ namespace YouTube_Downloader.Operations
 
         private void OnOperationComplete(OperationEventArgs e)
         {
+            RefreshStatus();
+
+            if (Program.RunningOperations.Contains(this))
+                Program.RunningOperations.Remove(this);
+
+            if (this.remove && this.ListView != null)
+                this.Remove();
+
             if (OperationComplete != null)
                 OperationComplete(this, e);
+
+            Console.WriteLine(this.GetType().Name + ": Operation complete, status: " + this.Status);
         }
     }
 }
