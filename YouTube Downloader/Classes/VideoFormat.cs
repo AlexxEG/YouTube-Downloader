@@ -156,10 +156,19 @@ namespace YouTube_Downloader.Classes
 
         public override string ToString()
         {
-            string text = string.Format("{0} (.{1})", Format.Split('-')[1].Trim(), this.Extension);
+            string text = string.Empty;
 
-            if (FPS != "30")
-                text = Regex.Replace(text, @"^(\d+x\d+)(\s.*)$", "$1x" + FPS + "$2");
+            if (this.AudioOnly)
+            {
+                text = string.Format("{0} kbps (DASH audio) (.{1})", AudioBitRate, Extension);
+            }
+            else
+            {
+                text = string.Format("{0} (.{1})", Format.Split('-')[1].Trim(), this.Extension);
+
+                if (FPS != "30")
+                    text = Regex.Replace(text, @"^(\d+x\d+)(\s.*)$", "$1x" + FPS + "$2");
+            }
 
             return text;
         }
