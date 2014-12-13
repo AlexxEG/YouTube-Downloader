@@ -13,7 +13,6 @@ using YouTube_Downloader.Properties;
  *
  * - Handle aborting operations better when closing form.
  * - Make sure OperationStatus is set for operations in BackgroundWorker.DoWork.
- * - Allow to only download audio
  */
 
 namespace YouTube_Downloader
