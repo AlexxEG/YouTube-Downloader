@@ -162,7 +162,7 @@ namespace YouTube_Downloader.Classes
         }
 
         /// <summary>
-        /// Returns the DASH audio format from the given VideoInfo.
+        /// Returns the highest quality DASH audio format from the given VideoInfo.
         /// </summary>
         /// <param name="video">The video to get audio format from.</param>
         public static VideoFormat GetAudioFormat(VideoInfo video)
