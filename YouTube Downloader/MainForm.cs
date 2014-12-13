@@ -21,7 +21,6 @@ namespace YouTube_Downloader
     {
         private string[] args;
         private VideoInfo selectedVideo;
-        private List<BackgroundWorker> RunningWorkers = new List<BackgroundWorker>();
         private Settings settings = Settings.Default;
 
         private delegate void UpdateFileSize(object sender, FileSizeUpdateEventArgs e);
@@ -161,8 +160,6 @@ namespace YouTube_Downloader
             cbQuality.Enabled = videoInfo.Formats.Count > 0;
             btnDownload.Enabled = true;
             videoThumbnail.ImageLocation = videoInfo.ThumbnailUrl;
-
-            RunningWorkers.Remove(bwGetVideo);
         }
 
         private void videoInfo_FileSizeUpdated(object sender, FileSizeUpdateEventArgs e)
@@ -208,8 +205,6 @@ namespace YouTube_Downloader
                 videoThumbnail.Tag = null;
 
                 bwGetVideo.RunWorkerAsync(txtYoutubeLink.Text);
-
-                RunningWorkers.Add(bwGetVideo);
             }
         }
 
@@ -774,13 +769,10 @@ namespace YouTube_Downloader
                 operation.Stop(false, true);
             }
 
-            foreach (BackgroundWorker worker in RunningWorkers)
-            {
-                if (worker.WorkerSupportsCancellation)
-                    worker.CancelAsync();
-            }
+            if (bwGetVideo.IsBusy)
+                bwGetVideo.CancelAsync();
 
-            while (Program.RunningOperations.Count > 0 || RunningWorkers.Count > 0)
+            while (Program.RunningOperations.Count > 0 || bwGetVideo.IsBusy)
             {
                 // Wait for everything to finish
             }
