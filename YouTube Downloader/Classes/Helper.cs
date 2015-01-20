@@ -63,6 +63,18 @@ namespace YouTube_Downloader.Classes
         }
 
         /// <summary>
+        /// Returns a fixed URL, stripped of unnecessary invalid information. 
+        /// </summary>
+        /// <param name="url">The URL to fix.</param>
+        public static string FixUrl(string url)
+        {
+            // Remove "Watch Later" information, causes error
+            url = url.Replace("&index=6&list=WL", "");
+
+            return url;
+        }
+
+        /// <summary>
         /// Returns a formatted string of the given file size.
         /// </summary>
         /// <param name="size">The file size as long to format.</param>

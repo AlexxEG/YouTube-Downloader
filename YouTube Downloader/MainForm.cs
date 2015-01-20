@@ -193,10 +193,14 @@ namespace YouTube_Downloader
         private void btnGetVideo_Click(object sender, EventArgs e)
         {
             if (!Helper.IsValidYouTubeUrl(txtYoutubeLink.Text))
+            {
                 MessageBox.Show(this, "You entered invalid YouTube URL, Please correct it.\r\n\nNote: URL should start with:\r\nhttp://www.youtube.com/watch?",
                     "Invalid URL", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
             else
             {
+                txtYoutubeLink.Text = Helper.FixUrl(txtYoutubeLink.Text);
+
                 settings.LastYouTubeUrl = txtYoutubeLink.Text;
 
                 txtTitle.Text = string.Empty;
