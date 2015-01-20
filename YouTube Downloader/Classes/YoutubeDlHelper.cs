@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Text.RegularExpressions;
+using System.Text;
 using System.Windows.Forms;
 
 namespace YouTube_Downloader.Classes
@@ -14,19 +13,21 @@ namespace YouTube_Downloader.Classes
 
         public static string YouTubeDlPath = Path.Combine(Application.StartupPath, "externals", "youtube-dl.exe");
 
-        public static StreamWriter CreateLogWriter()
+        private static FileStream _logWriter;
+
+        /// <summary>
+        /// Returns the <see cref="FileStream"/> for the youtube-dl log file, initializing it if necessary.
+        /// </summary>
+        public static FileStream GetLogWriter()
         {
             string folder = Program.GetLogsDirectory();
 
             if (!Directory.Exists(folder))
                 Directory.CreateDirectory(folder);
 
-            StreamWriter writer = new StreamWriter(Path.Combine(folder, "youtube-dl.log"), true)
-            {
-                AutoFlush = true
-            };
+            _logWriter = new FileStream(Path.Combine(folder, "youtube-dl.log"), FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
 
-            return writer;
+            return _logWriter;
         }
 
         public static VideoInfo GetVideoInfo(string url)
@@ -43,26 +44,27 @@ namespace YouTube_Downloader.Classes
 
             string json_file = "";
             string line = "";
+            var sb = new StringBuilder();
+
+            while ((line = process.StandardOutput.ReadLine()) != null)
+            {
+                sb.AppendLine(line);
+
+                line = line.Trim();
+
+                if (line.StartsWith("[info] Writing video description metadata as JSON to:"))
+                {
+                    /* Store file path. */
+                    json_file = line.Substring(line.IndexOf(":") + 1).Trim();
+                }
+            }
 
             /* Write output to log. */
-            using (var writer = CreateLogWriter())
+            lock (GetLogWriter())
             {
-                WriteLogHeader(writer, arguments, url);
-
-                while ((line = process.StandardOutput.ReadLine()) != null)
-                {
-                    writer.WriteLine(line);
-
-                    line = line.Trim();
-
-                    if (line.StartsWith("[info] Writing video description metadata as JSON to:"))
-                    {
-                        /* Store file path. */
-                        json_file = line.Substring(line.IndexOf(":") + 1).Trim();
-                    }
-                }
-
-                WriteLogFooter(writer);
+                WriteLogHeader(arguments, url);
+                WriteLogText(sb.ToString());
+                WriteLogFooter();
             }
 
             process.WaitForExit();
@@ -93,21 +95,55 @@ namespace YouTube_Downloader.Classes
             return process;
         }
 
-        public static void WriteLogFooter(StreamWriter writer)
+        /// <summary>
+        /// Writes log footer to log.
+        /// </summary>
+        public static void WriteLogFooter()
         {
-            writer.WriteLine();
-            writer.WriteLine();
-            writer.WriteLine();
+            // Write log footer to stream.
+            // Possibly write elapsed time and/or error in future.
+            byte[] bytes = Encoding.UTF8.GetBytes(Environment.NewLine);
+
+            for (int i = 0; i < 3; i++)
+            {
+                _logWriter.Write(bytes, 0, bytes.Length);
+            }
+
+            _logWriter.Flush();
         }
 
-        public static void WriteLogHeader(StreamWriter writer, string arguments, string url)
+        /// <summary>
+        /// Writes log header to log.
+        /// </summary>
+        /// <param name="arguments">The arguments to log in header.</param>
+        /// <param name="url">The URL to log in header.</param>
+        public static void WriteLogHeader(string arguments, string url)
         {
-            /* Log header. */
-            writer.WriteLine("[" + DateTime.Now + "]");
-            writer.WriteLine("url: " + url);
-            writer.WriteLine("cmd: " + arguments);
-            writer.WriteLine();
-            writer.WriteLine("OUTPUT");
+            var sb = new StringBuilder();
+
+            sb.AppendLine("[" + DateTime.Now + "]");
+            sb.AppendLine("url: " + url);
+            sb.AppendLine("cmd: " + arguments);
+            sb.AppendLine();
+            sb.AppendLine("OUTPUT");
+
+            // Write log header to stream
+            byte[] bytes = Encoding.UTF8.GetBytes(sb.ToString());
+
+            _logWriter.Write(bytes, 0, bytes.Length);
+            _logWriter.Flush();
+        }
+
+        /// <summary>
+        /// Writes text to log writer.
+        /// </summary>
+        /// <param name="text">The text to write to log.</param>
+        public static void WriteLogText(string text)
+        {
+            byte[] bytes = Encoding.UTF8.GetBytes(text);
+
+            _logWriter.Write(bytes, 0, bytes.Length);
+            _logWriter.Flush();
         }
     }
 }

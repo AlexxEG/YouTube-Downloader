@@ -1,15 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace YouTube_Downloader.Classes
 {
     public class PlaylistReader
     {
-        private StreamWriter log;
+        private StringBuilder log = new StringBuilder();
         private StreamReader reader;
         private Process youtubeDl;
+
+        private string _arguments;
+        private string _url;
 
         public Playlist Playlist { get; set; }
 
@@ -21,15 +25,11 @@ namespace YouTube_Downloader.Classes
             int onlineCount = 0;
 
             string json_dir = Program.GetJsonDirectory();
-            string arguments = string.Format(YoutubeDlHelper.Cmd_JSON_Info_Playlist, json_dir, playlist_id, url);
 
-            youtubeDl = YoutubeDlHelper.StartProcess(arguments);
+            _arguments = string.Format(YoutubeDlHelper.Cmd_JSON_Info_Playlist, json_dir, playlist_id, url);
+            _url = url;
 
-            /* Write output to log. */
-            log = YoutubeDlHelper.CreateLogWriter();
-
-            YoutubeDlHelper.WriteLogHeader(log, arguments, url);
-
+            youtubeDl = YoutubeDlHelper.StartProcess(_arguments);
             reader = youtubeDl.StandardOutput;
 
             while ((line = reader.ReadLine()) != null)
@@ -56,7 +56,7 @@ namespace YouTube_Downloader.Classes
 
             while ((line = reader.ReadLine()) != null)
             {
-                log.WriteLine(line);
+                log.AppendLine(line);
 
                 Match m;
 
@@ -76,7 +76,7 @@ namespace YouTube_Downloader.Classes
             if (line == null)
             {
                 /* End of stream. */
-                YoutubeDlHelper.WriteLogFooter(log);
+                this.WriteLog();
 
                 youtubeDl.WaitForExit();
 
@@ -91,6 +91,16 @@ namespace YouTube_Downloader.Classes
             this.Playlist.Videos.Add(video);
 
             return video;
+        }
+
+        private void WriteLog()
+        {
+            lock (YoutubeDlHelper.GetLogWriter())
+            {
+                YoutubeDlHelper.WriteLogHeader(_arguments, _url);
+                YoutubeDlHelper.WriteLogText(log.ToString());
+                YoutubeDlHelper.WriteLogFooter();
+            }
         }
     }
 }

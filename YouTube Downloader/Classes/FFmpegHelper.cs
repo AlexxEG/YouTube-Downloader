@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
@@ -26,6 +27,8 @@ namespace YouTube_Downloader.Classes
 
         public enum FileType { Audio, Error, Video }
 
+        private static FileStream _logWriter;
+
         /// <summary>
         /// Gets the path to FFmpeg executable.
         /// </summary>
@@ -44,24 +47,26 @@ namespace YouTube_Downloader.Classes
             string line = "";
             bool hasAudioStream = false;
 
-            /* Write output to log. */
-            using (var writer = CreateLogWriter())
+            var sb = new StringBuilder();
+
+            while ((line = process.StandardError.ReadLine()) != null)
             {
-                WriteLogHeader(writer, arguments);
+                sb.AppendLine(line);
+                line = line.Trim();
 
-                while ((line = process.StandardError.ReadLine()) != null)
+                if (line.StartsWith("Stream #") && line.Contains("Audio"))
                 {
-                    writer.WriteLine(line);
-                    line = line.Trim();
-
-                    if (line.StartsWith("Stream #") && line.Contains("Audio"))
-                    {
-                        /* File has audio stream. */
-                        hasAudioStream = true;
-                    }
+                    /* File has audio stream. */
+                    hasAudioStream = true;
                 }
+            }
 
-                WriteLogFooter(writer);
+            // Write output to log.
+            lock (GetLogWriter())
+            {
+                WriteLogHeader(arguments);
+                WriteLogText(sb.ToString());
+                WriteLogFooter();
             }
 
             process.WaitForExit();
@@ -85,70 +90,54 @@ namespace YouTube_Downloader.Classes
 
             Process process;
 
-            using (var writer = CreateLogWriter())
+            var sb = new StringBuilder();
+
+            using (process = StartProcess(argsAudio))
             {
-                WriteLogHeader(writer, argsAudio);
+                string line = "";
+                bool hasAudio = false;
 
-                using (process = StartProcess(argsAudio))
+                while ((line = process.StandardError.ReadLine()) != null)
                 {
-                    string line = "";
-                    bool hasAudio = false;
+                    sb.AppendLine(line);
+                    line = line.Trim();
 
-                    while ((line = process.StandardError.ReadLine()) != null)
+                    if (line.StartsWith("major_brand"))
                     {
-                        writer.WriteLine(line);
-                        line = line.Trim();
+                        string value = line.Split(':')[1].Trim();
 
-                        if (line.StartsWith("major_brand"))
+                        if (!value.Contains("dash"))
                         {
-                            string value = line.Split(':')[1].Trim();
-
-                            if (!value.Contains("dash"))
-                            {
-                                errors.Add("Audio doesn't appear to be a DASH file. Non-critical.");
-                            }
-                        }
-                        else if (line.StartsWith("Stream #"))
-                        {
-                            if (line.Contains("Audio"))
-                            {
-                                hasAudio = true;
-                            }
-                            else if (line.Contains("Video"))
-                            {
-                                errors.Add("Audio file also has a video stream.");
-                            }
+                            errors.Add("Audio doesn't appear to be a DASH file. Non-critical.");
                         }
                     }
-
-                    if (!hasAudio)
+                    else if (line.StartsWith("Stream #"))
                     {
-                        errors.Add("Audio file doesn't audio.");
+                        if (line.Contains("Audio"))
+                        {
+                            hasAudio = true;
+                        }
+                        else if (line.Contains("Video"))
+                        {
+                            errors.Add("Audio file also has a video stream.");
+                        }
                     }
                 }
 
-                WriteLogFooter(writer);
+                if (!hasAudio)
+                {
+                    errors.Add("Audio file doesn't audio.");
+                }
+            }
+
+            lock (GetLogWriter())
+            {
+                WriteLogHeader(argsAudio);
+                WriteLogText(sb.ToString());
+                WriteLogFooter();
             }
 
             return errors;
-        }
-
-        /// <summary>
-        /// Opens a <see cref="System.IO.StreamWriter"/> for FFmpeg log file.
-        /// </summary>
-        private static StreamWriter CreateLogWriter()
-        {
-            string folder = Program.GetLogsDirectory();
-
-            if (!Directory.Exists(folder))
-                Directory.CreateDirectory(folder);
-
-            StreamWriter writer = new StreamWriter(Path.Combine(folder, "ffmpeg.log"), true)
-            {
-                AutoFlush = true
-            };
-
-            return writer;
         }
 
         /// <summary>
@@ -165,18 +154,19 @@ namespace YouTube_Downloader.Classes
             Process process = FFmpegHelper.StartProcess(arguments);
 
             string line = "";
+            var sb = new StringBuilder();
 
-            /* Write output to log. */
-            using (var writer = CreateLogWriter())
+            while ((line = process.StandardError.ReadLine()) != null)
             {
-                WriteLogHeader(writer, arguments);
+                sb.AppendLine(line);
+            }
 
-                while ((line = process.StandardError.ReadLine()) != null)
-                {
-                    writer.WriteLine(line);
-                }
-
-                WriteLogFooter(writer);
+            // Write output to log.
+            lock (GetLogWriter())
+            {
+                WriteLogHeader(arguments);
+                WriteLogText(sb.ToString());
+                WriteLogFooter();
             }
 
             process.WaitForExit();
@@ -209,58 +199,59 @@ namespace YouTube_Downloader.Classes
             bool started = false;
             double milliseconds = 0;
             string line = "";
+            var sb = new StringBuilder();
 
-            /* Write output to log. */
-            using (var writer = CreateLogWriter())
+            while ((line = process.StandardError.ReadLine()) != null)
             {
-                WriteLogHeader(writer, arguments);
+                sb.AppendLine(line);
 
-                while ((line = process.StandardError.ReadLine()) != null)
+                // 'bw' is null, don't report any progress
+                if (bw != null && bw.WorkerReportsProgress)
                 {
-                    writer.WriteLine(line);
+                    line = line.Trim();
 
-                    // 'bw' is null, don't report any progress
-                    if (bw != null && bw.WorkerReportsProgress)
+                    if (line.StartsWith("Duration: "))
                     {
-                        line = line.Trim();
+                        int start = "Duration: ".Length;
+                        int length = "00:00:00.00".Length;
 
-                        if (line.StartsWith("Duration: "))
-                        {
-                            int start = "Duration: ".Length;
-                            int length = "00:00:00.00".Length;
+                        string time = line.Substring(start, length);
 
-                            string time = line.Substring(start, length);
+                        milliseconds = TimeSpan.Parse(time).TotalMilliseconds;
+                    }
+                    else if (line == "Press [q] to stop, [?] for help")
+                    {
+                        started = true;
 
-                            milliseconds = TimeSpan.Parse(time).TotalMilliseconds;
-                        }
-                        else if (line == "Press [q] to stop, [?] for help")
-                        {
-                            started = true;
+                        bw.ReportProgress(0);
+                    }
+                    else if (started && line.StartsWith("size="))
+                    {
+                        int start = line.IndexOf("time=") + 5;
+                        int length = "00:00:00.00".Length;
 
-                            bw.ReportProgress(0);
-                        }
-                        else if (started && line.StartsWith("size="))
-                        {
-                            int start = line.IndexOf("time=") + 5;
-                            int length = "00:00:00.00".Length;
+                        string time = line.Substring(start, length);
 
-                            string time = line.Substring(start, length);
+                        double currentMilli = TimeSpan.Parse(time).TotalMilliseconds;
+                        double percentage = (currentMilli / milliseconds) * 100;
 
-                            double currentMilli = TimeSpan.Parse(time).TotalMilliseconds;
-                            double percentage = (currentMilli / milliseconds) * 100;
+                        bw.ReportProgress(System.Convert.ToInt32(percentage));
+                    }
+                    else if (started && line == string.Empty)
+                    {
+                        started = false;
 
-                            bw.ReportProgress(System.Convert.ToInt32(percentage));
-                        }
-                        else if (started && line == string.Empty)
-                        {
-                            started = false;
-
-                            bw.ReportProgress(100);
-                        }
+                        bw.ReportProgress(100);
                     }
                 }
+            }
 
-                WriteLogFooter(writer);
+            // Write output to log.
+            lock (GetLogWriter())
+            {
+                WriteLogHeader(arguments);
+                WriteLogText(sb.ToString());
+                WriteLogFooter();
             }
 
             process.WaitForExit();
@@ -545,6 +536,24 @@ namespace YouTube_Downloader.Classes
         }
 
         /// <summary>
+        /// Returns the <see cref="FileStream"/> for the FFmpeg log file, initializing it if necessary.
+        /// </summary>
+        private static FileStream GetLogWriter()
+        {
+            if (_logWriter != null)
+                return _logWriter;
+
+            string folder = Program.GetLogsDirectory();
+
+            if (!Directory.Exists(folder))
+                Directory.CreateDirectory(folder);
+
+            _logWriter = new FileStream(Path.Combine(folder, "ffmpeg.log"), FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
+
+            return _logWriter;
+        }
+
+        /// <summary>
         /// Creates a Process with the given arguments, then returns it after it has started.
         /// </summary>
         /// <param name="arguments">The process arguments.</param>
@@ -566,30 +575,52 @@ namespace YouTube_Downloader.Classes
         }
 
         /// <summary>
-        /// Writes log footer to <see cref="StreamWriter"/>.
+        /// Writes log footer to log.
         /// </summary>
-        /// <param name="writer">The <see cref="StreamWriter"/> to write to.</param>
-        private static void WriteLogFooter(StreamWriter writer)
+        private static void WriteLogFooter()
         {
             // Write log footer to stream.
             // Possibly write elapsed time and/or error in future.
-            writer.WriteLine();
-            writer.WriteLine();
-            writer.WriteLine();
+            byte[] bytes = Encoding.UTF8.GetBytes(Environment.NewLine);
+
+            for (int i = 0; i < 3; i++)
+            {
+                _logWriter.Write(bytes, 0, bytes.Length);
+            }
+
+            _logWriter.Flush();
         }
 
         /// <summary>
-        /// Writes log header to <see cref="StreamWriter"/>.
+        /// Writes log header to log.
         /// </summary>
-        /// <param name="writer">The <see cref="StreamWriter"/> to write to.</param>
         /// <param name="arguments">The arguments to log in header.</param>
-        private static void WriteLogHeader(StreamWriter writer, string arguments)
+        private static void WriteLogHeader(string arguments)
         {
+            var sb = new StringBuilder();
+
+            sb.AppendLine("[" + DateTime.Now + "]");
+            sb.AppendLine("cmd: " + arguments);
+            sb.AppendLine();
+            sb.AppendLine("OUTPUT");
+
             // Write log header to stream
-            writer.WriteLine("[" + DateTime.Now + "]");
-            writer.WriteLine("cmd: " + arguments);
-            writer.WriteLine();
-            writer.WriteLine("OUTPUT");
+            byte[] bytes = Encoding.UTF8.GetBytes(sb.ToString());
+
+            _logWriter.Write(bytes, 0, bytes.Length);
+            _logWriter.Flush();
+        }
+
+        /// <summary>
+        /// Writes text to log writer.
+        /// </summary>
+        /// <param name="text">The text to write to log.</param>
+        private static void WriteLogText(string text)
+        {
+            byte[] bytes = Encoding.UTF8.GetBytes(text);
+
+            _logWriter.Write(bytes, 0, bytes.Length);
+            _logWriter.Flush();
         }
     }
 }
