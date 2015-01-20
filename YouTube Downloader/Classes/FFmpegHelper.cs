@@ -419,6 +419,9 @@ namespace YouTube_Downloader.Classes
                 process.Kill();
         }
 
+        /// <summary>
+        /// Returns the bit rate of the given file.
+        /// </summary>
         public static int GetBitRate(string file)
         {
             int result = -1;
