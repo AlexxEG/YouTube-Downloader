@@ -8,10 +8,11 @@ namespace YouTube_Downloader.Classes
 {
     public class YoutubeDlHelper
     {
-        public const string Cmd_JSON_Info = " -o \"{0}\\%(title)s\" --no-playlist --skip-download --restrict-filenames --write-info-json \"{1}\"";
+        private const string Cmd_JSON_Info = " -o \"{0}\\%(title)s\" --no-playlist --skip-download --restrict-filenames --write-info-json \"{1}\"";
         public const string Cmd_JSON_Info_Playlist = " -i -o \"{0}\\playlist-{1}\\%(playlist_index)s-%(title)s\" --restrict-filenames --skip-download --write-info-json \"{2}\"";
+        private const string Log_Filename = "youtube-dl.log";
 
-        public static string YouTubeDlPath = Path.Combine(Application.StartupPath, "externals", "youtube-dl.exe");
+        private static string YouTubeDlPath = Path.Combine(Application.StartupPath, "externals", "youtube-dl.exe");
 
         private static FileStream _logWriter;
 
@@ -25,7 +26,7 @@ namespace YouTube_Downloader.Classes
             if (!Directory.Exists(folder))
                 Directory.CreateDirectory(folder);
 
-            _logWriter = new FileStream(Path.Combine(folder, "youtube-dl.log"), FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
+            _logWriter = new FileStream(Path.Combine(folder, Log_Filename), FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
 
             return _logWriter;
         }
@@ -106,7 +107,7 @@ namespace YouTube_Downloader.Classes
         {
             // Write log footer to stream.
             // Possibly write elapsed time and/or error in future.
-            byte[] bytes = Encoding.UTF8.GetBytes(Environment.NewLine);
+            byte[] bytes = Common.LogEncoding.GetBytes(Environment.NewLine);
 
             for (int i = 0; i < 3; i++)
             {
@@ -132,7 +133,7 @@ namespace YouTube_Downloader.Classes
             sb.AppendLine("OUTPUT");
 
             // Write log header to stream
-            byte[] bytes = Encoding.UTF8.GetBytes(sb.ToString());
+            byte[] bytes = Common.LogEncoding.GetBytes(sb.ToString());
 
             _logWriter.Write(bytes, 0, bytes.Length);
             _logWriter.Flush();
@@ -144,7 +145,7 @@ namespace YouTube_Downloader.Classes
         /// <param name="text">The text to write to log.</param>
         public static void WriteLogText(string text)
         {
-            byte[] bytes = Encoding.UTF8.GetBytes(text);
+            byte[] bytes = Common.LogEncoding.GetBytes(text);
 
             _logWriter.Write(bytes, 0, bytes.Length);
             _logWriter.Flush();

@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.cs" />
+    <Compile Include="Classes\Common.cs" />
     <Compile Include="Classes\FFmpegHelper.cs" />
     <Compile Include="Classes\WindowStates.cs" />
     <Compile Include="DeDauwJeroen\FileDownloader.cs" />

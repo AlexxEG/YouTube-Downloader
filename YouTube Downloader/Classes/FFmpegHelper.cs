@@ -24,6 +24,7 @@ namespace YouTube_Downloader.Classes
         private const string Cmd_Crop_From = " -y -ss {0} -i \"{1}\" -acodec copy{2} \"{3}\"";
         private const string Cmd_Crop_From_To = " -y -ss {0} -i \"{1}\" -to {2} -acodec copy{3} \"{4}\"";
         private const string Cmd_Get_File_Info = " -i \"{0}\"";
+        private const string Log_Filename = "ffmpeg.log";
 
         public enum FileType { Audio, Error, Video }
 
@@ -551,7 +552,7 @@ namespace YouTube_Downloader.Classes
             if (!Directory.Exists(folder))
                 Directory.CreateDirectory(folder);
 
-            _logWriter = new FileStream(Path.Combine(folder, "ffmpeg.log"), FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
+            _logWriter = new FileStream(Path.Combine(folder, Log_Filename), FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
 
             return _logWriter;
         }
@@ -584,7 +585,7 @@ namespace YouTube_Downloader.Classes
         {
             // Write log footer to stream.
             // Possibly write elapsed time and/or error in future.
-            byte[] bytes = Encoding.UTF8.GetBytes(Environment.NewLine);
+            byte[] bytes = Common.LogEncoding.GetBytes(Environment.NewLine);
 
             for (int i = 0; i < 3; i++)
             {
@@ -608,7 +609,7 @@ namespace YouTube_Downloader.Classes
             sb.AppendLine("OUTPUT");
 
             // Write log header to stream
-            byte[] bytes = Encoding.UTF8.GetBytes(sb.ToString());
+            byte[] bytes = Common.LogEncoding.GetBytes(sb.ToString());
 
             _logWriter.Write(bytes, 0, bytes.Length);
             _logWriter.Flush();
@@ -620,7 +621,7 @@ namespace YouTube_Downloader.Classes
         /// <param name="text">The text to write to log.</param>
         private static void WriteLogText(string text)
         {
-            byte[] bytes = Encoding.UTF8.GetBytes(text);
+            byte[] bytes = Common.LogEncoding.GetBytes(text);
 
             _logWriter.Write(bytes, 0, bytes.Length);
             _logWriter.Flush();
