@@ -30,6 +30,10 @@ namespace YouTube_Downloader.Classes
             return _logWriter;
         }
 
+        /// <summary>
+        /// Returns a <see cref="VideoInfo"/> of the given video.
+        /// </summary>
+        /// <param name="url">The url to the video.</param>
         public static VideoInfo GetVideoInfo(string url)
         {
             string json_dir = Program.GetJsonDirectory();
