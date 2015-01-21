@@ -6,6 +6,7 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using YouTube_Downloader.Classes;
+using YouTube_Downloader.Enums;
 using YouTube_Downloader.Operations;
 using YouTube_Downloader.Properties;
 
@@ -269,7 +270,7 @@ namespace YouTube_Downloader
                 item.SubItems.Add(Helper.FormatVideoLength(tempFormat.VideoInfo.Duration));
 
                 // Combine video and audio file size if the format is DASH and not AudioOnly
-                if (tempFormat.DASH && !tempFormat.AudioOnly)
+                if (tempFormat.FormatType != FormatType.Normal && !tempFormat.AudioOnly)
                     item.SubItems.Add(Helper.FormatFileSize(tempFormat.FileSize + Helper.GetAudioFormat(tempFormat.VideoInfo).FileSize));
                 else
                     item.SubItems.Add(Helper.FormatFileSize(tempFormat.FileSize));
@@ -298,7 +299,7 @@ namespace YouTube_Downloader
 
                 lvQueue.AddEmbeddedControl(ll, 5, item.Index);
 
-                if (tempFormat.AudioOnly || !tempFormat.DASH)
+                if (tempFormat.AudioOnly || tempFormat.FormatType == FormatType.Normal)
                     item.Download(tempFormat.DownloadUrl, Path.Combine(path, filename));
                 else
                 {
@@ -353,7 +354,7 @@ namespace YouTube_Downloader
                 long total = format.FileSize;
 
                 // If the format is DASH and not a AudioOnly format, combine audio and video size.
-                if (format.DASH && !format.AudioOnly)
+                if (format.FormatType != FormatType.Normal && !format.AudioOnly)
                     total += Helper.GetAudioFormat(format.VideoInfo).FileSize;
 
                 lFileSize.Text = Helper.FormatFileSize(total);

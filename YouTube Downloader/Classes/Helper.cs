@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
+using YouTube_Downloader.Enums;
 using YouTube_Downloader.Properties;
 
 namespace YouTube_Downloader.Classes
@@ -247,11 +248,11 @@ namespace YouTube_Downloader.Classes
                     continue;
 
                 // Exclude DASH videos if dash is false.
-                if (!dash && format.DASH)
+                if (!dash && format.FormatType != FormatType.Normal)
                     continue;
 
                 // Only include .mp4 DASH videos if dash is true.
-                if (dash && !format.DASH || !format.Extension.Contains("mp4"))
+                if (dash && format.FormatType == FormatType.Normal || !format.Extension.Contains("mp4"))
                     continue;
 
                 formats.Add(format);

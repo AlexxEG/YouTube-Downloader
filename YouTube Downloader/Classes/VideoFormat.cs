@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
+using YouTube_Downloader.Enums;
 
 namespace YouTube_Downloader.Classes
 {
@@ -17,10 +18,6 @@ namespace YouTube_Downloader.Classes
         /// Gets whether the format is audio only.
         /// </summary>
         public bool AudioOnly { get; private set; }
-        /// <summary>
-        /// Gets whether the format is a DASH format.
-        /// </summary>
-        public bool DASH { get; private set; }
         /// <summary>
         /// Gets the download url.
         /// </summary>
@@ -37,6 +34,10 @@ namespace YouTube_Downloader.Classes
         /// Gets the format text.
         /// </summary>
         public string Format { get; private set; }
+        /// <summary>
+        /// Gets the format type.
+        /// </summary>
+        public FormatType FormatType { get; private set; }
         /// <summary>
         /// Gets the frames per second. Null if not defined.
         /// </summary>
@@ -125,8 +126,21 @@ namespace YouTube_Downloader.Classes
         {
             JToken format_note = token.SelectToken("format_note");
 
-            if (format_note != null && format_note.ToString().Contains("DASH"))
-                this.DASH = true;
+            if (format_note == null)
+            {
+                this.FormatType = FormatType.Normal;
+            }
+            else
+            {
+                if (format_note.ToString().ToLower().Contains("nondash"))
+                {
+                    this.FormatType = FormatType.NonDASH;
+                }
+                else if (format_note.ToString().ToLower().Contains("dash"))
+                {
+                    this.FormatType = FormatType.DASH;
+                }
+            }
 
             this.DownloadUrl = token["url"].ToString();
             this.Extension = token["ext"].ToString();
@@ -170,17 +184,17 @@ namespace YouTube_Downloader.Classes
                 // Only split by dash with whitespace around
                 string[] dash_split = new string[] { " - " };
 
-                if (this.DASH)
+                if (this.FormatType == FormatType.DASH)
                 {
                     text = string.Format("DASH Video - {0} (.{1})", Format.Split(dash_split, StringSplitOptions.None)[1].Replace("(DASH video)", "").Trim(), this.Extension);
-
-                    if (Format.Contains("nondash"))
-                        text = "non-" + text;
                 }
                 else
                 {
                     text = string.Format("{0} (.{1})", Format.Split(dash_split, StringSplitOptions.None)[1].Trim(), this.Extension);
                 }
+
+                if (this.FormatType == FormatType.NonDASH)
+                    text = "non-" + text;
 
                 if (FPS != "30")
                     text = Regex.Replace(text, @"^(\d+x\d+)(\s.*)$", "$1x" + FPS + "$2");

@@ -74,6 +74,7 @@
     <Compile Include="Delegates\SetItemTextDelegate.cs" />
     <Compile Include="Delegates\SetTextDelegate.cs" />
     <Compile Include="Enums\FFmpegFileType.cs" />
+    <Compile Include="Enums\FormatType.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
