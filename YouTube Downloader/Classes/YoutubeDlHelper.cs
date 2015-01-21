@@ -21,12 +21,12 @@ namespace YouTube_Downloader.Classes
         /// </summary>
         public static FileStream GetLogWriter()
         {
-            string folder = Program.GetLogsDirectory();
+            if (_logWriter != null)
+                return _logWriter;
 
-            if (!Directory.Exists(folder))
-                Directory.CreateDirectory(folder);
+            string filename = Path.Combine(Program.GetLogsDirectory(), Log_Filename);
 
-            _logWriter = new FileStream(Path.Combine(folder, Log_Filename), FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
+            _logWriter = new FileStream(filename, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
 
             return _logWriter;
         }

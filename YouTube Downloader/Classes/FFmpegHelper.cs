@@ -547,12 +547,9 @@ namespace YouTube_Downloader.Classes
             if (_logWriter != null)
                 return _logWriter;
 
-            string folder = Program.GetLogsDirectory();
+            string filename = Path.Combine(Program.GetLogsDirectory(), Log_Filename);
 
-            if (!Directory.Exists(folder))
-                Directory.CreateDirectory(folder);
-
-            _logWriter = new FileStream(Path.Combine(folder, Log_Filename), FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
+            _logWriter = new FileStream(filename, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
 
             return _logWriter;
         }
