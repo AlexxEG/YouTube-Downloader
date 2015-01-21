@@ -2,8 +2,8 @@
 {
     public enum FormatType
     {
-        DASH,
-        Normal,
-        NonDASH
+        DASH = 1,
+        Normal = 0,
+        NonDASH = 2
     }
 }
