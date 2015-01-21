@@ -612,7 +612,18 @@ namespace YouTube_Downloader
 
         private void optionsMenuItem_Click(object sender, EventArgs e)
         {
-
+            using (var of = new OptionsForm())
+            {
+                if (of.ShowDialog(this) == DialogResult.OK)
+                {
+                    if (selectedVideo != null)
+                    {
+                        cbQuality.Items.Clear();
+                        cbQuality.Items.AddRange(this.CheckFormats(selectedVideo.Formats));
+                        cbQuality.SelectedIndex = cbQuality.Items.Count - 1;
+                    }
+                }
+            }
         }
 
         #endregion
@@ -1088,8 +1099,13 @@ namespace YouTube_Downloader
             {
                 VideoFormat f = formats[i];
 
-                if (f.Extension.Contains("webm"))
+                if (f.Extension.Contains("webm") ||
+                    !Settings.Default.IncludeNonDASH && f.Format.ToLower().Contains("nondash") ||
+                    !Settings.Default.IncludeDASH && f.Format.ToLower().Contains("dash") ||
+                    !Settings.Default.IncludeNormal && !f.Format.ToLower().Contains("dash"))
+                {
                     formats.RemoveAt(i);
+                }
             }
 
             return formats.ToArray();

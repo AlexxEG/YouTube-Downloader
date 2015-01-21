@@ -140,5 +140,41 @@ namespace YouTube_Downloader.Properties {
                 this["LastPlaylistUrl"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool IncludeDASH {
+            get {
+                return ((bool)(this["IncludeDASH"]));
+            }
+            set {
+                this["IncludeDASH"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool IncludeNonDASH {
+            get {
+                return ((bool)(this["IncludeNonDASH"]));
+            }
+            set {
+                this["IncludeNonDASH"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool IncludeNormal {
+            get {
+                return ((bool)(this["IncludeNormal"]));
+            }
+            set {
+                this["IncludeNormal"] = value;
+            }
+        }
     }
 }
