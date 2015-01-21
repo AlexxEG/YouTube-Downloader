@@ -276,7 +276,7 @@ namespace YouTube_Downloader.Operations
                     }
                     else
                     {
-                        VideoFormat audioFormat = Helper.GetAudioFormat(video);
+                        VideoFormat audioFormat = Helper.GetAudioFormat(videoFormat);
                         // Add '_audio' & '_video' to end of filename. Only get filename, not full path.
                         string audioFile = Regex.Replace(finalFile, @"^(.*)(\..*)$", "$1_audio$2");
                         string videoFile = Regex.Replace(finalFile, @"^(.*)(\..*)$", "$1_video$2");

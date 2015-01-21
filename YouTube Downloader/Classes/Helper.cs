@@ -175,15 +175,15 @@ namespace YouTube_Downloader.Classes
         }
 
         /// <summary>
-        /// Returns the highest quality DASH audio format from the given VideoInfo.
+        /// Returns the highest quality DASH audio format from the given VideoFormat.
         /// </summary>
-        /// <param name="video">The video to get audio format from.</param>
-        public static VideoFormat GetAudioFormat(VideoInfo video)
+        /// <param name="format">The format to get audio format from.</param>
+        public static VideoFormat GetAudioFormat(VideoFormat format)
         {
             List<VideoFormat> audio = new List<VideoFormat>();
 
             // Add all audio only formats
-            audio.AddRange(video.Formats.FindAll(f => f.AudioOnly == true));
+            audio.AddRange(format.VideoInfo.Formats.FindAll(f => f.AudioOnly == true && f.FormatType == format.FormatType));
 
             // Return null if no audio is found
             if (audio.Count == 0)
