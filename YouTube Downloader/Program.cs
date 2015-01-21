@@ -29,7 +29,8 @@ namespace YouTube_Downloader
 
             Program.FFmpegAvailable = File.Exists(FFmpegHelper.FFmpegPath);
 
-            System.Net.ServicePointManager.DefaultConnectionLimit = 10;
+            // Up the connection limit for getting the file sizes of video formats
+            System.Net.ServicePointManager.DefaultConnectionLimit = 20;
 
             new App().Run(args);
         }
