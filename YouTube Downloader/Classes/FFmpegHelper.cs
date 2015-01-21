@@ -6,6 +6,7 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using YouTube_Downloader.Enums;
 
 namespace YouTube_Downloader.Classes
 {
@@ -25,8 +26,6 @@ namespace YouTube_Downloader.Classes
         private const string Cmd_Crop_From_To = " -y -ss {0} -i \"{1}\" -to {2} -acodec copy{3} \"{4}\"";
         private const string Cmd_Get_File_Info = " -i \"{0}\"";
         private const string Log_Filename = "ffmpeg.log";
-
-        public enum FileType { Audio, Error, Video }
 
         private static FileStream _logWriter;
 
@@ -279,7 +278,7 @@ namespace YouTube_Downloader.Classes
             {
                 string.Format("{0:00}:{1:00}:{2:00}.{3:000}", start.Hours, start.Minutes, start.Seconds, start.Milliseconds),
                 input,
-                GetFileType(input) == FileType.Video ? " -vcodec copy" : "",
+                GetFileType(input) == FFmpegFileType.Video ? " -vcodec copy" : "",
                 output
             };
 
@@ -364,7 +363,7 @@ namespace YouTube_Downloader.Classes
                 string.Format("{0:00}:{1:00}:{2:00}.{3:000}", start.Hours, start.Minutes, start.Seconds, start.Milliseconds),
                 input,
                 string.Format("{0:00}:{1:00}:{2:00}.{3:000}", length.Hours, length.Minutes, length.Seconds, length.Milliseconds),
-                GetFileType(input) == FileType.Video ? " -vcodec copy" : "",
+                GetFileType(input) == FFmpegFileType.Video ? " -vcodec copy" : "",
                 output
             };
 
@@ -496,9 +495,9 @@ namespace YouTube_Downloader.Classes
         /// Returns the <see cref="FileType"/> of the given file.
         /// </summary>
         /// <param name="file">The file to get <see cref="FileType"/> from.</param>
-        public static FileType GetFileType(string file)
+        public static FFmpegFileType GetFileType(string file)
         {
-            FileType result = FileType.Error;
+            FFmpegFileType result = FFmpegFileType.Error;
             string arguments = string.Format(" -i \"{0}\"", file);
             Process process = StartProcess(arguments);
             List<string> lines = new List<string>();
@@ -519,14 +518,14 @@ namespace YouTube_Downloader.Classes
                     if (line.Contains("Video: "))
                     {
                         // File contains video stream, so it's a video file, possibly without audio.
-                        result = FileType.Video;
+                        result = FFmpegFileType.Video;
                         break;
                     }
                     else if (line.Contains("Audio: "))
                     {
                         // File contains audio stream. Keep looking for a video stream,
                         // and if found it's probably a video file, and an audio file if not.
-                        result = FileType.Audio;
+                        result = FFmpegFileType.Audio;
                     }
                 }
             }
