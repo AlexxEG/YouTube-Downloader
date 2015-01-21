@@ -176,7 +176,7 @@ namespace YouTube_Downloader.Classes
             {
                 text = string.Format("DASH Audio - {0} kbps (.{1})", AudioBitRate, Extension);
 
-                if (Format.Contains("nondash"))
+                if (this.FormatType == FormatType.NonDASH)
                     text = "non-" + text;
             }
             else
@@ -184,7 +184,7 @@ namespace YouTube_Downloader.Classes
                 // Only split by dash with whitespace around
                 string[] dash_split = new string[] { " - " };
 
-                if (this.FormatType == FormatType.DASH)
+                if (this.FormatType != FormatType.Normal)
                 {
                     text = string.Format("DASH Video - {0} (.{1})", Format.Split(dash_split, StringSplitOptions.None)[1].Replace("(DASH video)", "").Trim(), this.Extension);
                 }
