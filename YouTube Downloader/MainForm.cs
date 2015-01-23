@@ -6,6 +6,7 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using YouTube_Downloader.Classes;
+using YouTube_Downloader.Dialogs;
 using YouTube_Downloader.Enums;
 using YouTube_Downloader.Operations;
 using YouTube_Downloader.Properties;
