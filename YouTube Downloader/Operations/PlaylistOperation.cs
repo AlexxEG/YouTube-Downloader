@@ -126,6 +126,18 @@ namespace YouTube_Downloader.Operations
         /// <param name="dash">True to download DASH, false if not.</param>
         public void Download(string url, string output, bool dash)
         {
+            this.Download(url, output, dash, null);
+        }
+
+        /// <summary>
+        /// Starts the playlist download.
+        /// </summary>
+        /// <param name="url">The playlist url.</param>
+        /// <param name="output">The output directory to save all videos.</param>
+        /// <param name="dash">True to download DASH, false if not.</param>
+        /// <param name="videos">Videos to download.</param>
+        public void Download(string url, string output, bool dash, ICollection<VideoInfo> videos)
+        {
             this.Input = url;
             this.Output = output;
             this.SubItems[5].Text = this.Input;
@@ -138,7 +150,7 @@ namespace YouTube_Downloader.Operations
             worker.DoWork += worker_DoWork;
             worker.ProgressChanged += worker_ProgressChanged;
             worker.RunWorkerCompleted += worker_RunWorkerCompleted;
-            worker.RunWorkerAsync();
+            worker.RunWorkerAsync(videos);
 
             this.Status = OperationStatus.Working;
 
@@ -244,16 +256,35 @@ namespace YouTube_Downloader.Operations
             try
             {
                 int count = 0;
-                PlaylistReader reader = new PlaylistReader(this.Input);
-                VideoInfo video;
+                List<VideoInfo> videos = new List<VideoInfo>();
 
-                while (!worker.CancellationPending && (video = reader.Next()) != null)
+                if (e.Argument == null)
                 {
+                    PlaylistReader reader = new PlaylistReader(this.Input);
+                    VideoInfo video;
+
+                    while (!worker.CancellationPending && (video = reader.Next()) != null)
+                    {
+                        videos.Add(video);
+                    }
+                }
+                else
+                {
+                    ICollection<VideoInfo> arg = e.Argument as ICollection<VideoInfo>;
+
+                    videos.AddRange(arg);
+                }
+
+                foreach (VideoInfo video in videos)
+                {
+                    if (worker.CancellationPending)
+                        break;
+
                     count++;
 
                     VideoFormat videoFormat = Helper.GetPreferedFormat(video, useDash);
 
-                    this.SetText(string.Format("({0}/{1}) {2}", count, reader.Playlist.OnlineCount, video.Title));
+                    this.SetText(string.Format("({0}/{1}) {2}", count, videos.Count, video.Title));
                     this.SetItemText(this.SubItems[3], Helper.FormatVideoLength(video.Duration));
                     this.SetItemText(this.SubItems[4], Helper.FormatFileSize(videoFormat.FileSize));
 

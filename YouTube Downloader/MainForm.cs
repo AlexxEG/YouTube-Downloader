@@ -378,6 +378,8 @@ namespace YouTube_Downloader
 
         #region Playlist Tab
 
+        private BackgroundWorker _backgroundWorkerPlaylist;
+
         private void btnPlaylistBrowse_Click(object sender, EventArgs e)
         {
             OpenFolderDialog ofd = new OpenFolderDialog();
@@ -393,18 +395,138 @@ namespace YouTube_Downloader
             }
         }
 
-        private void btnPlaylistDownload_Click(object sender, EventArgs e)
+        private void btnGetPlaylist_Click(object sender, EventArgs e)
+        {
+            if (btnGetPlaylist.Text == "Get Playlist")
+            {
+                btnGetPlaylist.Text = "Cancel";
+                btnPlaylistDownloadAll.Enabled = false;
+
+                _backgroundWorkerPlaylist = new BackgroundWorker()
+                {
+                    WorkerReportsProgress = true,
+                    WorkerSupportsCancellation = true
+                };
+                _backgroundWorkerPlaylist.DoWork += _backgroundWorkerPlaylist_DoWork;
+                _backgroundWorkerPlaylist.ProgressChanged += _backgroundWorkerPlaylist_ProgressChanged;
+                _backgroundWorkerPlaylist.RunWorkerCompleted += _backgroundWorkerPlaylist_RunWorkerCompleted;
+                _backgroundWorkerPlaylist.RunWorkerAsync(txtPlaylistLink.Text);
+
+                lvPlaylistVideos.UseWaitCursor = true;
+
+                // Save playlist url
+                settings.LastPlaylistUrl = txtPlaylistLink.Text;
+            }
+            else if (btnGetPlaylist.Text == "Cancel")
+            {
+                _backgroundWorkerPlaylist.CancelAsync();
+            }
+        }
+
+        private void _backgroundWorkerPlaylist_DoWork(object sender, DoWorkEventArgs e)
+        {
+            string playlistUrl = e.Argument as string;
+            PlaylistReader reader = new PlaylistReader(playlistUrl);
+            VideoInfo video;
+
+            while ((video = reader.Next()) != null)
+            {
+                if (_backgroundWorkerPlaylist.CancellationPending)
+                {
+                    e.Result = false;
+                    break;
+                }
+
+                ListViewItem item = new ListViewItem(video.Title);
+                item.SubItems.Add(Helper.FormatVideoLength(video.Duration));
+                item.Checked = true;
+                item.Tag = video;
+
+                _backgroundWorkerPlaylist.ReportProgress(1, item);
+            }
+
+            e.Result = true;
+        }
+
+        private void _backgroundWorkerPlaylist_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            ListViewItem item = e.UserState as ListViewItem;
+
+            lvPlaylistVideos.Items.Add(item);
+            lvPlaylistVideos.TopItem = item;
+        }
+
+        private void _backgroundWorkerPlaylist_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            bool result = (bool)e.Result;
+
+            btnGetPlaylist.Text = "Get Playlist";
+            btnPlaylistDownloadAll.Enabled = result;
+            btnPlaylistDownloadSelected.Enabled = result;
+            lvPlaylistVideos.UseWaitCursor = false;
+
+            if (!result)
+            {
+                lvPlaylistVideos.Items.Clear();
+            }
+        }
+
+        private void btnPlaylistDownloadSelected_Click(object sender, EventArgs e)
+        {
+            List<VideoInfo> videos = new List<VideoInfo>();
+
+            foreach (ListViewItem item in lvPlaylistVideos.CheckedItems)
+            {
+                videos.Add(item.Tag as VideoInfo);
+            }
+
+            this.StartPlaylistOperation(videos);
+        }
+
+        private void btnPlaylistDownloadAll_Click(object sender, EventArgs e)
+        {
+            this.StartPlaylistOperation(null);
+        }
+
+        private void txtPlaylistLink_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                btnPlaylistDownloadAll.Enabled = Helper.IsPlaylist(txtPlaylistLink.Text);
+            }
+            catch (Exception)
+            {
+                btnPlaylistDownloadAll.Enabled = false;
+            }
+        }
+
+        private void cbPlaylistSaveTo_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            settings.SelectedDirectoryPlaylist = cbPlaylistSaveTo.SelectedIndex;
+        }
+
+        private void cbPlaylistQuality_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            settings.PreferedQualityPlaylist = cbPlaylistQuality.SelectedIndex;
+        }
+
+        private void chbPlaylistDASH_CheckedChanged(object sender, EventArgs e)
+        {
+            settings.UseDashPlaylist = chbPlaylistDASH.Checked;
+        }
+
+        private void StartPlaylistOperation(ICollection<VideoInfo> videos)
         {
             string path = cbPlaylistSaveTo.Text;
 
-            /* Make sure download directory exists. */
+            // Make sure download directory exists.
             if (!this.ValidateDirectory(path))
                 return;
 
             if (!cbPlaylistSaveTo.Items.Contains(path))
                 cbPlaylistSaveTo.Items.Add(path);
 
-            settings.LastPlaylistUrl = path;
+            settings.LastPlaylistUrl = txtPlaylistLink.Text;
 
             try
             {
@@ -432,7 +554,7 @@ namespace YouTube_Downloader
                 ll.LinkClicked += linkLabel_LinkClicked;
                 lvQueue.AddEmbeddedControl(ll, 5, item.Index);
 
-                item.Download(txtPlaylistLink.Text, path, chbPlaylistDASH.Checked);
+                item.Download(txtPlaylistLink.Text, path, chbPlaylistDASH.Checked, videos);
 
                 tabControl1.SelectedTab = queueTabPage;
             }
@@ -440,33 +562,6 @@ namespace YouTube_Downloader
             {
                 MessageBox.Show(this, ex.Message, ex.Source, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-        }
-
-        private void txtPlaylistLink_TextChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                btnPlaylistDownload.Enabled = Helper.IsPlaylist(txtPlaylistLink.Text);
-            }
-            catch (Exception)
-            {
-                btnPlaylistDownload.Enabled = false;
-            }
-        }
-
-        private void cbPlaylistSaveTo_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            settings.SelectedDirectoryPlaylist = cbPlaylistSaveTo.SelectedIndex;
-        }
-
-        private void cbPlaylistQuality_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            settings.PreferedQualityPlaylist = cbPlaylistQuality.SelectedIndex;
-        }
-
-        private void chbPlaylistDASH_CheckedChanged(object sender, EventArgs e)
-        {
-            settings.UseDashPlaylist = chbPlaylistDASH.Checked;
         }
 
         #endregion
