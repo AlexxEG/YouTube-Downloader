@@ -86,7 +86,26 @@ namespace YouTube_Downloader.Classes
                 return null;
             }
 
-            VideoInfo video = new VideoInfo(json_path);
+            int attempts = 0;
+            VideoInfo video = null;
+
+            // Sometimes youtube-dl is slower to create the json file, try a couple times
+            while (attempts < 10)
+            {
+                try
+                {
+                    video = new VideoInfo(json_path);
+                    break;
+                }
+                catch (IOException)
+                {
+                    attempts++;
+                    System.Threading.Thread.Sleep(100);
+                }
+            }
+
+            if (video == null)
+                throw new FileNotFoundException("File not found.", json_path);
 
             this.Playlist.Videos.Add(video);
 
