@@ -516,6 +516,18 @@ namespace YouTube_Downloader
             settings.UseDashPlaylist = chbPlaylistDASH.Checked;
         }
 
+        private void playlistSelectAllMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in lvPlaylistVideos.Items)
+                item.Checked = true;
+        }
+
+        private void playlistSelectNoneMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in lvPlaylistVideos.Items)
+                item.Checked = false;
+        }
+
         private void StartPlaylistOperation(ICollection<VideoInfo> videos)
         {
             string path = cbPlaylistSaveTo.Text;

@@ -64,6 +64,7 @@
             this.playlistTabPage = new System.Windows.Forms.TabPage();
             this.lvPlaylistVideos = new System.Windows.Forms.ListView();
             this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.groupBox7 = new System.Windows.Forms.GroupBox();
             this.btnPlaylistDownloadSelected = new System.Windows.Forms.Button();
             this.btnGetPlaylist = new System.Windows.Forms.Button();
@@ -94,9 +95,6 @@
             this.label5 = new System.Windows.Forms.Label();
             this.queueTabPage = new System.Windows.Forms.TabPage();
             this.chbAutoConvert = new System.Windows.Forms.CheckBox();
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.lvQueue = new ListViewEmbeddedControls.ListViewEx();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -104,6 +102,11 @@
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.cmPlaylistList = new System.Windows.Forms.ContextMenu();
+            this.playlistSelectAllMenuItem = new System.Windows.Forms.MenuItem();
+            this.playlistSelectNoneMenuItem = new System.Windows.Forms.MenuItem();
             this.groupBox1.SuspendLayout();
             this.bottomPanel.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -467,6 +470,11 @@
             this.columnHeader7.Text = "Title";
             this.columnHeader7.Width = 500;
             // 
+            // columnHeader8
+            // 
+            this.columnHeader8.Text = "Duration";
+            this.columnHeader8.Width = 80;
+            // 
             // groupBox7
             // 
             this.groupBox7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -819,19 +827,6 @@
             this.chbAutoConvert.Text = "Convert to MP3 automatically";
             this.chbAutoConvert.UseVisualStyleBackColor = true;
             // 
-            // openFileDialog1
-            // 
-            this.openFileDialog1.Filter = "MP4 files|*.mp4|MP3 files|*.mp3|All files|*.*";
-            // 
-            // saveFileDialog1
-            // 
-            this.saveFileDialog1.Filter = "MP3 files|*.mp3|MP4 files|*.mp4|All files|*.*";
-            // 
-            // columnHeader8
-            // 
-            this.columnHeader8.Text = "Duration";
-            this.columnHeader8.Width = 80;
-            // 
             // lvQueue
             // 
             this.lvQueue.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -875,6 +870,32 @@
             // columnHeader6
             // 
             this.columnHeader6.Text = "Input";
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.Filter = "MP4 files|*.mp4|MP3 files|*.mp3|All files|*.*";
+            // 
+            // saveFileDialog1
+            // 
+            this.saveFileDialog1.Filter = "MP3 files|*.mp3|MP4 files|*.mp4|All files|*.*";
+            // 
+            // cmPlaylistList
+            // 
+            this.cmPlaylistList.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.playlistSelectAllMenuItem,
+            this.playlistSelectNoneMenuItem});
+            // 
+            // playlistSelectAllMenuItem
+            // 
+            this.playlistSelectAllMenuItem.Index = 0;
+            this.playlistSelectAllMenuItem.Text = "Select all";
+            this.playlistSelectAllMenuItem.Click += new System.EventHandler(this.playlistSelectAllMenuItem_Click);
+            // 
+            // playlistSelectNoneMenuItem
+            // 
+            this.playlistSelectNoneMenuItem.Index = 1;
+            this.playlistSelectNoneMenuItem.Text = "Select none";
+            this.playlistSelectNoneMenuItem.Click += new System.EventHandler(this.playlistSelectNoneMenuItem_Click);
             // 
             // MainForm
             // 
@@ -990,6 +1011,9 @@
         private System.Windows.Forms.Button btnPlaylistDownloadSelected;
         private System.Windows.Forms.Button btnGetPlaylist;
         private System.Windows.Forms.ColumnHeader columnHeader8;
+        private System.Windows.Forms.ContextMenu cmPlaylistList;
+        private System.Windows.Forms.MenuItem playlistSelectAllMenuItem;
+        private System.Windows.Forms.MenuItem playlistSelectNoneMenuItem;
     }
 }
 
