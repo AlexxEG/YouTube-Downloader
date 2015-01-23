@@ -48,7 +48,7 @@ namespace YouTube_Downloader
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (this.IsWorking())
+            if (this.GetIsWorking())
             {
                 string text = "Files are being downloaded/converted/cut.\n\nAre you sure you want to quit?";
 
@@ -896,7 +896,7 @@ namespace YouTube_Downloader
         /// <summary>
         /// Returns true if there is a working IOperation.
         /// </summary>
-        private bool IsWorking()
+        private bool GetIsWorking()
         {
             foreach (ListViewItem item in lvQueue.Items)
             {
