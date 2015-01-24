@@ -72,6 +72,7 @@ namespace YouTube_Downloader.Classes
 
             string displayId = jObject["display_id"].ToString();
 
+            // Don't use thumbnail from .json as this fits better
             this.ThumbnailUrl = string.Format("https://i.ytimg.com/vi/{0}/mqdefault.jpg", displayId);
             this.Url = jObject["webpage_url"].ToString();
 
