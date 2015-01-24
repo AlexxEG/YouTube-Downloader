@@ -33,6 +33,7 @@ namespace YouTube_Downloader
             InitializeMainMenu();
 
             lvQueue.ContextMenu = contextMenu1;
+            lvPlaylistVideos.ContextMenu = cmPlaylistList;
 
             mtxtTo.ValidatingType = typeof(TimeSpan);
             mtxtFrom.ValidatingType = typeof(TimeSpan);
