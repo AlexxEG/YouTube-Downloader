@@ -174,31 +174,31 @@ namespace YouTube_Downloader.Classes
 
             if (this.AudioOnly)
             {
-                text = string.Format("DASH Audio - {0} kbps (.{1})", AudioBitRate, Extension);
-
-                if (this.FormatType == FormatType.NonDASH)
-                    text = "non-" + text;
+                text = string.Format("DASH Audio - {0} kbps (.{1})", this.AudioBitRate, this.Extension);
             }
             else
             {
                 // Only split by dash with whitespace around
                 string[] dash_split = new string[] { " - " };
+                string format = this.Format.Split(dash_split, StringSplitOptions.None)[1].Trim();
 
                 if (this.FormatType != FormatType.Normal)
                 {
-                    text = string.Format("DASH Video - {0} (.{1})", Format.Split(dash_split, StringSplitOptions.None)[1].Replace("(DASH video)", "").Trim(), this.Extension);
+                    format = format.Replace("(DASH video)", string.Empty).Trim();
+
+                    text = string.Format("DASH Video - {0} (.{1})", format, this.Extension);
                 }
                 else
                 {
-                    text = string.Format("{0} (.{1})", Format.Split(dash_split, StringSplitOptions.None)[1].Trim(), this.Extension);
+                    text = string.Format("{0} (.{1})", format, this.Extension);
                 }
 
-                if (this.FormatType == FormatType.NonDASH)
-                    text = "non-" + text;
-
-                if (FPS != "30")
+                if (this.FPS != "30")
                     text = Regex.Replace(text, @"^(\d+x\d+)(\s.*)$", "$1x" + FPS + "$2");
             }
+
+            if (this.FormatType == FormatType.NonDASH)
+                text = "non-" + text;
 
             return text;
         }
