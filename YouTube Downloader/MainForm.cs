@@ -475,6 +475,9 @@ namespace YouTube_Downloader
 
         private void btnPlaylistDownloadSelected_Click(object sender, EventArgs e)
         {
+            if (lvPlaylistVideos.CheckedItems.Count < 1)
+                return;
+
             List<VideoInfo> videos = new List<VideoInfo>();
 
             foreach (ListViewItem item in lvPlaylistVideos.CheckedItems)
