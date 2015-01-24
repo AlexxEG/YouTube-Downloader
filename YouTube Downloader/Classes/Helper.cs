@@ -169,7 +169,7 @@ namespace YouTube_Downloader.Classes
         /// <param name="url">The url to get playlist id from.</param>
         public static string GetPlaylistId(string url)
         {
-            Regex regex = new Regex(@"^(?:https?:\/\/)?(?:www.)?youtube.com\/.*list=([0-9a-zA-Z\-\_]*).*$");
+            Regex regex = new Regex(@"^(?:https?://)?(?:www.)?youtube.com/.*list=([0-9a-zA-Z\-_]*).*$");
 
             return regex.Match(url).Groups[1].Value;
         }
@@ -267,7 +267,7 @@ namespace YouTube_Downloader.Classes
         /// <param name="url">The url to check.</param>
         public static bool IsPlaylist(string url)
         {
-            Regex regex = new Regex(@"^(?:https?:\/\/)?(?:www.)?youtube.com\/.*list=([0-9a-zA-Z\-\_]*).*$");
+            Regex regex = new Regex(@"^(?:https?://)?(?:www.)?youtube.com/.*list=([0-9a-zA-Z\-_]*).*$");
 
             return regex.IsMatch(url);
         }
