@@ -64,7 +64,28 @@ namespace YouTube_Downloader.Classes
 
         private void DeserializeJson(string json_file)
         {
-            string json = "";
+            string json = ReadJSON(json_file);
+            JObject jObject = JObject.Parse(json);
+
+            this.Duration = long.Parse(jObject["duration"].ToString());
+            this.Title = jObject["fulltitle"].ToString();
+
+            string displayId = jObject["display_id"].ToString();
+
+            this.ThumbnailUrl = string.Format("https://i.ytimg.com/vi/{0}/mqdefault.jpg", displayId);
+            this.Url = jObject["webpage_url"].ToString();
+
+            JArray array = (JArray)jObject["formats"];
+
+            foreach (JToken token in array)
+            {
+                this.Formats.Add(new VideoFormat(this, token));
+            }
+        }
+
+        private static string ReadJSON(string json_file)
+        {
+            string json = string.Empty;
 
             // Should try for about 10 seconds. */
             int attempts = 0; int maxAttempts = 20;
@@ -90,22 +111,7 @@ namespace YouTube_Downloader.Classes
                 }
             }
 
-            JObject jObject = JObject.Parse(json);
-
-            this.Duration = long.Parse(jObject["duration"].ToString());
-            this.Title = jObject["fulltitle"].ToString();
-
-            string displayId = jObject["display_id"].ToString();
-
-            this.ThumbnailUrl = string.Format("https://i.ytimg.com/vi/{0}/mqdefault.jpg", displayId);
-            this.Url = jObject["webpage_url"].ToString();
-
-            JArray array = (JArray)jObject["formats"];
-
-            foreach (JToken token in array)
-            {
-                this.Formats.Add(new VideoFormat(this, token));
-            }
+            return json;
         }
     }
 }
