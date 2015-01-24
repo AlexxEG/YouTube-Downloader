@@ -871,7 +871,7 @@ namespace YouTube_Downloader
         #endregion
 
         /// <summary>
-        /// Inserts a video url &amp; click the &apos;Get Video&apos; button automatically.
+        /// Inserts a video url &amp; retrieve video info automatically.
         /// </summary>
         /// <param name="url">The url to insert.</param>
         public void InsertVideo(string url)
