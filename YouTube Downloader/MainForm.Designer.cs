@@ -134,7 +134,7 @@
             this.groupBox1.Size = new System.Drawing.Size(584, 74);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Youtube Video";
+            this.groupBox1.Text = "Video Link";
             // 
             // label2
             // 
@@ -201,9 +201,9 @@
             this.cbSaveTo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cbSaveTo.FormattingEnabled = true;
-            this.cbSaveTo.Location = new System.Drawing.Point(212, 74);
+            this.cbSaveTo.Location = new System.Drawing.Point(182, 74);
             this.cbSaveTo.Name = "cbSaveTo";
-            this.cbSaveTo.Size = new System.Drawing.Size(329, 21);
+            this.cbSaveTo.Size = new System.Drawing.Size(359, 21);
             this.cbSaveTo.TabIndex = 5;
             // 
             // label4
@@ -211,9 +211,9 @@
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(132, 23);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(74, 13);
+            this.label4.Size = new System.Drawing.Size(27, 13);
             this.label4.TabIndex = 4;
-            this.label4.Text = "Title/Filename";
+            this.label4.Text = "Title";
             // 
             // btnDownload
             // 
@@ -234,9 +234,9 @@
             this.cbQuality.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbQuality.Enabled = false;
             this.cbQuality.FormattingEnabled = true;
-            this.cbQuality.Location = new System.Drawing.Point(212, 46);
+            this.cbQuality.Location = new System.Drawing.Point(182, 46);
             this.cbQuality.Name = "cbQuality";
-            this.cbQuality.Size = new System.Drawing.Size(248, 21);
+            this.cbQuality.Size = new System.Drawing.Size(278, 21);
             this.cbQuality.TabIndex = 1;
             this.cbQuality.SelectedIndexChanged += new System.EventHandler(this.cbQuality_SelectedIndexChanged);
             // 
@@ -373,9 +373,9 @@
             // 
             this.txtTitle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtTitle.Location = new System.Drawing.Point(212, 20);
+            this.txtTitle.Location = new System.Drawing.Point(182, 20);
             this.txtTitle.Name = "txtTitle";
-            this.txtTitle.Size = new System.Drawing.Size(329, 20);
+            this.txtTitle.Size = new System.Drawing.Size(359, 20);
             this.txtTitle.TabIndex = 12;
             // 
             // lFileSize
@@ -495,7 +495,7 @@
             this.groupBox7.Size = new System.Drawing.Size(584, 159);
             this.groupBox7.TabIndex = 0;
             this.groupBox7.TabStop = false;
-            this.groupBox7.Text = "YouTube Playlist";
+            this.groupBox7.Text = "Playlist Link";
             // 
             // btnPlaylistDownloadSelected
             // 
@@ -523,7 +523,7 @@
             // chbPlaylistDASH
             // 
             this.chbPlaylistDASH.AutoSize = true;
-            this.chbPlaylistDASH.Location = new System.Drawing.Point(522, 76);
+            this.chbPlaylistDASH.Location = new System.Drawing.Point(522, 48);
             this.chbPlaylistDASH.Name = "chbPlaylistDASH";
             this.chbPlaylistDASH.Size = new System.Drawing.Size(56, 17);
             this.chbPlaylistDASH.TabIndex = 14;
@@ -534,7 +534,7 @@
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(6, 76);
+            this.label14.Location = new System.Drawing.Point(6, 48);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(39, 13);
             this.label14.TabIndex = 13;
@@ -548,7 +548,7 @@
             "Highest",
             "Medium",
             "Low"});
-            this.cbPlaylistQuality.Location = new System.Drawing.Point(60, 73);
+            this.cbPlaylistQuality.Location = new System.Drawing.Point(60, 45);
             this.cbPlaylistQuality.Name = "cbPlaylistQuality";
             this.cbPlaylistQuality.Size = new System.Drawing.Size(456, 21);
             this.cbPlaylistQuality.TabIndex = 12;
@@ -557,7 +557,7 @@
             // btnPlaylistBrowse
             // 
             this.btnPlaylistBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPlaylistBrowse.Location = new System.Drawing.Point(547, 45);
+            this.btnPlaylistBrowse.Location = new System.Drawing.Point(547, 71);
             this.btnPlaylistBrowse.Name = "btnPlaylistBrowse";
             this.btnPlaylistBrowse.Size = new System.Drawing.Size(31, 23);
             this.btnPlaylistBrowse.TabIndex = 11;
@@ -580,18 +580,18 @@
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(6, 50);
+            this.label13.Location = new System.Drawing.Point(6, 76);
             this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(48, 13);
+            this.label13.Size = new System.Drawing.Size(44, 13);
             this.label13.TabIndex = 10;
-            this.label13.Text = "Save To";
+            this.label13.Text = "Save to";
             // 
             // cbPlaylistSaveTo
             // 
             this.cbPlaylistSaveTo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cbPlaylistSaveTo.FormattingEnabled = true;
-            this.cbPlaylistSaveTo.Location = new System.Drawing.Point(60, 46);
+            this.cbPlaylistSaveTo.Location = new System.Drawing.Point(60, 72);
             this.cbPlaylistSaveTo.Name = "cbPlaylistSaveTo";
             this.cbPlaylistSaveTo.Size = new System.Drawing.Size(481, 21);
             this.cbPlaylistSaveTo.TabIndex = 9;
