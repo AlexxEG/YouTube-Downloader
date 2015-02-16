@@ -81,6 +81,21 @@ namespace YouTube_Downloader.Classes
         }
 
         /// <summary>
+        /// Gets video information, then calls the given result method with the result.
+        /// </summary>
+        /// <param name="url">The url to the video.</param>
+        /// <param name="resultMethod">The method to call when result is ready.</param>
+        public static async void GetVideoInfoAsync(string url, Action<VideoInfo> resultMethod)
+        {
+            VideoInfo videoInfo = null;
+            await System.Threading.Tasks.Task.Run(delegate
+            {
+                videoInfo = YoutubeDlHelper.GetVideoInfo(url);
+            });
+            resultMethod.Invoke(videoInfo);
+        }
+
+        /// <summary>
         /// Creates a Process with the given arguments, then returns it after it has started.
         /// </summary>
         public static Process StartProcess(string arguments)
