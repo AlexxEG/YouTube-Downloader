@@ -115,7 +115,8 @@ namespace YouTube_Downloader.Classes
                 if (response != null)
                     response.Close();
 
-                cts.Dispose();
+                if (cts != null)
+                    cts.Dispose();
                 cts = null;
             }
         }
