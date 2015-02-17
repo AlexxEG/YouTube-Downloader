@@ -7,7 +7,7 @@ using YouTube_Downloader.Operations;
 
 namespace YouTube_Downloader
 {
-    static class Program
+    public static class Program
     {
         public const string Name = "YouTube Downloader";
 
