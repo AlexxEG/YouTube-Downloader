@@ -6,10 +6,11 @@
                       xmlns:s="clr-namespace:System;assembly=mscorlib"
                       xmlns:converters="clr-namespace:YouTube_Downloader_WPF.Converters"
                       xmlns:properties="clr-namespace:YouTube_Downloader_WPF.Properties"
+                      Name="MainWindowYTD"
                       Title="YouTube Downloader"
                       Height="400" Width="600"
                       EnableDWMDropShadow="True"
-                      Closing="MetroWindow_Closing">
+                      Closing="MetroWindow_Closing" Loaded="MetroWindow_Loaded">
 
     <Window.Resources>
         <ResourceDictionary>

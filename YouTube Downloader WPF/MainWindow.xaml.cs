@@ -93,7 +93,17 @@ namespace YouTube_Downloader_WPF
                 return;
             }
 
+            if (this.VideoInformation != null)
+                this.VideoInformation.AbortUpdateFileSizes();
+
+            settings.WindowStates[this.Name].SaveWindow(this);
+
             settings.Save();
+        }
+
+        private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.LoadSettings();
         }
 
         private void OptionsButton_Click(object sender, RoutedEventArgs e)
