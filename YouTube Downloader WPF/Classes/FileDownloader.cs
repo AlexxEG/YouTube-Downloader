@@ -144,6 +144,7 @@ namespace YouTube_Downloader_WPF.Classes
             this.IsBusy = false;
             this.IsPaused = false;
             this.WasCanceled = true;
+            this.DeleteUnfinishedFilesOnCancel = deleteUnfinishedFiles;
 
             _downloader.CancelAsync();
 
@@ -308,9 +309,9 @@ namespace YouTube_Downloader_WPF.Classes
             foreach (var file in this.Files)
             {
                 this.CurrentFile = file;
-                DownloadFile();
+                this.DownloadFile();
 
-                if (_downloader.CancellationPending)
+                if (_downloader.CancellationPending && this.DeleteUnfinishedFilesOnCancel)
                 {
                     CleanupFiles();
                 }
