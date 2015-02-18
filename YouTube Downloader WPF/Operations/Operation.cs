@@ -287,8 +287,10 @@ namespace YouTube_Downloader_WPF.Operations
 
         #endregion
 
-        public Operation()
+        public void Start(object[] args)
         {
+            OnWorkerStart(args);
+
             sw = new Stopwatch();
             sw.Start();
 
@@ -300,12 +302,6 @@ namespace YouTube_Downloader_WPF.Operations
             _worker.DoWork += Worker_DoWork;
             _worker.ProgressChanged += Worker_ProgressChanged;
             _worker.RunWorkerCompleted += Worker_RunWorkerCompleted;
-        }
-
-        public void Start(object[] args)
-        {
-            OnWorkerStart(args);
-
             _worker.RunWorkerAsync(args);
 
             App.RunningOperations.Add(this);
@@ -398,13 +394,7 @@ namespace YouTube_Downloader_WPF.Operations
 
         #region IDisposable members
 
-        bool disposed = false;
-
-        ~Operation()
-        {
-            // Finalizer calls Dispose(false)
-            this.Dispose(false);
-        }
+        bool _disposed = false;
 
         public virtual void Dispose()
         {
@@ -414,7 +404,7 @@ namespace YouTube_Downloader_WPF.Operations
 
         private void Dispose(bool disposing)
         {
-            if (disposed)
+            if (_disposed)
                 return;
 
             if (disposing)
@@ -428,7 +418,7 @@ namespace YouTube_Downloader_WPF.Operations
                 }
             }
 
-            disposed = true;
+            _disposed = true;
         }
 
         #endregion
