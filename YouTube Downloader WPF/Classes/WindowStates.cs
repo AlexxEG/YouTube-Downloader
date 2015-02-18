@@ -3,7 +3,7 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
-namespace YouTube_Downloader.Classes
+namespace YouTube_Downloader_WPF.Classes
 {
     public class WindowStates : IXmlSerializable
     {
@@ -51,7 +51,7 @@ namespace YouTube_Downloader.Classes
 
             if (booIsEmpty)
                 return;
-            
+
             while (reader.MoveToContent() == XmlNodeType.Element && reader.LocalName == "WindowState")
             {
                 string strWindowName = reader["name"];

@@ -1,4 +1,4 @@
-﻿namespace YouTube_Downloader.Enums
+﻿namespace YouTube_Downloader_WPF.Enums
 {
     public enum FFmpegFileType
     {

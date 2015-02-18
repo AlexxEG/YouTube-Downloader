@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace YouTube_Downloader
+namespace YouTube_Downloader_WPF
 {
     public class FileSizeFormatProvider : IFormatProvider, ICustomFormatter
     {

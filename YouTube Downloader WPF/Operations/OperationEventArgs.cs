@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace YouTube_Downloader.Operations
+namespace YouTube_Downloader_WPF.Operations
 {
     public class OperationEventArgs : EventArgs
     {

@@ -5,10 +5,9 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using YouTube_Downloader.Enums;
-using YouTube_Downloader_WPF;
+using YouTube_Downloader_WPF.Enums;
 
-namespace YouTube_Downloader.Classes
+namespace YouTube_Downloader_WPF.Classes
 {
     public class FFmpegHelper
     {

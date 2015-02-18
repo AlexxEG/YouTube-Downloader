@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace YouTube_Downloader.Classes
+namespace YouTube_Downloader_WPF.Classes
 {
     public delegate void FileSizeUpdateHandler(object sender, FileSizeUpdateEventArgs e);
 

@@ -13,10 +13,10 @@ using System.Windows.Documents;
 using System.Windows.Interop;
 using MahApps.Metro.Controls;
 using Microsoft.Win32;
-using YouTube_Downloader.Classes;
-using YouTube_Downloader.Dialogs;
-using YouTube_Downloader.Enums;
-using YouTube_Downloader.Operations;
+using YouTube_Downloader_WPF.Classes;
+using YouTube_Downloader_WPF.Dialogs;
+using YouTube_Downloader_WPF.Enums;
+using YouTube_Downloader_WPF.Operations;
 using YouTube_Downloader_WPF.Properties;
 using WinForms = System.Windows.Forms;
 

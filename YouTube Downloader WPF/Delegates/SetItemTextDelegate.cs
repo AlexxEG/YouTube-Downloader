@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace YouTube_Downloader.Delegates
+namespace YouTube_Downloader_WPF.Delegates
 {
     /// <summary>
     /// Used to invoke text change on ListViewItem.ListViewSubItem.

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace YouTube_Downloader.Classes
+namespace YouTube_Downloader_WPF.Classes
 {
     public class Playlist
     {

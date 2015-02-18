@@ -120,9 +120,9 @@ namespace YouTube_Downloader_WPF.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::YouTube_Downloader.Classes.WindowStates WindowStates {
+        public global::YouTube_Downloader_WPF.Classes.WindowStates WindowStates {
             get {
-                return ((global::YouTube_Downloader.Classes.WindowStates)(this["WindowStates"]));
+                return ((global::YouTube_Downloader_WPF.Classes.WindowStates)(this["WindowStates"]));
             }
             set {
                 this["WindowStates"] = value;

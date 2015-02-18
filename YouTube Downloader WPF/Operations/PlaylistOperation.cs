@@ -6,10 +6,9 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
 using DeDauwJeroen;
-using YouTube_Downloader.Classes;
-using YouTube_Downloader_WPF;
+using YouTube_Downloader_WPF.Classes;
 
-namespace YouTube_Downloader.Operations
+namespace YouTube_Downloader_WPF.Operations
 {
     public class PlaylistOperation : Operation
     {

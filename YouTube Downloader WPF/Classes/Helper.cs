@@ -4,10 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
-using YouTube_Downloader.Enums;
+using YouTube_Downloader_WPF.Enums;
 using YouTube_Downloader_WPF.Properties;
 
-namespace YouTube_Downloader.Classes
+namespace YouTube_Downloader_WPF.Classes
 {
     public class Helper
     {

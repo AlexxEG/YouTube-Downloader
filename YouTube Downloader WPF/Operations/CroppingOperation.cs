@@ -2,10 +2,9 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using YouTube_Downloader.Classes;
-using YouTube_Downloader_WPF;
+using YouTube_Downloader_WPF.Classes;
 
-namespace YouTube_Downloader.Operations
+namespace YouTube_Downloader_WPF.Operations
 {
     public class CroppingOperation : Operation
     {

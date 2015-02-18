@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Windows;
-using YouTube_Downloader.Classes;
-using YouTube_Downloader.Operations;
+using YouTube_Downloader_WPF.Classes;
+using YouTube_Downloader_WPF.Operations;
 
 namespace YouTube_Downloader_WPF
 {

@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace YouTube_Downloader.Classes
+namespace YouTube_Downloader_WPF.Classes
 {
     public class Common
     {
