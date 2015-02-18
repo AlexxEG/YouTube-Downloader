@@ -6,7 +6,7 @@ YouTube Downloader is a program to download & convert YouTube videos and playlis
 Download
 --------
 
-An installer & portable version can be found in [Releases](https://github.com/AlexxEG/YouTube-Downloader/releases).
+Not yet
 
 Screenshots
 -----------
@@ -16,12 +16,9 @@ See [Images](Images) folder.
 Licenses
 --------
 
-- [7-Zip](http://www.7-zip.org/) is licensed under GNU LGPL v2.1.
 - [FFmpeg](https://www.ffmpeg.org/) is licensed under GNU LGPL v2.1.
 - [FileDownloader](http://www.codeproject.com/Articles/35954/C-NET-Background-File-Downloader) is licensed under GPL v3.0
-- [Html Agility Pack](http://htmlagilitypack.codeplex.com/) is licensed under Ms-PL.
 - [Json.NET](http://james.newtonking.com/json) is licensed under MIT.
-- [SevenZipSharp](http://sevenzipsharp.codeplex.com/) is licensed under GNU LGPL v2.1.
 - [youtube-dl](http://rg3.github.io/youtube-dl/) is [Unlicensed](http://unlicense.org/) (?).
 
 Copyright
