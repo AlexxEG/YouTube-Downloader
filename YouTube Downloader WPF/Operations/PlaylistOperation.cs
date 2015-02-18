@@ -168,18 +168,20 @@ namespace YouTube_Downloader.Operations
             try
             {
                 int count = 0;
-                
+
                 if (_videos == null)
                 {
                     VideoInfo video;
                     PlaylistReader reader = new PlaylistReader(this.Input);
+
+                    _videos = new List<VideoInfo>();
 
                     while (!this.CancellationPending && (video = reader.Next()) != null)
                     {
                         _videos.Add(video);
                     }
                 }
-                
+
                 foreach (VideoInfo video in _videos)
                 {
                     if (this.CancellationPending)
@@ -268,6 +270,7 @@ namespace YouTube_Downloader.Operations
 
             // Temporary title.
             this.Title = "Getting playlist info...";
+            this.ReportsProgress = true;
 
             this.Input = (string)args[0];
             this.Output = (string)args[1];
