@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
-using DeDauwJeroen;
 using YouTube_Downloader_WPF.Classes;
 
 namespace YouTube_Downloader_WPF.Operations
@@ -51,8 +50,8 @@ namespace YouTube_Downloader_WPF.Operations
             {
                 _processing = true;
 
-                string speed = string.Format(new FileSizeFormatProvider(), "{0:s}", downloader.DownloadSpeed);
-                long longETA = Helper.GetETA(downloader.DownloadSpeed, downloader.TotalSize, downloader.TotalProgress);
+                string speed = string.Format(new FileSizeFormatProvider(), "{0:s}", downloader.Speed);
+                long longETA = Helper.GetETA(downloader.Speed, downloader.TotalSize, downloader.TotalProgress);
                 string ETA = longETA == 0 ? "" : "  [ " + FormatLeftTime.Format((longETA) * 1000) + " ]";
 
                 this.ETA = ETA;
@@ -133,7 +132,7 @@ namespace YouTube_Downloader_WPF.Operations
         {
             if (downloader.CanStop)
             {
-                downloader.Stop(false);
+                downloader.Stop(cleanup);
                 _downloaderSuccessful = false;
             }
 
@@ -141,21 +140,6 @@ namespace YouTube_Downloader_WPF.Operations
                 this.CancelAsync();
 
             this.Status = OperationStatus.Canceled;
-
-            if (cleanup)
-            {
-                if (downloader != null && downloader.Files.Count > 0)
-                {
-                    var files = new List<string>();
-
-                    foreach (FileDownloader.FileInfo file in downloader.Files)
-                    {
-                        files.Add(file.Path);
-                    }
-
-                    Helper.DeleteFiles(files.ToArray());
-                }
-            }
 
             return true;
         }
@@ -194,18 +178,15 @@ namespace YouTube_Downloader_WPF.Operations
                     this.Duration = video.Duration;
                     this.FileSize = videoFormat.FileSize;
 
-                    FileDownloader.FileInfo[] fileInfos;
+                    DownloadFile[] downloadFiles;
 
                     string finalFile = Path.Combine(this.Output, Helper.FormatTitle(videoFormat.VideoInfo.Title) + "." + videoFormat.Extension);
 
                     if (!_useDash)
                     {
-                        fileInfos = new FileDownloader.FileInfo[]
+                        downloadFiles = new DownloadFile[]
                         {
-                            new FileDownloader.FileInfo(videoFormat.DownloadUrl)
-                            {
-                                Name = Path.GetFileName(finalFile)
-                            }
+                            new DownloadFile(finalFile, videoFormat.DownloadUrl)
                         };
                     }
                     else
@@ -215,16 +196,10 @@ namespace YouTube_Downloader_WPF.Operations
                         string audioFile = Regex.Replace(finalFile, @"^(.*)(\..*)$", "$1_audio$2");
                         string videoFile = Regex.Replace(finalFile, @"^(.*)(\..*)$", "$1_video$2");
 
-                        fileInfos = new FileDownloader.FileInfo[]
+                        downloadFiles = new DownloadFile[]
                         {
-                            new FileDownloader.FileInfo(audioFormat.DownloadUrl)
-                            {
-                                Name = Path.GetFileName(audioFile)
-                            },
-                            new FileDownloader.FileInfo(videoFormat.DownloadUrl)
-                            {
-                                Name = Path.GetFileName(videoFile)
-                            }
+                            new DownloadFile(audioFile, audioFormat.DownloadUrl),
+                            new DownloadFile(videoFile, videoFormat.DownloadUrl)
                         };
                     }
 
@@ -232,7 +207,7 @@ namespace YouTube_Downloader_WPF.Operations
                     _downloaderSuccessful = null;
 
                     downloader.Files.Clear();
-                    downloader.Files.AddRange(fileInfos);
+                    downloader.Files.AddRange(downloadFiles);
                     downloader.Start();
 
                     // Wait for downloader to finish
@@ -280,21 +255,21 @@ namespace YouTube_Downloader_WPF.Operations
             if (args.Length == 4)
                 _videos = (ICollection<VideoInfo>)args[3];
 
-            downloader = new FileDownloader(true);
-            downloader.LocalDirectory = this.Output;
+            downloader = new FileDownloader();
+            downloader.Directory = this.Output;
 
             // Attach downloader events
             downloader.Canceled += downloader_Canceled;
             downloader.Completed += downloader_Completed;
             downloader.FileDownloadFailed += downloader_FileDownloadFailed;
-            downloader.FileSizesCalculationComplete += downloader_FileSizesCalculationComplete;
+            downloader.CalculatedTotalFileSize += downloader_FileSizesCalculationComplete;
             downloader.ProgressChanged += downloader_ProgressChanged;
         }
 
         private bool Combine()
         {
-            string audio = Path.Combine(downloader.LocalDirectory, downloader.Files[0].Name);
-            string video = Path.Combine(downloader.LocalDirectory, downloader.Files[1].Name);
+            string audio = Path.Combine(downloader.Directory, downloader.Files[0].Name);
+            string video = Path.Combine(downloader.Directory, downloader.Files[1].Name);
             // Remove '_video' from video file to get a final filename.
             string output = video.Replace("_video", string.Empty);
 
