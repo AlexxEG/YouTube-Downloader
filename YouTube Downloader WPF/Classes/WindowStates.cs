@@ -51,7 +51,7 @@ namespace YouTube_Downloader.Classes
 
             if (booIsEmpty)
                 return;
-
+            
             while (reader.MoveToContent() == XmlNodeType.Element && reader.LocalName == "WindowState")
             {
                 string strWindowName = reader["name"];
@@ -59,7 +59,7 @@ namespace YouTube_Downloader.Classes
                 XmlSerializer xsrWindowState = new XmlSerializer(typeof(WindowState));
                 windowStates.Add(strWindowName, (WindowState)xsrWindowState.Deserialize(reader));
 
-                windowStates.ToString();
+                reader.Read();
             }
         }
 

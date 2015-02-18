@@ -139,11 +139,6 @@ namespace YouTube_Downloader.Classes
         /// <param name="reader">The stream from which the object will be deserialized.</param>
         void IXmlSerializable.ReadXml(XmlReader reader)
         {
-            bool booIsEmpty = reader.IsEmptyElement;
-
-            if (booIsEmpty)
-                return;
-
             this.WindowName = reader.GetAttribute("name");
 
             if (reader.GetAttribute("left") != null)
