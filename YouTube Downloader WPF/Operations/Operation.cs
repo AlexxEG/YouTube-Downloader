@@ -46,57 +46,29 @@ namespace YouTube_Downloader_WPF.Operations
         /// </summary>
         public event OperationEventHandler OperationComplete;
 
-        #region Properties
+        #region Fields
+
+        bool _reportsProgress = false;
 
         long _duration;
-        string _eta;
         long _fileSize;
-        string _link;
         long _progress;
-        double _progressPercentage = 0;
+
+        string _eta;
+        string _link;
         string _progressText = string.Empty;
-        bool _reportsProgress = false;
         string _speed;
-        OperationStatus _status = OperationStatus.None;
         string _text;
         string _thumbnail;
         string _title;
 
-        public long Duration
-        {
-            get { return _duration; }
-            set
-            {
-                _duration = value;
-                this.OnPropertyChanged();
-            }
-        }
+        double _progressPercentage = 0;
 
-        public string ETA
-        {
-            get { return _eta; }
-            set
-            {
-                _eta = value;
-                this.OnPropertyChanged();
-            }
-        }
+        OperationStatus _status = OperationStatus.None;
 
-        public long FileSize
-        {
-            get { return _fileSize; }
-            set
-            {
-                _fileSize = value;
-                this.OnPropertyChanged();
-                this.OnPropertyChangedExplicit("ProgressText");
-            }
-        }
+        #endregion
 
-        /// <summary>
-        /// Gets the input file or download url.
-        /// </summary>
-        public string Input { get; set; }
+        #region Properties
 
         public bool IsCanceled
         {
@@ -130,6 +102,63 @@ namespace YouTube_Downloader_WPF.Operations
             }
         }
 
+        public bool ReportsProgress
+        {
+            get { return _reportsProgress; }
+            set
+            {
+                _reportsProgress = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        public long Duration
+        {
+            get { return _duration; }
+            set
+            {
+                _duration = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        public long FileSize
+        {
+            get { return _fileSize; }
+            set
+            {
+                _fileSize = value;
+                this.OnPropertyChanged();
+                this.OnPropertyChangedExplicit("ProgressText");
+            }
+        }
+
+        public long Progress
+        {
+            get { return _progress; }
+            set
+            {
+                _progress = value;
+                this.OnPropertyChanged();
+                this.OnPropertyChangedExplicit("ProgressText");
+            }
+        }
+
+        public string ETA
+        {
+            get { return _eta; }
+            set
+            {
+                _eta = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+        /// Gets the input file or download url.
+        /// </summary>
+        public string Input { get; set; }
+
         public string Link
         {
             get { return _link; }
@@ -145,36 +174,11 @@ namespace YouTube_Downloader_WPF.Operations
         /// </summary>
         public string Output { get; set; }
 
-        public long Progress
-        {
-            get { return _progress; }
-            set
-            {
-                _progress = value;
-                this.OnPropertyChanged();
-                this.OnPropertyChangedExplicit("ProgressText");
-            }
-        }
-
-        /// <summary>
-        /// Gets the operation progress, as a double between 0-100.
-        /// </summary>
-        public double ProgressPercentage
-        {
-            get { return _progressPercentage; }
-            set
-            {
-                _progressPercentage = value;
-                this.OnPropertyChanged();
-                this.OnPropertyChangedExplicit("ProgressText");
-            }
-        }
-
         public string ProgressText
         {
             get
             {
-                if (!string.IsNullOrEmpty(_progressText) && this.Wait())
+                if (this.Wait() && !string.IsNullOrEmpty(_progressText))
                     return _progressText;
 
                 if (sw != null)
@@ -209,16 +213,6 @@ namespace YouTube_Downloader_WPF.Operations
             }
         }
 
-        public bool ReportsProgress
-        {
-            get { return _reportsProgress; }
-            set
-            {
-                _reportsProgress = value;
-                this.OnPropertyChanged();
-            }
-        }
-
         public string Speed
         {
             get { return _speed; }
@@ -227,23 +221,6 @@ namespace YouTube_Downloader_WPF.Operations
                 _speed = value;
                 this.OnPropertyChanged();
                 this.OnPropertyChangedExplicit("ProgressText");
-            }
-        }
-
-        /// <summary>
-        /// Gets the operation status.
-        /// </summary>
-        public OperationStatus Status
-        {
-            get { return _status; }
-            set
-            {
-                _status = value;
-                this.OnPropertyChanged();
-                this.OnPropertyChangedExplicit("IsCanceled");
-                this.OnPropertyChangedExplicit("IsPaused");
-                this.OnPropertyChangedExplicit("IsSuccessful");
-                this.OnPropertyChangedExplicit("IsWorking");
             }
         }
 
@@ -274,6 +251,37 @@ namespace YouTube_Downloader_WPF.Operations
             {
                 _title = value;
                 this.OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+        /// Gets the operation progress, as a double between 0-100.
+        /// </summary>
+        public double ProgressPercentage
+        {
+            get { return _progressPercentage; }
+            set
+            {
+                _progressPercentage = value;
+                this.OnPropertyChanged();
+                this.OnPropertyChangedExplicit("ProgressText");
+            }
+        }
+
+        /// <summary>
+        /// Gets the operation status.
+        /// </summary>
+        public OperationStatus Status
+        {
+            get { return _status; }
+            set
+            {
+                _status = value;
+                this.OnPropertyChanged();
+                this.OnPropertyChangedExplicit("IsCanceled");
+                this.OnPropertyChangedExplicit("IsPaused");
+                this.OnPropertyChangedExplicit("IsSuccessful");
+                this.OnPropertyChangedExplicit("IsWorking");
             }
         }
 
@@ -308,7 +316,7 @@ namespace YouTube_Downloader_WPF.Operations
         private bool Wait()
         {
             // Limit the progress update to once a second to avoid flickering.
-            if (sw == null || sw.IsRunning)
+            if (sw == null || !sw.IsRunning)
                 return false;
 
             return sw.ElapsedMilliseconds < ProgressDelay;
@@ -367,7 +375,10 @@ namespace YouTube_Downloader_WPF.Operations
                 OperationComplete(this, e);
         }
 
-        protected abstract void OnWorkerDoWork(DoWorkEventArgs e);
+        protected virtual void OnWorkerDoWork(DoWorkEventArgs e)
+        {
+
+        }
 
         protected virtual void OnWorkerProgressChanged(ProgressChangedEventArgs e)
         {
@@ -380,7 +391,10 @@ namespace YouTube_Downloader_WPF.Operations
             this.Complete();
         }
 
-        protected abstract void OnWorkerStart(object[] args);
+        protected virtual void OnWorkerStart(object[] args)
+        {
+
+        }
 
         #region IDisposable members
 
