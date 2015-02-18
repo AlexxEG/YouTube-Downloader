@@ -257,6 +257,9 @@ namespace YouTube_Downloader_WPF
 
         private void VideoDownloadButton_Click(object sender, RoutedEventArgs e)
         {
+            if (this.VideoInformation == null)
+                return;
+
             // Validate the filename, checking for illegal characters. 
             // Prompts the user to remove these characters automatically.
             if (!this.ValidateFilename(this.VideoInformation.Title))
