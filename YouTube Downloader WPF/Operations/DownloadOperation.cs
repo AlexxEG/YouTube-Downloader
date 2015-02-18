@@ -171,7 +171,7 @@ namespace YouTube_Downloader_WPF.Operations
 
         protected override void OnWorkerDoWork(DoWorkEventArgs e)
         {
-            while (downloader.IsBusy)
+            while (downloader != null && downloader.IsBusy)
                 Thread.Sleep(200);
 
             if (_dash && this.Status == OperationStatus.Success)
