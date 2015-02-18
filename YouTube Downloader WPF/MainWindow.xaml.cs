@@ -165,7 +165,6 @@ namespace YouTube_Downloader_WPF
 
                     operation.Stop(true);
                     this.Queue.Remove(operation);
-                    operation.Dispose();
                     break;
             }
         }
@@ -707,7 +706,8 @@ namespace YouTube_Downloader_WPF
             foreach (Operation operation in App.RunningOperations)
             {
                 // Stop & delete unfinished files
-                operation.Stop(true);
+                if (operation.CanStop())
+                    operation.Stop(true);
             }
 
             while (App.RunningOperations.Count > 0)
