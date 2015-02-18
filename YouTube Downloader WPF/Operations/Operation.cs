@@ -280,12 +280,6 @@ namespace YouTube_Downloader.Operations
 
         #endregion
 
-        ~Operation()
-        {
-            // Finalizer calls Dispose(false)
-            this.Dispose(false);
-        }
-
         public Operation()
         {
             sw = new Stopwatch();
@@ -301,14 +295,6 @@ namespace YouTube_Downloader.Operations
             _worker.RunWorkerCompleted += Worker_RunWorkerCompleted;
         }
 
-        bool disposed = false;
-
-        public virtual void Dispose()
-        {
-            this.Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
         public void Start(object[] args)
         {
             OnWorkerStart(args);
@@ -318,6 +304,30 @@ namespace YouTube_Downloader.Operations
             App.RunningOperations.Add(this);
 
             this.Status = OperationStatus.Working;
+        }
+
+        private bool Wait()
+        {
+            // Limit the progress update to once a second to avoid flickering.
+            if (sw == null || sw.IsRunning)
+                return false;
+
+            return sw.ElapsedMilliseconds < ProgressDelay;
+        }
+
+        private void Worker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            OnWorkerDoWork(e);
+        }
+
+        private void Worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            OnWorkerProgressChanged(e);
+        }
+
+        private void Worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            OnWorkerRunWorkerCompleted(e);
         }
 
         protected void CancelAsync()
@@ -373,6 +383,22 @@ namespace YouTube_Downloader.Operations
 
         protected abstract void OnWorkerStart(object[] args);
 
+        #region IDisposable members
+
+        bool disposed = false;
+
+        ~Operation()
+        {
+            // Finalizer calls Dispose(false)
+            this.Dispose(false);
+        }
+
+        public virtual void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
         private void Dispose(bool disposing)
         {
             if (disposed)
@@ -392,29 +418,7 @@ namespace YouTube_Downloader.Operations
             disposed = true;
         }
 
-        private bool Wait()
-        {
-            // Limit the progress update to once a second to avoid flickering.
-            if (sw == null || sw.IsRunning)
-                return false;
-
-            return sw.ElapsedMilliseconds < ProgressDelay;
-        }
-
-        private void Worker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            OnWorkerDoWork(e);
-        }
-
-        private void Worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-            OnWorkerProgressChanged(e);
-        }
-
-        private void Worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            OnWorkerRunWorkerCompleted(e);
-        }
+        #endregion
 
         #region INotifyPropertyChanged members
 
