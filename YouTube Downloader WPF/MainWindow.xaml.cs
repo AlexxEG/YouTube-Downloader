@@ -84,8 +84,7 @@ namespace YouTube_Downloader_WPF
 
                 if (result == WinForms.DialogResult.Yes)
                 {
-                    // Hide form while waiting for threads to finish,
-                    // except downloads which will abort.
+                    // Hides window while waiting for threads to finish, except downloads which will abort.
                     this.CancelOperations();
                 }
 
