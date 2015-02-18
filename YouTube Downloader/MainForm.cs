@@ -79,8 +79,7 @@ namespace YouTube_Downloader
             settings.SaveToDirectories.AddRange(paths);
             settings.SelectedDirectory = cbSaveTo.SelectedIndex;
             settings.AutoConvert = chbAutoConvert.Checked;
-            settings.Save();
-
+            
             settings.Save();
 
             Application.Exit();
