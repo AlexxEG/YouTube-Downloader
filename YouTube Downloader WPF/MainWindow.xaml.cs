@@ -710,11 +710,6 @@ namespace YouTube_Downloader_WPF
                     operation.Stop(true);
             }
 
-            while (App.RunningOperations.Count > 0)
-            {
-                // Wait for everything to finish
-            }
-
             this.Close();
         }
 
