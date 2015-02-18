@@ -205,11 +205,6 @@ namespace YouTube_Downloader_WPF.Operations
             e.Result = this.Status;
         }
 
-        protected override void OnWorkerProgressChanged(ProgressChangedEventArgs e)
-        {
-            base.OnWorkerProgressChanged(e);
-        }
-
         protected override void OnWorkerStart(object[] args)
         {
             this.ReportsProgress = true;
