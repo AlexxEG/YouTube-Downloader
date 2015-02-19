@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using DeDauwJeroen;
 using ListViewEmbeddedControls;
 using YouTube_Downloader.Classes;
 using YouTube_Downloader.Delegates;
@@ -125,22 +124,18 @@ namespace YouTube_Downloader.Operations
             this.Output = output;
 
             string folder = Path.GetDirectoryName(output);
-            string file = Path.GetFileName(output).Trim();
 
-            downloader = new FileDownloader(true);
-            downloader.LocalDirectory = folder;
+            downloader = new FileDownloader();
+            downloader.Directory = folder;
 
-            FileDownloader.FileInfo fileInfo = new FileDownloader.FileInfo(url);
-
-            /* Give proper filename to downloaded file. */
-            fileInfo.Name = file;
+            DownloadFile fileInfo = new DownloadFile(this.Output, url);
 
             downloader.Files.Add(fileInfo);
 
             downloader.Canceled += downloader_Canceled;
             downloader.Completed += downloader_Completed;
             downloader.FileDownloadFailed += downloader_FileDownloadFailed;
-            downloader.FileSizesCalculationComplete += downloader_FileSizesCalculationComplete;
+            downloader.CalculatedTotalFileSize += downloader_CalculatedTotalFileSize;
             downloader.ProgressChanged += downloader_ProgressChanged;
 
             downloader.Start();
@@ -166,29 +161,24 @@ namespace YouTube_Downloader.Operations
             string folder = Path.GetDirectoryName(output);
             string file = Path.GetFileName(output).Trim();
 
-            downloader = new FileDownloader(true);
-            downloader.LocalDirectory = folder;
+            downloader = new FileDownloader();
+            downloader.Directory = folder;
 
-            Regex regex = new Regex(@"^\w:.*\\(.*)(\..*)$");
-            FileDownloader.FileInfo[] fileInfos = new FileDownloader.FileInfo[2]
+            Regex regex = new Regex(@"^(\w:.*\\.*)(\..*)$");
+
+            DownloadFile[] downloadFiles = new DownloadFile[]
             {
-                new FileDownloader.FileInfo(audio)
-                {
-                    Name = regex.Replace(output, "$1_audio$2")
-                },
-                new FileDownloader.FileInfo(video)
-                {
-                    Name = regex.Replace(output, "$1_video$2")
-                }
+                new DownloadFile(regex.Replace(output, "$1_audio$2"), audio),
+                new DownloadFile(regex.Replace(output, "$1_video$2"), video)
             };
 
-            downloader.Files.AddRange(fileInfos);
+            downloader.Files.AddRange(downloadFiles);
 
-            /* Attach events. */
+            // Attach events.
             downloader.Canceled += downloader_Canceled;
             downloader.Completed += downloader_Completed;
             downloader.FileDownloadFailed += downloader_FileDownloadFailed;
-            downloader.FileSizesCalculationComplete += downloader_FileSizesCalculationComplete;
+            downloader.CalculatedTotalFileSize += downloader_CalculatedTotalFileSize;
             downloader.ProgressChanged += downloader_ProgressChanged;
 
             downloader.Start();
@@ -261,18 +251,11 @@ namespace YouTube_Downloader.Operations
 
             // Stop downloader if still running.
             if (downloader != null && downloader.CanStop)
-                downloader.Stop(false);
+                downloader.Stop(cleanup);
 
             // Don't set status to canceled if already successful.
             if (this.Status != OperationStatus.Success)
                 this.Status = OperationStatus.Canceled;
-
-            // Cleanup if cleanup is true and download wasn't successful.
-            if (cleanup && this.Status != OperationStatus.Success)
-            {
-                if (File.Exists(this.Output))
-                    Helper.DeleteFiles(this.Output);
-            }
 
             OnOperationComplete();
 
@@ -354,7 +337,7 @@ namespace YouTube_Downloader.Operations
             downloader.Stop(false);
         }
 
-        private void downloader_FileSizesCalculationComplete(object sender, EventArgs e)
+        private void downloader_CalculatedTotalFileSize(object sender, EventArgs e)
         {
             this.SetItemText(this.SubItems[4], Helper.FormatFileSize(downloader.TotalSize));
         }
@@ -378,8 +361,8 @@ namespace YouTube_Downloader.Operations
                     if (!this.Wait())
                     {
                         /* Only update text once per second. */
-                        string speed = string.Format(new FileSizeFormatProvider(), "{0:s}", downloader.DownloadSpeed);
-                        long longETA = Helper.GetETA(downloader.DownloadSpeed, downloader.TotalSize, downloader.TotalProgress);
+                        string speed = string.Format(new FileSizeFormatProvider(), "{0:s}", downloader.Speed);
+                        long longETA = Helper.GetETA(downloader.Speed, downloader.TotalSize, downloader.TotalProgress);
                         string ETA = longETA == 0 ? "" : "  [ " + FormatLeftTime.Format(((long)longETA) * 1000) + " ]";
 
                         this.SubItems[1].Text = downloader.TotalPercentage() + " %";
@@ -407,8 +390,8 @@ namespace YouTube_Downloader.Operations
         /// </summary>
         private void Combine()
         {
-            string audio = downloader.LocalDirectory + "\\" + downloader.Files[0].Name;
-            string video = downloader.LocalDirectory + "\\" + downloader.Files[1].Name;
+            string audio = downloader.Files[0].Path;
+            string video = downloader.Files[1].Path;
 
             this.SubItems[2].Text = "Combining...";
             this.GetProgressBar().Value = this.GetProgressBar().Minimum;
