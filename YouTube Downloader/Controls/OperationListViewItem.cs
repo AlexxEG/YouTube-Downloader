@@ -80,14 +80,14 @@ namespace YouTube_Downloader.Controls
             this.GetListViewEx().AddEmbeddedControl(_inputLabel, 5, this.Index);
 
             this.Operation = operation;
-            this.Operation.OperationComplete += Operation_OperationComplete;
+            this.Operation.Completed += Operation_Completed;
             this.Operation.ProgressChanged += Operation_ProgressChanged;
             this.Operation.ReportsProgressChanged += Operation_ReportsProgressChanged;
             this.Operation.StatusChanged += Operation_StatusChanged;
             this.Operation.TitleChanged += Operation_TitleChanged;
         }
 
-        private void Operation_OperationComplete(object sender, OperationEventArgs e)
+        private void Operation_Completed(object sender, OperationEventArgs e)
         {
             this.FileSize = Helper.FormatFileSize(Helper.GetFileSize(this.Operation.Output));
 

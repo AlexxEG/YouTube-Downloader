@@ -23,7 +23,7 @@ namespace YouTube_Downloader.Operations
         /// <summary>
         /// Occurs when the operation is complete.
         /// </summary>
-        public event OperationEventHandler OperationComplete;
+        public event OperationEventHandler Completed;
         public event ProgressChangedEventHandler ProgressChanged;
         public event EventHandler ReportsProgressChanged;
         public event EventHandler StatusChanged;
@@ -373,8 +373,8 @@ namespace YouTube_Downloader.Operations
 
         protected virtual void OnOperationComplete(OperationEventArgs e)
         {
-            if (OperationComplete != null)
-                OperationComplete(this, e);
+            if (this.Completed != null)
+                this.Completed(this, e);
         }
 
         protected virtual void OnProgressChanged(ProgressChangedEventArgs e)
@@ -439,7 +439,7 @@ namespace YouTube_Downloader.Operations
 
             if (disposing)
             {
-                OperationComplete = null;
+                this.Completed = null;
 
                 if (_worker != null)
                 {

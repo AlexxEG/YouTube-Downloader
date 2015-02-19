@@ -295,7 +295,7 @@ namespace YouTube_Downloader_WPF
 
                 var operation = new DownloadOperation(this.SelectedFormat);
 
-                operation.OperationComplete += DownloadOperation_OperationComplete;
+                operation.Completed += DownloadOperation_Completed;
 
                 this.Queue.Add(operation);
                 this.SelectOneItem(operation);
@@ -335,7 +335,7 @@ namespace YouTube_Downloader_WPF
             }
         }
 
-        private void DownloadOperation_OperationComplete(object sender, OperationEventArgs e)
+        private void DownloadOperation_Completed(object sender, OperationEventArgs e)
         {
             var operation = (Operation)sender;
 
