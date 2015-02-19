@@ -79,7 +79,7 @@ namespace YouTube_Downloader
             settings.SaveToDirectories.AddRange(paths);
             settings.SelectedDirectory = cbSaveTo.SelectedIndex;
             settings.AutoConvert = chbAutoConvert.Checked;
-            
+
             settings.Save();
 
             Application.Exit();
@@ -893,7 +893,8 @@ namespace YouTube_Downloader
             foreach (IOperation operation in Program.RunningOperations)
             {
                 // Stop & delete unfinished files
-                operation.Stop(false, true);
+                if (operation.CanStop())
+                    operation.Stop(false, true);
             }
 
             if (bwGetVideo.IsBusy)
