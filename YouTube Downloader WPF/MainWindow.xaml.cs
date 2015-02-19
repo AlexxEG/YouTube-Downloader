@@ -17,11 +17,9 @@ using YouTube_Downloader.Classes;
 using YouTube_Downloader.Dialogs;
 using YouTube_Downloader.Enums;
 using YouTube_Downloader.Operations;
-using YouTube_Downloader_WPF.Operations;
 using YouTube_Downloader_WPF.Properties;
 using WinForms = System.Windows.Forms;
 using WPF_Classes = YouTube_Downloader_WPF.Classes;
-using WPF_Operations = YouTube_Downloader_WPF.Operations;
 
 namespace YouTube_Downloader_WPF
 {
@@ -131,7 +129,7 @@ namespace YouTube_Downloader_WPF
         private void QueueButton_Click(object sender, RoutedEventArgs e)
         {
             Button button = sender as Button;
-            Operation operation = button.Tag as Operation;
+            var operation = button.Tag as Operation;
 
             switch (button.ToolTip.ToString())
             {
@@ -143,9 +141,9 @@ namespace YouTube_Downloader_WPF
                     operation.OpenContainingFolder();
                     break;
                 case "Convert to MP3":
-                    if (operation is WPF_Operations.DownloadOperation && operation.Status == OperationStatus.Success)
+                    if (operation is DownloadOperation && operation.Status == OperationStatus.Success)
                     {
-                        string input = (operation as WPF_Operations.DownloadOperation).Output;
+                        string input = (operation as DownloadOperation).Output;
                         string output = Path.GetDirectoryName(input) + "\\" + Path.GetFileNameWithoutExtension(input) + ".mp3";
 
                         ConvertInput.Text = input;
@@ -295,7 +293,7 @@ namespace YouTube_Downloader_WPF
                     File.Delete(Path.Combine(path, filename));
                 }
 
-                var operation = new WPF_Operations.DownloadOperation(this.SelectedFormat);
+                var operation = new DownloadOperation(this.SelectedFormat);
 
                 operation.OperationComplete += DownloadOperation_OperationComplete;
 
@@ -339,7 +337,7 @@ namespace YouTube_Downloader_WPF
 
         private void DownloadOperation_OperationComplete(object sender, OperationEventArgs e)
         {
-            Operation operation = (Operation)sender;
+            var operation = (Operation)sender;
 
             if (AutoConvert.IsEnabled == true && AutoConvert.IsChecked == true && operation.Status == OperationStatus.Success)
             {
@@ -554,7 +552,7 @@ namespace YouTube_Downloader_WPF
 
             try
             {
-                var operation = new WPF_Operations.PlaylistOperation();
+                var operation = new PlaylistOperation();
 
                 this.Queue.Add(operation);
                 this.SelectOneItem(operation);
@@ -704,7 +702,7 @@ namespace YouTube_Downloader_WPF
         /// </summary>
         private void CancelOperations()
         {
-            foreach (Operation operation in App.RunningOperations)
+            foreach (var operation in App.RunningOperations)
             {
                 // Stop & delete unfinished files
                 if (operation.CanStop())
@@ -735,7 +733,7 @@ namespace YouTube_Downloader_WPF
                 end = TimeSpan.Parse(CropToTextBox.Text);
             }
 
-            var operation = new WPF_Operations.ConvertOperation();
+            var operation = new ConvertOperation();
 
             this.Queue.Add(operation);
             this.SelectOneItem(operation);
@@ -757,7 +755,7 @@ namespace YouTube_Downloader_WPF
             TimeSpan start = TimeSpan.Parse(CropFromTextBox.Text);
             TimeSpan end = TimeSpan.Parse(CropToTextBox.Text);
 
-            var operation = new WPF_Operations.CroppingOperation();
+            var operation = new CroppingOperation();
 
             this.Queue.Add(operation);
             this.SelectOneItem(operation);

@@ -2,134 +2,31 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Windows.Forms;
-using ListViewEmbeddedControls;
 using YouTube_Downloader.Classes;
 
 namespace YouTube_Downloader.Operations
 {
-    public class ConvertOperation : ListViewItem, IOperation, IDisposable
+    public class ConvertOperation : Operation
     {
-        /// <summary>
-        /// Gets the input file path.
-        /// </summary>
-        public string Input { get; private set; }
-        /// <summary>
-        /// Gets the output file path.
-        /// </summary>
-        public string Output { get; private set; }
-        /// <summary>
-        /// Gets the operation status.
-        /// </summary>
-        public OperationStatus Status { get; private set; }
+        TimeSpan _start = TimeSpan.MinValue;
+        TimeSpan _end = TimeSpan.MinValue;
+        Process _process;
 
-        /// <summary>
-        /// Occurs when the operation is complete.
-        /// </summary>
-        public event OperationEventHandler OperationComplete;
+        #region Operation members
 
-        bool remove;
-
-        public ConvertOperation(string text)
-            : base(text)
+        public override void Dispose()
         {
-        }
+            base.Dispose();
 
-        ~ConvertOperation()
-        {
-            // Finalizer calls Dispose(false)
-            Dispose(false);
-        }
-
-        /// <summary>
-        /// Returns whether the output can be opened.
-        /// </summary>
-        public bool CanOpen()
-        {
-            return this.Status == OperationStatus.Success;
-        }
-
-        /// <summary>
-        /// Returns whether the operation can be paused.
-        /// </summary>
-        public bool CanPause()
-        {
-            /* Doesn't support pausing. */
-            return false;
-        }
-
-        /// <summary>
-        /// Returns whether the operation can be resumed.
-        /// </summary>
-        public bool CanResume()
-        {
-            /* Doesn't support resuming. */
-            return false;
-        }
-
-        /// <summary>
-        /// Returns whether the operation can be stopped.
-        /// </summary>
-        public bool CanStop()
-        {
-            /* Can stop if working. */
-            return this.Status == OperationStatus.Working;
-        }
-
-        /// <summary>
-        /// Starts the converting operation, and optional cropping.
-        /// </summary>
-        /// <param name="input">The file to convert.</param>
-        /// <param name="output">The path to save the converted file.</param>
-        /// <param name="start">The start position to crop in 00:00:00.000 format. Can be null to not crop.</param>
-        /// <param name="end">The end position to crop in 00:00:00.000 format. Can be null to crop to end, or not at all if start is also null.</param>
-        public void Convert(string input, string output, TimeSpan start, TimeSpan end)
-        {
-            this.Input = input;
-            this.Output = output;
-            this.converterStart = start;
-            this.converterEnd = end;
-
-            backgroundWorker = new BackgroundWorker();
-            backgroundWorker.WorkerSupportsCancellation = true;
-            backgroundWorker.DoWork += backgroundWorker_DoWork;
-            backgroundWorker.RunWorkerCompleted += backgroundWorker_RunWorkerCompleted;
-            backgroundWorker.RunWorkerAsync();
-
-            Program.RunningOperations.Add(this);
-
-            this.Status = OperationStatus.Working;
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
+            // Free managed resources
+            if (_process != null)
             {
-                // Free managed resources
-                if (backgroundWorker != null)
-                {
-                    backgroundWorker.Dispose();
-                    backgroundWorker = null;
-                }
-                if (process != null)
-                {
-                    process.Dispose();
-                    process = null;
-                }
-                OperationComplete = null;
+                _process.Dispose();
+                _process = null;
             }
         }
 
-        /// <summary>
-        /// Opens the output file.
-        /// </summary>
-        public bool Open()
+        public override bool Open()
         {
             try
             {
@@ -142,10 +39,7 @@ namespace YouTube_Downloader.Operations
             return true;
         }
 
-        /// <summary>
-        /// Opens the output directory.
-        /// </summary>
-        public bool OpenContainingFolder()
+        public override bool OpenContainingFolder()
         {
             try
             {
@@ -158,44 +52,20 @@ namespace YouTube_Downloader.Operations
             return true;
         }
 
-        /// <summary>
-        /// Not supported.
-        /// </summary>
-        public void Pause()
-        {
-            throw new NotSupportedException();
-        }
-
-        /// <summary>
-        /// Not supported.
-        /// </summary>
-        public void Resume()
-        {
-            throw new NotSupportedException();
-        }
-
-        /// <summary>
-        /// Stops the operation.
-        /// </summary>
-        /// <param name="remove">True to remove the operation from it's ListView.</param>
-        /// <param name="cleanup">True to delete unfinished files.</param>
-        public bool Stop(bool remove, bool cleanup)
+        public override bool Stop(bool cleanup)
         {
             bool success = true;
-
-            this.remove = remove;
 
             if (this.Status == OperationStatus.Paused || this.Status == OperationStatus.Working)
             {
                 try
                 {
-                    backgroundWorker.CancelAsync();
+                    this.CancelAsync();
 
-                    if (process != null && !process.HasExited)
-                        process.StandardInput.WriteLine("\x71");
+                    if (_process != null && !_process.HasExited)
+                        _process.StandardInput.WriteLine("\x71");
 
                     this.Status = OperationStatus.Canceled;
-                    this.RefreshStatus();
                 }
                 catch (Exception ex)
                 {
@@ -210,39 +80,43 @@ namespace YouTube_Downloader.Operations
                     Helper.DeleteFiles(this.Output);
             }
 
-            OnOperationComplete(new OperationEventArgs(this, this.Status));
-
             return success;
         }
 
-        #region backgroundWorker
+        public override bool CanOpen()
+        {
+            return this.Status == OperationStatus.Success;
+        }
 
-        private BackgroundWorker backgroundWorker;
-        private TimeSpan converterStart = TimeSpan.MinValue;
-        private TimeSpan converterEnd = TimeSpan.MinValue;
-        private Process process;
+        public override bool CanStop()
+        {
+            // Can stop if working.
+            return this.Status == OperationStatus.Working;
+        }
 
-        private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        #endregion
+
+        protected override void OnWorkerDoWork(DoWorkEventArgs e)
         {
             try
             {
-                FFmpegHelper.Convert(ProgressChanged, this.Input, this.Output);
+                FFmpegHelper.Convert(this.ReportProgress, this.Input, this.Output);
 
-                if (!backgroundWorker.CancellationPending && converterStart != TimeSpan.MinValue)
+                if (!this.CancellationPending && _start != TimeSpan.MinValue)
                 {
-                    if (converterEnd == TimeSpan.MinValue)
+                    if (_end == TimeSpan.MinValue)
                     {
-                        FFmpegHelper.Crop(ProgressChanged, this.Output, this.Output, converterStart);
+                        FFmpegHelper.Crop(this.ReportProgress, this.Output, this.Output, _start);
                     }
                     else
                     {
-                        FFmpegHelper.Crop(ProgressChanged, this.Output, this.Output, converterStart, converterEnd);
+                        FFmpegHelper.Crop(this.ReportProgress, this.Output, this.Output, _start, _end);
                     }
                 }
 
-                this.converterStart = this.converterEnd = TimeSpan.MinValue;
+                _start = _end = TimeSpan.MinValue;
 
-                if (backgroundWorker.CancellationPending)
+                if (this.CancellationPending)
                 {
                     e.Result = OperationStatus.Canceled;
                 }
@@ -258,81 +132,45 @@ namespace YouTube_Downloader.Operations
             }
         }
 
-        private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        protected override void OnWorkerProgressChanged(ProgressChangedEventArgs e)
         {
-            this.Status = (OperationStatus)e.Result;
-            this.RefreshStatus();
+            base.OnWorkerProgressChanged(e);
+
+            if (e.UserState is Process)
+            {
+                // FFmpegHelper will return the ffmpeg process so it can be used to cancel.
+                _process = (Process)e.UserState;
+            }
+        }
+
+        protected override void OnWorkerRunWorkerCompleted(RunWorkerCompletedEventArgs e)
+        {
+            base.OnWorkerRunWorkerCompleted(e);
 
             if (this.Status == OperationStatus.Success)
             {
-                this.SubItems[4].Text = Helper.FormatFileSize(Helper.GetFileSize(this.Output));
-            }
-
-            Program.RunningOperations.Remove(this);
-
-            OnOperationComplete(new OperationEventArgs(this, this.Status));
-
-            if (this.remove && this.ListView != null)
-            {
-                this.Remove();
+                this.FileSize = Helper.GetFileSize(this.Output);
             }
         }
 
-        private void ProgressChanged(int progressPercentage, object userState)
+        protected override void OnWorkerStart(object[] args)
         {
-            this.GetProgressBar().Value = progressPercentage;
+            this.ReportsProgress = true;
 
-            if (userState is Process)
-            {
-                // FFmpegHelper will return the ffmpeg process so it can be used to cancel.
-                process = (Process)userState;
-            }
+            this.Input = (string)args[0];
+            this.Output = (string)args[1];
+
+            _start = (TimeSpan)args[2];
+            _end = (TimeSpan)args[3];
+
+            this.Duration = (long)FFmpegHelper.GetDuration(this.Input).TotalSeconds;
+            this.Text = "Converting...";
+            this.Title = Path.GetFileName(this.Output);
         }
 
-        #endregion
-
-        /// <summary>
-        /// Returns the operation's ProgressBar.
-        /// </summary>
-        private ProgressBar GetProgressBar()
+        public object[] Args(string input, string output, TimeSpan start, TimeSpan end)
         {
-            return (ProgressBar)((ListViewEx)this.ListView).GetEmbeddedControl(1, this.Index);
-        }
-
-        private void RefreshStatus()
-        {
-            if (this.Status == OperationStatus.Canceled)
-            {
-                this.SubItems[2].Text = "Canceled";
-            }
-            else if (this.Status == OperationStatus.Failed)
-            {
-                this.SubItems[2].Text = "Failed";
-            }
-            else if (this.Status == OperationStatus.Success)
-            {
-                this.SubItems[2].Text = "Completed";
-            }
-            else
-            {
-                this.SubItems[2].Text = "???";
-            }
-        }
-
-        private void OnOperationComplete(OperationEventArgs e)
-        {
-            RefreshStatus();
-
-            if (Program.RunningOperations.Contains(this))
-                Program.RunningOperations.Remove(this);
-
-            if (this.remove && this.ListView != null)
-                this.Remove();
-
-            if (OperationComplete != null)
-                OperationComplete(this, e);
-
-            Console.WriteLine(this.GetType().Name + ": Operation complete, status: " + this.Status);
+            return new object[] { input, output, start, end };
         }
     }
 }

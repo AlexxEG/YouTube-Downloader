@@ -93,11 +93,6 @@
     <Compile Include="Converters\MultiAnyBoolConverter.cs" />
     <Compile Include="Converters\MultipleBoolsConverter.cs" />
     <Compile Include="Converters\PauseResumeConverter.cs" />
-    <Compile Include="Operations\ConvertOperation.cs" />
-    <Compile Include="Operations\CroppingOperation.cs" />
-    <Compile Include="Operations\DownloadOperation.cs" />
-    <Compile Include="Operations\Operation.cs" />
-    <Compile Include="Operations\PlaylistOperation.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

@@ -6,7 +6,7 @@ using System.Text;
 using YouTube_Downloader.Classes;
 using YouTube_Downloader.Operations;
 
-namespace YouTube_Downloader_WPF.Operations
+namespace YouTube_Downloader.Operations
 {
     public abstract class Operation : IDisposable, INotifyPropertyChanged
     {
@@ -24,12 +24,10 @@ namespace YouTube_Downloader_WPF.Operations
         /// Occurs when the operation is complete.
         /// </summary>
         public event OperationEventHandler OperationComplete;
-
         public event ProgressChangedEventHandler ProgressChanged;
-
         public event EventHandler ReportsProgressChanged;
-
         public event EventHandler StatusChanged;
+        public event EventHandler TitleChanged;
 
         #region Fields
 
@@ -115,6 +113,7 @@ namespace YouTube_Downloader_WPF.Operations
             set
             {
                 _reportsProgress = value;
+                this.OnReportsProgressChanged(EventArgs.Empty);
                 this.OnPropertyChanged();
             }
         }
@@ -257,6 +256,7 @@ namespace YouTube_Downloader_WPF.Operations
             set
             {
                 _title = value;
+                this.OnTitleChanged(EventArgs.Empty);
                 this.OnPropertyChanged();
             }
         }
@@ -284,6 +284,9 @@ namespace YouTube_Downloader_WPF.Operations
             set
             {
                 _status = value;
+
+                this.OnStatusChanged(EventArgs.Empty);
+
                 this.OnPropertyChanged();
                 this.OnPropertyChangedExplicit("IsCanceled");
                 this.OnPropertyChangedExplicit("IsPaused");
@@ -311,8 +314,6 @@ namespace YouTube_Downloader_WPF.Operations
             _worker.RunWorkerCompleted += Worker_RunWorkerCompleted;
             _worker.RunWorkerAsync(args);
 
-            App.RunningOperations.Add(this);
-
             this.Status = OperationStatus.Working;
         }
 
@@ -332,7 +333,8 @@ namespace YouTube_Downloader_WPF.Operations
 
         private void Worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            OnWorkerProgressChanged(e);
+            this.OnProgressChanged(e);
+            this.OnWorkerProgressChanged(e);
         }
 
         private void Worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -359,9 +361,6 @@ namespace YouTube_Downloader_WPF.Operations
             this.OnPropertyChangedExplicit("ProgressText");
 
             this.Text = string.Empty;
-
-            if (App.RunningOperations.Contains(this))
-                App.RunningOperations.Remove(this);
 
             OnOperationComplete(new OperationEventArgs(null, this.Status));
         }
@@ -394,6 +393,12 @@ namespace YouTube_Downloader_WPF.Operations
         {
             if (StatusChanged != null)
                 StatusChanged(this, e);
+        }
+
+        protected virtual void OnTitleChanged(EventArgs e)
+        {
+            if (this.TitleChanged != null)
+                this.TitleChanged(this, e);
         }
 
         protected virtual void OnWorkerDoWork(DoWorkEventArgs e)

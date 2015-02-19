@@ -16,7 +16,7 @@ namespace YouTube_Downloader
         /// <summary>
         /// Store running operations that can be stopped automatically when closing application.
         /// </summary>
-        public static List<IOperation> RunningOperations = new List<IOperation>();
+        public static List<Operation> RunningOperations = new List<Operation>();
 
         /// <summary>
         /// The main entry point for the application.

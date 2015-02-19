@@ -3,195 +3,92 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
-using ListViewEmbeddedControls;
+using System.Threading;
 using YouTube_Downloader.Classes;
-using YouTube_Downloader.Delegates;
 
 namespace YouTube_Downloader.Operations
 {
-    public class DownloadOperation : ListViewItem, IOperation, IDisposable
+    public class DownloadOperation : Operation
     {
-        /// <summary>
-        /// The amount of time to wait for progress updates in milliseconds.
-        /// </summary>
-        private const int ProgressDelay = 1000;
+        bool _combining, _dash, _processing;
+        FileDownloader downloader;
 
-        /// <summary>
-        /// Gets the video download url input.
-        /// </summary>
-        public string Input { get; private set; }
-        /// <summary>
-        /// Gets the output directory.
-        /// </summary>
-        public string Output { get; private set; }
-        /// <summary>
-        /// Gets the operation status.
-        /// </summary>
-        public OperationStatus Status { get; private set; }
-
-        /// <summary>
-        /// Occurs when the operation is complete.
-        /// </summary>
-        public event OperationEventHandler OperationComplete;
-
-        bool dash, processing, remove;
-        Stopwatch sw;
-
-        public DownloadOperation(string text)
-            : base(text)
+        public DownloadOperation(VideoFormat format)
         {
-            sw = new Stopwatch();
-            sw.Start();
-
-            this.Status = OperationStatus.None;
+            this.Duration = format.VideoInfo.Duration;
+            this.FileSize = format.FileSize;
+            this.Link = format.VideoInfo.Url;
+            this.ReportsProgress = true;
+            this.Thumbnail = format.VideoInfo.ThumbnailUrl;
+            this.Title = format.VideoInfo.Title;
         }
 
-        ~DownloadOperation()
+        private void downloader_Canceled(object sender, EventArgs e)
         {
-            // Finalizer calls Dispose(false)
-            Dispose(false);
+            // Pass the event along to a almost identical event handler.
+            this.Status = OperationStatus.Canceled;
         }
 
-        /// <summary>
-        /// Returns whether the output can be opened.
-        /// </summary>
-        public bool CanOpen()
+        private void downloader_Completed(object sender, EventArgs e)
         {
-            return this.Status == OperationStatus.Success;
+            // Set status to successful if no download(s) failed.
+            if (this.Status != OperationStatus.Failed)
+                this.Status = OperationStatus.Success;
         }
 
-        /// <summary>
-        /// Returns whether the operation can be paused.
-        /// </summary>
-        public bool CanPause()
+        private void downloader_FileDownloadFailed(object sender, Exception ex)
         {
-            /* Only downloader can pause. */
-            return downloader.CanPause && this.Status == OperationStatus.Working;
+            // If one or more files fail, whole operation failed. Might handle it more
+            // elegantly in the future.
+            this.Status = OperationStatus.Failed;
+            downloader.Stop(false);
         }
 
-        /// <summary>
-        /// Returns whether the operation can be resumed.
-        /// </summary>
-        public bool CanResume()
+        private void downloader_CalculatedTotalFileSize(object sender, EventArgs e)
         {
-            /* Only downloader can resume. */
-            return downloader.CanResume && this.Status == OperationStatus.Paused;
+            this.FileSize = downloader.TotalSize;
         }
 
-        /// <summary>
-        /// Returns whether the operation can be stopped.
-        /// </summary>
-        public bool CanStop()
+        private void downloader_ProgressChanged(object sender, EventArgs e)
         {
-            /* Only downloader can stop. */
-            return combiner == null && downloader.CanStop && (this.Status == OperationStatus.Working || this.Status == OperationStatus.Paused);
-        }
+            if (_processing)
+                return;
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
+            try
             {
-                // Free managed resources
-                if (downloader != null)
-                {
-                    downloader.Dispose();
-                    downloader = null;
-                }
-                if (combiner != null)
-                {
-                    combiner.Dispose();
-                    combiner = null;
-                }
-                OperationComplete = null;
+                _processing = true;
+
+                string speed = string.Format(new FileSizeFormatProvider(), "{0:s}", downloader.Speed);
+                long longETA = Helper.GetETA(downloader.Speed, downloader.TotalSize, downloader.TotalProgress);
+                string ETA = longETA == 0 ? "" : "  [ " + FormatLeftTime.Format(((long)longETA) * 1000) + " ]";
+
+                this.ETA = ETA;
+                this.Speed = speed;
+                this.Progress = downloader.TotalProgress;
+                this.ProgressPercentage = downloader.TotalPercentage();
+            }
+            catch { }
+            finally
+            {
+                _processing = false;
             }
         }
 
-        /// <summary>
-        /// Starts the video download.
-        /// </summary>
-        /// <param name="url">The video download url.</param>
-        /// <param name="output">The output file to save video.</param>
-        public void Download(string url, string output)
+        #region Operation members
+
+        public override void Dispose()
         {
-            this.Input = url;
-            this.Output = output;
+            base.Dispose();
 
-            string folder = Path.GetDirectoryName(output);
-
-            downloader = new FileDownloader();
-            downloader.Directory = folder;
-
-            DownloadFile fileInfo = new DownloadFile(this.Output, url);
-
-            downloader.Files.Add(fileInfo);
-
-            downloader.Canceled += downloader_Canceled;
-            downloader.Completed += downloader_Completed;
-            downloader.FileDownloadFailed += downloader_FileDownloadFailed;
-            downloader.CalculatedTotalFileSize += downloader_CalculatedTotalFileSize;
-            downloader.ProgressChanged += downloader_ProgressChanged;
-
-            downloader.Start();
-
-            this.Status = OperationStatus.Working;
-
-            Program.RunningOperations.Add(this);
-        }
-
-        /// <summary>
-        /// Starts the DASH video download.
-        /// </summary>
-        /// <param name="audio">The audio download url.</param>
-        /// <param name="video">The video download url.</param>
-        /// <param name="output">The output file to save video.</param>
-        public void DownloadDASH(string audio, string video, string output)
-        {
-            dash = true;
-
-            this.Input = string.Format("{0}|{1}", audio, video);
-            this.Output = output;
-
-            string folder = Path.GetDirectoryName(output);
-            string file = Path.GetFileName(output).Trim();
-
-            downloader = new FileDownloader();
-            downloader.Directory = folder;
-
-            Regex regex = new Regex(@"^(\w:.*\\.*)(\..*)$");
-
-            DownloadFile[] downloadFiles = new DownloadFile[]
+            // Free managed resources
+            if (downloader != null)
             {
-                new DownloadFile(regex.Replace(output, "$1_audio$2"), audio),
-                new DownloadFile(regex.Replace(output, "$1_video$2"), video)
-            };
-
-            downloader.Files.AddRange(downloadFiles);
-
-            // Attach events.
-            downloader.Canceled += downloader_Canceled;
-            downloader.Completed += downloader_Completed;
-            downloader.FileDownloadFailed += downloader_FileDownloadFailed;
-            downloader.CalculatedTotalFileSize += downloader_CalculatedTotalFileSize;
-            downloader.ProgressChanged += downloader_ProgressChanged;
-
-            downloader.Start();
-
-            this.Status = OperationStatus.Working;
-
-            Program.RunningOperations.Add(this);
+                downloader.Dispose();
+                downloader = null;
+            }
         }
 
-        /// <summary>
-        /// Opens the output file.
-        /// </summary>
-        public bool Open()
+        public override bool Open()
         {
             try
             {
@@ -204,10 +101,7 @@ namespace YouTube_Downloader.Operations
             return true;
         }
 
-        /// <summary>
-        /// Opens the output directory.
-        /// </summary>
-        public bool OpenContainingFolder()
+        public override bool OpenContainingFolder()
         {
             try
             {
@@ -220,35 +114,22 @@ namespace YouTube_Downloader.Operations
             return true;
         }
 
-        /// <summary>
-        /// Pauses the operation.
-        /// </summary>
-        public void Pause()
+        public override void Pause()
         {
             downloader.Pause();
 
             this.Status = OperationStatus.Paused;
         }
 
-        /// <summary>
-        /// Resumes the operation.
-        /// </summary>
-        public void Resume()
+        public override void Resume()
         {
             downloader.Resume();
 
             this.Status = OperationStatus.Working;
         }
 
-        /// <summary>
-        /// Stops the operation.
-        /// </summary>
-        /// <param name="remove">True to remove the operation from it's ListView.</param>
-        /// <param name="cleanup">True to delete unfinished files.</param>
-        public bool Stop(bool remove, bool cleanup)
+        public override bool Stop(bool cleanup)
         {
-            this.remove = remove;
-
             // Stop downloader if still running.
             if (downloader != null && downloader.CanStop)
                 downloader.Stop(cleanup);
@@ -257,212 +138,134 @@ namespace YouTube_Downloader.Operations
             if (this.Status != OperationStatus.Success)
                 this.Status = OperationStatus.Canceled;
 
-            OnOperationComplete();
-
             return true;
         }
 
-        #region combiner
-
-        BackgroundWorker combiner;
-
-        private void combiner_DoWork(object sender, DoWorkEventArgs e)
+        public override bool CanOpen()
         {
-            try
-            {
-                string[] arguments = e.Argument as string[];
-                string audio = arguments[0];
-                string video = arguments[1];
-
-                FFmpegHelper.CombineDash(video, audio, this.Output);
-
-                /* Delete the separate audio & video files. */
-                Helper.DeleteFiles(arguments);
-
-                e.Result = OperationStatus.Success;
-            }
-            catch (Exception ex)
-            {
-                Program.SaveException(ex);
-                e.Result = OperationStatus.Failed;
-            }
+            return this.Status == OperationStatus.Success;
         }
 
-        private void combiner_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        public override bool CanPause()
         {
-            this.Status = (OperationStatus)e.Result;
+            // Only downloader can pause.
+            return downloader.CanPause && this.Status == OperationStatus.Working;
+        }
 
-            this.GetProgressBar().Style = ProgressBarStyle.Continuous;
-            this.GetProgressBar().MarqueeAnimationSpeed = 0;
-            this.GetProgressBar().Value = this.GetProgressBar().Maximum;
+        public override bool CanResume()
+        {
+            // Only downloader can resume.
+            return downloader.CanResume && this.Status == OperationStatus.Paused;
+        }
 
-            OnOperationComplete();
+        public override bool CanStop()
+        {
+            if (this.Status == OperationStatus.Paused || this.Status == OperationStatus.Working)
+                // Only downloader can stop, not the combiner currently.
+                return !_combining && downloader.CanStop;
+            else
+                return true;
         }
 
         #endregion
 
-        #region downloader
-
-        FileDownloader downloader;
-
-        private void downloader_Canceled(object sender, EventArgs e)
+        protected override void OnWorkerDoWork(DoWorkEventArgs e)
         {
-            // Pass the event along to a almost identical event handler.
-            this.Status = OperationStatus.Canceled;
+            while (downloader != null && downloader.IsBusy)
+                Thread.Sleep(200);
 
-            OnOperationComplete();
-        }
-
-        private void downloader_Completed(object sender, EventArgs e)
-        {
-            // Set status to successful if no download(s) failed.
-            if (this.Status != OperationStatus.Failed)
-                this.Status = OperationStatus.Success;
-
-            if (dash && this.Status == OperationStatus.Success)
+            if (_dash && this.Status == OperationStatus.Success)
             {
-                this.Combine();
-            }
-            else
-            {
-                OnOperationComplete();
-            }
-        }
+                _combining = true;
 
-        private void downloader_FileDownloadFailed(object sender, Exception ex)
-        {
-            /* If one or more files fail, whole operation failed. Might handle it more
-             * elegantly in the future. */
-            this.Status = OperationStatus.Failed;
-            downloader.Stop(false);
-        }
+                string audio = downloader.Files[0].Path;
+                string video = downloader.Files[1].Path;
 
-        private void downloader_CalculatedTotalFileSize(object sender, EventArgs e)
-        {
-            this.SetItemText(this.SubItems[4], Helper.FormatFileSize(downloader.TotalSize));
-        }
+                this.Text = "Combining...";
+                this.ReportsProgress = false;
+                this.Progress = 0;
+                this.ProgressPercentage = Max_Progress;
 
-        private void downloader_ProgressChanged(object sender, EventArgs e)
-        {
-            if (processing)
-                return;
-
-            if (this.ListView == null)
-                return;
-
-            if (ListView.InvokeRequired)
-                ListView.Invoke(new ProgressChangedEventHandler(downloader_ProgressChanged), sender, e);
-            else
-            {
                 try
                 {
-                    processing = true;
+                    FFmpegHelper.CombineDash(video, audio, this.Output);
 
-                    if (!this.Wait())
-                    {
-                        /* Only update text once per second. */
-                        string speed = string.Format(new FileSizeFormatProvider(), "{0:s}", downloader.Speed);
-                        long longETA = Helper.GetETA(downloader.Speed, downloader.TotalSize, downloader.TotalProgress);
-                        string ETA = longETA == 0 ? "" : "  [ " + FormatLeftTime.Format(((long)longETA) * 1000) + " ]";
+                    // Delete the separate audio & video files.
+                    Helper.DeleteFiles(audio, video);
 
-                        this.SubItems[1].Text = downloader.TotalPercentage() + " %";
-                        this.SubItems[2].Text = speed + ETA;
-
-                        sw.Restart();
-                    }
-
-                    this.GetProgressBar().Value = (int)downloader.TotalPercentage();
-
-                    RefreshStatus();
+                    e.Result = OperationStatus.Success;
                 }
-                catch { }
-                finally
+                catch (Exception ex)
                 {
-                    processing = false;
+                    Program.SaveException(ex);
+                    e.Result = OperationStatus.Failed;
                 }
             }
+
+            e.Result = this.Status;
         }
 
-        #endregion
-
-        /// <summary>
-        /// Combines DASH audio &amp; video, and returns true if it was successful.
-        /// </summary>
-        private void Combine()
+        protected override void OnWorkerStart(object[] args)
         {
-            string audio = downloader.Files[0].Path;
-            string video = downloader.Files[1].Path;
+            this.ReportsProgress = true;
 
-            this.SubItems[2].Text = "Combining...";
-            this.GetProgressBar().Value = this.GetProgressBar().Minimum;
-            this.GetProgressBar().Style = ProgressBarStyle.Marquee;
-            this.GetProgressBar().MarqueeAnimationSpeed = 30;
+            DownloadFile[] downloadFiles;
 
-            combiner = new BackgroundWorker();
-            combiner.DoWork += combiner_DoWork;
-            combiner.RunWorkerCompleted += combiner_RunWorkerCompleted;
-
-            combiner.RunWorkerAsync(new string[] { audio, video });
-        }
-
-        /// <summary>
-        /// Returns the operation's ProgressBar.
-        /// </summary>
-        private ProgressBar GetProgressBar()
-        {
-            return (ProgressBar)((ListViewEx)this.ListView).GetEmbeddedControl(1, this.Index);
-        }
-
-        private void RefreshStatus()
-        {
-            if (this.Status == OperationStatus.Success)
+            if (args.Length == 2)
             {
-                this.SubItems[2].Text = "Completed";
+                this.Input = (string)args[0];
+                this.Output = (string)args[1];
+
+                string file = Path.GetFileName(this.Output).Trim();
+
+                downloadFiles = new DownloadFile[]
+                {
+                    new DownloadFile(this.Output, this.Input)
+                };
             }
-            else if (this.Status == OperationStatus.Paused)
+            else if (args.Length == 3)
             {
-                this.SubItems[2].Text = "Paused";
-            }
-            else if (this.Status == OperationStatus.Canceled)
-            {
-                this.SubItems[2].Text = "Canceled";
-            }
-        }
+                _dash = true;
+                this.Input = string.Format("{0}|{1}", args[0], args[1]);
+                this.Output = (string)args[2];
 
-        private void SetItemText(ListViewSubItem item, string text)
-        {
-            if (this.ListView.InvokeRequired)
-            {
-                this.ListView.Invoke(new SetItemTextDelegate(SetItemText), item, text);
+                Regex regex = new Regex(@"^(\w:.*\\.*)(\..*)$");
+
+                downloadFiles = new DownloadFile[]
+                {
+                    new DownloadFile(regex.Replace(this.Output, "$1_audio$2"), (string)args[0]),
+                    new DownloadFile(regex.Replace(this.Output, "$1_video$2"), (string)args[1])
+                };
             }
             else
             {
-                item.Text = text;
+                throw new ArgumentException();
             }
+
+            string folder = Path.GetDirectoryName(this.Output);
+
+            downloader = new FileDownloader();
+            downloader.Files.AddRange(downloadFiles);
+            downloader.Directory = folder;
+
+            // Attach events.
+            downloader.Canceled += downloader_Canceled;
+            downloader.Completed += downloader_Completed;
+            downloader.FileDownloadFailed += downloader_FileDownloadFailed;
+            downloader.CalculatedTotalFileSize += downloader_CalculatedTotalFileSize;
+            downloader.ProgressChanged += downloader_ProgressChanged;
+
+            downloader.Start();
         }
 
-        private void OnOperationComplete()
+        public object[] Args(string url, string output)
         {
-            sw.Stop();
-
-            // Status should already be handled at some point before this.
-            RefreshStatus();
-            Program.RunningOperations.Remove(this);
-
-            // Remove from it's ListView if conditions is met.
-            if (this.remove && this.ListView != null)
-                this.Remove();
-
-            if (OperationComplete != null)
-                OperationComplete(this, new OperationEventArgs(this, this.Status));
-
-            Console.WriteLine(this.GetType().Name + ": Operation complete, status: " + this.Status);
+            return new object[] { url, output };
         }
 
-        private bool Wait()
+        public object[] Args(string audio, string video, string output)
         {
-            // Limit the progress update to once a second to avoid flickering.
-            return sw.ElapsedMilliseconds < ProgressDelay;
+            return new object[] { audio, video, output };
         }
     }
 }

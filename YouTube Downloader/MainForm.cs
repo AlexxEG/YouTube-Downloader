@@ -6,6 +6,7 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using YouTube_Downloader.Classes;
+using YouTube_Downloader.Controls;
 using YouTube_Downloader.Dialogs;
 using YouTube_Downloader.Enums;
 using YouTube_Downloader.Operations;
@@ -264,49 +265,30 @@ namespace YouTube_Downloader
                     File.Delete(Path.Combine(path, filename));
                 }
 
-                DownloadOperation item = new DownloadOperation(Path.GetFileName(filename));
+                var operation = new DownloadOperation(tempFormat);
+                var item = new OperationListViewItem(Path.GetFileName(filename), tempFormat.VideoInfo.Url, operation);
 
-                item.SubItems.Add("");
-                item.SubItems.Add("");
-                item.SubItems.Add(Helper.FormatVideoLength(tempFormat.VideoInfo.Duration));
+                item.Duration = Helper.FormatVideoLength(tempFormat.VideoInfo.Duration);
 
                 // Combine video and audio file size if the format is DASH and not AudioOnly
                 if (tempFormat.FormatType != FormatType.Normal && !tempFormat.AudioOnly)
-                    item.SubItems.Add(Helper.FormatFileSize(tempFormat.FileSize + Helper.GetAudioFormat(tempFormat).FileSize));
+                    item.FileSize = Helper.FormatFileSize(tempFormat.FileSize + Helper.GetAudioFormat(tempFormat).FileSize);
                 else
-                    item.SubItems.Add(Helper.FormatFileSize(tempFormat.FileSize));
+                    item.FileSize = Helper.FormatFileSize(tempFormat.FileSize);
 
-                item.SubItems.Add(tempFormat.VideoInfo.Url);
                 item.OperationComplete += downloadItem_OperationComplete;
 
                 lvQueue.Items.Add(item);
 
-                SelectOneItem(item);
-
-                ProgressBar pb = new ProgressBar()
-                {
-                    Maximum = 100,
-                    Minimum = 0,
-                    Value = 0
-                };
-                lvQueue.AddEmbeddedControl(pb, 1, item.Index);
-
-                LinkLabel ll = new LinkLabel()
-                {
-                    Text = tempFormat.VideoInfo.Url,
-                    Tag = tempFormat.VideoInfo.Url
-                };
-                ll.LinkClicked += linkLabel_LinkClicked;
-
-                lvQueue.AddEmbeddedControl(ll, 5, item.Index);
+                this.SelectOneItem(item);
 
                 if (tempFormat.AudioOnly || tempFormat.FormatType == FormatType.Normal)
-                    item.Download(tempFormat.DownloadUrl, Path.Combine(path, filename));
+                    operation.Start(operation.Args(tempFormat.DownloadUrl, Path.Combine(path, filename)));
                 else
                 {
                     VideoFormat audio = Helper.GetAudioFormat(tempFormat);
 
-                    item.DownloadDASH(audio.DownloadUrl, tempFormat.DownloadUrl, Path.Combine(path, filename));
+                    operation.Start(operation.Args(audio.DownloadUrl, tempFormat.DownloadUrl, Path.Combine(path, filename)));
                 }
 
                 tabControl1.SelectedTab = queueTabPage;
@@ -364,7 +346,7 @@ namespace YouTube_Downloader
 
         private void downloadItem_OperationComplete(object sender, OperationEventArgs e)
         {
-            IOperation operation = (IOperation)e.Item;
+            Operation operation = (sender as OperationListViewItem).Operation;
 
             if (chbAutoConvert.Enabled && chbAutoConvert.Checked && operation.Status == OperationStatus.Success)
             {
@@ -546,31 +528,14 @@ namespace YouTube_Downloader
 
             try
             {
-                PlaylistOperation item = new PlaylistOperation();
-
-                // item.OperationComplete += downloadItem_OperationComplete;
+                var operation = new PlaylistOperation();
+                var item = new OperationListViewItem("Getting playlist info...", txtPlaylistLink.Text, operation);
 
                 lvQueue.Items.Add(item);
 
-                SelectOneItem(item);
+                this.SelectOneItem(item);
 
-                ProgressBar pb = new ProgressBar()
-                {
-                    Maximum = 100,
-                    Minimum = 0,
-                    Value = 0
-                };
-                lvQueue.AddEmbeddedControl(pb, 1, item.Index);
-
-                LinkLabel ll = new LinkLabel()
-                {
-                    Text = txtPlaylistLink.Text,
-                    Tag = txtPlaylistLink.Text
-                };
-                ll.LinkClicked += linkLabel_LinkClicked;
-                lvQueue.AddEmbeddedControl(ll, 5, item.Index);
-
-                item.Download(txtPlaylistLink.Text, path, chbPlaylistDASH.Checked, videos);
+                operation.Start(operation.Args(txtPlaylistLink.Text, path, chbPlaylistDASH.Checked, videos));
 
                 tabControl1.SelectedTab = queueTabPage;
             }
@@ -756,21 +721,23 @@ namespace YouTube_Downloader
 
             bool canOpen = false, canPause = false, canResume = false, canStop = false, canConvert = false;
 
-            foreach (IOperation item in lvQueue.SelectedItems)
+            foreach (OperationListViewItem item in lvQueue.SelectedItems)
             {
-                if (item.CanOpen())
+                Operation operation = item.Operation;
+
+                if (operation.CanOpen())
                     canOpen = true;
 
-                if (item.CanPause())
+                if (operation.CanPause())
                     canPause = true;
 
-                if (item.CanResume())
+                if (operation.CanResume())
                     canResume = true;
 
-                if (item.CanStop())
+                if (operation.CanStop())
                     canStop = true;
 
-                if (item is DownloadOperation && item.Status == OperationStatus.Success)
+                if (operation is DownloadOperation && operation.Status == OperationStatus.Success)
                     canConvert = true;
             }
 
@@ -794,8 +761,10 @@ namespace YouTube_Downloader
         {
             int fails = 0;
 
-            foreach (IOperation operation in lvQueue.SelectedItems)
+            foreach (OperationListViewItem item in lvQueue.SelectedItems)
             {
+                Operation operation = item.Operation;
+
                 if (operation.CanOpen() && !operation.Open()) fails++;
             }
 
@@ -809,8 +778,10 @@ namespace YouTube_Downloader
         {
             int fails = 0;
 
-            foreach (IOperation operation in lvQueue.SelectedItems)
+            foreach (OperationListViewItem item in lvQueue.SelectedItems)
             {
+                Operation operation = item.Operation;
+
                 if (!operation.OpenContainingFolder()) fails++;
             }
 
@@ -822,8 +793,10 @@ namespace YouTube_Downloader
 
         private void convertToMP3MenuItem_Click(object sender, EventArgs e)
         {
-            foreach (IOperation operation in lvQueue.SelectedItems)
+            foreach (OperationListViewItem item in lvQueue.SelectedItems)
             {
+                Operation operation = item.Operation;
+
                 if (operation is DownloadOperation && operation.Status == OperationStatus.Success)
                 {
                     string input = (operation as DownloadOperation).Output;
@@ -839,25 +812,31 @@ namespace YouTube_Downloader
 
         private void resumeMenuItem_Click(object sender, EventArgs e)
         {
-            foreach (IOperation operation in lvQueue.SelectedItems)
+            foreach (OperationListViewItem item in lvQueue.SelectedItems)
             {
+                Operation operation = item.Operation;
+
                 if (operation.CanResume()) operation.Resume();
             }
         }
 
         private void pauseMenuItem_Click(object sender, EventArgs e)
         {
-            foreach (IOperation operation in lvQueue.SelectedItems)
+            foreach (OperationListViewItem item in lvQueue.SelectedItems)
             {
+                Operation operation = item.Operation;
+
                 if (operation.CanPause()) operation.Pause();
             }
         }
 
         private void stopMenuItem_Click(object sender, EventArgs e)
         {
-            foreach (IOperation operation in lvQueue.SelectedItems)
+            foreach (OperationListViewItem item in lvQueue.SelectedItems)
             {
-                if (operation.CanStop()) operation.Stop(false, true);
+                Operation operation = item.Operation;
+
+                if (operation.CanStop()) operation.Stop(true);
             }
         }
 
@@ -865,9 +844,10 @@ namespace YouTube_Downloader
         {
             for (int i = lvQueue.SelectedItems.Count; i-- > 0; )
             {
-                IOperation operation = (IOperation)lvQueue.SelectedItems[i];
+                var item = (OperationListViewItem)lvQueue.SelectedItems[i];
+                var operation = item.Operation;
 
-                operation.Stop(true, true);
+                operation.Stop(true);
             }
         }
 
@@ -890,11 +870,11 @@ namespace YouTube_Downloader
         {
             this.Hide();
 
-            foreach (IOperation operation in Program.RunningOperations)
+            foreach (Operation operation in Program.RunningOperations)
             {
                 // Stop & delete unfinished files
                 if (operation.CanStop())
-                    operation.Stop(false, true);
+                    operation.Stop(true);
             }
 
             if (bwGetVideo.IsBusy)
@@ -929,35 +909,18 @@ namespace YouTube_Downloader
                 end = (TimeSpan)mtxtTo.ValidateText();
             }
 
-            var item = new ConvertOperation(Path.GetFileName(output));
+            var operation = new ConvertOperation();
+            var item = new OperationListViewItem(Path.GetFileName(output), input, Path.GetFileName(input), operation);
 
-            item.SubItems.Add("");
-            item.SubItems.Add("Converting");
-            item.SubItems.Add(Helper.FormatVideoLength(FFmpegHelper.GetDuration(input)));
-            item.SubItems.Add(Helper.FormatFileSize(Helper.GetFileSize(input)));
-            item.SubItems.Add("");
+            item.WorkingText = "Converting";
+            item.Duration = Helper.FormatVideoLength(FFmpegHelper.GetDuration(input));
+            item.FileSize = Helper.FormatFileSize(Helper.GetFileSize(input));
 
             lvQueue.Items.Add(item);
 
-            SelectOneItem(item);
+            this.SelectOneItem(item);
 
-            ProgressBar pb = new ProgressBar()
-            {
-                Maximum = 100,
-                Minimum = 0,
-                Value = 0
-            };
-            lvQueue.AddEmbeddedControl(pb, 1, item.Index);
-
-            LinkLabel ll = new LinkLabel()
-            {
-                Text = Path.GetFileName(input),
-                Tag = input
-            };
-            ll.LinkClicked += linkLabel_LinkClicked;
-            lvQueue.AddEmbeddedControl(ll, 5, item.Index);
-
-            item.Convert(input, output, start, end);
+            operation.Start(operation.Args(input, output, start, end));
         }
 
         /// <summary>
@@ -974,35 +937,18 @@ namespace YouTube_Downloader
             TimeSpan start = (TimeSpan)mtxtFrom.ValidateText();
             TimeSpan end = (TimeSpan)mtxtTo.ValidateText();
 
-            CroppingOperation item = new CroppingOperation(Path.GetFileName(output));
+            var operation = new CroppingOperation();
+            var item = new OperationListViewItem(Path.GetFileName(output), input, Path.GetFileName(input), operation);
 
-            item.SubItems.Add("");
-            item.SubItems.Add("Cropping");
-            item.SubItems.Add(Helper.FormatVideoLength(FFmpegHelper.GetDuration(input)));
-            item.SubItems.Add(Helper.FormatFileSize(Helper.GetFileSize(input)));
-            item.SubItems.Add("");
+            item.WorkingText = "Cropping";
+            item.Duration = Helper.FormatVideoLength(FFmpegHelper.GetDuration(input));
+            item.FileSize = Helper.FormatFileSize(Helper.GetFileSize(input));
 
             lvQueue.Items.Add(item);
 
-            SelectOneItem(item);
+            this.SelectOneItem(item);
 
-            ProgressBar pb = new ProgressBar()
-            {
-                Maximum = 100,
-                Minimum = 0,
-                Value = 0
-            };
-            lvQueue.AddEmbeddedControl(pb, 1, item.Index);
-
-            LinkLabel ll = new LinkLabel()
-            {
-                Text = Path.GetFileName(input),
-                Tag = input
-            };
-            ll.LinkClicked += linkLabel_LinkClicked;
-            lvQueue.AddEmbeddedControl(ll, 5, item.Index);
-
-            item.Crop(input, output, start, end);
+            operation.Start(operation.Args(input, output, start, end));
         }
 
         /// <summary>
@@ -1010,9 +956,9 @@ namespace YouTube_Downloader
         /// </summary>
         private bool GetIsWorking()
         {
-            foreach (ListViewItem item in lvQueue.Items)
+            foreach (OperationListViewItem item in lvQueue.Items)
             {
-                IOperation operation = (IOperation)item;
+                Operation operation = item.Operation;
 
                 if (operation.Status == OperationStatus.Working)
                 {
