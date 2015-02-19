@@ -701,8 +701,6 @@ namespace YouTube_Downloader_WPF
         /// </summary>
         private void CancelOperations()
         {
-            this.Hide();
-
             foreach (Operation operation in App.RunningOperations)
             {
                 // Stop & delete unfinished files
