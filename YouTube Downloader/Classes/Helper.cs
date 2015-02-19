@@ -153,14 +153,12 @@ namespace YouTube_Downloader.Classes
         }
 
         /// <summary>
-        /// Returns a formatted string of file size from given file.
+        /// Returns a long of the file size from given file in bytes.
         /// </summary>
         /// <param name="file">The file to get file size from.</param>
-        public static string GetFileSize(string file)
+        public static long GetFileSize(string file)
         {
-            FileInfo info = new FileInfo(file);
-
-            return Helper.FormatFileSize(info.Length);
+            return new FileInfo(file).Length;
         }
 
         /// <summary>
@@ -288,7 +286,7 @@ namespace YouTube_Downloader.Classes
         }
     }
 
-    static class FormatLeftTime
+    public static class FormatLeftTime
     {
         private static string[] TimeUnitsNames = { "Milli", "Sec", "Min", "Hour", "Day", "Month", "Year", "Decade", "Century" };
         private static int[] TimeUnitsValue = { 1000, 60, 60, 24, 30, 12, 10, 10 }; // Reference unit is milli

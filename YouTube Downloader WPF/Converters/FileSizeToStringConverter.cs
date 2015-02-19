@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Data;
-using YouTube_Downloader_WPF.Classes;
+using YouTube_Downloader.Classes;
 
 namespace YouTube_Downloader_WPF.Converters
 {

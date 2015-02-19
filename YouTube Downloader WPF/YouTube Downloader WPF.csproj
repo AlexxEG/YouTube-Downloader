@@ -85,38 +85,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Classes\Common.cs" />
-    <Compile Include="Classes\FFmpegHelper.cs" />
-    <Compile Include="Classes\FileDownloader.cs" />
-    <Compile Include="Classes\FileSizeFormatProvider.cs" />
-    <Compile Include="Classes\FileSizeUpdateEventArgs.cs" />
-    <Compile Include="Classes\Helper.cs" />
-    <Compile Include="Classes\Playlist.cs" />
-    <Compile Include="Classes\PlaylistReader.cs" />
-    <Compile Include="Classes\VideoFormat.cs" />
-    <Compile Include="Classes\VideoInfo.cs" />
     <Compile Include="Classes\WindowState.cs" />
     <Compile Include="Classes\WindowStates.cs" />
-    <Compile Include="Classes\YoutubeDlHelper.cs" />
     <Compile Include="Converters\FileSizeToStringConverter.cs" />
     <Compile Include="Converters\InverseBooleanConverter.cs" />
     <Compile Include="Converters\LongToDurationConverter.cs" />
     <Compile Include="Converters\MultiAnyBoolConverter.cs" />
     <Compile Include="Converters\MultipleBoolsConverter.cs" />
     <Compile Include="Converters\PauseResumeConverter.cs" />
-    <Compile Include="DeDauwJeroen\FileDownloader.cs" />
-    <Compile Include="Delegates\SetItemTextDelegate.cs" />
-    <Compile Include="Delegates\SetTextDelegate.cs" />
-    <Compile Include="Dialogs\OpenFolderDialog.cs" />
-    <Compile Include="Enums\FFmpegFileType.cs" />
-    <Compile Include="Enums\FormatType.cs" />
     <Compile Include="Operations\ConvertOperation.cs" />
     <Compile Include="Operations\CroppingOperation.cs" />
     <Compile Include="Operations\DownloadOperation.cs" />
     <Compile Include="Operations\Operation.cs" />
-    <Compile Include="Operations\OperationEventArgs.cs" />
-    <Compile Include="Operations\OperationEventHandler.cs" />
-    <Compile Include="Operations\OperationStatus.cs" />
     <Compile Include="Operations\PlaylistOperation.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -184,6 +164,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Resource Include="icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\YouTube Downloader\YouTube Downloader.csproj">
+      <Project>{47ddfb4c-45f8-40a4-9562-f04d3b67f547}</Project>
+      <Name>YouTube Downloader</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -13,12 +13,15 @@ using System.Windows.Documents;
 using System.Windows.Interop;
 using MahApps.Metro.Controls;
 using Microsoft.Win32;
-using YouTube_Downloader_WPF.Classes;
-using YouTube_Downloader_WPF.Dialogs;
-using YouTube_Downloader_WPF.Enums;
+using YouTube_Downloader.Classes;
+using YouTube_Downloader.Dialogs;
+using YouTube_Downloader.Enums;
+using YouTube_Downloader.Operations;
 using YouTube_Downloader_WPF.Operations;
 using YouTube_Downloader_WPF.Properties;
 using WinForms = System.Windows.Forms;
+using WPF_Classes = YouTube_Downloader_WPF.Classes;
+using WPF_Operations = YouTube_Downloader_WPF.Operations;
 
 namespace YouTube_Downloader_WPF
 {
@@ -140,9 +143,9 @@ namespace YouTube_Downloader_WPF
                     operation.OpenContainingFolder();
                     break;
                 case "Convert to MP3":
-                    if (operation is DownloadOperation && operation.Status == OperationStatus.Success)
+                    if (operation is WPF_Operations.DownloadOperation && operation.Status == OperationStatus.Success)
                     {
-                        string input = (operation as DownloadOperation).Output;
+                        string input = (operation as WPF_Operations.DownloadOperation).Output;
                         string output = Path.GetDirectoryName(input) + "\\" + Path.GetFileNameWithoutExtension(input) + ".mp3";
 
                         ConvertInput.Text = input;
@@ -292,7 +295,7 @@ namespace YouTube_Downloader_WPF
                     File.Delete(Path.Combine(path, filename));
                 }
 
-                DownloadOperation operation = new DownloadOperation(this.SelectedFormat);
+                var operation = new WPF_Operations.DownloadOperation(this.SelectedFormat);
 
                 operation.OperationComplete += DownloadOperation_OperationComplete;
 
@@ -300,12 +303,12 @@ namespace YouTube_Downloader_WPF
                 this.SelectOneItem(operation);
 
                 if (this.SelectedFormat.AudioOnly || this.SelectedFormat.FormatType == FormatType.Normal)
-                    operation.Start(DownloadOperation.Args(this.SelectedFormat.DownloadUrl, Path.Combine(path, filename)));
+                    operation.Start(operation.Args(this.SelectedFormat.DownloadUrl, Path.Combine(path, filename)));
                 else
                 {
                     VideoFormat audio = Helper.GetAudioFormat(this.SelectedFormat);
 
-                    operation.Start(DownloadOperation.Args(audio.DownloadUrl, this.SelectedFormat.DownloadUrl, Path.Combine(path, filename)));
+                    operation.Start(operation.Args(audio.DownloadUrl, this.SelectedFormat.DownloadUrl, Path.Combine(path, filename)));
                 }
 
                 TabControl.SelectedIndex = 3;
@@ -336,7 +339,7 @@ namespace YouTube_Downloader_WPF
 
         private void DownloadOperation_OperationComplete(object sender, OperationEventArgs e)
         {
-            Operation operation = (Operation)e.Operation;
+            Operation operation = (Operation)sender;
 
             if (AutoConvert.IsEnabled == true && AutoConvert.IsChecked == true && operation.Status == OperationStatus.Success)
             {
@@ -551,12 +554,12 @@ namespace YouTube_Downloader_WPF
 
             try
             {
-                PlaylistOperation item = new PlaylistOperation();
+                var operation = new WPF_Operations.PlaylistOperation();
 
-                this.Queue.Add(item);
-                this.SelectOneItem(item);
+                this.Queue.Add(operation);
+                this.SelectOneItem(operation);
 
-                item.Start(PlaylistOperation.Args(this.PlaylistLink.Text, path, settings.UseDashPlaylist, videos));
+                operation.Start(operation.Args(this.PlaylistLink.Text, path, settings.UseDashPlaylist, videos));
 
                 TabControl.SelectedIndex = 3;
             }
@@ -732,12 +735,12 @@ namespace YouTube_Downloader_WPF
                 end = TimeSpan.Parse(CropToTextBox.Text);
             }
 
-            var operation = new ConvertOperation();
+            var operation = new WPF_Operations.ConvertOperation();
 
             this.Queue.Add(operation);
             this.SelectOneItem(operation);
 
-            operation.Start(ConvertOperation.Args(input, output, start, end));
+            operation.Start(operation.Args(input, output, start, end));
         }
 
         /// <summary>
@@ -754,12 +757,12 @@ namespace YouTube_Downloader_WPF
             TimeSpan start = TimeSpan.Parse(CropFromTextBox.Text);
             TimeSpan end = TimeSpan.Parse(CropToTextBox.Text);
 
-            CroppingOperation item = new CroppingOperation();
+            var operation = new WPF_Operations.CroppingOperation();
 
-            this.Queue.Add(item);
-            this.SelectOneItem(item);
+            this.Queue.Add(operation);
+            this.SelectOneItem(operation);
 
-            item.Start(CroppingOperation.Args(input, output, start, end));
+            operation.Start(operation.Args(input, output, start, end));
         }
 
         /// <summary>
@@ -794,7 +797,7 @@ namespace YouTube_Downloader_WPF
             // Initialize WindowStates collection if null
             if (settings.WindowStates == null)
             {
-                settings.WindowStates = new WindowStates();
+                settings.WindowStates = new WPF_Classes.WindowStates();
             }
 
             // Add WindowState for form if WindowStates doesn't have a entry for it

@@ -176,13 +176,13 @@ namespace YouTube_Downloader.Classes
         }
 
         /// <summary>
-        /// Converts file to MP3, reporting progress to given <see cref="System.ComponentModel.BackgroundWorker"/>.
+        /// Converts file to MP3.
         /// Possibly more formats in the future.
         /// </summary>
-        /// <param name="bw">The <see cref="System.ComponentModel.BackgroundWorker"/> to report progress to. Can be null.</param>
+        /// <param name="reportProgress">The method to call when there is progress. Can be null.</param>
         /// <param name="input">The input file.</param>
         /// <param name="output">Where to save the output file.</param>
-        public static void Convert(BackgroundWorker bw, string input, string output)
+        public static void Convert(Action<int, object> reportProgress, string input, string output)
         {
             if (input == output)
             {
@@ -194,7 +194,8 @@ namespace YouTube_Downloader.Classes
 
             Process process = FFmpegHelper.StartProcess(arguments);
 
-            bw.ReportProgress(0, process);
+            if (reportProgress != null)
+                reportProgress.Invoke(0, process);
 
             bool started = false;
             double milliseconds = 0;
@@ -206,7 +207,7 @@ namespace YouTube_Downloader.Classes
                 sb.AppendLine(line);
 
                 // 'bw' is null, don't report any progress
-                if (bw != null && bw.WorkerReportsProgress)
+                if (reportProgress != null)
                 {
                     line = line.Trim();
 
@@ -223,7 +224,7 @@ namespace YouTube_Downloader.Classes
                     {
                         started = true;
 
-                        bw.ReportProgress(0);
+                        reportProgress.Invoke(0, null);
                     }
                     else if (started && line.StartsWith("size="))
                     {
@@ -235,13 +236,13 @@ namespace YouTube_Downloader.Classes
                         double currentMilli = TimeSpan.Parse(time).TotalMilliseconds;
                         double percentage = (currentMilli / milliseconds) * 100;
 
-                        bw.ReportProgress(System.Convert.ToInt32(percentage));
+                        reportProgress.Invoke(System.Convert.ToInt32(percentage), null);
                     }
                     else if (started && line == string.Empty)
                     {
                         started = false;
 
-                        bw.ReportProgress(100);
+                        reportProgress.Invoke(100, null);
                     }
                 }
             }
@@ -261,13 +262,13 @@ namespace YouTube_Downloader.Classes
         }
 
         /// <summary>
-        /// Crops file from given start position to end, reporting progress to given <see cref="System.ComponentModel.BackgroundWorker"/>.
+        /// Crops file from given start position to end.
         /// </summary>
-        /// <param name="bw">The <see cref="System.ComponentModel.BackgroundWorker"/> to report progress to. Can be null.</param>
+        /// <param name="reportProgress">The method to call when there is progress. Can be null.</param>
         /// <param name="input">The input file.</param>
         /// <param name="output">Where to save the output file.</param>
         /// <param name="start">The <see cref="System.TimeSpan"/> start position.</param>
-        public static void Crop(BackgroundWorker bw, string input, string output, TimeSpan start)
+        public static void Crop(Action<int, object> reportProgress, string input, string output, TimeSpan start)
         {
             if (input == output)
             {
@@ -286,7 +287,8 @@ namespace YouTube_Downloader.Classes
 
             Process process = FFmpegHelper.StartProcess(arguments);
 
-            bw.ReportProgress(0, process);
+            if (reportProgress != null)
+                reportProgress.Invoke(0, process);
 
             bool started = false;
             double milliseconds = 0;
@@ -295,7 +297,7 @@ namespace YouTube_Downloader.Classes
             while ((line = process.StandardError.ReadLine()) != null)
             {
                 // 'bw' is null, don't report any progress
-                if (bw != null && bw.WorkerReportsProgress)
+                if (reportProgress != null)
                 {
                     line = line.Trim();
 
@@ -312,7 +314,7 @@ namespace YouTube_Downloader.Classes
                     {
                         started = true;
 
-                        bw.ReportProgress(0);
+                        reportProgress.Invoke(0, null);
                     }
                     else if (started && line.StartsWith("size="))
                     {
@@ -324,13 +326,13 @@ namespace YouTube_Downloader.Classes
                         double currentMilli = TimeSpan.Parse(time).TotalMilliseconds;
                         double percentage = (currentMilli / milliseconds) * 100;
 
-                        bw.ReportProgress(System.Convert.ToInt32(percentage));
+                        reportProgress.Invoke(System.Convert.ToInt32(percentage), null);
                     }
                     else if (started && line == string.Empty)
                     {
                         started = false;
 
-                        bw.ReportProgress(100);
+                        reportProgress.Invoke(100, null);
                     }
                 }
             }
@@ -342,14 +344,14 @@ namespace YouTube_Downloader.Classes
         }
 
         /// <summary>
-        /// Crops file from given start position to given end position, reporting progress to given <see cref="System.ComponentModel.BackgroundWorker"/>.
+        /// Crops file from given start position to given end position.
         /// </summary>
-        /// <param name="bw">The <see cref="System.ComponentModel.BackgroundWorker"/> to report progress to. Can be null.</param>
+        /// <param name="reportProgress">The method to call when there is progress. Can be null.</param>
         /// <param name="input">The input file.</param>
         /// <param name="output">Where to save the output file.</param>
         /// <param name="start">The <see cref="System.TimeSpan"/> start position.</param>
         /// <param name="end">The <see cref="System.TimeSpan"/> end position.</param>
-        public static void Crop(BackgroundWorker bw, string input, string output, TimeSpan start, TimeSpan end)
+        public static void Crop(Action<int, object> reportProgress, string input, string output, TimeSpan start, TimeSpan end)
         {
             if (input == output)
             {
@@ -371,7 +373,8 @@ namespace YouTube_Downloader.Classes
 
             Process process = FFmpegHelper.StartProcess(arguments);
 
-            bw.ReportProgress(0, process);
+            if (reportProgress != null)
+                reportProgress.Invoke(0, process);
 
             bool started = false;
             double milliseconds = 0;
@@ -380,7 +383,7 @@ namespace YouTube_Downloader.Classes
             while ((line = process.StandardError.ReadLine()) != null)
             {
                 // 'bw' is null, don't report any progress
-                if (bw != null && bw.WorkerReportsProgress)
+                if (reportProgress != null)
                 {
                     line = line.Trim();
 
@@ -390,7 +393,7 @@ namespace YouTube_Downloader.Classes
                     {
                         started = true;
 
-                        bw.ReportProgress(0);
+                        reportProgress.Invoke(0, null);
                     }
                     else if (started && line.StartsWith("size="))
                     {
@@ -402,13 +405,13 @@ namespace YouTube_Downloader.Classes
                         double currentMilli = TimeSpan.Parse(time).TotalMilliseconds;
                         double percentage = (currentMilli / milliseconds) * 100;
 
-                        bw.ReportProgress(System.Convert.ToInt32(percentage));
+                        reportProgress.Invoke(System.Convert.ToInt32(percentage), null);
                     }
                     else if (started && line == string.Empty)
                     {
                         started = false;
 
-                        bw.ReportProgress(100);
+                        reportProgress.Invoke(100, null);
                     }
                 }
             }

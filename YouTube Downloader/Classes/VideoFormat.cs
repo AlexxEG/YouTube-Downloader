@@ -1,5 +1,7 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,40 +10,62 @@ using YouTube_Downloader.Enums;
 
 namespace YouTube_Downloader.Classes
 {
-    public class VideoFormat
+    public class VideoFormat : INotifyPropertyChanged
     {
         /// <summary>
         /// Gets the audio bit rate. Returns -1 if not defined.
         /// </summary>
         public int AudioBitRate { get; private set; }
+
         /// <summary>
         /// Gets whether the format is audio only.
         /// </summary>
         public bool AudioOnly { get; private set; }
+
         /// <summary>
         /// Gets the download url.
         /// </summary>
         public string DownloadUrl { get; private set; }
+
         /// <summary>
         /// Gets the file extension, excluding the period.
         /// </summary>
         public string Extension { get; private set; }
+
+        long _fileSize;
         /// <summary>
         /// Gets the file size as bytes count.
         /// </summary>
-        public long FileSize { get; private set; }
+        public long FileSize
+        {
+            get { return _fileSize; }
+            private set
+            {
+                _fileSize = value;
+                this.OnPropertyChanged();
+            }
+        }
+
         /// <summary>
         /// Gets the format text.
         /// </summary>
         public string Format { get; private set; }
+
         /// <summary>
         /// Gets the format type.
         /// </summary>
         public FormatType FormatType { get; private set; }
+
         /// <summary>
         /// Gets the frames per second. Null if not defined.
         /// </summary>
         public string FPS { get; private set; }
+
+        /// <summary>
+        /// Gets the format title, displaying some basic information.
+        /// </summary>
+        public string Title { get { return this.ToString(); } }
+
         /// <summary>
         /// Gets the associated VideoInfo.
         /// </summary>
@@ -203,6 +227,23 @@ namespace YouTube_Downloader.Classes
 
             return text;
         }
+
+        #region INotifyPropertyChanged members
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            this.OnPropertyChangedExplicit(propertyName);
+        }
+
+        public void OnPropertyChangedExplicit(string propertyName)
+        {
+            if (this.PropertyChanged != null)
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        #endregion
     }
 
     // Source: http://stackoverflow.com/a/19215782

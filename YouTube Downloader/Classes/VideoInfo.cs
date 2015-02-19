@@ -1,33 +1,67 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using Newtonsoft.Json.Linq;
 
 namespace YouTube_Downloader.Classes
 {
-    public class VideoInfo
+    public class VideoInfo : INotifyPropertyChanged
     {
+        long _duration = 0;
         /// <summary>
         /// Gets the video duration in seconds.
         /// </summary>
-        public long Duration { get; private set; }
+        public long Duration
+        {
+            get { return _duration; }
+            set
+            {
+                _duration = value;
+                this.OnPropertyChanged();
+            }
+        }
+
         /// <summary>
         /// Gets the video ID.
         /// </summary>
         public string ID { get; private set; }
+
+        string _title = string.Empty;
         /// <summary>
         /// Gets the video title.
         /// </summary>
-        public string Title { get; private set; }
+        public string Title
+        {
+            get { return _title; }
+            set
+            {
+                _title = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        string _thumbnailUrl = string.Empty;
         /// <summary>
         /// Gets the video thumbnail url.
         /// </summary>
-        public string ThumbnailUrl { get; private set; }
+        public string ThumbnailUrl
+        {
+            get { return _thumbnailUrl; }
+            set
+            {
+                _thumbnailUrl = value;
+                this.OnPropertyChanged();
+            }
+        }
+
         /// <summary>
         /// Gets the video url.
         /// </summary>
         public string Url { get; private set; }
+
         /// <summary>
         /// Gets all the available formats.
         /// </summary>
@@ -38,10 +72,14 @@ namespace YouTube_Downloader.Classes
         /// </summary>
         public event FileSizeUpdateHandler FileSizeUpdated;
 
-        public VideoInfo(string json_file)
+        public VideoInfo()
         {
             this.Formats = new List<VideoFormat>();
+        }
 
+        public VideoInfo(string json_file)
+            : this()
+        {
             this.DeserializeJson(json_file);
         }
 
@@ -114,5 +152,22 @@ namespace YouTube_Downloader.Classes
 
             return json;
         }
+
+        #region INotifyPropertyChanged members
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            OnPropertyChangedExplicit(propertyName);
+        }
+
+        private void OnPropertyChangedExplicit(string propertyName)
+        {
+            if (this.PropertyChanged != null)
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        #endregion
     }
 }

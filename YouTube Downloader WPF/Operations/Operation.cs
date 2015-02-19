@@ -3,7 +3,8 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text;
-using YouTube_Downloader_WPF.Classes;
+using YouTube_Downloader.Classes;
+using YouTube_Downloader.Operations;
 
 namespace YouTube_Downloader_WPF.Operations
 {
@@ -19,32 +20,16 @@ namespace YouTube_Downloader_WPF.Operations
         Stopwatch sw;
         BackgroundWorker _worker;
 
-        public bool CancellationPending
-        {
-            get
-            {
-                if (_worker == null)
-                    return false;
-
-                return _worker.CancellationPending;
-            }
-        }
-
-        public bool IsBusy
-        {
-            get
-            {
-                if (_worker == null)
-                    return false;
-
-                return _worker.IsBusy;
-            }
-        }
-
         /// <summary>
         /// Occurs when the operation is complete.
         /// </summary>
         public event OperationEventHandler OperationComplete;
+
+        public event ProgressChangedEventHandler ProgressChanged;
+
+        public event EventHandler ReportsProgressChanged;
+
+        public event EventHandler StatusChanged;
 
         #region Fields
 
@@ -69,6 +54,28 @@ namespace YouTube_Downloader_WPF.Operations
         #endregion
 
         #region Properties
+
+        public bool CancellationPending
+        {
+            get
+            {
+                if (_worker == null)
+                    return false;
+
+                return _worker.CancellationPending;
+            }
+        }
+
+        public bool IsBusy
+        {
+            get
+            {
+                if (_worker == null)
+                    return false;
+
+                return _worker.IsBusy;
+            }
+        }
 
         public bool IsCanceled
         {
@@ -356,7 +363,7 @@ namespace YouTube_Downloader_WPF.Operations
             if (App.RunningOperations.Contains(this))
                 App.RunningOperations.Remove(this);
 
-            OnOperationComplete(new OperationEventArgs(this, this.Status));
+            OnOperationComplete(new OperationEventArgs(null, this.Status));
         }
 
         protected void ReportProgress(int percentProgress, object userState)
@@ -369,6 +376,24 @@ namespace YouTube_Downloader_WPF.Operations
         {
             if (OperationComplete != null)
                 OperationComplete(this, e);
+        }
+
+        protected virtual void OnProgressChanged(ProgressChangedEventArgs e)
+        {
+            if (ProgressChanged != null)
+                ProgressChanged(this, e);
+        }
+
+        protected virtual void OnReportsProgressChanged(EventArgs e)
+        {
+            if (ReportsProgressChanged != null)
+                ReportsProgressChanged(this, e);
+        }
+
+        protected virtual void OnStatusChanged(EventArgs e)
+        {
+            if (StatusChanged != null)
+                StatusChanged(this, e);
         }
 
         protected virtual void OnWorkerDoWork(DoWorkEventArgs e)

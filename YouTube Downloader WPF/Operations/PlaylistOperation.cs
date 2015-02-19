@@ -5,7 +5,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
-using YouTube_Downloader_WPF.Classes;
+using YouTube_Downloader;
+using YouTube_Downloader.Classes;
+using YouTube_Downloader.Operations;
 
 namespace YouTube_Downloader_WPF.Operations
 {
@@ -295,12 +297,12 @@ namespace YouTube_Downloader_WPF.Operations
             return true;
         }
 
-        public static object[] Args(string url, string output, bool dash)
+        public object[] Args(string url, string output, bool dash)
         {
             return new object[] { url, output, dash };
         }
 
-        public static object[] Args(string url, string output, bool dash, ICollection<VideoInfo> videos)
+        public object[] Args(string url, string output, bool dash, ICollection<VideoInfo> videos)
         {
             return new object[] { url, output, dash, videos };
         }

@@ -934,7 +934,7 @@ namespace YouTube_Downloader
             item.SubItems.Add("");
             item.SubItems.Add("Converting");
             item.SubItems.Add(Helper.FormatVideoLength(FFmpegHelper.GetDuration(input)));
-            item.SubItems.Add(Helper.GetFileSize(input));
+            item.SubItems.Add(Helper.FormatFileSize(Helper.GetFileSize(input)));
             item.SubItems.Add("");
 
             lvQueue.Items.Add(item);
@@ -979,7 +979,7 @@ namespace YouTube_Downloader
             item.SubItems.Add("");
             item.SubItems.Add("Cropping");
             item.SubItems.Add(Helper.FormatVideoLength(FFmpegHelper.GetDuration(input)));
-            item.SubItems.Add(Helper.GetFileSize(input));
+            item.SubItems.Add(Helper.FormatFileSize(Helper.GetFileSize(input)));
             item.SubItems.Add("");
 
             lvQueue.Items.Add(item);

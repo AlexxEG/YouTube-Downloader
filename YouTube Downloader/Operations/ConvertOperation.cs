@@ -91,10 +91,8 @@ namespace YouTube_Downloader.Operations
             this.converterEnd = end;
 
             backgroundWorker = new BackgroundWorker();
-            backgroundWorker.WorkerReportsProgress = true;
             backgroundWorker.WorkerSupportsCancellation = true;
             backgroundWorker.DoWork += backgroundWorker_DoWork;
-            backgroundWorker.ProgressChanged += backgroundWorker_ProgressChanged;
             backgroundWorker.RunWorkerCompleted += backgroundWorker_RunWorkerCompleted;
             backgroundWorker.RunWorkerAsync();
 
@@ -228,17 +226,17 @@ namespace YouTube_Downloader.Operations
         {
             try
             {
-                FFmpegHelper.Convert(backgroundWorker, this.Input, this.Output);
+                FFmpegHelper.Convert(ProgressChanged, this.Input, this.Output);
 
                 if (!backgroundWorker.CancellationPending && converterStart != TimeSpan.MinValue)
                 {
                     if (converterEnd == TimeSpan.MinValue)
                     {
-                        FFmpegHelper.Crop(backgroundWorker, this.Output, this.Output, converterStart);
+                        FFmpegHelper.Crop(ProgressChanged, this.Output, this.Output, converterStart);
                     }
                     else
                     {
-                        FFmpegHelper.Crop(backgroundWorker, this.Output, this.Output, converterStart, converterEnd);
+                        FFmpegHelper.Crop(ProgressChanged, this.Output, this.Output, converterStart, converterEnd);
                     }
                 }
 
@@ -260,17 +258,6 @@ namespace YouTube_Downloader.Operations
             }
         }
 
-        private void backgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-            this.GetProgressBar().Value = e.ProgressPercentage;
-
-            if (e.UserState is Process)
-            {
-                // FFmpegHelper will return the ffmpeg process so it can be used to cancel.
-                process = (Process)e.UserState;
-            }
-        }
-
         private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             this.Status = (OperationStatus)e.Result;
@@ -278,7 +265,7 @@ namespace YouTube_Downloader.Operations
 
             if (this.Status == OperationStatus.Success)
             {
-                this.SubItems[4].Text = Helper.GetFileSize(this.Output);
+                this.SubItems[4].Text = Helper.FormatFileSize(Helper.GetFileSize(this.Output));
             }
 
             Program.RunningOperations.Remove(this);
@@ -288,6 +275,17 @@ namespace YouTube_Downloader.Operations
             if (this.remove && this.ListView != null)
             {
                 this.Remove();
+            }
+        }
+
+        private void ProgressChanged(int progressPercentage, object userState)
+        {
+            this.GetProgressBar().Value = progressPercentage;
+
+            if (userState is Process)
+            {
+                // FFmpegHelper will return the ffmpeg process so it can be used to cancel.
+                process = (Process)userState;
             }
         }
 

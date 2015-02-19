@@ -2,7 +2,8 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using YouTube_Downloader_WPF.Classes;
+using YouTube_Downloader.Classes;
+using YouTube_Downloader.Operations;
 
 namespace YouTube_Downloader_WPF.Operations
 {
@@ -160,7 +161,7 @@ namespace YouTube_Downloader_WPF.Operations
             this.Title = Path.GetFileName(this.Output);
         }
 
-        public static object[] Args(string input, string output, TimeSpan start, TimeSpan end)
+        public object[] Args(string input, string output, TimeSpan start, TimeSpan end)
         {
             return new object[] { input, output, start, end };
         }
