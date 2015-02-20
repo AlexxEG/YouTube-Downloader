@@ -9,12 +9,12 @@ namespace YouTube_Downloader.Operations
 {
     public abstract class Operation : IDisposable, INotifyPropertyChanged
     {
+        protected const int Max_Progress = 100;
+        protected const int Min_Progress = 0;
         /// <summary>
         /// The amount of time to wait for progress updates in milliseconds.
         /// </summary>
         protected const int ProgressDelay = 500;
-        protected const double Max_Progress = 100;
-        protected const double Min_Progress = 0;
 
         /// <summary>
         /// Occurs when the operation is complete.
@@ -27,6 +27,8 @@ namespace YouTube_Downloader.Operations
         public event EventHandler TitleChanged;
 
         #region Fields
+
+        int _progressPercentage = 0;
 
         bool _reportsProgress = false;
 
@@ -41,8 +43,6 @@ namespace YouTube_Downloader.Operations
         string _text;
         string _thumbnail;
         string _title;
-
-        double _progressPercentage = 0;
 
         OperationStatus _status = OperationStatus.None;
 
@@ -264,7 +264,7 @@ namespace YouTube_Downloader.Operations
         /// <summary>
         /// Gets the operation progress, as a double between 0-100.
         /// </summary>
-        public double ProgressPercentage
+        public int ProgressPercentage
         {
             get { return _progressPercentage; }
             set
@@ -457,13 +457,19 @@ namespace YouTube_Downloader.Operations
 
         private void Worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
+            if (e.ProgressPercentage < 0)
+                return;
+
+            this.ProgressPercentage = e.ProgressPercentage;
             this.OnProgressChanged(e);
             this.OnWorkerProgressChanged(e);
         }
 
         private void Worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            OnWorkerRunWorkerCompleted(e);
+            this.Status = (OperationStatus)e.Result;
+            this.Complete();
+            this.OnWorkerRunWorkerCompleted(e);
         }
 
         protected void CancelAsync()
@@ -538,16 +544,12 @@ namespace YouTube_Downloader.Operations
 
         protected virtual void OnWorkerProgressChanged(ProgressChangedEventArgs e)
         {
-            if (e.ProgressPercentage < 0)
-                return;
-
-            this.ProgressPercentage = e.ProgressPercentage;
+            
         }
 
         protected virtual void OnWorkerRunWorkerCompleted(RunWorkerCompletedEventArgs e)
         {
-            this.Status = (OperationStatus)e.Result;
-            this.Complete();
+            
         }
 
         protected virtual void OnWorkerStart(object[] args)
