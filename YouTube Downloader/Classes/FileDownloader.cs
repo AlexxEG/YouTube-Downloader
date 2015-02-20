@@ -58,9 +58,9 @@ namespace YouTube_Downloader.Classes
         public long TotalProgress { get; set; }
         public long TotalSize { get; private set; }
 
-        public DownloadFile CurrentFile { get; private set; }
+        public FileDownload CurrentFile { get; private set; }
 
-        public List<DownloadFile> Files { get; set; }
+        public List<FileDownload> Files { get; set; }
 
         public delegate void ExceptionEventHandler(object sender, Exception ex);
 
@@ -111,7 +111,7 @@ namespace YouTube_Downloader.Classes
             this.PackageSize = 4096;
             this.StopWatchCyclesAmount = 5;
             this.DeleteUnfinishedFilesOnCancel = true;
-            this.Files = new List<DownloadFile>();
+            this.Files = new List<FileDownload>();
         }
 
         public void Pause()
@@ -419,31 +419,6 @@ namespace YouTube_Downloader.Classes
         {
             if (this.Stopped != null)
                 this.Stopped(this, EventArgs.Empty);
-        }
-    }
-
-    public class DownloadFile
-    {
-        public bool IsFinished { get; set; }
-
-        public long Progress { get; set; }
-        public long TotalFileSize { get; set; }
-
-        public string Directory
-        {
-            get { return IO.Path.GetDirectoryName(this.Path); }
-        }
-        public string Name
-        {
-            get { return IO.Path.GetFileName(this.Path); }
-        }
-        public string Path { get; set; }
-        public string Url { get; set; }
-
-        public DownloadFile(string path, string url)
-        {
-            this.Path = path;
-            this.Url = url;
         }
     }
 }

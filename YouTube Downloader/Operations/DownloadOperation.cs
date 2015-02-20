@@ -230,7 +230,7 @@ namespace YouTube_Downloader.Operations
         {
             this.ReportsProgress = true;
 
-            DownloadFile[] downloadFiles;
+            FileDownload[] fileDownloads;
 
             if (args.Length == 2)
             {
@@ -239,9 +239,9 @@ namespace YouTube_Downloader.Operations
 
                 string file = Path.GetFileName(this.Output).Trim();
 
-                downloadFiles = new DownloadFile[]
+                fileDownloads = new FileDownload[]
                 {
-                    new DownloadFile(this.Output, this.Input)
+                    new FileDownload(this.Output, this.Input)
                 };
             }
             else if (args.Length == 3)
@@ -252,10 +252,10 @@ namespace YouTube_Downloader.Operations
 
                 Regex regex = new Regex(@"^(\w:.*\\.*)(\..*)$");
 
-                downloadFiles = new DownloadFile[]
+                fileDownloads = new FileDownload[]
                 {
-                    new DownloadFile(regex.Replace(this.Output, "$1_audio$2"), (string)args[0]),
-                    new DownloadFile(regex.Replace(this.Output, "$1_video$2"), (string)args[1])
+                    new FileDownload(regex.Replace(this.Output, "$1_audio$2"), (string)args[0]),
+                    new FileDownload(regex.Replace(this.Output, "$1_video$2"), (string)args[1])
                 };
             }
             else
@@ -266,7 +266,7 @@ namespace YouTube_Downloader.Operations
             string folder = Path.GetDirectoryName(this.Output);
 
             downloader = new FileDownloader();
-            downloader.Files.AddRange(downloadFiles);
+            downloader.Files.AddRange(fileDownloads);
 
             // Attach events.
             downloader.Canceled += downloader_Canceled;

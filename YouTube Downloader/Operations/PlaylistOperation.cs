@@ -181,15 +181,15 @@ namespace YouTube_Downloader.Operations
                         { "FileSize", videoFormat.FileSize }
                     });
 
-                    DownloadFile[] downloadFiles;
+                    FileDownload[] fileDownloads;
 
                     string finalFile = Path.Combine(this.Output, Helper.FormatTitle(videoFormat.VideoInfo.Title) + "." + videoFormat.Extension);
 
                     if (!_useDash)
                     {
-                        downloadFiles = new DownloadFile[]
+                        fileDownloads = new FileDownload[]
                         {
-                            new DownloadFile(finalFile, videoFormat.DownloadUrl)
+                            new FileDownload(finalFile, videoFormat.DownloadUrl)
                         };
                     }
                     else
@@ -199,10 +199,10 @@ namespace YouTube_Downloader.Operations
                         string audioFile = Regex.Replace(finalFile, @"^(.*)(\..*)$", "$1_audio$2");
                         string videoFile = Regex.Replace(finalFile, @"^(.*)(\..*)$", "$1_video$2");
 
-                        downloadFiles = new DownloadFile[]
+                        fileDownloads = new FileDownload[]
                         {
-                            new DownloadFile(audioFile, audioFormat.DownloadUrl),
-                            new DownloadFile(videoFile, videoFormat.DownloadUrl)
+                            new FileDownload(audioFile, audioFormat.DownloadUrl),
+                            new FileDownload(videoFile, videoFormat.DownloadUrl)
                         };
                     }
 
@@ -210,7 +210,7 @@ namespace YouTube_Downloader.Operations
                     _downloaderSuccessful = null;
 
                     downloader.Files.Clear();
-                    downloader.Files.AddRange(downloadFiles);
+                    downloader.Files.AddRange(fileDownloads);
                     downloader.Start();
 
                     // Wait for downloader to finish

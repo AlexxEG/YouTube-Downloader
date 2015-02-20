@@ -50,6 +50,7 @@
     <Compile Include="App.cs" />
     <Compile Include="Classes\Common.cs" />
     <Compile Include="Classes\FFmpegHelper.cs" />
+    <Compile Include="Classes\FileDownload.cs" />
     <Compile Include="Classes\FileDownloader.cs" />
     <Compile Include="Classes\WindowStates.cs" />
     <Compile Include="Classes\FileSizeFormatProvider.cs" />
