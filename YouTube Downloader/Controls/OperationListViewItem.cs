@@ -61,7 +61,6 @@ namespace YouTube_Downloader.Controls
         public OperationListViewItem(string text, string input, Operation operation)
             : this(text, input, input, operation)
         {
-
         }
 
         public OperationListViewItem(string text, string input, string inputText, Operation operation)
@@ -90,6 +89,12 @@ namespace YouTube_Downloader.Controls
             this.Operation.ReportsProgressChanged += Operation_ReportsProgressChanged;
             this.Operation.Started += Operation_Started;
             this.Operation.StatusChanged += Operation_StatusChanged;
+        }
+
+        private void OnOperationComplete(OperationEventArgs e)
+        {
+            if (this.OperationComplete != null)
+                this.OperationComplete(this, e);
         }
 
         private void Operation_Completed(object sender, OperationEventArgs e)
@@ -219,12 +224,6 @@ namespace YouTube_Downloader.Controls
                 return false;
 
             return sw.ElapsedMilliseconds < 1000;
-        }
-
-        private void OnOperationComplete(OperationEventArgs e)
-        {
-            if (this.OperationComplete != null)
-                this.OperationComplete(this, e);
         }
     }
 }
