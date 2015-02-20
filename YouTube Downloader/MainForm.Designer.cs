@@ -857,7 +857,7 @@
             // 
             // columnHeader3
             // 
-            this.columnHeader3.Text = "Speed";
+            this.columnHeader3.Text = "Status";
             // 
             // columnHeader4
             // 

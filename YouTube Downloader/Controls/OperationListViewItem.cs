@@ -46,7 +46,7 @@ namespace YouTube_Downloader.Controls
             set { this.SubItems[1].Text = value; }
         }
 
-        public string Speed
+        public string Status
         {
             get { return this.SubItems[2].Text; }
             set { this.SubItems[2].Text = value; }
@@ -116,7 +116,7 @@ namespace YouTube_Downloader.Controls
                 _progressBar.Value = e.ProgressPercentage;
 
             if (!string.IsNullOrEmpty(this.WorkingText))
-                this.Speed = this.WorkingText;
+                this.Status = this.WorkingText;
             else
             {
                 if (this.Wait())
@@ -125,7 +125,7 @@ namespace YouTube_Downloader.Controls
                 if (sw != null)
                     sw.Restart();
 
-                this.Speed = this.Operation.Speed + this.Operation.ETA;
+                this.Status = this.Operation.Speed + this.Operation.ETA;
             }
         }
 
@@ -179,20 +179,20 @@ namespace YouTube_Downloader.Controls
             switch (this.Operation.Status)
             {
                 case OperationStatus.Canceled:
-                    this.Speed = "Canceled";
+                    this.Status = "Canceled";
                     break;
                 case OperationStatus.Failed:
-                    this.Speed = "Failed";
+                    this.Status = "Failed";
                     break;
                 case OperationStatus.Success:
-                    this.Speed = "Completed";
+                    this.Status = "Completed";
                     break;
                 case OperationStatus.Paused:
-                    this.Speed = "Paused";
+                    this.Status = "Paused";
                     break;
                 case OperationStatus.Working:
                     if (!string.IsNullOrEmpty(this.WorkingText))
-                        this.Speed = this.WorkingText;
+                        this.Status = this.WorkingText;
                     break;
             }
         }
