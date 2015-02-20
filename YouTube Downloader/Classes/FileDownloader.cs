@@ -21,14 +21,14 @@ namespace YouTube_Downloader.Classes
         public event EventHandler CalculatedTotalFileSize;
         public event EventHandler Canceled;
         public event EventHandler Completed;
-        public event EventHandler FileDownloadComplete;
-        public event ExceptionEventHandler FileDownloadFailed;
-        public event EventHandler FileDownloadSucceeded;
         public event EventHandler Paused;
         public event EventHandler ProgressChanged;
         public event EventHandler Resumed;
         public event EventHandler Started;
         public event EventHandler Stopped;
+        public event ExceptionEventHandler FileDownloadFailed;
+        public event FileDownloadEventHandler FileDownloadComplete;
+        public event FileDownloadEventHandler FileDownloadSucceeded;
 
         public int PackageSize { get; set; }
         public int Speed { get; set; }
@@ -63,6 +63,7 @@ namespace YouTube_Downloader.Classes
         public List<FileDownload> Files { get; set; }
 
         public delegate void ExceptionEventHandler(object sender, Exception ex);
+        public delegate void FileDownloadEventHandler(object sender, FileDownloadEventArgs e);
 
         private enum BackgroundEvents
         {
@@ -300,9 +301,34 @@ namespace YouTube_Downloader.Classes
                 {
                     this.CurrentFile.IsFinished = true;
 
-                    _downloader.ReportProgress(-1, BackgroundEvents.FileDownloadSucceeded);
+                    this.RaiseEventFromBackground(BackgroundEvents.FileDownloadSucceeded,
+                        new FileDownloadEventArgs(this.CurrentFile));
                 }
             }
+        }
+
+        private void RaiseEvent(BackgroundEvents evt, EventArgs e)
+        {
+            switch (evt)
+            {
+                case BackgroundEvents.CalculatedTotalFileSize:
+                    this.OnCalculatedTotalFileSize();
+                    break;
+                case BackgroundEvents.FileDownloadComplete:
+                    this.OnFileDownloadComplete((FileDownloadEventArgs)e);
+                    break;
+                case BackgroundEvents.FileDownloadSucceeded:
+                    this.OnFileDownloadSucceeded((FileDownloadEventArgs)e);
+                    break;
+                case BackgroundEvents.ProgressChanged:
+                    this.OnProgressChanged();
+                    break;
+            }
+        }
+
+        private void RaiseEventFromBackground(BackgroundEvents evt, EventArgs e)
+        {
+            _downloader.ReportProgress(-1, new object[] { evt, e });
         }
 
         private void downloader_DoWork(object sender, DoWorkEventArgs e)
@@ -318,7 +344,8 @@ namespace YouTube_Downloader.Classes
 
                 this.DownloadFile();
 
-                _downloader.ReportProgress(-1, BackgroundEvents.FileDownloadComplete);
+                this.RaiseEventFromBackground(BackgroundEvents.FileDownloadComplete,
+                        new FileDownloadEventArgs(file));
 
                 if (_downloader.CancellationPending)
                 {
@@ -333,22 +360,13 @@ namespace YouTube_Downloader.Classes
             {
                 this.OnFileDownloadFailed(e.UserState as Exception);
             }
-            else if (e.UserState is BackgroundEvents)
+            else if (e.UserState is object[])
             {
-                switch ((BackgroundEvents)e.UserState)
+                object[] obj = (object[])e.UserState;
+
+                if (obj[0] is BackgroundEvents)
                 {
-                    case BackgroundEvents.CalculatedTotalFileSize:
-                        this.OnCalculatedTotalFileSize();
-                        break;
-                    case BackgroundEvents.FileDownloadComplete:
-                        this.OnFileDownloadComplete();
-                        break;
-                    case BackgroundEvents.FileDownloadSucceeded:
-                        this.OnFileDownloadSucceeded();
-                        break;
-                    case BackgroundEvents.ProgressChanged:
-                        this.OnProgressChanged();
-                        break;
+                    this.RaiseEvent((BackgroundEvents)obj[0], (EventArgs)obj[1]);
                 }
             }
         }
@@ -383,10 +401,10 @@ namespace YouTube_Downloader.Classes
                 this.Completed(this, EventArgs.Empty);
         }
 
-        protected void OnFileDownloadComplete()
+        protected void OnFileDownloadComplete(FileDownloadEventArgs e)
         {
             if (FileDownloadComplete != null)
-                FileDownloadComplete(this, EventArgs.Empty);
+                FileDownloadComplete(this, e);
         }
 
         protected void OnFileDownloadFailed(Exception exception)
@@ -395,10 +413,10 @@ namespace YouTube_Downloader.Classes
                 this.FileDownloadFailed(this, exception);
         }
 
-        protected void OnFileDownloadSucceeded()
+        protected void OnFileDownloadSucceeded(FileDownloadEventArgs e)
         {
             if (FileDownloadSucceeded != null)
-                FileDownloadSucceeded(this, EventArgs.Empty);
+                FileDownloadSucceeded(this, e);
         }
 
         protected void OnPaused()

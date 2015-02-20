@@ -52,6 +52,7 @@
     <Compile Include="Classes\FFmpegHelper.cs" />
     <Compile Include="Classes\FileDownload.cs" />
     <Compile Include="Classes\FileDownloader.cs" />
+    <Compile Include="Classes\FileDownloadEventArgs.cs" />
     <Compile Include="Classes\WindowStates.cs" />
     <Compile Include="Classes\FileSizeFormatProvider.cs" />
     <Compile Include="Classes\FileSizeUpdateEventArgs.cs" />
