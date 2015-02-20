@@ -3,10 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Threading;
-using System.Windows.Threading;
 using YouTube_Downloader.Classes;
-using YouTube_Downloader.Operations;
 
 namespace YouTube_Downloader.Operations
 {
@@ -300,6 +297,54 @@ namespace YouTube_Downloader.Operations
 
         #endregion
 
+        #region IDisposable members
+
+        bool _disposed = false;
+
+        public virtual void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (_disposed)
+                return;
+
+            if (disposing)
+            {
+                this.Completed = null;
+
+                if (_worker != null)
+                {
+                    _worker.Dispose();
+                    _worker = null;
+                }
+            }
+
+            _disposed = true;
+        }
+
+        #endregion
+
+        #region INotifyPropertyChanged members
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            this.OnPropertyChangedExplicit(propertyName);
+        }
+
+        public void OnPropertyChangedExplicit(string propertyName)
+        {
+            if (this.PropertyChanged != null)
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        #endregion
+
         public void Start(object[] args)
         {
             OnWorkerStart(args);
@@ -319,6 +364,81 @@ namespace YouTube_Downloader.Operations
 
             this.Status = OperationStatus.Working;
             this.OnStarted(EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// Returns whether 'Open' method is supported and available at the moment.
+        /// </summary>
+        public virtual bool CanOpen()
+        {
+            return false;
+        }
+
+        /// <summary>
+        /// Returns whether 'Pause' method is supported and available at the moment.
+        /// </summary>
+        public virtual bool CanPause()
+        {
+            return false;
+        }
+
+        /// <summary>
+        /// Returns whether 'Resume' method is supported and available at the moment.
+        /// </summary>
+        public virtual bool CanResume()
+        {
+            return false;
+        }
+
+        /// <summary>
+        /// Returns whether 'Stop' method is supported and available at the moment.
+        /// </summary>
+        public virtual bool CanStop()
+        {
+            return false;
+        }
+
+        /// <summary>
+        /// Opens the output file.
+        /// </summary>
+        /// <returns></returns>
+        public virtual bool Open()
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// Opens the containing folder of the output file(s).
+        /// </summary>
+        public virtual bool OpenContainingFolder()
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// Pauses the operation if supported &amp; available.
+        /// </summary>
+        public virtual void Pause()
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// Resumes the operation if supported &amp; available.
+        /// </summary>
+        public virtual void Resume()
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// Stops the operation if supported &amp; available.
+        /// </summary>
+        /// <param name="remove">Remove operation from it's ListView if set to true.</param>
+        /// <param name="cleanup">Delete unfinished files if set to true.</param>
+        public virtual bool Stop(bool cleanup)
+        {
+            throw new NotSupportedException();
         }
 
         private bool Wait()
@@ -430,122 +550,6 @@ namespace YouTube_Downloader.Operations
         protected virtual void OnWorkerStart(object[] args)
         {
 
-        }
-
-        #region IDisposable members
-
-        bool _disposed = false;
-
-        public virtual void Dispose()
-        {
-            this.Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        private void Dispose(bool disposing)
-        {
-            if (_disposed)
-                return;
-
-            if (disposing)
-            {
-                this.Completed = null;
-
-                if (_worker != null)
-                {
-                    _worker.Dispose();
-                    _worker = null;
-                }
-            }
-
-            _disposed = true;
-        }
-
-        #endregion
-
-        #region INotifyPropertyChanged members
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public void OnPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            this.OnPropertyChangedExplicit(propertyName);
-        }
-
-        public void OnPropertyChangedExplicit(string propertyName)
-        {
-            if (this.PropertyChanged != null)
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        #endregion
-
-        /// <summary>
-        /// Opens the output file.
-        /// </summary>
-        /// <returns></returns>
-        public virtual bool Open()
-        {
-            throw new NotSupportedException();
-        }
-        /// <summary>
-        /// Opens the containing folder of the output file(s).
-        /// </summary>
-        public virtual bool OpenContainingFolder()
-        {
-            throw new NotSupportedException();
-        }
-        /// <summary>
-        /// Pauses the operation if supported &amp; available.
-        /// </summary>
-        public virtual void Pause()
-        {
-            throw new NotSupportedException();
-        }
-        /// <summary>
-        /// Resumes the operation if supported &amp; available.
-        /// </summary>
-        public virtual void Resume()
-        {
-            throw new NotSupportedException();
-        }
-        /// <summary>
-        /// Stops the operation if supported &amp; available.
-        /// </summary>
-        /// <param name="remove">Remove operation from it's ListView if set to true.</param>
-        /// <param name="cleanup">Delete unfinished files if set to true.</param>
-        public virtual bool Stop(bool cleanup)
-        {
-            throw new NotSupportedException();
-        }
-
-        /// <summary>
-        /// Returns whether 'Open' method is supported and available at the moment.
-        /// </summary>
-        public virtual bool CanOpen()
-        {
-            return false;
-        }
-        /// <summary>
-        /// Returns whether 'Pause' method is supported and available at the moment.
-        /// </summary>
-        public virtual bool CanPause()
-        {
-            return false;
-        }
-        /// <summary>
-        /// Returns whether 'Resume' method is supported and available at the moment.
-        /// </summary>
-        public virtual bool CanResume()
-        {
-            return false;
-        }
-        /// <summary>
-        /// Returns whether 'Stop' method is supported and available at the moment.
-        /// </summary>
-        public virtual bool CanStop()
-        {
-            return false;
         }
     }
 }
