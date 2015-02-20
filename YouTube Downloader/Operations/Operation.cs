@@ -3,6 +3,8 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
+using System.Windows.Threading;
 using YouTube_Downloader.Classes;
 using YouTube_Downloader.Operations;
 
@@ -10,15 +12,12 @@ namespace YouTube_Downloader.Operations
 {
     public abstract class Operation : IDisposable, INotifyPropertyChanged
     {
-        protected const double Max_Progress = 100;
-        protected const double Min_Progress = 0;
         /// <summary>
         /// The amount of time to wait for progress updates in milliseconds.
         /// </summary>
         protected const int ProgressDelay = 500;
-
-        Stopwatch sw;
-        BackgroundWorker _worker;
+        protected const double Max_Progress = 100;
+        protected const double Min_Progress = 0;
 
         /// <summary>
         /// Occurs when the operation is complete.
@@ -26,6 +25,7 @@ namespace YouTube_Downloader.Operations
         public event OperationEventHandler Completed;
         public event ProgressChangedEventHandler ProgressChanged;
         public event EventHandler ReportsProgressChanged;
+        public event EventHandler Started;
         public event EventHandler StatusChanged;
         public event EventHandler TitleChanged;
 
@@ -48,6 +48,9 @@ namespace YouTube_Downloader.Operations
         double _progressPercentage = 0;
 
         OperationStatus _status = OperationStatus.None;
+
+        Stopwatch sw;
+        BackgroundWorker _worker;
 
         #endregion
 
@@ -315,6 +318,7 @@ namespace YouTube_Downloader.Operations
             _worker.RunWorkerAsync(args);
 
             this.Status = OperationStatus.Working;
+            this.OnStarted(EventArgs.Empty);
         }
 
         private bool Wait()
@@ -362,7 +366,7 @@ namespace YouTube_Downloader.Operations
 
             this.Text = string.Empty;
 
-            OnOperationComplete(new OperationEventArgs(null, this.Status));
+            OnCompleted(new OperationEventArgs(null, this.Status));
         }
 
         protected void ReportProgress(int percentProgress, object userState)
@@ -371,7 +375,7 @@ namespace YouTube_Downloader.Operations
                 _worker.ReportProgress(percentProgress, userState);
         }
 
-        protected virtual void OnOperationComplete(OperationEventArgs e)
+        protected virtual void OnCompleted(OperationEventArgs e)
         {
             if (this.Completed != null)
                 this.Completed(this, e);
@@ -379,20 +383,26 @@ namespace YouTube_Downloader.Operations
 
         protected virtual void OnProgressChanged(ProgressChangedEventArgs e)
         {
-            if (ProgressChanged != null)
-                ProgressChanged(this, e);
+            if (this.ProgressChanged != null)
+                this.ProgressChanged(this, e);
         }
 
         protected virtual void OnReportsProgressChanged(EventArgs e)
         {
-            if (ReportsProgressChanged != null)
-                ReportsProgressChanged(this, e);
+            if (this.ReportsProgressChanged != null)
+                this.ReportsProgressChanged(this, e);
+        }
+
+        protected virtual void OnStarted(EventArgs e)
+        {
+            if (this.Started != null)
+                this.Started(this, e);
         }
 
         protected virtual void OnStatusChanged(EventArgs e)
         {
-            if (StatusChanged != null)
-                StatusChanged(this, e);
+            if (this.StatusChanged != null)
+                this.StatusChanged(this, e);
         }
 
         protected virtual void OnTitleChanged(EventArgs e)
