@@ -538,6 +538,9 @@ namespace YouTube_Downloader.Operations
 
         protected virtual void OnWorkerProgressChanged(ProgressChangedEventArgs e)
         {
+            if (e.ProgressPercentage < 0)
+                return;
+
             this.ProgressPercentage = e.ProgressPercentage;
         }
 
