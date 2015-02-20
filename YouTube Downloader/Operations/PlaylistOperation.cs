@@ -57,8 +57,7 @@ namespace YouTube_Downloader.Operations
                 this.ETA = ETA;
                 this.Speed = speed;
                 this.Progress = downloader.TotalProgress;
-                this.ProgressPercentage = downloader.TotalPercentage();
-                this.ReportProgress((int)this.ProgressPercentage, null);
+                this.ReportProgress(this.ProgressPercentage, null);
             }
             catch { }
             finally
@@ -175,9 +174,12 @@ namespace YouTube_Downloader.Operations
 
                     VideoFormat videoFormat = Helper.GetPreferedFormat(video, _useDash);
 
-                    this.Title = string.Format("({0}/{1}) {2}", count, _videos.Count, video.Title);
-                    this.Duration = video.Duration;
-                    this.FileSize = videoFormat.FileSize;
+                    this.ReportProgress(-1, new Dictionary<string, object>()
+                    {
+                        { "Title", string.Format("({0}/{1}) {2}", count, _videos.Count, video.Title) },
+                        { "Duration", video.Duration },
+                        { "FileSize", videoFormat.FileSize }
+                    });
 
                     DownloadFile[] downloadFiles;
 
@@ -217,15 +219,23 @@ namespace YouTube_Downloader.Operations
 
                     if (_useDash && _downloaderSuccessful == true)
                     {
-                        this.Text = "Combining...";
-                        this.ReportsProgress = false;
+                        this.ReportProgress(-1, new Dictionary<string, object>()
+                        {
+                            { "Text", "Combining..." },
+                            { "ReportsProgress", false }
+                        });
+
                         this.Combine();
-                        this.ReportsProgress = true;
-                        this.Text = string.Empty;
+
+                        this.ReportProgress(-1, new Dictionary<string, object>()
+                        {
+                            { "Text", string.Empty },
+                            { "ReportsProgress", true }
+                        });
                     }
 
                     // Reset before starting new download.
-                    this.ProgressPercentage = Min_Progress;
+                    this.ReportProgress(Min_Progress, null);
                 }
 
                 e.Cancel = this.CancellationPending;
@@ -235,6 +245,23 @@ namespace YouTube_Downloader.Operations
             {
                 Program.SaveException(ex);
                 e.Result = OperationStatus.Failed;
+            }
+        }
+
+        protected override void OnWorkerProgressChanged(ProgressChangedEventArgs e)
+        {
+            base.OnWorkerProgressChanged(e);
+
+            if (e.UserState == null)
+                return;
+
+            // Used to set multiple properties
+            if (e.UserState is Dictionary<string, object>)
+            {
+                foreach (KeyValuePair<string, object> pair in (e.UserState as Dictionary<string, object>))
+                {
+                    this.GetType().GetProperty(pair.Key).SetValue(this, pair.Value);
+                }
             }
         }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -65,8 +66,7 @@ namespace YouTube_Downloader.Operations
                 this.ETA = ETA;
                 this.Speed = speed;
                 this.Progress = downloader.TotalProgress;
-                this.ProgressPercentage = downloader.TotalPercentage();
-                this.ReportProgress((int)this.ProgressPercentage, null);
+                this.ReportProgress(this.ProgressPercentage, null);
             }
             catch { }
             finally
@@ -182,10 +182,13 @@ namespace YouTube_Downloader.Operations
                 string audio = downloader.Files[0].Path;
                 string video = downloader.Files[1].Path;
 
-                this.Text = "Combining...";
-                this.ReportsProgress = false;
-                this.Progress = 0;
-                this.ProgressPercentage = Max_Progress;
+                this.ReportProgress(-1, new Dictionary<string, object>()
+                {
+                    { "Text", "Combining..." },
+                    { "ReportsProgress", false },
+                    { "Progress", 0 }
+                });
+                this.ReportProgress(Max_Progress, null);
 
                 try
                 {
@@ -204,6 +207,23 @@ namespace YouTube_Downloader.Operations
             }
 
             e.Result = this.Status;
+        }
+
+        protected override void OnWorkerProgressChanged(ProgressChangedEventArgs e)
+        {
+            base.OnWorkerProgressChanged(e);
+
+            if (e.UserState == null)
+                return;
+
+            // Used to set multiple properties
+            if (e.UserState is Dictionary<string, object>)
+            {
+                foreach (KeyValuePair<string, object> pair in (e.UserState as Dictionary<string, object>))
+                {
+                    this.GetType().GetProperty(pair.Key).SetValue(this, pair.Value);
+                }
+            }
         }
 
         protected override void OnWorkerStart(object[] args)
