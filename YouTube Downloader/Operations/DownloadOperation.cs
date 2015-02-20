@@ -66,6 +66,7 @@ namespace YouTube_Downloader.Operations
                 this.Speed = speed;
                 this.Progress = downloader.TotalProgress;
                 this.ProgressPercentage = downloader.TotalPercentage();
+                this.ReportProgress((int)this.ProgressPercentage, null);
             }
             catch { }
             finally
