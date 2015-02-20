@@ -102,7 +102,7 @@ namespace YouTube_Downloader.Controls
             sw.Stop();
             sw = null;
 
-            this.FileSize = Helper.FormatFileSize(Helper.GetFileSize(this.Operation.Output));
+            this.FileSize = Helper.GetFileSizeFormatted(this.Operation.Output);
 
             if (_progressBar != null)
                 _progressBar.Value = _progressBar.Maximum;

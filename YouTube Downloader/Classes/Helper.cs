@@ -162,6 +162,15 @@ namespace YouTube_Downloader.Classes
         }
 
         /// <summary>
+        /// Returns an formatted string of the given file's size.
+        /// </summary>
+        /// <param name="size">The file to get and format file size for.</param>
+        public static string GetFileSizeFormatted(string file)
+        {
+            return FormatFileSize(GetFileSize(file));
+        }
+
+        /// <summary>
         /// Returns the playlist id from given url.
         /// </summary>
         /// <param name="url">The url to get playlist id from.</param>
