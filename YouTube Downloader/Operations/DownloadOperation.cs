@@ -267,7 +267,6 @@ namespace YouTube_Downloader.Operations
 
             downloader = new FileDownloader();
             downloader.Files.AddRange(downloadFiles);
-            downloader.Directory = folder;
 
             // Attach events.
             downloader.Canceled += downloader_Canceled;

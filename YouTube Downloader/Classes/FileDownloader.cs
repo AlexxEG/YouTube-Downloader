@@ -58,8 +58,6 @@ namespace YouTube_Downloader.Classes
         public long TotalProgress { get; set; }
         public long TotalSize { get; private set; }
 
-        public string Directory { get; set; }
-
         public DownloadFile CurrentFile { get; private set; }
 
         public List<DownloadFile> Files { get; set; }
@@ -241,7 +239,7 @@ namespace YouTube_Downloader.Classes
             int readings = 0;
             Exception exception = null;
 
-            FileStream writer = new FileStream(Path.Combine(this.Directory, this.CurrentFile.Name), FileMode.Create);
+            FileStream writer = new FileStream(this.CurrentFile.Path, FileMode.Create);
 
             WebRequest webReq;
             WebResponse webResp = null;
@@ -279,7 +277,7 @@ namespace YouTube_Downloader.Classes
 
                     this.CurrentFile.Progress += currentPackageSize;
                     this.TotalProgress += currentPackageSize;
-                    
+
                     // Raise ProgressChanged event
                     _downloader.ReportProgress(-1, BackgroundEvents.ProgressChanged);
 
@@ -301,7 +299,7 @@ namespace YouTube_Downloader.Classes
                 if (!_downloader.CancellationPending)
                 {
                     this.CurrentFile.IsFinished = true;
-                    
+
                     _downloader.ReportProgress(-1, BackgroundEvents.FileDownloadSucceeded);
                 }
             }
@@ -311,17 +309,18 @@ namespace YouTube_Downloader.Classes
         {
             this.CalculateTotalFileSize();
 
-            if (!IO.Directory.Exists(this.Directory))
-                IO.Directory.CreateDirectory(this.Directory);
-
             foreach (var file in this.Files)
             {
                 this.CurrentFile = file;
-                DownloadFile();
+
+                if (!IO.Directory.Exists(file.Directory))
+                    IO.Directory.CreateDirectory(file.Directory);
+
+                this.DownloadFile();
 
                 if (_downloader.CancellationPending)
                 {
-                    CleanupFiles();
+                    this.CleanupFiles();
                 }
             }
         }
@@ -334,7 +333,7 @@ namespace YouTube_Downloader.Classes
             }
             else if (e.UserState is BackgroundEvents)
             {
-                switch((BackgroundEvents)e.UserState)
+                switch ((BackgroundEvents)e.UserState)
                 {
                     case BackgroundEvents.FileDownloadSucceeded:
                         break;
@@ -430,6 +429,10 @@ namespace YouTube_Downloader.Classes
         public long Progress { get; set; }
         public long TotalFileSize { get; set; }
 
+        public string Directory
+        {
+            get { return IO.Path.GetDirectoryName(this.Path); }
+        }
         public string Name
         {
             get { return IO.Path.GetFileName(this.Path); }

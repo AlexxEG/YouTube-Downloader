@@ -284,7 +284,6 @@ namespace YouTube_Downloader.Operations
                 _videos = (ICollection<VideoInfo>)args[3];
 
             downloader = new FileDownloader();
-            downloader.Directory = this.Output;
 
             // Attach downloader events
             downloader.Canceled += downloader_Canceled;
@@ -296,8 +295,8 @@ namespace YouTube_Downloader.Operations
 
         private bool Combine()
         {
-            string audio = Path.Combine(downloader.Directory, downloader.Files[0].Name);
-            string video = Path.Combine(downloader.Directory, downloader.Files[1].Name);
+            string audio = downloader.Files[0].Path;
+            string video = downloader.Files[1].Path;
             // Remove '_video' from video file to get a final filename.
             string output = video.Replace("_video", string.Empty);
 
