@@ -24,7 +24,6 @@ namespace YouTube_Downloader.Operations
         public event EventHandler ReportsProgressChanged;
         public event EventHandler Started;
         public event EventHandler StatusChanged;
-        public event EventHandler TitleChanged;
 
         #region Fields
 
@@ -256,7 +255,6 @@ namespace YouTube_Downloader.Operations
             set
             {
                 _title = value;
-                this.OnTitleChanged(EventArgs.Empty);
                 this.OnPropertyChanged();
             }
         }
@@ -529,12 +527,6 @@ namespace YouTube_Downloader.Operations
         {
             if (this.StatusChanged != null)
                 this.StatusChanged(this, e);
-        }
-
-        protected virtual void OnTitleChanged(EventArgs e)
-        {
-            if (this.TitleChanged != null)
-                this.TitleChanged(this, e);
         }
 
         protected virtual void OnWorkerDoWork(DoWorkEventArgs e)
