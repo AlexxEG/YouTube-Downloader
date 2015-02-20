@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using ListViewEmbeddedControls;
 using YouTube_Downloader.Classes;
@@ -36,7 +32,12 @@ namespace YouTube_Downloader.Controls
         public string Input
         {
             get { return this.SubItems[5].Text; }
-            set { this.SubItems[5].Text = value; }
+            set
+            {
+                _inputLabel.Text = this.Input;
+
+                this.SubItems[5].Text = value;
+            }
         }
 
         public string Progress
@@ -78,18 +79,17 @@ namespace YouTube_Downloader.Controls
             };
             _inputLabel = new LinkLabel()
             {
-                Text = inputText,
-                Tag = input
+                Text = inputText
             };
             _inputLabel.LinkClicked += _inputLabel_LinkClicked;
 
             this.Operation = operation;
             this.Operation.Completed += Operation_Completed;
             this.Operation.ProgressChanged += Operation_ProgressChanged;
+            this.Operation.PropertyChanged += Operation_PropertyChanged;
             this.Operation.ReportsProgressChanged += Operation_ReportsProgressChanged;
             this.Operation.Started += Operation_Started;
             this.Operation.StatusChanged += Operation_StatusChanged;
-            this.Operation.TitleChanged += Operation_TitleChanged;
         }
 
         private void Operation_Completed(object sender, OperationEventArgs e)
@@ -121,6 +121,25 @@ namespace YouTube_Downloader.Controls
                     sw.Restart();
 
                 this.Speed = this.Operation.Speed + this.Operation.ETA;
+            }
+        }
+
+        private void Operation_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case "Duration":
+                    this.Duration = Helper.FormatVideoLength(this.Operation.Duration);
+                    break;
+                case "FileSize":
+                    this.FileSize = Helper.FormatFileSize(this.Operation.FileSize);
+                    break;
+                case "Input":
+                    this.Input = this.Operation.Input;
+                    break;
+                case "Title":
+                    this.Text = this.Operation.Title;
+                    break;
             }
         }
 
@@ -173,16 +192,11 @@ namespace YouTube_Downloader.Controls
             }
         }
 
-        private void Operation_TitleChanged(object sender, EventArgs e)
-        {
-            this.Text = this.Operation.Title;
-        }
-
         private void _inputLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             try
             {
-                Process.Start((string)_inputLabel.Tag);
+                Process.Start((string)_inputLabel.Text);
             }
             catch
             {
