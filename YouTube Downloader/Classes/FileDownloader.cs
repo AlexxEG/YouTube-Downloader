@@ -66,6 +66,8 @@ namespace YouTube_Downloader.Classes
 
         private enum BackgroundEvents
         {
+            CalculatedTotalFileSize,
+            FileDownloadComplete,
             FileDownloadSucceeded,
             ProgressChanged
         }
@@ -177,7 +179,7 @@ namespace YouTube_Downloader.Classes
                 catch (Exception) { }
             }
 
-            this.OnCalculatedTotalFileSize();
+            _downloader.ReportProgress(-1, BackgroundEvents.CalculatedTotalFileSize);
         }
 
         private void CleanupFiles()
@@ -229,8 +231,6 @@ namespace YouTube_Downloader.Classes
 
         private void DownloadFile()
         {
-            this.OnFileDownloadComplete();
-
             long size = 0;
 
             byte[] readBytes = new byte[this.PackageSize];
@@ -318,6 +318,8 @@ namespace YouTube_Downloader.Classes
 
                 this.DownloadFile();
 
+                _downloader.ReportProgress(-1, BackgroundEvents.FileDownloadComplete);
+
                 if (_downloader.CancellationPending)
                 {
                     this.CleanupFiles();
@@ -335,9 +337,17 @@ namespace YouTube_Downloader.Classes
             {
                 switch ((BackgroundEvents)e.UserState)
                 {
+                    case BackgroundEvents.CalculatedTotalFileSize:
+                        this.OnCalculatedTotalFileSize();
+                        break;
+                    case BackgroundEvents.FileDownloadComplete:
+                        this.OnFileDownloadComplete();
+                        break;
                     case BackgroundEvents.FileDownloadSucceeded:
+                        this.OnFileDownloadSucceeded();
                         break;
                     case BackgroundEvents.ProgressChanged:
+                        this.OnProgressChanged();
                         break;
                 }
             }
