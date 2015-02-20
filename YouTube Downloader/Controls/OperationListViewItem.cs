@@ -19,11 +19,18 @@ namespace YouTube_Downloader.Controls
     {
         LinkLabel _inputLabel;
         ProgressBar _progressBar;
+        Stopwatch sw;
 
         public string Duration
         {
             get { return this.SubItems[3].Text; }
             set { this.SubItems[3].Text = value; }
+        }
+
+        public string FileSize
+        {
+            get { return this.SubItems[4].Text; }
+            set { this.SubItems[4].Text = value; }
         }
 
         public string Input
@@ -38,10 +45,10 @@ namespace YouTube_Downloader.Controls
             set { this.SubItems[1].Text = value; }
         }
 
-        public string FileSize
+        public string Speed
         {
-            get { return this.SubItems[4].Text; }
-            set { this.SubItems[4].Text = value; }
+            get { return this.SubItems[2].Text; }
+            set { this.SubItems[2].Text = value; }
         }
 
         public string WorkingText { get; set; }
@@ -76,19 +83,20 @@ namespace YouTube_Downloader.Controls
             };
             _inputLabel.LinkClicked += _inputLabel_LinkClicked;
 
-            this.GetListViewEx().AddEmbeddedControl(_progressBar, 1, this.Index);
-            this.GetListViewEx().AddEmbeddedControl(_inputLabel, 5, this.Index);
-
             this.Operation = operation;
             this.Operation.Completed += Operation_Completed;
             this.Operation.ProgressChanged += Operation_ProgressChanged;
             this.Operation.ReportsProgressChanged += Operation_ReportsProgressChanged;
+            this.Operation.Started += Operation_Started;
             this.Operation.StatusChanged += Operation_StatusChanged;
             this.Operation.TitleChanged += Operation_TitleChanged;
         }
 
         private void Operation_Completed(object sender, OperationEventArgs e)
         {
+            sw.Stop();
+            sw = null;
+
             this.FileSize = Helper.FormatFileSize(Helper.GetFileSize(this.Operation.Output));
 
             if (_progressBar != null)
@@ -99,10 +107,21 @@ namespace YouTube_Downloader.Controls
 
         private void Operation_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            if (_progressBar == null)
-                return;
+            if (_progressBar != null)
+                _progressBar.Value = e.ProgressPercentage;
 
-            _progressBar.Value = e.ProgressPercentage;
+            if (!string.IsNullOrEmpty(this.WorkingText))
+                this.Speed = this.WorkingText;
+            else
+            {
+                if (this.Wait())
+                    return;
+
+                if (sw != null)
+                    sw.Restart();
+
+                this.Speed = this.Operation.Speed + this.Operation.ETA;
+            }
         }
 
         private void Operation_ReportsProgressChanged(object sender, EventArgs e)
@@ -122,25 +141,34 @@ namespace YouTube_Downloader.Controls
             }
         }
 
+        private void Operation_Started(object sender, EventArgs e)
+        {
+            sw = new Stopwatch();
+            sw.Start();
+
+            this.GetListViewEx().AddEmbeddedControl(_progressBar, 1, this.Index);
+            this.GetListViewEx().AddEmbeddedControl(_inputLabel, 5, this.Index);
+        }
+
         private void Operation_StatusChanged(object sender, EventArgs e)
         {
             switch (this.Operation.Status)
             {
                 case OperationStatus.Canceled:
-                    this.Progress = "Canceled";
+                    this.Speed = "Canceled";
                     break;
                 case OperationStatus.Failed:
-                    this.Progress = "Failed";
+                    this.Speed = "Failed";
                     break;
                 case OperationStatus.Success:
-                    this.Progress = "Completed";
+                    this.Speed = "Completed";
                     break;
                 case OperationStatus.Paused:
-                    this.Progress = "Paused";
+                    this.Speed = "Paused";
                     break;
                 case OperationStatus.Working:
                     if (!string.IsNullOrEmpty(this.WorkingText))
-                        this.Progress = this.WorkingText;
+                        this.Speed = this.WorkingText;
                     break;
             }
         }
@@ -168,6 +196,15 @@ namespace YouTube_Downloader.Controls
                 return null;
 
             return this.ListView as ListViewEx;
+        }
+
+        private bool Wait()
+        {
+            // Limit the progress update to once a second to avoid flickering.
+            if (sw == null || !sw.IsRunning)
+                return false;
+
+            return sw.ElapsedMilliseconds < 1000;
         }
 
         private void OnOperationComplete(OperationEventArgs e)
