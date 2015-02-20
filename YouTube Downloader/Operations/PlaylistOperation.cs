@@ -36,7 +36,7 @@ namespace YouTube_Downloader.Operations
             downloader.Stop(false);
         }
 
-        private void downloader_FileSizesCalculationComplete(object sender, EventArgs e)
+        private void downloader_CalculatedTotalFileSize(object sender, EventArgs e)
         {
             this.FileSize = downloader.TotalSize;
         }
@@ -290,7 +290,7 @@ namespace YouTube_Downloader.Operations
             downloader.Canceled += downloader_Canceled;
             downloader.Completed += downloader_Completed;
             downloader.FileDownloadFailed += downloader_FileDownloadFailed;
-            downloader.CalculatedTotalFileSize += downloader_FileSizesCalculationComplete;
+            downloader.CalculatedTotalFileSize += downloader_CalculatedTotalFileSize;
             downloader.ProgressChanged += downloader_ProgressChanged;
         }
 
