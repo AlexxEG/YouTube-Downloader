@@ -66,6 +66,12 @@ namespace YouTube_Downloader.Classes
 
         public delegate void ExceptionEventHandler(object sender, Exception ex);
 
+        private enum BackgroundEvents
+        {
+            FileDownloadSucceeded,
+            ProgressChanged
+        }
+
         #region IDisposable Members
 
         private bool _disposed = false;
@@ -273,7 +279,9 @@ namespace YouTube_Downloader.Classes
 
                     this.CurrentFile.Progress += currentPackageSize;
                     this.TotalProgress += currentPackageSize;
-                    this.OnProgressChanged();
+                    
+                    // Raise ProgressChanged event
+                    _downloader.ReportProgress(-1, BackgroundEvents.ProgressChanged);
 
                     writer.Write(readBytes, 0, currentPackageSize);
                     readings += 1;
@@ -293,7 +301,8 @@ namespace YouTube_Downloader.Classes
                 if (!_downloader.CancellationPending)
                 {
                     this.CurrentFile.IsFinished = true;
-                    this.OnFileDownloadSucceeded();
+                    
+                    _downloader.ReportProgress(-1, BackgroundEvents.FileDownloadSucceeded);
                 }
             }
         }
@@ -322,6 +331,16 @@ namespace YouTube_Downloader.Classes
             if (e.UserState is Exception)
             {
                 this.OnFileDownloadFailed(e.UserState as Exception);
+            }
+            else if (e.UserState is BackgroundEvents)
+            {
+                switch((BackgroundEvents)e.UserState)
+                {
+                    case BackgroundEvents.FileDownloadSucceeded:
+                        break;
+                    case BackgroundEvents.ProgressChanged:
+                        break;
+                }
             }
         }
 
