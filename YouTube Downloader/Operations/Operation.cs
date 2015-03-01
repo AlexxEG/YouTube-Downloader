@@ -459,13 +459,13 @@ namespace YouTube_Downloader.Operations
                 _worker.ReportProgress(percentProgress, userState);
         }
 
-        protected virtual void WorkerCompleted(RunWorkerCompletedEventArgs e) { }
+        protected abstract void WorkerCompleted(RunWorkerCompletedEventArgs e);
 
-        protected virtual void WorkerDoWork(DoWorkEventArgs e) { }
+        protected abstract void WorkerDoWork(DoWorkEventArgs e);
 
-        protected virtual void WorkerProgressChanged(ProgressChangedEventArgs e) { }
+        protected abstract void WorkerProgressChanged(ProgressChangedEventArgs e);
 
-        protected virtual void WorkerStart(object[] args) { }
+        protected abstract void WorkerStart(object[] args);
 
         private void Worker_Completed(object sender, RunWorkerCompletedEventArgs e)
         {

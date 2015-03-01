@@ -125,8 +125,6 @@ namespace YouTube_Downloader.Operations
 
         protected override void WorkerProgressChanged(ProgressChangedEventArgs e)
         {
-            base.WorkerProgressChanged(e);
-
             if (e.UserState is Process)
             {
                 // FFmpegHelper will return the ffmpeg process so it can be used to cancel.
@@ -136,8 +134,6 @@ namespace YouTube_Downloader.Operations
 
         protected override void WorkerCompleted(RunWorkerCompletedEventArgs e)
         {
-            base.WorkerCompleted(e);
-
             if (this.Status == OperationStatus.Success)
             {
                 this.Duration = (long)FFmpegHelper.GetDuration(this.Input).TotalSeconds;

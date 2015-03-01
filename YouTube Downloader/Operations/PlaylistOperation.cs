@@ -146,6 +146,8 @@ namespace YouTube_Downloader.Operations
 
         #endregion
 
+        protected override void WorkerCompleted(RunWorkerCompletedEventArgs e) { }
+
         protected override void WorkerDoWork(DoWorkEventArgs e)
         {
             try
@@ -250,8 +252,6 @@ namespace YouTube_Downloader.Operations
 
         protected override void WorkerProgressChanged(ProgressChangedEventArgs e)
         {
-            base.WorkerProgressChanged(e);
-
             if (e.UserState == null)
                 return;
 
