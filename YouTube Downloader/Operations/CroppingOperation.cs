@@ -96,7 +96,7 @@ namespace YouTube_Downloader.Operations
 
         #endregion
 
-        protected override void OnWorkerDoWork(DoWorkEventArgs e)
+        protected override void WorkerDoWork(DoWorkEventArgs e)
         {
             try
             {
@@ -123,9 +123,9 @@ namespace YouTube_Downloader.Operations
             }
         }
 
-        protected override void OnWorkerProgressChanged(ProgressChangedEventArgs e)
+        protected override void WorkerProgressChanged(ProgressChangedEventArgs e)
         {
-            base.OnWorkerProgressChanged(e);
+            base.WorkerProgressChanged(e);
 
             if (e.UserState is Process)
             {
@@ -134,9 +134,9 @@ namespace YouTube_Downloader.Operations
             }
         }
 
-        protected override void OnWorkerRunWorkerCompleted(RunWorkerCompletedEventArgs e)
+        protected override void WorkerCompleted(RunWorkerCompletedEventArgs e)
         {
-            base.OnWorkerRunWorkerCompleted(e);
+            base.WorkerCompleted(e);
 
             if (this.Status == OperationStatus.Success)
             {
@@ -145,7 +145,7 @@ namespace YouTube_Downloader.Operations
             }
         }
 
-        protected override void OnWorkerStart(object[] args)
+        protected override void WorkerStart(object[] args)
         {
             this.ReportsProgress = true;
 

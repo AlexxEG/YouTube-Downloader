@@ -336,7 +336,7 @@ namespace YouTube_Downloader.Operations
 
         public void Start(object[] args)
         {
-            OnWorkerStart(args);
+            WorkerStart(args);
 
             sw = new Stopwatch();
             sw.Start();
@@ -348,7 +348,7 @@ namespace YouTube_Downloader.Operations
             };
             _worker.DoWork += Worker_DoWork;
             _worker.ProgressChanged += Worker_ProgressChanged;
-            _worker.RunWorkerCompleted += Worker_RunWorkerCompleted;
+            _worker.RunWorkerCompleted += Worker_Completed;
             _worker.RunWorkerAsync(args);
 
             this.Status = OperationStatus.Working;
@@ -459,17 +459,24 @@ namespace YouTube_Downloader.Operations
                 _worker.ReportProgress(percentProgress, userState);
         }
 
-        protected virtual void OnWorkerDoWork(DoWorkEventArgs e) { }
+        protected virtual void WorkerCompleted(RunWorkerCompletedEventArgs e) { }
 
-        protected virtual void OnWorkerProgressChanged(ProgressChangedEventArgs e) { }
+        protected virtual void WorkerDoWork(DoWorkEventArgs e) { }
 
-        protected virtual void OnWorkerRunWorkerCompleted(RunWorkerCompletedEventArgs e) { }
+        protected virtual void WorkerProgressChanged(ProgressChangedEventArgs e) { }
 
-        protected virtual void OnWorkerStart(object[] args) { }
+        protected virtual void WorkerStart(object[] args) { }
+
+        private void Worker_Completed(object sender, RunWorkerCompletedEventArgs e)
+        {
+            this.Status = (OperationStatus)e.Result;
+            this.Complete();
+            this.WorkerCompleted(e);
+        }
 
         private void Worker_DoWork(object sender, DoWorkEventArgs e)
         {
-            OnWorkerDoWork(e);
+            WorkerDoWork(e);
         }
 
         private void Worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -479,14 +486,7 @@ namespace YouTube_Downloader.Operations
 
             this.ProgressPercentage = e.ProgressPercentage;
             this.OnProgressChanged(e);
-            this.OnWorkerProgressChanged(e);
-        }
-
-        private void Worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            this.Status = (OperationStatus)e.Result;
-            this.Complete();
-            this.OnWorkerRunWorkerCompleted(e);
+            this.WorkerProgressChanged(e);
         }
 
         private bool Wait()
