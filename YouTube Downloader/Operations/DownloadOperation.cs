@@ -188,7 +188,7 @@ namespace YouTube_Downloader.Operations
                     { "ReportsProgress", false },
                     { "Progress", 0 }
                 });
-                this.ReportProgress(Max_Progress, null);
+                this.ReportProgress(ProgressMax, null);
 
                 try
                 {

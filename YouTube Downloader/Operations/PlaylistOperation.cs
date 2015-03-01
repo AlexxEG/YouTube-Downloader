@@ -235,7 +235,7 @@ namespace YouTube_Downloader.Operations
                     }
 
                     // Reset before starting new download.
-                    this.ReportProgress(Min_Progress, null);
+                    this.ReportProgress(ProgressMin, null);
                 }
 
                 e.Cancel = this.CancellationPending;

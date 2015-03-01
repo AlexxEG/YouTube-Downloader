@@ -9,8 +9,8 @@ namespace YouTube_Downloader.Operations
 {
     public abstract class Operation : IDisposable, INotifyPropertyChanged
     {
-        protected const int Max_Progress = 100;
-        protected const int Min_Progress = 0;
+        protected const int ProgressMax = 100;
+        protected const int ProgressMin = 0;
         /// <summary>
         /// The amount of time to wait for progress updates in milliseconds.
         /// </summary>
@@ -484,7 +484,7 @@ namespace YouTube_Downloader.Operations
             this.ReportsProgress = true;
 
             if (this.Status == OperationStatus.Success)
-                this.ProgressPercentage = Max_Progress;
+                this.ProgressPercentage = ProgressMax;
 
             this.OnPropertyChangedExplicit("ProgressText");
 
