@@ -16,15 +16,6 @@ namespace YouTube_Downloader.Operations
         /// </summary>
         protected const int ProgressDelay = 500;
 
-        /// <summary>
-        /// Occurs when the operation is complete.
-        /// </summary>
-        public event OperationEventHandler Completed;
-        public event ProgressChangedEventHandler ProgressChanged;
-        public event EventHandler ReportsProgressChanged;
-        public event EventHandler Started;
-        public event EventHandler StatusChanged;
-
         #region Fields
 
         int _progressPercentage = 0;
@@ -439,37 +430,6 @@ namespace YouTube_Downloader.Operations
             throw new NotSupportedException();
         }
 
-        private bool Wait()
-        {
-            // Limit the progress update to once a second to avoid flickering.
-            if (sw == null || !sw.IsRunning)
-                return false;
-
-            return sw.ElapsedMilliseconds < ProgressDelay;
-        }
-
-        private void Worker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            OnWorkerDoWork(e);
-        }
-
-        private void Worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-            if (e.ProgressPercentage < 0)
-                return;
-
-            this.ProgressPercentage = e.ProgressPercentage;
-            this.OnProgressChanged(e);
-            this.OnWorkerProgressChanged(e);
-        }
-
-        private void Worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            this.Status = (OperationStatus)e.Result;
-            this.Complete();
-            this.OnWorkerRunWorkerCompleted(e);
-        }
-
         protected void CancelAsync()
         {
             if (_worker != null)
@@ -499,6 +459,56 @@ namespace YouTube_Downloader.Operations
                 _worker.ReportProgress(percentProgress, userState);
         }
 
+        protected virtual void OnWorkerDoWork(DoWorkEventArgs e) { }
+
+        protected virtual void OnWorkerProgressChanged(ProgressChangedEventArgs e) { }
+
+        protected virtual void OnWorkerRunWorkerCompleted(RunWorkerCompletedEventArgs e) { }
+
+        protected virtual void OnWorkerStart(object[] args) { }
+
+        private void Worker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            OnWorkerDoWork(e);
+        }
+
+        private void Worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            if (e.ProgressPercentage < 0)
+                return;
+
+            this.ProgressPercentage = e.ProgressPercentage;
+            this.OnProgressChanged(e);
+            this.OnWorkerProgressChanged(e);
+        }
+
+        private void Worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            this.Status = (OperationStatus)e.Result;
+            this.Complete();
+            this.OnWorkerRunWorkerCompleted(e);
+        }
+
+        private bool Wait()
+        {
+            if (sw == null || !sw.IsRunning)
+                return false;
+
+            // Limit the progress update to once a second to avoid flickering.
+            return sw.ElapsedMilliseconds < ProgressDelay;
+        }
+
+        // Events
+
+        /// <summary>
+        /// Occurs when the operation is complete.
+        /// </summary>
+        public event OperationEventHandler Completed;
+        public event ProgressChangedEventHandler ProgressChanged;
+        public event EventHandler ReportsProgressChanged;
+        public event EventHandler Started;
+        public event EventHandler StatusChanged;
+
         protected virtual void OnCompleted(OperationEventArgs e)
         {
             if (this.Completed != null)
@@ -527,26 +537,6 @@ namespace YouTube_Downloader.Operations
         {
             if (this.StatusChanged != null)
                 this.StatusChanged(this, e);
-        }
-
-        protected virtual void OnWorkerDoWork(DoWorkEventArgs e)
-        {
-
-        }
-
-        protected virtual void OnWorkerProgressChanged(ProgressChangedEventArgs e)
-        {
-            
-        }
-
-        protected virtual void OnWorkerRunWorkerCompleted(RunWorkerCompletedEventArgs e)
-        {
-            
-        }
-
-        protected virtual void OnWorkerStart(object[] args)
-        {
-
         }
     }
 }
