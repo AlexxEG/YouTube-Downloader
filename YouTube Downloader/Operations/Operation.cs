@@ -16,6 +16,49 @@ namespace YouTube_Downloader.Operations
         /// </summary>
         protected const int ProgressDelay = 500;
 
+        #region Events
+
+        /// <summary>
+        /// Occurs when the operation is complete.
+        /// </summary>
+        public event OperationEventHandler Completed;
+        public event ProgressChangedEventHandler ProgressChanged;
+        public event EventHandler ReportsProgressChanged;
+        public event EventHandler Started;
+        public event EventHandler StatusChanged;
+
+        protected virtual void OnCompleted(OperationEventArgs e)
+        {
+            if (this.Completed != null)
+                this.Completed(this, e);
+        }
+
+        protected virtual void OnProgressChanged(ProgressChangedEventArgs e)
+        {
+            if (this.ProgressChanged != null)
+                this.ProgressChanged(this, e);
+        }
+
+        protected virtual void OnReportsProgressChanged(EventArgs e)
+        {
+            if (this.ReportsProgressChanged != null)
+                this.ReportsProgressChanged(this, e);
+        }
+
+        protected virtual void OnStarted(EventArgs e)
+        {
+            if (this.Started != null)
+                this.Started(this, e);
+        }
+
+        protected virtual void OnStatusChanged(EventArgs e)
+        {
+            if (this.StatusChanged != null)
+                this.StatusChanged(this, e);
+        }
+
+        #endregion
+
         #region Fields
 
         int _progressPercentage = 0;
@@ -496,47 +539,6 @@ namespace YouTube_Downloader.Operations
 
             // Limit the progress update to once a second to avoid flickering.
             return sw.ElapsedMilliseconds < ProgressDelay;
-        }
-
-        // Events
-
-        /// <summary>
-        /// Occurs when the operation is complete.
-        /// </summary>
-        public event OperationEventHandler Completed;
-        public event ProgressChangedEventHandler ProgressChanged;
-        public event EventHandler ReportsProgressChanged;
-        public event EventHandler Started;
-        public event EventHandler StatusChanged;
-
-        protected virtual void OnCompleted(OperationEventArgs e)
-        {
-            if (this.Completed != null)
-                this.Completed(this, e);
-        }
-
-        protected virtual void OnProgressChanged(ProgressChangedEventArgs e)
-        {
-            if (this.ProgressChanged != null)
-                this.ProgressChanged(this, e);
-        }
-
-        protected virtual void OnReportsProgressChanged(EventArgs e)
-        {
-            if (this.ReportsProgressChanged != null)
-                this.ReportsProgressChanged(this, e);
-        }
-
-        protected virtual void OnStarted(EventArgs e)
-        {
-            if (this.Started != null)
-                this.Started(this, e);
-        }
-
-        protected virtual void OnStatusChanged(EventArgs e)
-        {
-            if (this.StatusChanged != null)
-                this.StatusChanged(this, e);
         }
     }
 }
