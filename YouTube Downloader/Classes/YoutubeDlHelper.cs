@@ -9,7 +9,6 @@ namespace YouTube_Downloader.Classes
     public class YoutubeDlHelper
     {
         private const string Cmd_JSON_Info = " -o \"{0}\\%(title)s\" --no-playlist --skip-download --restrict-filenames --write-info-json \"{1}\"";
-        public const string Cmd_JSON_Info_Playlist = " -i -o \"{0}\\playlist-{1}\\%(playlist_index)s-%(title)s\" --restrict-filenames --skip-download --write-info-json \"{2}\"";
         private const string Log_Filename = "youtube-dl.log";
 
         private static string YouTubeDlPath = Path.Combine(Application.StartupPath, "externals", "youtube-dl.exe");
@@ -38,9 +37,6 @@ namespace YouTube_Downloader.Classes
         public static VideoInfo GetVideoInfo(string url)
         {
             string json_dir = Program.GetJsonDirectory();
-
-            if (!Directory.Exists(json_dir))
-                Directory.CreateDirectory(json_dir);
 
             /* Fill in json directory & video url. */
             string arguments = string.Format(Cmd_JSON_Info, json_dir, url);
@@ -100,17 +96,20 @@ namespace YouTube_Downloader.Classes
         /// </summary>
         public static Process StartProcess(string arguments)
         {
-            Process process = new Process();
+            var psi = new ProcessStartInfo(YoutubeDlHelper.YouTubeDlPath, arguments)
+            {
+                UseShellExecute = false,
+                RedirectStandardInput = true,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden
+            };
 
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.RedirectStandardInput = true;
-            process.StartInfo.RedirectStandardOutput = true;
-            process.StartInfo.RedirectStandardError = true;
-            process.StartInfo.CreateNoWindow = true;
-            process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            process.StartInfo.FileName = YoutubeDlHelper.YouTubeDlPath;
-            process.StartInfo.Arguments = arguments;
-            process.Start();
+            var process = new Process()
+            {
+                StartInfo = psi
+            };
 
             return process;
         }

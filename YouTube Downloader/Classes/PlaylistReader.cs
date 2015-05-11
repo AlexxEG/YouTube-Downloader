@@ -8,6 +8,8 @@ namespace YouTube_Downloader.Classes
 {
     public class PlaylistReader
     {
+        public const string Cmd_JSON_Info_Playlist = " -i -o \"{0}\\playlist-{1}\\%(playlist_index)s-%(title)s\" --restrict-filenames --skip-download --write-info-json \"{2}\"";
+
         private StringBuilder log = new StringBuilder();
         private StreamReader reader;
         private Process youtubeDl;
@@ -26,7 +28,7 @@ namespace YouTube_Downloader.Classes
 
             string json_dir = Program.GetJsonDirectory();
 
-            _arguments = string.Format(YoutubeDlHelper.Cmd_JSON_Info_Playlist, json_dir, playlist_id, url);
+            _arguments = string.Format(Cmd_JSON_Info_Playlist, json_dir, playlist_id, url);
             _url = url;
 
             youtubeDl = YoutubeDlHelper.StartProcess(_arguments);
