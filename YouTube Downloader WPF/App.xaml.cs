@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Windows;
+using System.Windows.Threading;
 using YouTube_Downloader.Classes;
 using YouTube_Downloader.Operations;
 
@@ -25,7 +26,7 @@ namespace YouTube_Downloader_WPF
         {
             base.OnStartup(e);
 
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            this.DispatcherUnhandledException += App_DispatcherUnhandledException;
 
             // Check for ffmpeg
             App.FFmpegAvailable = File.Exists(FFmpegHelper.FFmpegPath);
@@ -37,9 +38,9 @@ namespace YouTube_Downloader_WPF
         /// <summary>
         /// Automatically saves unhandled Exceptions.
         /// </summary>
-        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            App.SaveException((Exception)e.ExceptionObject);
+            App.SaveException(e.Exception);
         }
 
         /// <summary>
