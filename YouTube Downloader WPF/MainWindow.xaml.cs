@@ -30,8 +30,8 @@ namespace YouTube_Downloader_WPF
     {
         Settings settings = Properties.Settings.Default;
 
-        private ObservableCollection<PlaylistItem> _playlistItems;
-        private ObservableCollection<Operation> _queue;
+        ObservableCollection<PlaylistItem> _playlistItems;
+        ObservableCollection<Operation> _queue;
 
         public ObservableCollection<PlaylistItem> PlaylistItems
         {
@@ -361,7 +361,8 @@ namespace YouTube_Downloader_WPF
         bool _canDownloadPlaylist = false;
         bool _canGetPlaylist = true;
         bool _isPlaylistLinkValid = false;
-        private BackgroundWorker _backgroundWorkerPlaylist;
+
+        BackgroundWorker _backgroundWorkerPlaylist;
 
         public bool CanDownloadPlaylist
         {
