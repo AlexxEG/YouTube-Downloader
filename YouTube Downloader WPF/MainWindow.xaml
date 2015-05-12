@@ -17,11 +17,12 @@
 
     <Window.Resources>
         <ResourceDictionary>
-            <BooleanToVisibilityConverter x:Key="BoolToVis" />
+            <BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter" />
             <converters:MultipleBoolsConverter x:Key="multiBoolConverter" />
             <converters:MultiAnyBoolConverter x:Key="multiAnyBoolConverter" />
             <converters:PauseResumeConverter x:Key="pauseResumeConverter" />
             <converters:InverseBooleanConverter x:Key="inverseBooleanConverter" />
+            <converters:InverseBooleanToVisibilityConverter x:Key="inverseBooleanToVisibilityConverter" />
             <converters:FileSizeToStringConverter x:Key="fileSizeToStringConverter" />
             <converters:LongToDurationConverter x:Key="longToDurationConverter" />
 
@@ -193,17 +194,17 @@
                     <TextBox Name="VideoLink"
                              MaxLines="1"
                              Controls:TextBoxHelper.Watermark="Enter youtube link"
-                             IsEnabled="{Binding CanGetVideo}"
+                             IsEnabled="{Binding EnableDownloadControls}"
                              Margin="5,5,5,0" />
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
                         <Button Content="Paste"
-                                IsEnabled="{Binding CanGetVideo}"
+                                IsEnabled="{Binding EnableDownloadControls}"
                                 MinWidth="80" Margin="0,0,5,0"
                                 Click="VideoLinkPasteButton_Click" />
 
                         <Button Content="Get Video"
-                                IsEnabled="{Binding CanGetVideo}"
+                                IsEnabled="{Binding EnableDownloadControls}"
                                 MinWidth="80"
                                 Margin="5,0,5,0"
                                 Click="GetVideoButton_Click" />
@@ -261,7 +262,7 @@
                                Grid.Column="1" />
 
                         <TextBox Text="{Binding Path=VideoInformation.Title}"
-                                 IsEnabled="{Binding CanGetVideo}"
+                                 IsEnabled="{Binding EnableDownloadControls}"
                                  Grid.Column="2"
                                  Grid.ColumnSpan="2"/>
 
@@ -272,7 +273,7 @@
                         <ComboBox ItemsSource="{Binding Source={StaticResource FilteredFormats}}"
                                   SelectedItem="{Binding SelectedFormat, Mode=TwoWay}"
                                   SelectedIndex="0"
-                                  IsEnabled="{Binding CanGetVideo}"
+                                  IsEnabled="{Binding EnableDownloadControls}"
                                   Margin="0,5,0,5"
                                   Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="1">
 
@@ -281,7 +282,8 @@
                                     <WrapPanel>
                                         <TextBlock Text="{Binding Title}" />
                                         <TextBlock Text=" - " />
-                                        <TextBlock Text="{Binding FileSize, Converter={StaticResource fileSizeToStringConverter}}" />
+                                        <TextBlock Text="{Binding FileSize, 
+                                                                  Converter={StaticResource fileSizeToStringConverter}}" />
                                     </WrapPanel>
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
@@ -295,7 +297,7 @@
                                                         Path=SaveToDirectories,
                                                         Mode=TwoWay}"
                                   IsEditable="True"
-                                  IsEnabled="{Binding CanGetVideo}"
+                                  IsEnabled="{Binding EnableDownloadControls}"
                                   SelectedIndex="{Binding Source={x:Static properties:Settings.Default},
                                                           Path=SelectedDirectory,
                                                           Mode=TwoWay}"
@@ -303,14 +305,14 @@
 
                         <Button Name="VideoBrowseButton"
                                 Content="..."
-                                IsEnabled="{Binding CanGetVideo}"
+                                IsEnabled="{Binding EnableDownloadControls}"
                                 Width="25" Margin="5,0,0,0"
                                 Grid.Column="3" Grid.Row="2"
                                 Click="VideoBrowseButton_Click" />
 
                         <Button Name="VideoDownloadButton"
                                 Content="Download"
-                                IsEnabled="{Binding CanGetVideo}"
+                                IsEnabled="{Binding EnableDownloadControls}"
                                 Width="90" Margin="0,10,0,0"
                                 HorizontalAlignment="Right"
                                 Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="3"
@@ -351,7 +353,7 @@
                         <Label Content="Link" />
 
                         <TextBox Name="PlaylistLink"
-                                 IsEnabled="{Binding CanGetPlaylist}"
+                                 IsEnabled="{Binding EnablePlaylistControls}"
                                  Grid.Column="1"
                                  TextChanged="PlaylistLink_TextChanged" />
                         <!--Link-->
@@ -365,7 +367,7 @@
                                   SelectedIndex="{Binding Source={x:Static properties:Settings.Default},
                                                           Path=PreferredQualityPlaylist,
                                                           Mode=TwoWay}"
-                                  IsEnabled="{Binding CanGetPlaylist}"
+                                  IsEnabled="{Binding EnablePlaylistControls}"
                                   Grid.Column="1" Grid.Row="1">
                             <ComboBoxItem Content="Highest" />
                             <ComboBoxItem Content="Medium" />
@@ -376,7 +378,7 @@
                                   IsChecked="{Binding Source={x:Static properties:Settings.Default},
                                                       Path=UseDashPlaylist,
                                                       Mode=TwoWay}"
-                                  IsEnabled="{Binding CanGetPlaylist}"
+                                  IsEnabled="{Binding EnablePlaylistControls}"
                                   Margin="5,0,5,0"
                                   Grid.Column="2" Grid.Row="1" />
                         <!--Quality-->
@@ -393,11 +395,11 @@
                                                           Path=SelectedDirectoryPlaylist,
                                                           Mode=TwoWay}"
                                   IsEditable="True"
-                                  IsEnabled="{Binding CanGetPlaylist}"
+                                  IsEnabled="{Binding EnablePlaylistControls}"
                                   Grid.Column="1" Grid.Row="2" />
 
                         <Button Content="..."
-                                IsEnabled="{Binding CanGetPlaylist}"
+                                IsEnabled="{Binding EnablePlaylistControls}"
                                 Margin="5,0,0,0"
                                 Grid.Column="2" Grid.Row="2"
                                 Click="PlaylistBrowse_Click" />
@@ -410,18 +412,27 @@
                                         Grid.ColumnSpan="3"
                                         Grid.Row="3">
 
-                            <Button Name="PlaylistGet"
-                                    Content="Get Playlist"
-                                    IsEnabled="{Binding IsPlaylistLinkValid}"
-                                    MinWidth="80"
-                                    Click="PlaylistGet_Click" />
+                            <Grid>
+                                <Button Content="Cancel"
+                                        MinWidth="80"
+                                        Visibility="{Binding EnablePlaylistControls,
+                                                             Converter={StaticResource inverseBooleanToVisibilityConverter}}"
+                                        Click="PlaylistCancel_Click" />
+
+                                <Button Content="Get Playlist"
+                                        IsEnabled="{Binding IsPlaylistLinkValid}"
+                                        MinWidth="80"
+                                        Visibility="{Binding EnablePlaylistControls,
+                                                             Converter={StaticResource booleanToVisibilityConverter}}"
+                                        Click="PlaylistGet_Click" />
+                            </Grid>
 
                             <Button Content="Download All"
                                     Margin="5,0,0,0"
                                     Click="PlaylistDownloadAll_Click">
                                 <Button.IsEnabled>
                                     <MultiBinding Converter="{StaticResource multiBoolConverter}">
-                                        <Binding Path="CanGetPlaylist" />
+                                        <Binding Path="EnablePlaylistControls" />
                                         <Binding Path="IsPlaylistLinkValid" />
                                     </MultiBinding>
                                 </Button.IsEnabled>
@@ -432,7 +443,7 @@
 
                     <ListView Name="PlaylistVideos"
                               ItemsSource="{Binding PlaylistItems}"
-                              IsEnabled="{Binding CanGetPlaylist}"
+                              IsEnabled="{Binding EnablePlaylistControls}"
                               BorderBrush="LightGray"
                               BorderThickness="0,1,0,0"
                               Margin="5"
@@ -614,7 +625,8 @@
                                                 </Image.ContextMenu>
                                             </Image>
 
-                                            <TextBlock Text="{Binding Duration, Converter={StaticResource longToDurationConverter}}"
+                                            <TextBlock Text="{Binding Duration, 
+                                                                      Converter={StaticResource longToDurationConverter}}"
                                                        Foreground="White"
                                                        Margin="2"
                                                        HorizontalAlignment="Right"
@@ -699,13 +711,19 @@
                                                     </MultiBinding>
                                                 </Button.IsEnabled>
                                                 <Grid>
-                                                    <Rectangle Width="10" Height="10" RenderTransformOrigin="2.4,2.2" Visibility="{Binding IsWorking, Converter={StaticResource BoolToVis}}">
+                                                    <Rectangle Width="10" Height="10"
+                                                               RenderTransformOrigin="2.4,2.2"
+                                                               Visibility="{Binding IsWorking, 
+                                                                                    Converter={StaticResource booleanToVisibilityConverter}}">
                                                         <Rectangle.Fill>
                                                             <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_control_pause}" />
                                                         </Rectangle.Fill>
                                                     </Rectangle>
 
-                                                    <Rectangle Width="10" Height="10" RenderTransformOrigin="2.4,2.2" Visibility="{Binding IsPaused, Converter={StaticResource BoolToVis}}">
+                                                    <Rectangle Width="10" Height="10"
+                                                               RenderTransformOrigin="2.4,2.2"
+                                                               Visibility="{Binding IsPaused,
+                                                                                    Converter={StaticResource booleanToVisibilityConverter}}">
                                                         <Rectangle.Fill>
                                                             <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_control_resume}" />
                                                         </Rectangle.Fill>
@@ -728,25 +746,33 @@
 
                                         <!--Status Icons-->
                                         <Grid MinHeight="24" MinWidth="24" Margin="5" HorizontalAlignment="Right" VerticalAlignment="Top">
-                                            <Rectangle RenderTransformOrigin="2.4,2.2" Visibility="{Binding IsCanceled, Converter={StaticResource BoolToVis}}">
+                                            <Rectangle RenderTransformOrigin="2.4,2.2"
+                                                       Visibility="{Binding IsCanceled,
+                                                                            Converter={StaticResource booleanToVisibilityConverter}}">
                                                 <Rectangle.Fill>
                                                     <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_cancel_red}" />
                                                 </Rectangle.Fill>
                                             </Rectangle>
 
-                                            <Rectangle RenderTransformOrigin="2.4,2.2" Visibility="{Binding IsPaused, Converter={StaticResource BoolToVis}}">
+                                            <Rectangle RenderTransformOrigin="2.4,2.2"
+                                                       Visibility="{Binding IsPaused,
+                                                                            Converter={StaticResource booleanToVisibilityConverter}}">
                                                 <Rectangle.Fill>
                                                     <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_control_pause}" />
                                                 </Rectangle.Fill>
                                             </Rectangle>
 
-                                            <Rectangle RenderTransformOrigin="2.4,2.2" Visibility="{Binding IsSuccessful, Converter={StaticResource BoolToVis}}">
+                                            <Rectangle RenderTransformOrigin="2.4,2.2"
+                                                       Visibility="{Binding IsSuccessful,
+                                                                            Converter={StaticResource booleanToVisibilityConverter}}">
                                                 <Rectangle.Fill>
                                                     <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_check_green}" />
                                                 </Rectangle.Fill>
                                             </Rectangle>
 
-                                            <Rectangle RenderTransformOrigin="2.4,2.2" Visibility="{Binding IsWorking, Converter={StaticResource BoolToVis}}">
+                                            <Rectangle RenderTransformOrigin="2.4,2.2"
+                                                       Visibility="{Binding IsWorking,
+                                                                            Converter={StaticResource booleanToVisibilityConverter}}">
                                                 <Rectangle.Fill>
                                                     <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_download_gray}" />
                                                 </Rectangle.Fill>
@@ -754,7 +780,8 @@
                                         </Grid>
 
                                         <ProgressBar Value="{Binding ProgressPercentage}"
-                                                     IsIndeterminate="{Binding ReportsProgress, Converter={StaticResource inverseBooleanConverter}}"
+                                                     IsIndeterminate="{Binding ReportsProgress,
+                                                                               Converter={StaticResource inverseBooleanConverter}}"
                                                      Minimum="0"
                                                      Maximum="100"
                                                      Height="20"
@@ -790,6 +817,7 @@
 
         <Grid Visibility="Collapsed" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Bottom">
             <ProgressBar MinHeight="24" Height="Auto" />
+
             <TextBlock Text="Downloading"
                        Foreground="White"
                        HorizontalAlignment="Center"

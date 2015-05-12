@@ -176,19 +176,19 @@ namespace YouTube_Downloader_WPF
 
         #region Download Tab
 
-        bool _canGetVideo = true;
+        bool _enableDownloadControls = true;
         VideoFormat _selectedFormat;
         VideoInfo _videoInformation;
 
         /// <summary>
-        /// Used to disable controls in the Download tab when getting video information in the background.
+        /// Gets or sets whether to enable controls in the 'Download' tab.
         /// </summary>
-        public bool CanGetVideo
+        public bool EnableDownloadControls
         {
-            get { return _canGetVideo; }
+            get { return _enableDownloadControls; }
             set
             {
-                _canGetVideo = value;
+                _enableDownloadControls = value;
                 this.OnPropertyChanged();
             }
         }
@@ -235,7 +235,7 @@ namespace YouTube_Downloader_WPF
                 this.VideoInformation = null;
 
                 // Disabled controls while getting video information.
-                this.CanGetVideo = false;
+                this.EnableDownloadControls = false;
 
                 YoutubeDlHelper.GetVideoInfoAsync(VideoLink.Text, GetVideoInfoResult);
             }
@@ -355,7 +355,7 @@ namespace YouTube_Downloader_WPF
         private void GetVideoInfoResult(VideoInfo videoInfo)
         {
             this.VideoInformation = videoInfo;
-            this.CanGetVideo = true;
+            this.EnableDownloadControls = true;
         }
 
         #endregion
@@ -363,7 +363,7 @@ namespace YouTube_Downloader_WPF
         #region Playlist Tab
 
         bool _canDownloadPlaylist = false;
-        bool _canGetPlaylist = true;
+        bool _enablePlaylistControls = true;
         bool _isPlaylistLinkValid = false;
 
         BackgroundWorker _backgroundWorkerPlaylist;
@@ -378,12 +378,12 @@ namespace YouTube_Downloader_WPF
             }
         }
 
-        public bool CanGetPlaylist
+        public bool EnablePlaylistControls
         {
-            get { return _canGetPlaylist; }
+            get { return _enablePlaylistControls; }
             set
             {
-                _canGetPlaylist = value;
+                _enablePlaylistControls = value;
                 this.OnPropertyChanged();
             }
         }
@@ -420,28 +420,25 @@ namespace YouTube_Downloader_WPF
 
         private void PlaylistGet_Click(object sender, RoutedEventArgs e)
         {
-            if (this.PlaylistGet.Content.ToString() == "Get Playlist")
-            {
-                this.CanGetPlaylist = false;
-                this.PlaylistGet.Content = "Cancel";
+            this.EnablePlaylistControls = false;
 
-                _backgroundWorkerPlaylist = new BackgroundWorker()
-                {
-                    WorkerReportsProgress = true,
-                    WorkerSupportsCancellation = true
-                };
-                _backgroundWorkerPlaylist.DoWork += _backgroundWorkerPlaylist_DoWork;
-                _backgroundWorkerPlaylist.ProgressChanged += _backgroundWorkerPlaylist_ProgressChanged;
-                _backgroundWorkerPlaylist.RunWorkerCompleted += _backgroundWorkerPlaylist_RunWorkerCompleted;
-                _backgroundWorkerPlaylist.RunWorkerAsync(PlaylistLink.Text);
-
-                // Save playlist url
-                settings.LastPlaylistUrl = PlaylistLink.Text;
-            }
-            else if (this.PlaylistGet.Content.ToString() == "Cancel")
+            _backgroundWorkerPlaylist = new BackgroundWorker()
             {
-                _backgroundWorkerPlaylist.CancelAsync();
-            }
+                WorkerReportsProgress = true,
+                WorkerSupportsCancellation = true
+            };
+            _backgroundWorkerPlaylist.DoWork += _backgroundWorkerPlaylist_DoWork;
+            _backgroundWorkerPlaylist.ProgressChanged += _backgroundWorkerPlaylist_ProgressChanged;
+            _backgroundWorkerPlaylist.RunWorkerCompleted += _backgroundWorkerPlaylist_RunWorkerCompleted;
+            _backgroundWorkerPlaylist.RunWorkerAsync(PlaylistLink.Text);
+
+            // Save playlist url
+            settings.LastPlaylistUrl = PlaylistLink.Text;
+        }
+
+        private void PlaylistCancel_Click(object sender, RoutedEventArgs e)
+        {
+            _backgroundWorkerPlaylist.CancelAsync();
         }
 
         private void PlaylistDownloadAll_Click(object sender, RoutedEventArgs e)
@@ -531,7 +528,6 @@ namespace YouTube_Downloader_WPF
         {
             bool result = (bool)e.Result;
 
-            this.PlaylistGet.Content = "Get Playlist";
             this.CanDownloadPlaylist = result;
 
             if (!result)
@@ -539,7 +535,7 @@ namespace YouTube_Downloader_WPF
                 this.PlaylistItems.Clear();
             }
 
-            this.CanGetPlaylist = true;
+            this.EnablePlaylistControls = true;
         }
 
         private void StartPlaylistOperation(ICollection<VideoInfo> videos)
