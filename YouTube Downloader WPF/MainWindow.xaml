@@ -234,7 +234,7 @@
                                 Grid.RowSpan="3">
 
                             <Grid>
-                                <Image Source="{Binding Path=VideoInformation.Thumbnail}"
+                                <Image Source="{Binding Path=VideoInformation.ThumbnailUrl}"
                                        HorizontalAlignment="Stretch"
                                        VerticalAlignment="Top">
                                     <Image.ContextMenu>
