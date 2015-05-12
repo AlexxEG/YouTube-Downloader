@@ -76,6 +76,7 @@
     <Compile Include="Classes\WindowStates.cs" />
     <Compile Include="Converters\FileSizeToStringConverter.cs" />
     <Compile Include="Converters\InverseBooleanConverter.cs" />
+    <Compile Include="Converters\InverseBooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\LongToDurationConverter.cs" />
     <Compile Include="Converters\MultiAnyBoolConverter.cs" />
     <Compile Include="Converters\MultipleBoolsConverter.cs" />
