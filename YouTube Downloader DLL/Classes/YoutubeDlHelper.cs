@@ -111,6 +111,8 @@ namespace YouTube_Downloader_DLL.Classes
                 StartInfo = psi
             };
 
+            process.Start();
+
             return process;
         }
 
