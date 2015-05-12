@@ -8,6 +8,7 @@ namespace YouTube_Downloader_DLL.Classes
 {
     public class YoutubeDlHelper
     {
+        private const string Cmd_Get_Version = " --version";
         private const string Cmd_JSON_Info = " -o \"{0}\\%(title)s\" --no-playlist --skip-download --restrict-filenames --write-info-json \"{1}\"";
         private const string Log_Filename = "youtube-dl.log";
 
@@ -92,6 +93,30 @@ namespace YouTube_Downloader_DLL.Classes
         }
 
         /// <summary>
+        /// Gets current youtube-dl version.
+        /// </summary>
+        public static string GetVersion()
+        {
+            Process process = StartProcess(Cmd_Get_Version);
+
+            string line, version = "";
+
+            while ((line = process.StandardOutput.ReadLine()) != null)
+            {
+                // Only one line gets printed, so assume any non-empty line is the version
+                if (!string.IsNullOrEmpty(line))
+                    version = line.Trim();
+            }
+
+            process.WaitForExit();
+
+            if (!process.HasExited)
+                process.Kill();
+
+            return version;
+        }
+
+        /// <summary>
         /// Creates a Process with the given arguments, then returns it after it has started.
         /// </summary>
         public static Process StartProcess(string arguments)
@@ -143,8 +168,9 @@ namespace YouTube_Downloader_DLL.Classes
             var sb = new StringBuilder();
 
             sb.AppendLine("[" + DateTime.Now + "]");
+            sb.AppendLine("version: " + GetVersion());
             sb.AppendLine("url: " + url);
-            sb.AppendLine("cmd: " + arguments);
+            sb.AppendLine("cmd: " + arguments.Trim());
             sb.AppendLine();
             sb.AppendLine("OUTPUT");
 
