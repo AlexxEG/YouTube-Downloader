@@ -57,6 +57,7 @@ namespace YouTube_Downloader_WPF
             get
             {
                 var interopHelper = new WindowInteropHelper(this);
+
                 return interopHelper.Handle;
             }
         }
@@ -136,6 +137,7 @@ namespace YouTube_Downloader_WPF
                 case "Open":
                     if (operation.CanOpen())
                         operation.Open();
+
                     break;
                 case "Open Containing Folder":
                     operation.OpenContainingFolder();
@@ -155,10 +157,12 @@ namespace YouTube_Downloader_WPF
                 case "Pause":
                     if (operation.CanPause())
                         operation.Pause();
+
                     break;
                 case "Resume":
                     if (operation.CanResume())
                         operation.Resume();
+
                     break;
                 case "Remove":
                     if (!operation.CanStop())
