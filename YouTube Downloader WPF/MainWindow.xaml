@@ -12,7 +12,8 @@
                       Height="400" Width="600"
                       EnableDWMDropShadow="True"
                       ShowIconOnTitleBar="False"
-                      Closing="MetroWindow_Closing" Loaded="MetroWindow_Loaded">
+                      Closing="MetroWindow_Closing"
+                      Loaded="MetroWindow_Loaded">
 
     <Window.Resources>
         <ResourceDictionary>
