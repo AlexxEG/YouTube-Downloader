@@ -407,24 +407,24 @@
 
                         <!--Button row-->
                         <StackPanel HorizontalAlignment="Right"
-                                        Margin="0,15,0,0"
-                                        Orientation="Horizontal"
-                                        Grid.ColumnSpan="3"
-                                        Grid.Row="3">
+                                    Margin="0,15,0,0"
+                                    Orientation="Horizontal"
+                                    Grid.ColumnSpan="3"
+                                    Grid.Row="3">
 
                             <Grid>
-                                <Button Content="Cancel"
-                                        MinWidth="80"
-                                        Visibility="{Binding EnablePlaylistControls,
-                                                             Converter={StaticResource inverseBooleanToVisibilityConverter}}"
-                                        Click="PlaylistCancel_Click" />
-
                                 <Button Content="Get Playlist"
                                         IsEnabled="{Binding IsPlaylistLinkValid}"
                                         MinWidth="80"
                                         Visibility="{Binding EnablePlaylistControls,
                                                              Converter={StaticResource booleanToVisibilityConverter}}"
                                         Click="PlaylistGet_Click" />
+
+                                <Button Content="Cancel"
+                                        MinWidth="80"
+                                        Visibility="{Binding EnablePlaylistControls,
+                                                             Converter={StaticResource inverseBooleanToVisibilityConverter}}"
+                                        Click="PlaylistCancel_Click" />
                             </Grid>
 
                             <Button Content="Download All"
