@@ -238,13 +238,7 @@
                             <Grid>
                                 <Image Source="{Binding Path=VideoInformation.ThumbnailUrl}"
                                        HorizontalAlignment="Stretch"
-                                       VerticalAlignment="Top">
-                                    <Image.ContextMenu>
-                                        <ContextMenu>
-                                            <MenuItem Header="Save to..." />
-                                        </ContextMenu>
-                                    </Image.ContextMenu>
-                                </Image>
+                                       VerticalAlignment="Top" />
 
                                 <TextBlock Text="{Binding Path=VideoInformation.Duration, 
                                                           Converter={StaticResource longToDurationConverter}, 
