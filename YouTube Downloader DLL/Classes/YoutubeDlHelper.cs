@@ -4,7 +4,7 @@ using System.IO;
 using System.Text;
 using System.Windows.Forms;
 
-namespace YouTube_Downloader.Classes
+namespace YouTube_Downloader_DLL.Classes
 {
     public class YoutubeDlHelper
     {
@@ -23,7 +23,7 @@ namespace YouTube_Downloader.Classes
             if (_logWriter != null)
                 return _logWriter;
 
-            string filename = Path.Combine(Program.GetLogsDirectory(), Log_Filename);
+            string filename = Path.Combine(Common.GetLogsDirectory(), Log_Filename);
 
             _logWriter = new FileStream(filename, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
 
@@ -36,7 +36,7 @@ namespace YouTube_Downloader.Classes
         /// <param name="url">The url to the video.</param>
         public static VideoInfo GetVideoInfo(string url)
         {
-            string json_dir = Program.GetJsonDirectory();
+            string json_dir = Common.GetJsonDirectory();
 
             /* Fill in json directory & video url. */
             string arguments = string.Format(Cmd_JSON_Info, json_dir, url);

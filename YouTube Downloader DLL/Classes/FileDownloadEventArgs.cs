@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace YouTube_Downloader.Classes
+namespace YouTube_Downloader_DLL.Classes
 {
     public class FileDownloadEventArgs : EventArgs
     {

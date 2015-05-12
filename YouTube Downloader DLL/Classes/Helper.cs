@@ -4,16 +4,15 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
-using YouTube_Downloader.Enums;
-using YouTube_Downloader.Properties;
+using YouTube_Downloader_DLL.Enums;
 
-namespace YouTube_Downloader.Classes
+namespace YouTube_Downloader_DLL.Classes
 {
     public class Helper
     {
-        public const int PreferedQualityHighest = 0;
-        public const int PreferedQualityMedium = 1;
-        public const int PreferedQualityLow = 2;
+        public const int PreferredQualityHighest = 0;
+        public const int PreferredQualityMedium = 1;
+        public const int PreferredQualityLow = 2;
 
         /// <summary>
         /// Attempts to delete given file(s), ignoring exceptions for 10 tries, with 2 second delay between each try.
@@ -201,11 +200,11 @@ namespace YouTube_Downloader.Classes
         }
 
         /// <summary>
-        /// Returns the prefered video format quality based on application setting.
+        /// Returns the preferred video format quality based on application setting.
         /// </summary>
         /// <param name="video">The video to get format from.</param>
         /// <param name="dash">True to only get DASH formats.</param>
-        public static VideoFormat GetPreferedFormat(VideoInfo video, bool dash)
+        public static VideoFormat GetPreferredFormat(VideoInfo video, bool dash, int preferredQuality)
         {
             VideoFormat[] qualities = Helper.GetVideoFormats(video, dash);
 
@@ -218,15 +217,15 @@ namespace YouTube_Downloader.Classes
 
             int index = -1;
 
-            switch (Settings.Default.PreferedQualityPlaylist)
+            switch (preferredQuality)
             {
-                case PreferedQualityMedium:
+                case PreferredQualityMedium:
                     if ((index = qualities.IndexOf("720", dash)) > -1)
                     {
                         return qualities[index];
                     }
                     break;
-                case PreferedQualityLow:
+                case PreferredQualityLow:
                     if ((index = qualities.IndexOf("360", dash)) > -1)
                     {
                         return qualities[index];

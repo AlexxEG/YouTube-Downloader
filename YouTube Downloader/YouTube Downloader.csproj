@@ -48,44 +48,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.cs" />
-    <Compile Include="Classes\Common.cs" />
-    <Compile Include="Classes\FFmpegHelper.cs" />
-    <Compile Include="Classes\FileDownload.cs" />
-    <Compile Include="Classes\FileDownloader.cs" />
-    <Compile Include="Classes\FileDownloadEventArgs.cs" />
     <Compile Include="Classes\WindowStates.cs" />
-    <Compile Include="Classes\FileSizeFormatProvider.cs" />
-    <Compile Include="Classes\FileSizeUpdateEventArgs.cs" />
-    <Compile Include="Classes\Helper.cs" />
     <Compile Include="Controls\OperationListViewItem.cs" />
-    <Compile Include="Dialogs\OpenFolderDialog.cs" />
-    <Compile Include="Classes\Playlist.cs" />
-    <Compile Include="Classes\PlaylistReader.cs" />
-    <Compile Include="Classes\VideoFormat.cs" />
-    <Compile Include="Classes\VideoInfo.cs" />
     <Compile Include="Classes\WindowState.cs" />
-    <Compile Include="Classes\YoutubeDlHelper.cs" />
     <Compile Include="Controls\ListViewEx.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Delegates\SetItemTextDelegate.cs" />
     <Compile Include="Delegates\SetTextDelegate.cs" />
-    <Compile Include="Enums\FFmpegFileType.cs" />
-    <Compile Include="Enums\FormatType.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Operations\ConvertOperation.cs" />
-    <Compile Include="Operations\CroppingOperation.cs" />
-    <Compile Include="Operations\DownloadOperation.cs" />
-    <Compile Include="Operations\Operation.cs" />
-    <Compile Include="Operations\OperationEventArgs.cs" />
-    <Compile Include="Operations\OperationEventHandler.cs" />
-    <Compile Include="Operations\OperationStatus.cs" />
-    <Compile Include="Operations\PlaylistOperation.cs" />
     <Compile Include="OptionsForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -133,7 +109,12 @@
     </Content>
     <Content Include="icon.ico" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\YouTube Downloader DLL\YouTube Downloader DLL.csproj">
+      <Project>{36524ad6-8987-4d78-812f-177972f4908f}</Project>
+      <Name>YouTube Downloader DLL</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

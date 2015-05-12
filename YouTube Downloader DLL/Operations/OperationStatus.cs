@@ -1,4 +1,4 @@
-﻿namespace YouTube_Downloader.Operations
+﻿namespace YouTube_Downloader_DLL.Operations
 {
     public enum OperationStatus
     {

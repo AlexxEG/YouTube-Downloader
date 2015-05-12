@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-namespace YouTube_Downloader.Dialogs
+namespace YouTube_Downloader_DLL.Dialogs
 {
     public class OpenFolderDialog : IDisposable
     {

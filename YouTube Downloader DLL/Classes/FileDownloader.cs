@@ -12,7 +12,7 @@ using System.Net;
 using System.Threading;
 using IO = System.IO;
 
-namespace YouTube_Downloader.Classes
+namespace YouTube_Downloader_DLL.Classes
 {
     public class FileDownloader : IDisposable
     {

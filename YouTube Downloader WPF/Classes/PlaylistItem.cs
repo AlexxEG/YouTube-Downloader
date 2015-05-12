@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using YouTube_Downloader.Classes;
+using YouTube_Downloader_DLL.Classes;
 
 namespace YouTube_Downloader_WPF
 {

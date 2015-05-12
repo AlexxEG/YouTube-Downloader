@@ -6,9 +6,9 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
-using YouTube_Downloader.Enums;
+using YouTube_Downloader_DLL.Enums;
 
-namespace YouTube_Downloader.Classes
+namespace YouTube_Downloader_DLL.Classes
 {
     public class VideoFormat : INotifyPropertyChanged
     {

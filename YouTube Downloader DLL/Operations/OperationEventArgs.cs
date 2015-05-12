@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace YouTube_Downloader.Operations
+namespace YouTube_Downloader_DLL.Operations
 {
     public class OperationEventArgs : EventArgs
     {

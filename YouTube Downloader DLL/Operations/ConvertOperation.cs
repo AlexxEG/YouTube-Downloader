@@ -2,11 +2,11 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using YouTube_Downloader.Classes;
+using YouTube_Downloader_DLL.Classes;
 
-namespace YouTube_Downloader.Operations
+namespace YouTube_Downloader_DLL.Operations
 {
-    public class CroppingOperation : Operation
+    public class ConvertOperation : Operation
     {
         TimeSpan _start = TimeSpan.MinValue;
         TimeSpan _end = TimeSpan.MinValue;
@@ -24,17 +24,6 @@ namespace YouTube_Downloader.Operations
                 _process.Dispose();
                 _process = null;
             }
-        }
-
-        public override bool CanOpen()
-        {
-            return this.Status == OperationStatus.Success;
-        }
-
-        public override bool CanStop()
-        {
-            /* Can stop if working. */
-            return this.Status == OperationStatus.Working;
         }
 
         public override bool Open()
@@ -80,7 +69,7 @@ namespace YouTube_Downloader.Operations
                 }
                 catch (Exception ex)
                 {
-                    Program.SaveException(ex);
+                    Common.SaveException(ex);
                     return false;
                 }
             }
@@ -94,16 +83,36 @@ namespace YouTube_Downloader.Operations
             return success;
         }
 
+        public override bool CanOpen()
+        {
+            return this.Status == OperationStatus.Success;
+        }
+
+        public override bool CanStop()
+        {
+            // Can stop if working.
+            return this.Status == OperationStatus.Working;
+        }
+
         #endregion
 
         protected override void WorkerDoWork(DoWorkEventArgs e)
         {
             try
             {
-                if (_end == TimeSpan.MinValue)
-                    FFmpegHelper.Crop(this.ReportProgress, this.Input, this.Output, _start);
-                else
-                    FFmpegHelper.Crop(this.ReportProgress, this.Input, this.Output, _start, _end);
+                FFmpegHelper.Convert(this.ReportProgress, this.Input, this.Output);
+
+                if (!this.CancellationPending && _start != TimeSpan.MinValue)
+                {
+                    if (_end == TimeSpan.MinValue)
+                    {
+                        FFmpegHelper.Crop(this.ReportProgress, this.Output, this.Output, _start);
+                    }
+                    else
+                    {
+                        FFmpegHelper.Crop(this.ReportProgress, this.Output, this.Output, _start, _end);
+                    }
+                }
 
                 _start = _end = TimeSpan.MinValue;
 
@@ -118,7 +127,7 @@ namespace YouTube_Downloader.Operations
             }
             catch (Exception ex)
             {
-                Program.SaveException(ex);
+                Common.SaveException(ex);
                 e.Result = OperationStatus.Failed;
             }
         }
@@ -128,7 +137,7 @@ namespace YouTube_Downloader.Operations
             if (e.UserState is Process)
             {
                 // FFmpegHelper will return the ffmpeg process so it can be used to cancel.
-                this._process = (Process)e.UserState;
+                _process = (Process)e.UserState;
             }
         }
 
@@ -136,7 +145,6 @@ namespace YouTube_Downloader.Operations
         {
             if (this.Status == OperationStatus.Success)
             {
-                this.Duration = (long)FFmpegHelper.GetDuration(this.Input).TotalSeconds;
                 this.FileSize = Helper.GetFileSize(this.Output);
             }
         }
@@ -152,7 +160,7 @@ namespace YouTube_Downloader.Operations
             _end = (TimeSpan)args[3];
 
             this.Duration = (long)FFmpegHelper.GetDuration(this.Input).TotalSeconds;
-            this.Text = "Cropping...";
+            this.Text = "Converting...";
             this.Title = Path.GetFileName(this.Output);
         }
 

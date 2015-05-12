@@ -62,12 +62,12 @@ namespace YouTube_Downloader_WPF.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int PreferedQualityPlaylist {
+        public int PreferredQualityPlaylist {
             get {
-                return ((int)(this["PreferedQualityPlaylist"]));
+                return ((int)(this["PreferredQualityPlaylist"]));
             }
             set {
-                this["PreferedQualityPlaylist"] = value;
+                this["PreferredQualityPlaylist"] = value;
             }
         }
         

@@ -11,7 +11,7 @@
     <Setting Name="SelectedDirectory" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="PreferedQualityPlaylist" Type="System.Int32" Scope="User">
+    <Setting Name="PreferredQualityPlaylist" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="UseDashPlaylist" Type="System.Boolean" Scope="User">

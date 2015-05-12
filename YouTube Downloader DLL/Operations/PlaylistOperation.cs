@@ -5,12 +5,13 @@ using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
-using YouTube_Downloader.Classes;
+using YouTube_Downloader_DLL.Classes;
 
-namespace YouTube_Downloader.Operations
+namespace YouTube_Downloader_DLL.Operations
 {
     public class PlaylistOperation : Operation
     {
+        int _preferredQuality;
         bool _combining, _processing, _useDash;
         bool? _downloaderSuccessful;
         ICollection<VideoInfo> _videos;
@@ -174,7 +175,7 @@ namespace YouTube_Downloader.Operations
 
                     count++;
 
-                    VideoFormat videoFormat = Helper.GetPreferedFormat(video, _useDash);
+                    VideoFormat videoFormat = Helper.GetPreferredFormat(video, _useDash, _preferredQuality);
 
                     this.ReportProgress(-1, new Dictionary<string, object>()
                     {
@@ -245,7 +246,7 @@ namespace YouTube_Downloader.Operations
             }
             catch (Exception ex)
             {
-                Program.SaveException(ex);
+                Common.SaveException(ex);
                 e.Result = OperationStatus.Failed;
             }
         }
@@ -267,7 +268,7 @@ namespace YouTube_Downloader.Operations
 
         protected override void WorkerStart(object[] args)
         {
-            if (!(args.Length == 3 || args.Length == 4))
+            if (!(args.Length == 4 || args.Length == 5))
                 throw new ArgumentException();
 
             // Temporary title.
@@ -279,6 +280,7 @@ namespace YouTube_Downloader.Operations
             this.Link = this.Input;
 
             _useDash = (bool)args[2];
+            _preferredQuality = (int)args[3];
 
             if (args.Length == 4)
                 _videos = (ICollection<VideoInfo>)args[3];
@@ -311,7 +313,7 @@ namespace YouTube_Downloader.Operations
             }
             catch (Exception ex)
             {
-                Program.SaveException(ex);
+                Common.SaveException(ex);
                 return false;
             }
             finally
@@ -322,14 +324,14 @@ namespace YouTube_Downloader.Operations
             return true;
         }
 
-        public object[] Args(string url, string output, bool dash)
+        public object[] Args(string url, string output, bool dash, int preferredQuality)
         {
-            return new object[] { url, output, dash };
+            return new object[] { url, output, dash, preferredQuality };
         }
 
-        public object[] Args(string url, string output, bool dash, ICollection<VideoInfo> videos)
+        public object[] Args(string url, string output, bool dash, int preferredQuality, ICollection<VideoInfo> videos)
         {
-            return new object[] { url, output, dash, videos };
+            return new object[] { url, output, dash, preferredQuality, videos };
         }
     }
 }

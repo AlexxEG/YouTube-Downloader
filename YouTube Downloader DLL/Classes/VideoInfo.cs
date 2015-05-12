@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using Newtonsoft.Json.Linq;
 
-namespace YouTube_Downloader.Classes
+namespace YouTube_Downloader_DLL.Classes
 {
     public class VideoInfo : INotifyPropertyChanged
     {

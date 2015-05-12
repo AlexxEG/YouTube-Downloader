@@ -7,10 +7,11 @@ using System.IO;
 using System.Windows.Forms;
 using YouTube_Downloader.Classes;
 using YouTube_Downloader.Controls;
-using YouTube_Downloader.Dialogs;
-using YouTube_Downloader.Enums;
-using YouTube_Downloader.Operations;
 using YouTube_Downloader.Properties;
+using YouTube_Downloader_DLL.Classes;
+using YouTube_Downloader_DLL.Dialogs;
+using YouTube_Downloader_DLL.Enums;
+using YouTube_Downloader_DLL.Operations;
 
 /* ToDo: 
  *
@@ -295,7 +296,7 @@ namespace YouTube_Downloader
             }
             catch (Exception ex)
             {
-                Program.SaveException(ex);
+                Common.SaveException(ex);
 
                 MessageBox.Show(this, ex.Message, ex.Source, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
@@ -493,7 +494,7 @@ namespace YouTube_Downloader
 
         private void cbPlaylistQuality_SelectedIndexChanged(object sender, EventArgs e)
         {
-            settings.PreferedQualityPlaylist = cbPlaylistQuality.SelectedIndex;
+            settings.PreferredQualityPlaylist = cbPlaylistQuality.SelectedIndex;
         }
 
         private void chbPlaylistDASH_CheckedChanged(object sender, EventArgs e)
@@ -535,7 +536,12 @@ namespace YouTube_Downloader
 
                 this.SelectOneItem(item);
 
-                operation.Start(operation.Args(txtPlaylistLink.Text, path, chbPlaylistDASH.Checked, videos));
+                operation.Start(operation.Args(txtPlaylistLink.Text,
+                                    path,
+                                    chbPlaylistDASH.Checked,
+                                    Settings.Default.PreferredQualityPlaylist,
+                                    videos)
+                                );
 
                 tabControl1.SelectedTab = queueTabPage;
             }
@@ -1019,7 +1025,7 @@ namespace YouTube_Downloader
             if (cbPlaylistSaveTo.Items.Count > 0)
                 cbPlaylistSaveTo.SelectedIndex = settings.SelectedDirectoryPlaylist;
 
-            cbPlaylistQuality.SelectedIndex = settings.PreferedQualityPlaylist;
+            cbPlaylistQuality.SelectedIndex = settings.PreferredQualityPlaylist;
 
             // Restore CheckBox.Checked
             chbAutoConvert.Checked = settings.AutoConvert;

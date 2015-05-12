@@ -13,10 +13,10 @@ using System.Windows.Documents;
 using System.Windows.Interop;
 using MahApps.Metro.Controls;
 using Microsoft.Win32;
-using YouTube_Downloader.Classes;
-using YouTube_Downloader.Dialogs;
-using YouTube_Downloader.Enums;
-using YouTube_Downloader.Operations;
+using YouTube_Downloader_DLL.Classes;
+using YouTube_Downloader_DLL.Dialogs;
+using YouTube_Downloader_DLL.Enums;
+using YouTube_Downloader_DLL.Operations;
 using YouTube_Downloader_WPF.Properties;
 using WinForms = System.Windows.Forms;
 using WPF_Classes = YouTube_Downloader_WPF.Classes;
@@ -557,7 +557,12 @@ namespace YouTube_Downloader_WPF
                 this.Queue.Add(operation);
                 this.SelectOneItem(operation);
 
-                operation.Start(operation.Args(this.PlaylistLink.Text, path, settings.UseDashPlaylist, videos));
+                operation.Start(operation.Args(this.PlaylistLink.Text,
+                                    path,
+                                    settings.UseDashPlaylist,
+                                    Settings.Default.PreferredQualityPlaylist,
+                                    videos)
+                                );
 
                 TabControl.SelectedIndex = 3;
             }

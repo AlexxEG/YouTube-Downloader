@@ -3,8 +3,8 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Forms;
 using ListViewEmbeddedControls;
-using YouTube_Downloader.Classes;
-using YouTube_Downloader.Operations;
+using YouTube_Downloader_DLL.Classes;
+using YouTube_Downloader_DLL.Operations;
 
 namespace YouTube_Downloader.Controls
 {

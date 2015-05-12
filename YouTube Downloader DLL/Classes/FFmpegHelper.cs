@@ -6,9 +6,9 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using YouTube_Downloader.Enums;
+using YouTube_Downloader_DLL.Enums;
 
-namespace YouTube_Downloader.Classes
+namespace YouTube_Downloader_DLL.Classes
 {
     public class FFmpegHelper
     {
@@ -549,7 +549,7 @@ namespace YouTube_Downloader.Classes
             if (_logWriter != null)
                 return _logWriter;
 
-            string filename = Path.Combine(Program.GetLogsDirectory(), Log_Filename);
+            string filename = Path.Combine(Common.GetLogsDirectory(), Log_Filename);
 
             _logWriter = new FileStream(filename, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
 

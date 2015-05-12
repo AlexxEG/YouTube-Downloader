@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YouTube Downloader", "YouTu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YouTube Downloader WPF", "YouTube Downloader WPF\YouTube Downloader WPF.csproj", "{43CF4305-7DFB-47D5-895B-21C4A47AC9F8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YouTube Downloader DLL", "YouTube Downloader DLL\YouTube Downloader DLL.csproj", "{36524AD6-8987-4D78-812F-177972F4908F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{43CF4305-7DFB-47D5-895B-21C4A47AC9F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{43CF4305-7DFB-47D5-895B-21C4A47AC9F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{43CF4305-7DFB-47D5-895B-21C4A47AC9F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36524AD6-8987-4D78-812F-177972F4908F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36524AD6-8987-4D78-812F-177972F4908F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36524AD6-8987-4D78-812F-177972F4908F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36524AD6-8987-4D78-812F-177972F4908F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{36524AD6-8987-4D78-812F-177972F4908F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>YouTube_Downloader_DLL</RootNamespace>
+    <AssemblyName>YouTube Downloader Library</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\YouTube Downloader\externals\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Classes\Common.cs" />
+    <Compile Include="Classes\FFmpegHelper.cs" />
+    <Compile Include="Classes\FileDownload.cs" />
+    <Compile Include="Classes\FileDownloader.cs" />
+    <Compile Include="Classes\FileDownloadEventArgs.cs" />
+    <Compile Include="Classes\FileSizeFormatProvider.cs" />
+    <Compile Include="Classes\FileSizeUpdateEventArgs.cs" />
+    <Compile Include="Classes\Helper.cs" />
+    <Compile Include="Classes\Playlist.cs" />
+    <Compile Include="Classes\PlaylistReader.cs" />
+    <Compile Include="Classes\VideoFormat.cs" />
+    <Compile Include="Classes\VideoInfo.cs" />
+    <Compile Include="Classes\YoutubeDlHelper.cs" />
+    <Compile Include="Dialogs\OpenFolderDialog.cs" />
+    <Compile Include="Enums\FFmpegFileType.cs" />
+    <Compile Include="Enums\FormatType.cs" />
+    <Compile Include="Operations\ConvertOperation.cs" />
+    <Compile Include="Operations\CroppingOperation.cs" />
+    <Compile Include="Operations\DownloadOperation.cs" />
+    <Compile Include="Operations\Operation.cs" />
+    <Compile Include="Operations\OperationEventArgs.cs" />
+    <Compile Include="Operations\OperationEventHandler.cs" />
+    <Compile Include="Operations\OperationStatus.cs" />
+    <Compile Include="Operations\PlaylistOperation.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

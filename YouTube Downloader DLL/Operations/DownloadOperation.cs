@@ -5,9 +5,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
-using YouTube_Downloader.Classes;
+using YouTube_Downloader_DLL.Classes;
 
-namespace YouTube_Downloader.Operations
+namespace YouTube_Downloader_DLL.Operations
 {
     public class DownloadOperation : Operation
     {
@@ -203,7 +203,7 @@ namespace YouTube_Downloader.Operations
                 }
                 catch (Exception ex)
                 {
-                    Program.SaveException(ex);
+                    Common.SaveException(ex);
                     e.Result = OperationStatus.Failed;
                 }
             }

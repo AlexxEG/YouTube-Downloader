@@ -3,9 +3,9 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text;
-using YouTube_Downloader.Classes;
+using YouTube_Downloader_DLL.Classes;
 
-namespace YouTube_Downloader.Operations
+namespace YouTube_Downloader_DLL.Operations
 {
     public abstract class Operation : IDisposable, INotifyPropertyChanged
     {

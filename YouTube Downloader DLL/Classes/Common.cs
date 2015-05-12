@@ -1,54 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Windows;
-using System.Windows.Threading;
-using YouTube_Downloader_DLL.Classes;
-using YouTube_Downloader_DLL.Operations;
+using System.Text;
 
-namespace YouTube_Downloader_WPF
+namespace YouTube_Downloader_DLL.Classes
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
-    public partial class App : Application
+    public class Common
     {
         public const string Name = "YouTube Downloader";
 
-        public static bool FFmpegAvailable = true;
-
-        /// <summary>
-        /// Store running operations that can be stopped automatically when closing application.
-        /// </summary>
-        public static List<Operation> RunningOperations = new List<Operation>();
-
-        protected override void OnStartup(StartupEventArgs e)
-        {
-            base.OnStartup(e);
-
-            this.DispatcherUnhandledException += App_DispatcherUnhandledException;
-
-            // Check for ffmpeg
-            App.FFmpegAvailable = File.Exists(FFmpegHelper.FFmpegPath);
-
-            // Up the connection limit for getting the file sizes of video formats
-            System.Net.ServicePointManager.DefaultConnectionLimit = 20;
-        }
-
-        /// <summary>
-        /// Automatically saves unhandled Exceptions.
-        /// </summary>
-        private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
-        {
-            App.SaveException(e.Exception);
-        }
+        public static Encoding LogEncoding = Encoding.UTF8;
 
         /// <summary>
         /// Returns the local app data directory for this program. Also makes sure the directory exists.
         /// </summary>
         public static string GetAppDataDirectory()
         {
-            string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), App.Name);
+            string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                Common.Name);
 
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);

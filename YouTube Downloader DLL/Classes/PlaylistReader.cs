@@ -4,7 +4,7 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace YouTube_Downloader.Classes
+namespace YouTube_Downloader_DLL.Classes
 {
     public class PlaylistReader
     {
@@ -26,7 +26,7 @@ namespace YouTube_Downloader.Classes
             string playlist_id = Helper.GetPlaylistId(url);
             int onlineCount = 0;
 
-            string json_dir = Program.GetJsonDirectory();
+            string json_dir = Common.GetJsonDirectory();
 
             _arguments = string.Format(Cmd_JSON_Info_Playlist, json_dir, playlist_id, url);
             _url = url;

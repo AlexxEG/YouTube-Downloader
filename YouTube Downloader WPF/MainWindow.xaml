@@ -366,7 +366,7 @@
 
                         <ComboBox Margin="0,5,0,5"
                                   SelectedIndex="{Binding Source={x:Static properties:Settings.Default},
-                                                          Path=PreferedQualityPlaylist,
+                                                          Path=PreferredQualityPlaylist,
                                                           Mode=TwoWay}"
                                   IsEnabled="{Binding CanGetPlaylist}"
                                   Grid.Column="1" Grid.Row="1">

@@ -1,6 +1,6 @@
 ﻿using IO = System.IO;
 
-namespace YouTube_Downloader.Classes
+namespace YouTube_Downloader_DLL.Classes
 {
     public class FileDownload
     {
