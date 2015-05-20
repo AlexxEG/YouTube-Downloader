@@ -14,9 +14,9 @@ namespace YouTube_Downloader_DLL.Classes
             public const string GetVersion = " --version";
         }
 
-        private const string Log_Filename = "youtube-dl.log";
+        private const string LogFilename = "youtube-dl.log";
 
-        private static string YouTubeDlPath = Path.Combine(Application.StartupPath, "externals", "youtube-dl.exe");
+        private static string YouTubeDlPath = Path.Combine(Application.StartupPath, "Externals", "youtube-dl.exe");
 
         private static FileStream _logWriter;
 
@@ -28,7 +28,7 @@ namespace YouTube_Downloader_DLL.Classes
             if (_logWriter != null)
                 return _logWriter;
 
-            string filename = Path.Combine(Common.GetLogsDirectory(), Log_Filename);
+            string filename = Path.Combine(Common.GetLogsDirectory(), LogFilename);
 
             _logWriter = new FileStream(filename, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
 
