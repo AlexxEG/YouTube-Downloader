@@ -36,7 +36,7 @@ namespace YouTube_Downloader_DLL.Classes
         /// <summary>
         /// Gets the path to FFmpeg executable.
         /// </summary>
-        public static string FFmpegPath = Path.Combine(Application.StartupPath, "externals", "ffmpeg.exe");
+        public static string FFmpegPath = Path.Combine(Application.StartupPath, "Externals", "ffmpeg.exe");
 
         /// <summary>
         /// Returns true if given file can be converted to a MP3 file, false otherwise.
