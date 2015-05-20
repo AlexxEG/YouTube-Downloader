@@ -29,7 +29,7 @@ namespace YouTube_Downloader_DLL.Classes
             public const string GetFileInfo = " -i \"{0}\"";
         }
 
-        private const string Log_Filename = "ffmpeg.log";
+        private const string LogFilename = "ffmpeg.log";
 
         private static FileStream _logWriter;
 
@@ -531,7 +531,7 @@ namespace YouTube_Downloader_DLL.Classes
                     else if (line.Contains("Audio: "))
                     {
                         // File contains audio stream. Keep looking for a video stream,
-                        // and if found it's probably a video file, and an audio file if not.
+                        // and if found it's probably a video file, or an audio file if not.
                         result = FFmpegFileType.Audio;
                     }
                 }
@@ -553,7 +553,7 @@ namespace YouTube_Downloader_DLL.Classes
             if (_logWriter != null)
                 return _logWriter;
 
-            string filename = Path.Combine(Common.GetLogsDirectory(), Log_Filename);
+            string filename = Path.Combine(Common.GetLogsDirectory(), LogFilename);
 
             _logWriter = new FileStream(filename, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
 
