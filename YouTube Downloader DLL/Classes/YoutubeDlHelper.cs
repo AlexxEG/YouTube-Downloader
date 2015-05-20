@@ -8,8 +8,12 @@ namespace YouTube_Downloader_DLL.Classes
 {
     public class YoutubeDlHelper
     {
-        private const string Cmd_Get_Version = " --version";
-        private const string Cmd_JSON_Info = " -o \"{0}\\%(title)s\" --no-playlist --skip-download --restrict-filenames --write-info-json \"{1}\"";
+        public static class Commands
+        {
+            public const string GetJsonInfo = " -o \"{0}\\%(title)s\" --no-playlist --skip-download --restrict-filenames --write-info-json \"{1}\"";
+            public const string GetVersion = " --version";
+        }
+
         private const string Log_Filename = "youtube-dl.log";
 
         private static string YouTubeDlPath = Path.Combine(Application.StartupPath, "externals", "youtube-dl.exe");
@@ -40,7 +44,7 @@ namespace YouTube_Downloader_DLL.Classes
             string json_dir = Common.GetJsonDirectory();
 
             /* Fill in json directory & video url. */
-            string arguments = string.Format(Cmd_JSON_Info, json_dir, url);
+            string arguments = string.Format(Commands.GetJsonInfo, json_dir, url);
 
             Process process = StartProcess(arguments);
 
@@ -97,7 +101,7 @@ namespace YouTube_Downloader_DLL.Classes
         /// </summary>
         public static string GetVersion()
         {
-            Process process = StartProcess(Cmd_Get_Version);
+            Process process = StartProcess(Commands.GetVersion);
 
             string line, version = "";
 

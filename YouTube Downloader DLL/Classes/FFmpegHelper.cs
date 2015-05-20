@@ -12,19 +12,23 @@ namespace YouTube_Downloader_DLL.Classes
 {
     public class FFmpegHelper
     {
-        private const string Cmd_Combine_Dash = " -y -i \"{0}\" -i \"{1}\" -vcodec copy -acodec copy \"{2}\"";
-        /* Cmd_Convert options:
-         *
-         * -y  - Overwrite output file without asking
-         * -i  - Input file name
-         * -vn - Disables video recording.
-         * -f  - Forces file format, but isn't needed if output has .mp3 extensions
-         * -ab - Sets the audio bitrate
-         */
-        private const string Cmd_Convert = " -y -i \"{0}\" -vn -f mp3 -ab {1}k \"{2}\"";
-        private const string Cmd_Crop_From = " -y -ss {0} -i \"{1}\" -acodec copy{2} \"{3}\"";
-        private const string Cmd_Crop_From_To = " -y -ss {0} -i \"{1}\" -to {2} -acodec copy{3} \"{4}\"";
-        private const string Cmd_Get_File_Info = " -i \"{0}\"";
+        public static class Commands
+        {
+            public const string CombineDash = " -y -i \"{0}\" -i \"{1}\" -vcodec copy -acodec copy \"{2}\"";
+            /* Convert options:
+             *
+             * -y  - Overwrite output file without asking
+             * -i  - Input file name
+             * -vn - Disables video recording.
+             * -f  - Forces file format, but isn't needed if output has .mp3 extensions
+             * -ab - Sets the audio bitrate
+             */
+            public const string Convert = " -y -i \"{0}\" -vn -f mp3 -ab {1}k \"{2}\"";
+            public const string CropFrom = " -y -ss {0} -i \"{1}\" -acodec copy{2} \"{3}\"";
+            public const string CropFromTo = " -y -ss {0} -i \"{1}\" -to {2} -acodec copy{3} \"{4}\"";
+            public const string GetFileInfo = " -i \"{0}\"";
+        }
+
         private const string Log_Filename = "ffmpeg.log";
 
         private static FileStream _logWriter;
@@ -40,7 +44,7 @@ namespace YouTube_Downloader_DLL.Classes
         /// <param name="file">The file to check.</param>
         public static bool CanConvertMP3(string file)
         {
-            string arguments = string.Format(Cmd_Get_File_Info, file);
+            string arguments = string.Format(Commands.GetFileInfo, file);
 
             Process process = StartProcess(arguments);
 
@@ -85,8 +89,8 @@ namespace YouTube_Downloader_DLL.Classes
         public static List<string> CheckCombine(string audio, string video)
         {
             List<string> errors = new List<string>();
-            string argsAudio = string.Format(Cmd_Get_File_Info, audio);
-            string argsVideo = string.Format(Cmd_Get_File_Info, video);
+            string argsAudio = string.Format(Commands.GetFileInfo, audio);
+            string argsVideo = string.Format(Commands.GetFileInfo, video);
 
             Process process;
 
@@ -149,7 +153,7 @@ namespace YouTube_Downloader_DLL.Classes
         public static void CombineDash(string video, string audio, string output)
         {
             string[] args = new string[] { video, audio, output };
-            string arguments = string.Format(FFmpegHelper.Cmd_Combine_Dash, args);
+            string arguments = string.Format(Commands.CombineDash, args);
 
             Process process = FFmpegHelper.StartProcess(arguments);
 
@@ -190,7 +194,7 @@ namespace YouTube_Downloader_DLL.Classes
             }
 
             string[] args = new string[] { input, GetBitRate(input).ToString(), output };
-            string arguments = string.Format(FFmpegHelper.Cmd_Convert, args);
+            string arguments = string.Format(Commands.Convert, args);
 
             Process process = FFmpegHelper.StartProcess(arguments);
 
@@ -283,7 +287,7 @@ namespace YouTube_Downloader_DLL.Classes
                 output
             };
 
-            string arguments = string.Format(Cmd_Crop_From, args);
+            string arguments = string.Format(Commands.CropFrom, args);
 
             Process process = FFmpegHelper.StartProcess(arguments);
 
@@ -369,7 +373,7 @@ namespace YouTube_Downloader_DLL.Classes
                 output
             };
 
-            string arguments = string.Format(Cmd_Crop_From_To, args);
+            string arguments = string.Format(Commands.CropFromTo, args);
 
             Process process = FFmpegHelper.StartProcess(arguments);
 
