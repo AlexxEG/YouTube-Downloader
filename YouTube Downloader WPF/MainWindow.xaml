@@ -8,6 +8,7 @@
                       xmlns:properties="clr-namespace:YouTube_Downloader_WPF.Properties"
                       Name="MainWindowYTD"
                       Title="YouTube Downloader"
+                      TitleForeground="Transparent"
                       Icon="icon.ico"
                       Height="400" Width="600"
                       EnableDWMDropShadow="True"
