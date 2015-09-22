@@ -848,12 +848,14 @@ namespace YouTube_Downloader
 
         private void removeMenuItem_Click(object sender, EventArgs e)
         {
-            for (int i = lvQueue.SelectedItems.Count; i-- > 0; )
+            for (int i = lvQueue.SelectedItems.Count - 1; i >= 0; i--)
             {
                 var item = (OperationListViewItem)lvQueue.SelectedItems[i];
                 var operation = item.Operation;
 
                 operation.Stop(true);
+
+                lvQueue.Items.RemoveAt(item.Index);
             }
         }
 
