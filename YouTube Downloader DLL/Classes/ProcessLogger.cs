@@ -6,7 +6,7 @@ using System.Text;
 namespace YouTube_Downloader_DLL.Classes
 {
     /// <summary>
-    /// Wrapper for Process class to automatically log output and error streams to file.
+    /// Wrapper for Process class to automatically log output and error streams to log file.
     /// </summary>
     public class ProcessLogger
     {
