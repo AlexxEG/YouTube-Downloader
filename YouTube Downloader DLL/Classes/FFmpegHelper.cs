@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using YouTube_Downloader_DLL.Enums;
+
+// ToDo: Might have to switch to reading error stream instead of output. ffmpeg uses error stream for some reason
 
 namespace YouTube_Downloader_DLL.Classes
 {
@@ -27,11 +28,10 @@ namespace YouTube_Downloader_DLL.Classes
             public const string CropFrom = " -y -ss {0} -i \"{1}\" -acodec copy{2} \"{3}\"";
             public const string CropFromTo = " -y -ss {0} -i \"{1}\" -to {2} -acodec copy{3} \"{4}\"";
             public const string GetFileInfo = " -i \"{0}\"";
+            public const string Version = " -version";
         }
 
         private const string LogFilename = "ffmpeg.log";
-
-        private static FileStream _logWriter;
 
         /// <summary>
         /// Gets the path to FFmpeg executable.
@@ -44,39 +44,24 @@ namespace YouTube_Downloader_DLL.Classes
         /// <param name="file">The file to check.</param>
         public static bool CanConvertMP3(string file)
         {
-            string arguments = string.Format(Commands.GetFileInfo, file);
-
-            Process process = StartProcess(arguments);
-
-            string line = "";
             bool hasAudioStream = false;
+            string processArgs = string.Format(Commands.GetFileInfo, file);
 
-            var sb = new StringBuilder();
+            var process = CreateProcess(processArgs);
 
-            while ((line = process.StandardError.ReadLine()) != null)
+            process.NewLineOutput += delegate(string line)
             {
-                sb.AppendLine(line);
                 line = line.Trim();
 
                 if (line.StartsWith("Stream #") && line.Contains("Audio"))
                 {
-                    /* File has audio stream. */
+                    // File has audio stream
                     hasAudioStream = true;
                 }
-            }
+            };
 
-            // Write output to log.
-            lock (GetLogWriter())
-            {
-                WriteLogHeader(arguments);
-                WriteLogText(sb.ToString());
-                WriteLogFooter();
-            }
-
+            process.Start();
             process.WaitForExit();
-
-            if (!process.HasExited)
-                process.Kill();
 
             return hasAudioStream;
         }
@@ -86,59 +71,105 @@ namespace YouTube_Downloader_DLL.Classes
         /// </summary>
         /// <param name="audio">The input audio file.</param>
         /// <param name="video">The input video file.</param>
-        public static List<string> CheckCombine(string audio, string video)
+        public static IEnumerable<string> CheckCombine(string audio, string video)
         {
             List<string> errors = new List<string>();
-            string argsAudio = string.Format(Commands.GetFileInfo, audio);
-            string argsVideo = string.Format(Commands.GetFileInfo, video);
 
-            Process process;
+            errors.AddRange(CheckCombineAudio(string.Format(Commands.GetFileInfo, audio)));
+            errors.AddRange(CheckCombineVideo(string.Format(Commands.GetFileInfo, video)));
 
-            var sb = new StringBuilder();
+            return errors;
+        }
 
-            using (process = StartProcess(argsAudio))
+        /// <summary>
+        /// The audio check portion of 'CheckCombine' function.
+        /// </summary>
+        /// <param name="cmd_args">The arguments used for creating the Process.</param>
+        public static IEnumerable<string> CheckCombineAudio(string cmd_args)
+        {
+            bool hasAudio = false;
+            List<string> errors = new List<string>();
+            var process = CreateProcess(cmd_args);
+
+            process.NewLineOutput += delegate(string line)
             {
-                string line = "";
-                bool hasAudio = false;
+                line = line.Trim();
 
-                while ((line = process.StandardError.ReadLine()) != null)
+                if (line.StartsWith("major_brand")) // check for dash
                 {
-                    sb.AppendLine(line);
-                    line = line.Trim();
+                    string value = line.Split(':')[1].Trim();
 
-                    if (line.StartsWith("major_brand"))
+                    if (!value.Contains("dash"))
                     {
-                        string value = line.Split(':')[1].Trim();
-
-                        if (!value.Contains("dash"))
-                        {
-                            errors.Add("Audio doesn't appear to be a DASH file. Non-critical.");
-                        }
-                    }
-                    else if (line.StartsWith("Stream #"))
-                    {
-                        if (line.Contains("Audio"))
-                        {
-                            hasAudio = true;
-                        }
-                        else if (line.Contains("Video"))
-                        {
-                            errors.Add("Audio file also has a video stream.");
-                        }
+                        errors.Add("Audio doesn't appear to be a DASH file. Non-critical.");
                     }
                 }
-
-                if (!hasAudio)
+                else if (line.StartsWith("Stream #")) // check audio stream
                 {
-                    errors.Add("Audio file doesn't audio.");
+                    if (line.Contains("Audio"))
+                    {
+                        hasAudio = true;
+                    }
+                    else if (line.Contains("Video"))
+                    {
+                        errors.Add("Audio file also has a video stream.");
+                    }
                 }
+            };
+
+            process.Start();
+            process.WaitForExit();
+
+            if (!hasAudio)
+            {
+                errors.Add("Audio file doesn't have an audio stream.");
             }
 
-            lock (GetLogWriter())
+            return errors;
+        }
+
+        /// <summary>
+        /// The video check portion of 'CheckCombine' function.
+        /// </summary>
+        /// <param name="cmd_args">The arguments used for creating the Process.</param>
+        public static IEnumerable<string> CheckCombineVideo(string cmd_args)
+        {
+            bool hasVideo = false;
+            List<string> errors = new List<string>();
+            var process = CreateProcess(cmd_args);
+
+            process.NewLineOutput += delegate(string line)
             {
-                WriteLogHeader(argsAudio);
-                WriteLogText(sb.ToString());
-                WriteLogFooter();
+                line = line.Trim();
+
+                if (line.StartsWith("major_brand")) // check for dash
+                {
+                    string value = line.Split(':')[1].Trim();
+
+                    if (!value.Contains("dash"))
+                    {
+                        errors.Add("Video doesn't appear to be a DASH file. Non-critical.");
+                    }
+                }
+                else if (line.StartsWith("Stream #")) // check video stream
+                {
+                    if (line.Contains("Video"))
+                    {
+                        hasVideo = true;
+                    }
+                    else if (line.Contains("Audio"))
+                    {
+                        errors.Add("Video file also has an audio stream.");
+                    }
+                }
+            };
+
+            process.Start();
+            process.WaitForExit();
+
+            if (!hasVideo)
+            {
+                errors.Add("Video file doesn't have a video stream.");
             }
 
             return errors;
@@ -152,31 +183,13 @@ namespace YouTube_Downloader_DLL.Classes
         /// <param name="output">Where to save the output file.</param>
         public static void CombineDash(string video, string audio, string output)
         {
-            string[] args = new string[] { video, audio, output };
-            string arguments = string.Format(Commands.CombineDash, args);
+            string[] argsInfo = new string[] { video, audio, output };
+            string processArgs = string.Format(Commands.CombineDash, argsInfo);
 
-            Process process = FFmpegHelper.StartProcess(arguments);
+            var process = FFmpegHelper.CreateProcess(processArgs);
 
-            string line = "";
-            var sb = new StringBuilder();
-
-            while ((line = process.StandardError.ReadLine()) != null)
-            {
-                sb.AppendLine(line);
-            }
-
-            // Write output to log.
-            lock (GetLogWriter())
-            {
-                WriteLogHeader(arguments);
-                WriteLogText(sb.ToString());
-                WriteLogFooter();
-            }
-
+            process.Start();
             process.WaitForExit();
-
-            if (!process.HasExited)
-                process.Kill();
         }
 
         /// <summary>
@@ -193,25 +206,20 @@ namespace YouTube_Downloader_DLL.Classes
                 throw new Exception("Input & output can't be the same.");
             }
 
-            string[] args = new string[] { input, GetBitRate(input).ToString(), output };
-            string arguments = string.Format(Commands.Convert, args);
+            string[] argsInfo = new string[] { input, GetBitRate(input).ToString(), output };
+            string processArgs = string.Format(Commands.Convert, argsInfo);
 
-            Process process = FFmpegHelper.StartProcess(arguments);
+            var process = FFmpegHelper.CreateProcess(processArgs);
 
             if (reportProgress != null)
                 reportProgress.Invoke(0, process);
 
             bool started = false;
             double milliseconds = 0;
-            string line = "";
-            var sb = new StringBuilder();
 
-            while ((line = process.StandardError.ReadLine()) != null)
+            if (reportProgress != null)
             {
-                sb.AppendLine(line);
-
-                // 'bw' is null, don't report any progress
-                if (reportProgress != null)
+                process.NewLineOutput += delegate(string line)
                 {
                     line = line.Trim();
 
@@ -248,21 +256,44 @@ namespace YouTube_Downloader_DLL.Classes
 
                         reportProgress.Invoke(100, null);
                     }
-                }
+                };
             }
 
-            // Write output to log.
-            lock (GetLogWriter())
-            {
-                WriteLogHeader(arguments);
-                WriteLogText(sb.ToString());
-                WriteLogFooter();
-            }
-
+            process.Start();
             process.WaitForExit();
+        }
 
-            if (!process.HasExited)
-                process.Kill();
+        /// <summary>
+        /// Creates a Process with the given arguments, then returns it after it has started.
+        /// </summary>
+        /// <param name="arguments">The process arguments.</param>
+        public static ProcessLogger CreateProcess(string arguments, bool noLog = false)
+        {
+            var psi = new ProcessStartInfo(FFmpegHelper.FFmpegPath, arguments)
+            {
+                UseShellExecute = false,
+                RedirectStandardInput = true,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden
+            };
+
+            ProcessLogger process = null;
+            string filename = Path.Combine(Common.GetLogsDirectory(), LogFilename);
+
+            if (noLog)
+                process = new ProcessLogger();
+            else
+                process = new ProcessLogger(filename)
+                {
+                    Header = BuildLogHeader(arguments),
+                    Footer = BuildLogFooter()
+                };
+
+            process.StartInfo = psi;
+
+            return process;
         }
 
         /// <summary>
@@ -279,29 +310,26 @@ namespace YouTube_Downloader_DLL.Classes
                 throw new Exception("Input & output can't be the same.");
             }
 
-            string[] args = new string[]
+            string[] argsInfo = new string[]
             {
                 string.Format("{0:00}:{1:00}:{2:00}.{3:000}", start.Hours, start.Minutes, start.Seconds, start.Milliseconds),
                 input,
                 GetFileType(input) == FFmpegFileType.Video ? " -vcodec copy" : "",
                 output
             };
+            string processArgs = string.Format(Commands.CropFrom, argsInfo);
 
-            string arguments = string.Format(Commands.CropFrom, args);
-
-            Process process = FFmpegHelper.StartProcess(arguments);
+            var process = FFmpegHelper.CreateProcess(processArgs);
 
             if (reportProgress != null)
                 reportProgress.Invoke(0, process);
 
             bool started = false;
             double milliseconds = 0;
-            string line = "";
 
-            while ((line = process.StandardError.ReadLine()) != null)
+            if (reportProgress != null)
             {
-                // 'bw' is null, don't report any progress
-                if (reportProgress != null)
+                process.NewLineOutput += delegate(string line)
                 {
                     line = line.Trim();
 
@@ -338,13 +366,11 @@ namespace YouTube_Downloader_DLL.Classes
 
                         reportProgress.Invoke(100, null);
                     }
-                }
+                };
             }
 
+            process.Start();
             process.WaitForExit();
-
-            if (!process.HasExited)
-                process.Kill();
         }
 
         /// <summary>
@@ -364,7 +390,7 @@ namespace YouTube_Downloader_DLL.Classes
 
             TimeSpan length = new TimeSpan((long)Math.Abs(start.Ticks - end.Ticks));
 
-            string[] args = new string[]
+            string[] argsInfo = new string[]
             {
                 string.Format("{0:00}:{1:00}:{2:00}.{3:000}", start.Hours, start.Minutes, start.Seconds, start.Milliseconds),
                 input,
@@ -372,22 +398,19 @@ namespace YouTube_Downloader_DLL.Classes
                 GetFileType(input) == FFmpegFileType.Video ? " -vcodec copy" : "",
                 output
             };
+            string processArgs = string.Format(Commands.CropFromTo, argsInfo);
 
-            string arguments = string.Format(Commands.CropFromTo, args);
-
-            Process process = FFmpegHelper.StartProcess(arguments);
+            var process = FFmpegHelper.CreateProcess(processArgs);
 
             if (reportProgress != null)
                 reportProgress.Invoke(0, process);
 
             bool started = false;
             double milliseconds = 0;
-            string line = "";
 
-            while ((line = process.StandardError.ReadLine()) != null)
+            if (reportProgress != null)
             {
-                // 'bw' is null, don't report any progress
-                if (reportProgress != null)
+                process.NewLineOutput += delegate(string line)
                 {
                     line = line.Trim();
 
@@ -417,13 +440,11 @@ namespace YouTube_Downloader_DLL.Classes
 
                         reportProgress.Invoke(100, null);
                     }
-                }
+                };
             }
 
+            process.Start();
             process.WaitForExit();
-
-            if (!process.HasExited)
-                process.Kill();
         }
 
         /// <summary>
@@ -432,30 +453,25 @@ namespace YouTube_Downloader_DLL.Classes
         public static int GetBitRate(string file)
         {
             int result = -1;
-            string arguments = string.Format(" -i \"{0}\"", file);
-            Process process = StartProcess(arguments);
-            List<string> lines = new List<string>();
+            string processArgs = string.Format(" -i \"{0}\"", file);
+            Regex regex = new Regex(@"^Stream\s#\d:\d.*\s(\d+)\skb/s.*$", RegexOptions.Compiled);
+            var process = CreateProcess(processArgs);
 
-            // Read to EOS, storing each line
-            while (!process.StandardError.EndOfStream)
-                lines.Add(process.StandardError.ReadLine().Trim());
-
-            foreach (string line in lines)
+            process.NewLineOutput += delegate(string line)
             {
+                line = line.Trim();
+
                 if (line.StartsWith("Stream"))
                 {
-                    Regex regex = new Regex(@"^Stream\s#\d:\d.*\s(\d+)\skb/s.*$");
                     Match m = regex.Match(line);
 
                     if (m.Success)
                         result = int.Parse(m.Groups[1].Value);
                 }
-            }
+            };
 
+            process.Start();
             process.WaitForExit();
-
-            if (!process.HasExited)
-                process.Kill();
 
             return result;
         }
@@ -467,18 +483,13 @@ namespace YouTube_Downloader_DLL.Classes
         public static TimeSpan GetDuration(string file)
         {
             TimeSpan result = TimeSpan.Zero;
-            string arguments = string.Format(" -i \"{0}\"", file);
-            Process process = StartProcess(arguments);
-            List<string> lines = new List<string>();
+            string processArgs = string.Format(" -i \"{0}\"", file);
+            var process = CreateProcess(processArgs);
 
-            // Read to EOS, storing each line.
-            while (!process.StandardError.EndOfStream)
+            process.NewLineOutput += delegate(string line)
             {
-                lines.Add(process.StandardError.ReadLine().Trim());
-            }
+                line = line.Trim();
 
-            foreach (var line in lines)
-            {
                 // Example line, including whitespace:
                 //  Duration: 00:00:00.00, start: 0.000000, bitrate: *** kb/s
                 if (line.StartsWith("Duration"))
@@ -486,14 +497,11 @@ namespace YouTube_Downloader_DLL.Classes
                     string[] split = line.Split(' ', ',');
 
                     result = TimeSpan.Parse(split[1]);
-                    break;
                 }
-            }
+            };
 
+            process.Start();
             process.WaitForExit();
-
-            if (!process.HasExited)
-                process.Kill();
 
             return result;
         }
@@ -505,18 +513,13 @@ namespace YouTube_Downloader_DLL.Classes
         public static FFmpegFileType GetFileType(string file)
         {
             FFmpegFileType result = FFmpegFileType.Error;
-            string arguments = string.Format(" -i \"{0}\"", file);
-            Process process = StartProcess(arguments);
-            List<string> lines = new List<string>();
+            string processArgs = string.Format(" -i \"{0}\"", file);
+            var process = CreateProcess(processArgs);
 
-            // Read to EOS, storing each line.
-            while (!process.StandardError.EndOfStream)
+            process.NewLineOutput += delegate(string line)
             {
-                lines.Add(process.StandardError.ReadLine().Trim());
-            }
+                line = line.Trim();
 
-            foreach (var line in lines)
-            {
                 // Example lines, including whitespace:
                 //    Stream #0:0(und): Video: h264 ([33][0][0][0] / 0x0021), yuv420p, 320x240 [SAR 717:716 DAR 239:179], q=2-31, 242 kb/s, 29.01 fps, 90k tbn, 90k tbc (default)
                 //    Stream #0:1(eng): Audio: vorbis ([221][0][0][0] / 0x00DD), 44100 Hz, stereo (default)
@@ -526,7 +529,6 @@ namespace YouTube_Downloader_DLL.Classes
                     {
                         // File contains video stream, so it's a video file, possibly without audio.
                         result = FFmpegFileType.Video;
-                        break;
                     }
                     else if (line.Contains("Audio: "))
                     {
@@ -535,74 +537,54 @@ namespace YouTube_Downloader_DLL.Classes
                         result = FFmpegFileType.Audio;
                     }
                 }
-            }
+            };
 
+            process.Start();
             process.WaitForExit();
-
-            if (!process.HasExited)
-                process.Kill();
 
             return result;
         }
 
         /// <summary>
-        /// Returns the <see cref="FileStream"/> for the FFmpeg log file, initializing it if necessary.
+        /// Gets current ffmpeg version.
         /// </summary>
-        private static FileStream GetLogWriter()
+        private string GetVersion()
         {
-            if (_logWriter != null)
-                return _logWriter;
+            string version = string.Empty;
+            Regex regex = new Regex("^ffmpeg version (.*) Copyright.*$", RegexOptions.Compiled);
+            var process = CreateProcess(Commands.Version);
 
-            string filename = Path.Combine(Common.GetLogsDirectory(), LogFilename);
+            process.NewLineOutput += delegate(string line)
+            {
+                Match match = regex.Match(line);
 
-            _logWriter = new FileStream(filename, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
+                if (match.Success)
+                {
+                    version = match.Groups[1].Value.Trim();
+                }
+            };
 
-            return _logWriter;
-        }
-
-        /// <summary>
-        /// Creates a Process with the given arguments, then returns it after it has started.
-        /// </summary>
-        /// <param name="arguments">The process arguments.</param>
-        private static Process StartProcess(string arguments)
-        {
-            Process process = new Process();
-
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.RedirectStandardInput = true;
-            process.StartInfo.RedirectStandardOutput = true;
-            process.StartInfo.RedirectStandardError = true;
-            process.StartInfo.CreateNoWindow = true;
-            process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            process.StartInfo.FileName = FFmpegHelper.FFmpegPath;
-            process.StartInfo.Arguments = arguments;
             process.Start();
+            process.WaitForExit();
 
-            return process;
+            return version;
         }
 
         /// <summary>
         /// Writes log footer to log.
         /// </summary>
-        private static void WriteLogFooter()
+        private static string BuildLogFooter()
         {
             // Write log footer to stream.
             // Possibly write elapsed time and/or error in future.
-            byte[] bytes = Common.LogEncoding.GetBytes(Environment.NewLine);
-
-            for (int i = 0; i < 3; i++)
-            {
-                _logWriter.Write(bytes, 0, bytes.Length);
-            }
-
-            _logWriter.Flush();
+            return Environment.NewLine;
         }
 
         /// <summary>
         /// Writes log header to log.
         /// </summary>
         /// <param name="arguments">The arguments to log in header.</param>
-        private static void WriteLogHeader(string arguments)
+        private static string BuildLogHeader(string arguments)
         {
             var sb = new StringBuilder();
 
@@ -611,23 +593,7 @@ namespace YouTube_Downloader_DLL.Classes
             sb.AppendLine();
             sb.AppendLine("OUTPUT");
 
-            // Write log header to stream
-            byte[] bytes = Common.LogEncoding.GetBytes(sb.ToString());
-
-            _logWriter.Write(bytes, 0, bytes.Length);
-            _logWriter.Flush();
-        }
-
-        /// <summary>
-        /// Writes text to log writer.
-        /// </summary>
-        /// <param name="text">The text to write to log.</param>
-        private static void WriteLogText(string text)
-        {
-            byte[] bytes = Common.LogEncoding.GetBytes(text);
-
-            _logWriter.Write(bytes, 0, bytes.Length);
-            _logWriter.Flush();
+            return sb.ToString();
         }
     }
 }

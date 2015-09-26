@@ -11,28 +11,43 @@ namespace YouTube_Downloader_DLL.Classes
         public static class Commands
         {
             public const string GetJsonInfo = " -o \"{0}\\%(title)s\" --no-playlist --skip-download --restrict-filenames --write-info-json \"{1}\"";
-            public const string GetVersion = " --version";
+            public const string Version = " --version";
         }
 
         private const string LogFilename = "youtube-dl.log";
 
         private static string YouTubeDlPath = Path.Combine(Application.StartupPath, "Externals", "youtube-dl.exe");
 
-        private static FileStream _logWriter;
-
         /// <summary>
-        /// Returns the <see cref="FileStream"/> for the youtube-dl log file, initializing it if necessary.
+        /// Creates a Process with the given arguments, then returns it.
         /// </summary>
-        public static FileStream GetLogWriter()
+        public static ProcessLogger CreateProcess(string arguments, bool noLog = false)
         {
-            if (_logWriter != null)
-                return _logWriter;
+            var psi = new ProcessStartInfo(YoutubeDlHelper.YouTubeDlPath, arguments)
+            {
+                UseShellExecute = false,
+                RedirectStandardInput = true,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden
+            };
 
+            ProcessLogger process = null;
             string filename = Path.Combine(Common.GetLogsDirectory(), LogFilename);
 
-            _logWriter = new FileStream(filename, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
+            if (noLog)
+                process = new ProcessLogger();
+            else
+                process = new ProcessLogger(filename)
+                {
+                    Header = BuildLogHeader(arguments),
+                    Footer = BuildLogFooter()
+                };
 
-            return _logWriter;
+            process.StartInfo = psi;
+
+            return process;
         }
 
         /// <summary>
@@ -42,41 +57,27 @@ namespace YouTube_Downloader_DLL.Classes
         public static VideoInfo GetVideoInfo(string url)
         {
             string json_dir = Common.GetJsonDirectory();
-
-            /* Fill in json directory & video url. */
+            string json_file = "";
             string arguments = string.Format(Commands.GetJsonInfo, json_dir, url);
 
-            Process process = StartProcess(arguments);
+            var process = CreateProcess(arguments);
 
-            string json_file = "";
-            string line = "";
-            var sb = new StringBuilder();
-
-            while ((line = process.StandardOutput.ReadLine()) != null)
+            process.NewLineOutput += delegate(string line)
             {
-                sb.AppendLine(line);
-
                 line = line.Trim();
 
                 if (line.StartsWith("[info] Writing video description metadata as JSON to:"))
                 {
-                    /* Store file path. */
+                    // Store file path
                     json_file = line.Substring(line.IndexOf(":") + 1).Trim();
                 }
-            }
+                else if (line.StartsWith("[error]"))
+                {
 
-            /* Write output to log. */
-            lock (GetLogWriter())
-            {
-                WriteLogHeader(arguments, url);
-                WriteLogText(sb.ToString());
-                WriteLogFooter();
-            }
-
+                }
+            };
+            process.Start();
             process.WaitForExit();
-
-            if (!process.HasExited)
-                process.Kill();
 
             return new VideoInfo(json_file);
         }
@@ -101,65 +102,30 @@ namespace YouTube_Downloader_DLL.Classes
         /// </summary>
         public static string GetVersion()
         {
-            Process process = StartProcess(Commands.GetVersion);
+            var process = CreateProcess(Commands.Version, true);
+            string version = "";
 
-            string line, version = "";
-
-            while ((line = process.StandardOutput.ReadLine()) != null)
+            process.NewLineOutput += delegate(string line)
             {
                 // Only one line gets printed, so assume any non-empty line is the version
                 if (!string.IsNullOrEmpty(line))
                     version = line.Trim();
-            }
+            };
 
+            process.Start();
             process.WaitForExit();
-
-            if (!process.HasExited)
-                process.Kill();
 
             return version;
         }
 
         /// <summary>
-        /// Creates a Process with the given arguments, then returns it after it has started.
-        /// </summary>
-        public static Process StartProcess(string arguments)
-        {
-            var psi = new ProcessStartInfo(YoutubeDlHelper.YouTubeDlPath, arguments)
-            {
-                UseShellExecute = false,
-                RedirectStandardInput = true,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                CreateNoWindow = true,
-                WindowStyle = ProcessWindowStyle.Hidden
-            };
-
-            var process = new Process()
-            {
-                StartInfo = psi
-            };
-
-            process.Start();
-
-            return process;
-        }
-
-        /// <summary>
         /// Writes log footer to log.
         /// </summary>
-        public static void WriteLogFooter()
+        public static string BuildLogFooter()
         {
             // Write log footer to stream.
             // Possibly write elapsed time and/or error in future.
-            byte[] bytes = Common.LogEncoding.GetBytes(Environment.NewLine);
-
-            for (int i = 0; i < 3; i++)
-            {
-                _logWriter.Write(bytes, 0, bytes.Length);
-            }
-
-            _logWriter.Flush();
+            return Environment.NewLine;
         }
 
         /// <summary>
@@ -167,34 +133,17 @@ namespace YouTube_Downloader_DLL.Classes
         /// </summary>
         /// <param name="arguments">The arguments to log in header.</param>
         /// <param name="url">The URL to log in header.</param>
-        public static void WriteLogHeader(string arguments, string url)
+        public static string BuildLogHeader(string arguments)
         {
             var sb = new StringBuilder();
 
             sb.AppendLine("[" + DateTime.Now + "]");
             sb.AppendLine("version: " + GetVersion());
-            sb.AppendLine("url: " + url);
             sb.AppendLine("cmd: " + arguments.Trim());
             sb.AppendLine();
             sb.AppendLine("OUTPUT");
 
-            // Write log header to stream
-            byte[] bytes = Common.LogEncoding.GetBytes(sb.ToString());
-
-            _logWriter.Write(bytes, 0, bytes.Length);
-            _logWriter.Flush();
-        }
-
-        /// <summary>
-        /// Writes text to log writer.
-        /// </summary>
-        /// <param name="text">The text to write to log.</param>
-        public static void WriteLogText(string text)
-        {
-            byte[] bytes = Common.LogEncoding.GetBytes(text);
-
-            _logWriter.Write(bytes, 0, bytes.Length);
-            _logWriter.Flush();
+            return sb.ToString();
         }
     }
 }

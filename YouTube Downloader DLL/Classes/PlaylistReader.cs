@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace YouTube_Downloader_DLL.Classes
@@ -10,84 +8,82 @@ namespace YouTube_Downloader_DLL.Classes
     {
         public const string Cmd_JSON_Info_Playlist = " -i -o \"{0}\\playlist-{1}\\%(playlist_index)s-%(title)s\" --restrict-filenames --skip-download --write-info-json \"{2}\"";
 
-        private StringBuilder log = new StringBuilder();
-        private StreamReader reader;
-        private Process youtubeDl;
+        int _currentIndex = -1;
+        bool _working = false;
 
-        private string _arguments;
-        private string _url;
+        string _arguments;
+        string _playlist_id;
+        string _url;
+
+        List<string> _jsonFiles = new List<string>();
+        Regex _regexPlaylistInfo = new Regex(@"^\[youtube:playlist\] playlist (.*):.*downloading\s+(\d+)\s+.*$", RegexOptions.Compiled);
+        Regex _regexVideoJson = new Regex(@"^\[info\].*JSON.*:\s(.*)$", RegexOptions.Compiled);
+        ProcessLogger _youtubeDl;
 
         public Playlist Playlist { get; set; }
 
         public PlaylistReader(string url)
         {
-            /* Playlist properties. */
-            string name = string.Empty;
-            string playlist_id = Helper.GetPlaylistId(url);
-            int onlineCount = 0;
+            _playlist_id = Helper.GetPlaylistId(url);
 
             string json_dir = Common.GetJsonDirectory();
 
-            _arguments = string.Format(Cmd_JSON_Info_Playlist, json_dir, playlist_id, url);
+            _arguments = string.Format(Cmd_JSON_Info_Playlist, json_dir, _playlist_id, url);
             _url = url;
 
-            youtubeDl = YoutubeDlHelper.StartProcess(_arguments);
-            reader = youtubeDl.StandardOutput;
-
-            while ((line = reader.ReadLine()) != null)
+            _youtubeDl = YoutubeDlHelper.CreateProcess(_arguments);
+            _youtubeDl.NewLineOutput += youtubeDl_NewLineOutput;
+            _youtubeDl.Start();
+            _youtubeDl.WaitForExitAsync(delegate
             {
-                Match m;
+                _working = false;
+            });
 
-                /* Get the playlist count. */
-                if ((m = Regex.Match(line, @"^\[youtube:playlist\] playlist (.*):.*downloading\s+(\d+)\s+.*$")).Success)
-                {
-                    name = m.Groups[1].Value;
-                    onlineCount = int.Parse(m.Groups[2].Value);
-                    break;
-                }
-            }
-
-            this.Playlist = new Playlist(playlist_id, name, onlineCount, new List<VideoInfo>());
+            _working = true;
         }
 
-        private string line = string.Empty;
-
-        public VideoInfo Next()
+        private void youtubeDl_NewLineOutput(string line)
         {
-            string json_path = string.Empty;
+            Match m;
 
-            while ((line = reader.ReadLine()) != null)
+            if ((m = _regexVideoJson.Match(line)).Success)
             {
-                log.AppendLine(line);
-
-                Match m;
-
-                /* New json found, break & create a VideoInfo instance. */
+                // New json found
                 if ((m = Regex.Match(line, @"^\[info\].*JSON.*:\s(.*)$")).Success)
                 {
                     string file = m.Groups[1].Value.Trim();
 
-                    // json_path = Path.Combine(Application.StartupPath, file);
-                    json_path = file;
-                    /* Read another line to release json file from youtube-dl (hopefully...). */
-                    break;
+                    // Store all the json files in List
+                    _jsonFiles.Add(file);
                 }
             }
-
-            /* If it's the end of the stream finish up the process. */
-            if (line == null)
+            else if ((m = _regexPlaylistInfo.Match(line)).Success)
             {
-                /* End of stream. */
-                this.WriteLog();
+                // Get the playlist info
+                string name = m.Groups[1].Value;
+                int onlineCount = int.Parse(m.Groups[2].Value);
 
-                youtubeDl.WaitForExit();
-
-                if (!youtubeDl.HasExited)
-                    youtubeDl.Kill();
-
-                return null;
+                this.Playlist = new Playlist(_playlist_id, name, onlineCount);
             }
+        }
 
+        public VideoInfo Next()
+        {
+            // Last item already handled, start returning null
+            if (!_working && _currentIndex == _jsonFiles.Count - 1)
+                return null;
+
+            _currentIndex++;
+
+            // Might be /r/softwaregore worthy
+        tryAgain:
+            if (_currentIndex == _jsonFiles.Count)
+                if (!_working)
+                    return null;
+                else
+                    goto tryAgain;
+
+            string json_path = _jsonFiles[_currentIndex];
             int attempts = 0;
             VideoInfo video = null;
 
@@ -112,16 +108,6 @@ namespace YouTube_Downloader_DLL.Classes
             this.Playlist.Videos.Add(video);
 
             return video;
-        }
-
-        private void WriteLog()
-        {
-            lock (YoutubeDlHelper.GetLogWriter())
-            {
-                YoutubeDlHelper.WriteLogHeader(_arguments, _url);
-                YoutubeDlHelper.WriteLogText(log.ToString());
-                YoutubeDlHelper.WriteLogFooter();
-            }
         }
     }
 }
