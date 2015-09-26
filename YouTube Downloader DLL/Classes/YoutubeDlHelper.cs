@@ -59,6 +59,7 @@ namespace YouTube_Downloader_DLL.Classes
             string json_dir = Common.GetJsonDirectory();
             string json_file = "";
             string arguments = string.Format(Commands.GetJsonInfo, json_dir, url);
+            VideoInfo video = new VideoInfo();
 
             var process = CreateProcess(arguments);
 
@@ -71,15 +72,24 @@ namespace YouTube_Downloader_DLL.Classes
                     // Store file path
                     json_file = line.Substring(line.IndexOf(":") + 1).Trim();
                 }
-                else if (line.StartsWith("ERROR:"))
-                {
+            };
+            process.NewLineError += delegate(string line)
+            {
+                line = line.Trim();
 
+                if (line.StartsWith("ERROR:"))
+                {
+                    video.Failure = true;
+                    video.FailureReason = line.Substring("ERROR: ".Length);
                 }
             };
             process.Start();
             process.WaitForExit();
 
-            return new VideoInfo(json_file);
+            if (!video.Failure)
+                video.DeserializeJson(json_file);
+
+            return video;
         }
 
         /// <summary>
