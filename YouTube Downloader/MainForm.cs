@@ -135,61 +135,6 @@ namespace YouTube_Downloader
             }
         }
 
-        private void bwGetVideo_DoWork(object sender, DoWorkEventArgs e)
-        {
-            e.Result = YoutubeDlHelper.GetVideoInfo((string)e.Argument);
-        }
-
-        private void bwGetVideo_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            VideoInfo videoInfo = e.Result as VideoInfo;
-
-            if (videoInfo.Failure)
-            {
-                MessageBox.Show(this, "Couldn't retrieve video. Reason:\n\n" + videoInfo.FailureReason);
-            }
-            else
-            {
-                selectedVideo = videoInfo;
-
-                videoInfo.FileSizeUpdated += videoInfo_FileSizeUpdated;
-
-                cbQuality.Items.AddRange(this.CheckFormats(videoInfo.Formats));
-                cbQuality.SelectedIndex = cbQuality.Items.Count - 1;
-
-                txtTitle.Text = Helper.FormatTitle(videoInfo.Title);
-
-                TimeSpan videoLength = TimeSpan.FromSeconds(videoInfo.Duration);
-                if (videoLength.Hours > 0)
-                    videoThumbnail.Tag = string.Format("{0}:{1:00}:{2:00}", videoLength.Hours, videoLength.Minutes, videoLength.Seconds);
-                else
-                    videoThumbnail.Tag = string.Format("{0}:{1:00}", videoLength.Minutes, videoLength.Seconds);
-
-                videoThumbnail.Refresh();
-                videoThumbnail.ImageLocation = videoInfo.ThumbnailUrl;
-            }
-
-            btnGetVideo.Enabled = txtYoutubeLink.Enabled = true;
-            cbQuality.Enabled = videoInfo.Formats.Count > 0;
-            btnDownload.Enabled = true;
-        }
-
-        private void videoInfo_FileSizeUpdated(object sender, FileSizeUpdateEventArgs e)
-        {
-            if (lFileSize.InvokeRequired)
-            {
-                lFileSize.Invoke(new UpdateFileSize(videoInfo_FileSizeUpdated), sender, e);
-            }
-            else
-            {
-                // Display the updated file size if the selected item was updated.
-                if (e.VideoFormat == cbQuality.SelectedItem)
-                {
-                    lFileSize.Text = Helper.FormatFileSize(e.VideoFormat.FileSize);
-                }
-            }
-        }
-
         #region Download Tab
 
         private void btnPaste_Click(object sender, EventArgs e)
@@ -351,6 +296,61 @@ namespace YouTube_Downloader
 
                 lFileSize.Text = Helper.FormatFileSize(total);
             }
+        }
+
+        private void videoInfo_FileSizeUpdated(object sender, FileSizeUpdateEventArgs e)
+        {
+            if (lFileSize.InvokeRequired)
+            {
+                lFileSize.Invoke(new UpdateFileSize(videoInfo_FileSizeUpdated), sender, e);
+            }
+            else
+            {
+                // Display the updated file size if the selected item was updated.
+                if (e.VideoFormat == cbQuality.SelectedItem)
+                {
+                    lFileSize.Text = Helper.FormatFileSize(e.VideoFormat.FileSize);
+                }
+            }
+        }
+
+        private void bwGetVideo_DoWork(object sender, DoWorkEventArgs e)
+        {
+            e.Result = YoutubeDlHelper.GetVideoInfo((string)e.Argument);
+        }
+
+        private void bwGetVideo_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            VideoInfo videoInfo = e.Result as VideoInfo;
+
+            if (videoInfo.Failure)
+            {
+                MessageBox.Show(this, "Couldn't retrieve video. Reason:\n\n" + videoInfo.FailureReason);
+            }
+            else
+            {
+                selectedVideo = videoInfo;
+
+                videoInfo.FileSizeUpdated += videoInfo_FileSizeUpdated;
+
+                cbQuality.Items.AddRange(this.CheckFormats(videoInfo.Formats));
+                cbQuality.SelectedIndex = cbQuality.Items.Count - 1;
+
+                txtTitle.Text = Helper.FormatTitle(videoInfo.Title);
+
+                TimeSpan videoLength = TimeSpan.FromSeconds(videoInfo.Duration);
+                if (videoLength.Hours > 0)
+                    videoThumbnail.Tag = string.Format("{0}:{1:00}:{2:00}", videoLength.Hours, videoLength.Minutes, videoLength.Seconds);
+                else
+                    videoThumbnail.Tag = string.Format("{0}:{1:00}", videoLength.Minutes, videoLength.Seconds);
+
+                videoThumbnail.Refresh();
+                videoThumbnail.ImageLocation = videoInfo.ThumbnailUrl;
+            }
+
+            btnGetVideo.Enabled = txtYoutubeLink.Enabled = true;
+            cbQuality.Enabled = videoInfo.Formats.Count > 0;
+            btnDownload.Enabled = true;
         }
 
         private void downloadItem_OperationComplete(object sender, OperationEventArgs e)
