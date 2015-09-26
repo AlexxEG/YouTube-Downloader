@@ -11,6 +11,9 @@ namespace YouTube_Downloader_DLL.Classes
     public class VideoInfo : INotifyPropertyChanged
     {
         long _duration = 0;
+        string _title = string.Empty;
+        string _thumbnailUrl = string.Empty;
+
         /// <summary>
         /// Gets the video duration in seconds.
         /// </summary>
@@ -29,7 +32,6 @@ namespace YouTube_Downloader_DLL.Classes
         /// </summary>
         public string ID { get; private set; }
 
-        string _title = string.Empty;
         /// <summary>
         /// Gets the video title.
         /// </summary>
@@ -43,7 +45,6 @@ namespace YouTube_Downloader_DLL.Classes
             }
         }
 
-        string _thumbnailUrl = string.Empty;
         /// <summary>
         /// Gets the video thumbnail url.
         /// </summary>
