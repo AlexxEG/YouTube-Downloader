@@ -71,7 +71,7 @@ namespace YouTube_Downloader_DLL.Classes
                     // Store file path
                     json_file = line.Substring(line.IndexOf(":") + 1).Trim();
                 }
-                else if (line.StartsWith("[error]"))
+                else if (line.StartsWith("ERROR:"))
                 {
 
                 }
