@@ -20,9 +20,17 @@ namespace YouTube_Downloader_DLL.Classes
         /// <summary>
         /// Gets the videos in the playlist. Videos with errors not included, for example country restrictions.
         /// </summary>
-        public ICollection<VideoInfo> Videos { get; private set; }
+        public List<VideoInfo> Videos { get; private set; }
 
-        public Playlist(string id, string name, int onlineCount, ICollection<VideoInfo> videos)
+        public Playlist(string id, string name, int onlineCount)
+        {
+            this.ID = id;
+            this.Name = name;
+            this.OnlineCount = onlineCount;
+            this.Videos = new List<VideoInfo>();
+        }
+
+        public Playlist(string id, string name, int onlineCount, List<VideoInfo> videos)
         {
             this.ID = id;
             this.Name = name;
