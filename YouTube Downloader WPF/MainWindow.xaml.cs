@@ -354,7 +354,15 @@ namespace YouTube_Downloader_WPF
 
         private void GetVideoInfoResult(VideoInfo videoInfo)
         {
-            this.VideoInformation = videoInfo;
+            if (!videoInfo.Failure)
+            {
+                this.VideoInformation = videoInfo;
+            }
+            else
+            {
+                MessageBox.Show(this, "Couldn't retrieve video. Reason:\n\n" + videoInfo.FailureReason);
+            }
+
             this.EnableDownloadControls = true;
         }
 

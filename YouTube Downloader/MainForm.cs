@@ -144,26 +144,34 @@ namespace YouTube_Downloader
         {
             VideoInfo videoInfo = e.Result as VideoInfo;
 
-            selectedVideo = videoInfo;
-
-            videoInfo.FileSizeUpdated += videoInfo_FileSizeUpdated;
-
-            cbQuality.Items.AddRange(this.CheckFormats(videoInfo.Formats));
-            cbQuality.SelectedIndex = cbQuality.Items.Count - 1;
-
-            txtTitle.Text = Helper.FormatTitle(videoInfo.Title);
-
-            TimeSpan videoLength = TimeSpan.FromSeconds(videoInfo.Duration);
-            if (videoLength.Hours > 0)
-                videoThumbnail.Tag = string.Format("{0}:{1:00}:{2:00}", videoLength.Hours, videoLength.Minutes, videoLength.Seconds);
+            if (videoInfo.Failure)
+            {
+                MessageBox.Show(this, "Couldn't retrieve video. Reason:\n\n" + videoInfo.FailureReason);
+            }
             else
-                videoThumbnail.Tag = string.Format("{0}:{1:00}", videoLength.Minutes, videoLength.Seconds);
-            videoThumbnail.Refresh();
+            {
+                selectedVideo = videoInfo;
+
+                videoInfo.FileSizeUpdated += videoInfo_FileSizeUpdated;
+
+                cbQuality.Items.AddRange(this.CheckFormats(videoInfo.Formats));
+                cbQuality.SelectedIndex = cbQuality.Items.Count - 1;
+
+                txtTitle.Text = Helper.FormatTitle(videoInfo.Title);
+
+                TimeSpan videoLength = TimeSpan.FromSeconds(videoInfo.Duration);
+                if (videoLength.Hours > 0)
+                    videoThumbnail.Tag = string.Format("{0}:{1:00}:{2:00}", videoLength.Hours, videoLength.Minutes, videoLength.Seconds);
+                else
+                    videoThumbnail.Tag = string.Format("{0}:{1:00}", videoLength.Minutes, videoLength.Seconds);
+
+                videoThumbnail.Refresh();
+                videoThumbnail.ImageLocation = videoInfo.ThumbnailUrl;
+            }
 
             btnGetVideo.Enabled = txtYoutubeLink.Enabled = true;
             cbQuality.Enabled = videoInfo.Formats.Count > 0;
             btnDownload.Enabled = true;
-            videoThumbnail.ImageLocation = videoInfo.ThumbnailUrl;
         }
 
         private void videoInfo_FileSizeUpdated(object sender, FileSizeUpdateEventArgs e)

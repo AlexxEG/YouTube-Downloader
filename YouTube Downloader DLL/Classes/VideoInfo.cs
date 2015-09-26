@@ -26,6 +26,16 @@ namespace YouTube_Downloader_DLL.Classes
                 this.OnPropertyChanged();
             }
         }
+        
+        /// <summary>
+        /// Gets or sets whether there was a failure retrieving video information.
+        /// </summary>
+        public bool Failure { get; set; }
+
+        /// <summary>
+        /// Gets or sets the reason for failure retrieving video information.
+        /// </summary>
+        public string FailureReason { get; set; }
 
         /// <summary>
         /// Gets the video ID.
@@ -101,7 +111,7 @@ namespace YouTube_Downloader_DLL.Classes
                 this.FileSizeUpdated(this, new FileSizeUpdateEventArgs(videoFormat));
         }
 
-        private void DeserializeJson(string json_file)
+        public void DeserializeJson(string json_file)
         {
             string json = ReadJSON(json_file);
             JObject jObject = JObject.Parse(json);
