@@ -548,7 +548,7 @@ namespace YouTube_Downloader_DLL.Classes
         /// <summary>
         /// Gets current ffmpeg version.
         /// </summary>
-        private string GetVersion()
+        private static string GetVersion()
         {
             string version = string.Empty;
             Regex regex = new Regex("^ffmpeg version (.*) Copyright.*$", RegexOptions.Compiled);
