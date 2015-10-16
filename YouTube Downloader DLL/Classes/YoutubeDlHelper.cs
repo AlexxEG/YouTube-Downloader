@@ -56,14 +56,17 @@ namespace YouTube_Downloader_DLL.Classes
         /// <param name="url">The url to the video.</param>
         public static VideoInfo GetVideoInfo(string url)
         {
+            string line = string.Empty;
             string json_dir = Common.GetJsonDirectory();
-            string json_file = "";
+            string json_file = string.Empty;
             string arguments = string.Format(Commands.GetJsonInfo, json_dir, url);
             VideoInfo video = new VideoInfo();
 
             var process = CreateProcess(arguments);
 
-            process.NewLineOutput += delegate(string line)
+            process.Start();
+
+            while ((line = process.ReadLineOutput()) != null)
             {
                 line = line.Trim();
 
@@ -72,8 +75,8 @@ namespace YouTube_Downloader_DLL.Classes
                     // Store file path
                     json_file = line.Substring(line.IndexOf(":") + 1).Trim();
                 }
-            };
-            process.NewLineError += delegate(string line)
+            }
+            while ((line = process.ReadLineError()) != null)
             {
                 line = line.Trim();
 
@@ -82,8 +85,8 @@ namespace YouTube_Downloader_DLL.Classes
                     video.Failure = true;
                     video.FailureReason = line.Substring("ERROR: ".Length);
                 }
-            };
-            process.Start();
+            }
+
             process.WaitForExit();
 
             if (!video.Failure)
@@ -113,16 +116,18 @@ namespace YouTube_Downloader_DLL.Classes
         public static string GetVersion()
         {
             var process = CreateProcess(Commands.Version, true);
-            string version = "";
+            string line = string.Empty,
+                   version = string.Empty;
 
-            process.NewLineOutput += delegate(string line)
+            process.Start();
+
+            while ((line = process.ReadLineOutput()) != null)
             {
                 // Only one line gets printed, so assume any non-empty line is the version
                 if (!string.IsNullOrEmpty(line))
                     version = line.Trim();
-            };
+            }
 
-            process.Start();
             process.WaitForExit();
 
             return version;
