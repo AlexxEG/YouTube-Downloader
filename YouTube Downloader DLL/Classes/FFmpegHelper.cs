@@ -15,7 +15,7 @@ namespace YouTube_Downloader_DLL.Classes
     {
         public static class Commands
         {
-            public const string CombineDash = " -y -i \"{0}\" -i \"{1}\" -vcodec copy -acodec copy \"{2}\"";
+            public const string CombineDash = " -y -i \"{0}\" -i \"{1}\" -vcodec copy -acodec libvo_aacenc \"{2}\"";
             /* Convert options:
              *
              * -y  - Overwrite output file without asking
@@ -45,11 +45,14 @@ namespace YouTube_Downloader_DLL.Classes
         public static bool CanConvertMP3(string file)
         {
             bool hasAudioStream = false;
+            string line = string.Empty;
             string processArgs = string.Format(Commands.GetFileInfo, file);
 
             var process = CreateProcess(processArgs);
 
-            process.NewLineOutput += delegate(string line)
+            process.Start();
+
+            while ((line = process.ReadLineError()) != null)
             {
                 line = line.Trim();
 
@@ -58,9 +61,8 @@ namespace YouTube_Downloader_DLL.Classes
                     // File has audio stream
                     hasAudioStream = true;
                 }
-            };
+            }
 
-            process.Start();
             process.WaitForExit();
 
             return hasAudioStream;
@@ -88,10 +90,13 @@ namespace YouTube_Downloader_DLL.Classes
         public static IEnumerable<string> CheckCombineAudio(string cmd_args)
         {
             bool hasAudio = false;
+            string line = string.Empty;
             List<string> errors = new List<string>();
             var process = CreateProcess(cmd_args);
 
-            process.NewLineOutput += delegate(string line)
+            process.Start();
+
+            while ((line = process.ReadLineError()) != null)
             {
                 line = line.Trim();
 
@@ -115,9 +120,8 @@ namespace YouTube_Downloader_DLL.Classes
                         errors.Add("Audio file also has a video stream.");
                     }
                 }
-            };
+            }
 
-            process.Start();
             process.WaitForExit();
 
             if (!hasAudio)
@@ -135,10 +139,13 @@ namespace YouTube_Downloader_DLL.Classes
         public static IEnumerable<string> CheckCombineVideo(string cmd_args)
         {
             bool hasVideo = false;
+            string line = string.Empty;
             List<string> errors = new List<string>();
             var process = CreateProcess(cmd_args);
 
-            process.NewLineOutput += delegate(string line)
+            process.Start();
+
+            while ((line = process.ReadLineError()) != null)
             {
                 line = line.Trim();
 
@@ -162,9 +169,8 @@ namespace YouTube_Downloader_DLL.Classes
                         errors.Add("Video file also has an audio stream.");
                     }
                 }
-            };
+            }
 
-            process.Start();
             process.WaitForExit();
 
             if (!hasVideo)
@@ -217,9 +223,13 @@ namespace YouTube_Downloader_DLL.Classes
             bool started = false;
             double milliseconds = 0;
 
+            process.Start();
+
             if (reportProgress != null)
             {
-                process.NewLineOutput += delegate(string line)
+                string line = string.Empty;
+
+                while ((line = process.ReadLineError()) != null)
                 {
                     line = line.Trim();
 
@@ -256,10 +266,9 @@ namespace YouTube_Downloader_DLL.Classes
 
                         reportProgress.Invoke(100, null);
                     }
-                };
+                }
             }
 
-            process.Start();
             process.WaitForExit();
         }
 
@@ -327,9 +336,13 @@ namespace YouTube_Downloader_DLL.Classes
             bool started = false;
             double milliseconds = 0;
 
+            process.Start();
+
             if (reportProgress != null)
             {
-                process.NewLineOutput += delegate(string line)
+                string line = string.Empty;
+
+                while ((line = process.ReadLineError()) != null)
                 {
                     line = line.Trim();
 
@@ -366,10 +379,9 @@ namespace YouTube_Downloader_DLL.Classes
 
                         reportProgress.Invoke(100, null);
                     }
-                };
+                }
             }
 
-            process.Start();
             process.WaitForExit();
         }
 
@@ -408,9 +420,13 @@ namespace YouTube_Downloader_DLL.Classes
             bool started = false;
             double milliseconds = 0;
 
+            process.Start();
+
             if (reportProgress != null)
             {
-                process.NewLineOutput += delegate(string line)
+                string line = string.Empty;
+
+                while ((line = process.ReadLineError()) != null)
                 {
                     line = line.Trim();
 
@@ -440,10 +456,9 @@ namespace YouTube_Downloader_DLL.Classes
 
                         reportProgress.Invoke(100, null);
                     }
-                };
+                }
             }
 
-            process.Start();
             process.WaitForExit();
         }
 
@@ -453,11 +468,14 @@ namespace YouTube_Downloader_DLL.Classes
         public static int GetBitRate(string file)
         {
             int result = -1;
+            string line = string.Empty;
             string processArgs = string.Format(" -i \"{0}\"", file);
             Regex regex = new Regex(@"^Stream\s#\d:\d.*\s(\d+)\skb/s.*$", RegexOptions.Compiled);
             var process = CreateProcess(processArgs);
 
-            process.NewLineOutput += delegate(string line)
+            process.Start();
+
+            while ((line = process.ReadLineError()) != null)
             {
                 line = line.Trim();
 
@@ -468,9 +486,8 @@ namespace YouTube_Downloader_DLL.Classes
                     if (m.Success)
                         result = int.Parse(m.Groups[1].Value);
                 }
-            };
+            }
 
-            process.Start();
             process.WaitForExit();
 
             return result;
@@ -483,10 +500,13 @@ namespace YouTube_Downloader_DLL.Classes
         public static TimeSpan GetDuration(string file)
         {
             TimeSpan result = TimeSpan.Zero;
+            string line = string.Empty;
             string processArgs = string.Format(" -i \"{0}\"", file);
             var process = CreateProcess(processArgs);
 
-            process.NewLineOutput += delegate(string line)
+            process.Start();
+
+            while ((line = process.ReadLineError()) != null)
             {
                 line = line.Trim();
 
@@ -498,9 +518,8 @@ namespace YouTube_Downloader_DLL.Classes
 
                     result = TimeSpan.Parse(split[1]);
                 }
-            };
+            }
 
-            process.Start();
             process.WaitForExit();
 
             return result;
@@ -513,10 +532,13 @@ namespace YouTube_Downloader_DLL.Classes
         public static FFmpegFileType GetFileType(string file)
         {
             FFmpegFileType result = FFmpegFileType.Error;
+            string line = string.Empty;
             string processArgs = string.Format(" -i \"{0}\"", file);
             var process = CreateProcess(processArgs);
 
-            process.NewLineOutput += delegate(string line)
+            process.Start();
+
+            while ((line = process.ReadLineError()) != null)
             {
                 line = line.Trim();
 
@@ -537,9 +559,8 @@ namespace YouTube_Downloader_DLL.Classes
                         result = FFmpegFileType.Audio;
                     }
                 }
-            };
+            }
 
-            process.Start();
             process.WaitForExit();
 
             return result;
@@ -550,11 +571,14 @@ namespace YouTube_Downloader_DLL.Classes
         /// </summary>
         private static string GetVersion()
         {
+            string line = string.Empty;
             string version = string.Empty;
             Regex regex = new Regex("^ffmpeg version (.*) Copyright.*$", RegexOptions.Compiled);
             var process = CreateProcess(Commands.Version);
 
-            process.NewLineOutput += delegate(string line)
+            process.Start();
+
+            while ((line = process.ReadLineError()) != null)
             {
                 Match match = regex.Match(line);
 
@@ -562,9 +586,8 @@ namespace YouTube_Downloader_DLL.Classes
                 {
                     version = match.Groups[1].Value.Trim();
                 }
-            };
+            }
 
-            process.Start();
             process.WaitForExit();
 
             return version;
