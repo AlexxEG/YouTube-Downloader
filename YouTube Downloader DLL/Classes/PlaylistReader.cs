@@ -13,7 +13,7 @@ namespace YouTube_Downloader_DLL.Classes
         string _playlist_id;
         string _url;
 
-        Regex _regexPlaylistInfo = new Regex(@"^\[youtube:playlist\] playlist (.*):.*downloading\s+(\d+)\s+.*$", RegexOptions.Compiled);
+        Regex _regexPlaylistInfo = new Regex(@"^\[youtube:playlist\] playlist (.*):.*Downloading\s+(\d+)\s+.*$", RegexOptions.Compiled);
         Regex _regexVideoJson = new Regex(@"^\[info\].*JSON.*:\s(.*)$", RegexOptions.Compiled);
         ProcessLogger _youtubeDl;
 
