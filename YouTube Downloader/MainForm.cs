@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using YouTube_Downloader.Classes;
 using YouTube_Downloader.Controls;
@@ -77,6 +78,11 @@ namespace YouTube_Downloader
 
             string[] paths = new string[cbSaveTo.Items.Count];
             cbSaveTo.Items.CopyTo(paths, 0);
+            string[] pathsPlaylist = new string[cbPlaylistSaveTo.Items.Count];
+            cbPlaylistSaveTo.Items.CopyTo(pathsPlaylist, 0);
+
+            // Merge paths, removing duplicates
+            paths = paths.Union(pathsPlaylist).ToArray();
 
             settings.SaveToDirectories.AddRange(paths);
             settings.SelectedDirectory = cbSaveTo.SelectedIndex;
@@ -181,6 +187,7 @@ namespace YouTube_Downloader
             if (ofd.ShowDialog(this) == DialogResult.OK)
             {
                 cbSaveTo.SelectedIndex = cbSaveTo.Items.Add(ofd.Folder);
+                cbPlaylistSaveTo.Items.Add(ofd.Folder);
             }
         }
 
@@ -383,6 +390,7 @@ namespace YouTube_Downloader
 
             if (ofd.ShowDialog(this) == DialogResult.OK)
             {
+                cbSaveTo.Items.Add(ofd.Folder);
                 cbPlaylistSaveTo.SelectedIndex = cbPlaylistSaveTo.Items.Add(ofd.Folder);
             }
         }
