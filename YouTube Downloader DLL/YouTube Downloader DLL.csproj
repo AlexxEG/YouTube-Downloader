@@ -55,6 +55,7 @@
     <Compile Include="Dialogs\OpenFolderDialog.cs" />
     <Compile Include="Enums\FFmpegFileType.cs" />
     <Compile Include="Enums\FormatType.cs" />
+    <Compile Include="FFmpeg\FFmpegResult.cs" />
     <Compile Include="Operations\ConvertOperation.cs" />
     <Compile Include="Operations\CroppingOperation.cs" />
     <Compile Include="Operations\DownloadOperation.cs" />
@@ -75,6 +76,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

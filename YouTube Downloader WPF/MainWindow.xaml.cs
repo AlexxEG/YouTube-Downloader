@@ -641,7 +641,7 @@ namespace YouTube_Downloader_WPF
 
         private void Convert_Click(object sender, RoutedEventArgs e)
         {
-            if (!FFmpegHelper.CanConvertMP3(ConvertInput.Text))
+            if (!FFmpegHelper.CanConvertToMP3(ConvertInput.Text).Value)
             {
                 string text = "Can't convert input file to MP3. File doesn't appear to have audio.";
 

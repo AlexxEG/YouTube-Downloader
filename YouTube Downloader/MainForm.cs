@@ -603,7 +603,7 @@ namespace YouTube_Downloader
 
         private void btnConvert_Click(object sender, EventArgs e)
         {
-            if (!FFmpegHelper.CanConvertMP3(txtInput.Text))
+            if (!FFmpegHelper.CanConvertToMP3(txtInput.Text).Value)
             {
                 string text = "Can't convert input file to MP3. File doesn't appear to have audio.";
 
@@ -929,7 +929,7 @@ namespace YouTube_Downloader
             var item = new OperationListViewItem(Path.GetFileName(output), input, Path.GetFileName(input), operation);
 
             item.WorkingText = "Converting";
-            item.Duration = Helper.FormatVideoLength(FFmpegHelper.GetDuration(input));
+            item.Duration = Helper.FormatVideoLength(FFmpegHelper.GetDuration(input).Value);
             item.FileSize = Helper.GetFileSizeFormatted(input);
 
             lvQueue.Items.Add(item);
@@ -957,7 +957,7 @@ namespace YouTube_Downloader
             var item = new OperationListViewItem(Path.GetFileName(output), input, Path.GetFileName(input), operation);
 
             item.WorkingText = "Cropping";
-            item.Duration = Helper.FormatVideoLength(FFmpegHelper.GetDuration(input));
+            item.Duration = Helper.FormatVideoLength(FFmpegHelper.GetDuration(input).Value);
             item.FileSize = Helper.GetFileSizeFormatted(input);
 
             lvQueue.Items.Add(item);

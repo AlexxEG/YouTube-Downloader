@@ -14,9 +14,13 @@ namespace YouTube_Downloader_DLL.Classes
         private Process _process;
         private StringBuilder _log;
 
+        public int ExitCode
+        {
+            get { return _process.ExitCode; }
+        }
         public string Header { get; set; }
         public string Footer { get; set; }
-        public string LogFile { get; set; }
+        public string LogFile { get; private set; }
         public ProcessStartInfo StartInfo
         {
             get { return _process.StartInfo; }
