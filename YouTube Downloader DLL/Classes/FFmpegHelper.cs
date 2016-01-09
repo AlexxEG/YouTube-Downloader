@@ -210,7 +210,7 @@ namespace YouTube_Downloader_DLL.Classes
             string line = string.Empty;
             StringBuilder lines = new StringBuilder();
 
-            while ((line = process.ReadLineOutput()) != null)
+            while ((line = process.ReadLineError()) != null)
             {
                 lines.AppendLine(line.Trim());
             }
