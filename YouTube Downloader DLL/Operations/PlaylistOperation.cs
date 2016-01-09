@@ -14,7 +14,7 @@ namespace YouTube_Downloader_DLL.Operations
         int _preferredQuality;
         bool _combining, _processing, _useDash;
         bool? _downloaderSuccessful;
-        ICollection<VideoInfo> _videos;
+        List<VideoInfo> _videos;
         FileDownloader downloader;
 
         private void downloader_Canceled(object sender, EventArgs e)
@@ -58,7 +58,7 @@ namespace YouTube_Downloader_DLL.Operations
                 this.ETA = ETA;
                 this.Speed = speed;
                 this.Progress = downloader.TotalProgress;
-                this.ReportProgress(this.ProgressPercentage, null);
+                this.ReportProgress((int)downloader.TotalPercentage(), null);
             }
             catch { }
             finally
@@ -283,7 +283,7 @@ namespace YouTube_Downloader_DLL.Operations
             _preferredQuality = (int)args[3];
 
             if (args.Length == 4)
-                _videos = (ICollection<VideoInfo>)args[3];
+                _videos = (List<VideoInfo>)args[3];
 
             downloader = new FileDownloader();
 
