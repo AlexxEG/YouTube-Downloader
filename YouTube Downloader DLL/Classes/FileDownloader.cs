@@ -185,7 +185,7 @@ namespace YouTube_Downloader_DLL.Classes
 
         private void CleanupFiles()
         {
-            new Thread(delegate()
+            new Thread(delegate ()
             {
                 var dict = new Dictionary<string, int>();
                 var keys = new List<string>();
@@ -280,7 +280,7 @@ namespace YouTube_Downloader_DLL.Classes
                     this.TotalProgress += currentPackageSize;
 
                     // Raise ProgressChanged event
-                    _downloader.ReportProgress(-1, BackgroundEvents.ProgressChanged);
+                    this.RaiseEventFromBackground(BackgroundEvents.ProgressChanged, EventArgs.Empty);
 
                     writer.Write(readBytes, 0, currentPackageSize);
                     readings += 1;
