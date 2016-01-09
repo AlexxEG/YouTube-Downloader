@@ -14,8 +14,16 @@ namespace YouTube_Downloader_DLL.Operations
         int _preferredQuality;
         bool _combining, _processing, _useDash;
         bool? _downloaderSuccessful;
-        List<VideoInfo> _videos;
         FileDownloader downloader;
+
+        public List<string> DownloadedFiles { get; set; }
+        public List<VideoInfo> Videos { get; set; }
+
+        public PlaylistOperation()
+        {
+            this.DownloadedFiles = new List<string>();
+            this.Videos = new List<VideoInfo>();
+        }
 
         private void downloader_Canceled(object sender, EventArgs e)
         {
@@ -154,21 +162,21 @@ namespace YouTube_Downloader_DLL.Operations
             try
             {
                 int count = 0;
+                PlaylistReader reader = new PlaylistReader(this.Input);
 
-                if (_videos == null)
+                this.Videos = new List<VideoInfo>();
+
+                // Populate 'Videos' list
                 {
                     VideoInfo video;
-                    PlaylistReader reader = new PlaylistReader(this.Input);
-
-                    _videos = new List<VideoInfo>();
 
                     while (!this.CancellationPending && (video = reader.Next()) != null)
                     {
-                        _videos.Add(video);
+                        this.Videos.Add(video);
                     }
                 }
 
-                foreach (VideoInfo video in _videos)
+                foreach (VideoInfo video in this.Videos)
                 {
                     if (this.CancellationPending)
                         break;
@@ -179,14 +187,15 @@ namespace YouTube_Downloader_DLL.Operations
 
                     this.ReportProgress(-1, new Dictionary<string, object>()
                     {
-                        { "Title", string.Format("({0}/{1}) {2}", count, _videos.Count, video.Title) },
+                        { "Title", string.Format("({0}/{1}) {2}", count, this.Videos.Count, video.Title) },
                         { "Duration", video.Duration },
                         { "FileSize", videoFormat.FileSize }
                     });
 
                     FileDownload[] fileDownloads;
-
                     string finalFile = Path.Combine(this.Output, Helper.FormatTitle(videoFormat.VideoInfo.Title) + "." + videoFormat.Extension);
+
+                    this.DownloadedFiles.Add(finalFile);
 
                     if (!_useDash)
                     {
@@ -283,7 +292,7 @@ namespace YouTube_Downloader_DLL.Operations
             _preferredQuality = (int)args[3];
 
             if (args.Length == 4)
-                _videos = (List<VideoInfo>)args[3];
+                this.Videos = (List<VideoInfo>)args[3];
 
             downloader = new FileDownloader();
 
