@@ -136,7 +136,7 @@ namespace YouTube_Downloader_DLL.Operations
         {
             if (this.Status == OperationStatus.Success)
             {
-                this.Duration = (long)FFmpegHelper.GetDuration(this.Input).TotalSeconds;
+                this.Duration = (long)FFmpegHelper.GetDuration(this.Input).Value.TotalSeconds;
                 this.FileSize = Helper.GetFileSize(this.Output);
             }
         }
@@ -151,7 +151,7 @@ namespace YouTube_Downloader_DLL.Operations
             _start = (TimeSpan)args[2];
             _end = (TimeSpan)args[3];
 
-            this.Duration = (long)FFmpegHelper.GetDuration(this.Input).TotalSeconds;
+            this.Duration = (long)FFmpegHelper.GetDuration(this.Input).Value.TotalSeconds;
             this.Text = "Cropping...";
             this.Title = Path.GetFileName(this.Output);
         }

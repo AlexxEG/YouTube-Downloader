@@ -6,8 +6,9 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using YouTube_Downloader_DLL.Enums;
+using YouTube_Downloader_DLL.FFmpeg;
 
-// ToDo: Might have to switch to reading error stream instead of output. ffmpeg uses error stream for some reason
+// ToDo: Catch errors from Process
 
 namespace YouTube_Downloader_DLL.Classes
 {
@@ -31,7 +32,8 @@ namespace YouTube_Downloader_DLL.Classes
             public const string Version = " -version";
         }
 
-        private const string LogFilename = "ffmpeg.log";
+        private const string LogFilename = "ffmpeg-{0}.log";
+        private const string RegexFindReportFile = "^Report written to \"(.*)\"$";
 
         /// <summary>
         /// Gets the path to FFmpeg executable.
@@ -42,19 +44,18 @@ namespace YouTube_Downloader_DLL.Classes
         /// Returns true if given file can be converted to a MP3 file, false otherwise.
         /// </summary>
         /// <param name="file">The file to check.</param>
-        public static bool CanConvertMP3(string file)
+        public static FFmpegResult<bool> CanConvertToMP3(string file)
         {
             bool hasAudioStream = false;
             string line = string.Empty;
-            string processArgs = string.Format(Commands.GetFileInfo, file);
-
-            var process = CreateProcess(processArgs);
+            StringBuilder lines = new StringBuilder();
+            var process = CreateProcess(string.Format(Commands.GetFileInfo, file));
 
             process.Start();
 
             while ((line = process.ReadLineError()) != null)
             {
-                line = line.Trim();
+                lines.AppendLine(line = line.Trim());
 
                 if (line.StartsWith("Stream #") && line.Contains("Audio"))
                 {
@@ -65,7 +66,14 @@ namespace YouTube_Downloader_DLL.Classes
 
             process.WaitForExit();
 
-            return hasAudioStream;
+            if (process.ExitCode != 0)
+            {
+                string reportFile = FindReportFile(lines.ToString());
+
+                return new FFmpegResult<bool>(process.ExitCode, CheckForErrors(reportFile));
+            }
+
+            return new FFmpegResult<bool>(hasAudioStream);
         }
 
         /// <summary>
@@ -73,21 +81,24 @@ namespace YouTube_Downloader_DLL.Classes
         /// </summary>
         /// <param name="audio">The input audio file.</param>
         /// <param name="video">The input video file.</param>
-        public static IEnumerable<string> CheckCombine(string audio, string video)
+        public static FFmpegResult<bool> CanCombine(string audio, string video)
         {
             List<string> errors = new List<string>();
 
-            errors.AddRange(CheckCombineAudio(string.Format(Commands.GetFileInfo, audio)));
-            errors.AddRange(CheckCombineVideo(string.Format(Commands.GetFileInfo, video)));
+            errors.AddRange(CanCombineAudio(string.Format(Commands.GetFileInfo, audio)));
+            errors.AddRange(CanCombineVideo(string.Format(Commands.GetFileInfo, video)));
 
-            return errors;
+            if (errors.Count == 0)
+                return new FFmpegResult<bool>(true);
+            else
+                return new FFmpegResult<bool>(false, 1, errors);
         }
 
         /// <summary>
         /// The audio check portion of 'CheckCombine' function.
         /// </summary>
         /// <param name="cmd_args">The arguments used for creating the Process.</param>
-        public static IEnumerable<string> CheckCombineAudio(string cmd_args)
+        public static IEnumerable<string> CanCombineAudio(string cmd_args)
         {
             bool hasAudio = false;
             string line = string.Empty;
@@ -136,7 +147,7 @@ namespace YouTube_Downloader_DLL.Classes
         /// The video check portion of 'CheckCombine' function.
         /// </summary>
         /// <param name="cmd_args">The arguments used for creating the Process.</param>
-        public static IEnumerable<string> CheckCombineVideo(string cmd_args)
+        public static IEnumerable<string> CanCombineVideo(string cmd_args)
         {
             bool hasVideo = false;
             string line = string.Empty;
@@ -187,7 +198,7 @@ namespace YouTube_Downloader_DLL.Classes
         /// <param name="video">The input video file.</param>
         /// <param name="audio">The input audio file.</param>
         /// <param name="output">Where to save the output file.</param>
-        public static void CombineDash(string video, string audio, string output)
+        public static FFmpegResult<bool> CombineDash(string video, string audio, string output)
         {
             string[] argsInfo = new string[] { video, audio, output };
             string processArgs = string.Format(Commands.CombineDash, argsInfo);
@@ -195,7 +206,25 @@ namespace YouTube_Downloader_DLL.Classes
             var process = FFmpegHelper.CreateProcess(processArgs);
 
             process.Start();
+
+            string line = string.Empty;
+            StringBuilder lines = new StringBuilder();
+
+            while ((line = process.ReadLineOutput()) != null)
+            {
+                lines.AppendLine(line.Trim());
+            }
+
             process.WaitForExit();
+
+            if (process.ExitCode != 0)
+            {
+                string reportFile = FindReportFile(lines.ToString());
+
+                return new FFmpegResult<bool>(false, process.ExitCode, CheckForErrors(reportFile));
+            }
+
+            return new FFmpegResult<bool>(true);
         }
 
         /// <summary>
@@ -205,7 +234,7 @@ namespace YouTube_Downloader_DLL.Classes
         /// <param name="reportProgress">The method to call when there is progress. Can be null.</param>
         /// <param name="input">The input file.</param>
         /// <param name="output">Where to save the output file.</param>
-        public static void Convert(Action<int, object> reportProgress, string input, string output)
+        public static FFmpegResult<bool> Convert(Action<int, object> reportProgress, string input, string output)
         {
             if (input == output)
             {
@@ -225,51 +254,62 @@ namespace YouTube_Downloader_DLL.Classes
 
             process.Start();
 
-            if (reportProgress != null)
+            string line = string.Empty;
+            StringBuilder lines = new StringBuilder();
+
+            while ((line = process.ReadLineError()) != null)
             {
-                string line = string.Empty;
+                lines.AppendLine(line = line.Trim());
 
-                while ((line = process.ReadLineError()) != null)
+                // If reportProgress is null it can't be invoked. So skip code below
+                if (reportProgress == null)
+                    continue;
+
+                if (line.StartsWith("Duration: "))
                 {
-                    line = line.Trim();
+                    int start = "Duration: ".Length;
+                    int length = "00:00:00.00".Length;
 
-                    if (line.StartsWith("Duration: "))
-                    {
-                        int start = "Duration: ".Length;
-                        int length = "00:00:00.00".Length;
+                    string time = line.Substring(start, length);
 
-                        string time = line.Substring(start, length);
+                    milliseconds = TimeSpan.Parse(time).TotalMilliseconds;
+                }
+                else if (line == "Press [q] to stop, [?] for help")
+                {
+                    started = true;
 
-                        milliseconds = TimeSpan.Parse(time).TotalMilliseconds;
-                    }
-                    else if (line == "Press [q] to stop, [?] for help")
-                    {
-                        started = true;
+                    reportProgress.Invoke(0, null);
+                }
+                else if (started && line.StartsWith("size="))
+                {
+                    int start = line.IndexOf("time=") + 5;
+                    int length = "00:00:00.00".Length;
 
-                        reportProgress.Invoke(0, null);
-                    }
-                    else if (started && line.StartsWith("size="))
-                    {
-                        int start = line.IndexOf("time=") + 5;
-                        int length = "00:00:00.00".Length;
+                    string time = line.Substring(start, length);
 
-                        string time = line.Substring(start, length);
+                    double currentMilli = TimeSpan.Parse(time).TotalMilliseconds;
+                    double percentage = (currentMilli / milliseconds) * 100;
 
-                        double currentMilli = TimeSpan.Parse(time).TotalMilliseconds;
-                        double percentage = (currentMilli / milliseconds) * 100;
+                    reportProgress.Invoke(System.Convert.ToInt32(percentage), null);
+                }
+                else if (started && line == string.Empty)
+                {
+                    started = false;
 
-                        reportProgress.Invoke(System.Convert.ToInt32(percentage), null);
-                    }
-                    else if (started && line == string.Empty)
-                    {
-                        started = false;
-
-                        reportProgress.Invoke(100, null);
-                    }
+                    reportProgress.Invoke(100, null);
                 }
             }
 
             process.WaitForExit();
+
+            if (process.ExitCode != 0)
+            {
+                string reportFile = FindReportFile(lines.ToString());
+
+                return new FFmpegResult<bool>(false, process.ExitCode, CheckForErrors(reportFile));
+            }
+
+            return new FFmpegResult<bool>(true);
         }
 
         /// <summary>
@@ -288,13 +328,14 @@ namespace YouTube_Downloader_DLL.Classes
                 WindowStyle = ProcessWindowStyle.Hidden
             };
 
+            string filename = string.Format(LogFilename, DateTime.Now.ToString("ddMMyyyy-HHmmss-fff"));
+            string fullpath = Path.Combine(Common.GetLogsDirectory(), filename);
             ProcessLogger process = null;
-            string filename = Path.Combine(Common.GetLogsDirectory(), LogFilename);
 
             if (noLog)
                 process = new ProcessLogger();
             else
-                process = new ProcessLogger(filename)
+                process = new ProcessLogger(fullpath)
                 {
                     Header = BuildLogHeader(arguments),
                     Footer = BuildLogFooter()
@@ -312,7 +353,7 @@ namespace YouTube_Downloader_DLL.Classes
         /// <param name="input">The input file.</param>
         /// <param name="output">Where to save the output file.</param>
         /// <param name="start">The <see cref="System.TimeSpan"/> start position.</param>
-        public static void Crop(Action<int, object> reportProgress, string input, string output, TimeSpan start)
+        public static FFmpegResult<bool> Crop(Action<int, object> reportProgress, string input, string output, TimeSpan start)
         {
             if (input == output)
             {
@@ -323,7 +364,7 @@ namespace YouTube_Downloader_DLL.Classes
             {
                 string.Format("{0:00}:{1:00}:{2:00}.{3:000}", start.Hours, start.Minutes, start.Seconds, start.Milliseconds),
                 input,
-                GetFileType(input) == FFmpegFileType.Video ? " -vcodec copy" : "",
+                GetFileType(input).Value == FFmpegFileType.Video ? " -vcodec copy" : "",
                 output
             };
             string processArgs = string.Format(Commands.CropFrom, argsInfo);
@@ -335,54 +376,64 @@ namespace YouTube_Downloader_DLL.Classes
 
             bool started = false;
             double milliseconds = 0;
+            string line = string.Empty;
+            StringBuilder lines = new StringBuilder();
 
             process.Start();
 
-            if (reportProgress != null)
+            while ((line = process.ReadLineError()) != null)
             {
-                string line = string.Empty;
+                lines.AppendLine(line = line.Trim());
 
-                while ((line = process.ReadLineError()) != null)
+                // If reportProgress is null it can't be invoked. So skip code below
+                if (reportProgress == null)
+                    continue;
+
+                if (line.StartsWith("Duration: "))
                 {
-                    line = line.Trim();
+                    int lineStart = "Duration: ".Length;
+                    int length = "00:00:00.00".Length;
 
-                    if (line.StartsWith("Duration: "))
-                    {
-                        int lineStart = "Duration: ".Length;
-                        int length = "00:00:00.00".Length;
+                    string time = line.Substring(lineStart, length);
 
-                        string time = line.Substring(lineStart, length);
+                    milliseconds = TimeSpan.Parse(time).TotalMilliseconds;
+                }
+                else if (line == "Press [q] to stop, [?] for help")
+                {
+                    started = true;
 
-                        milliseconds = TimeSpan.Parse(time).TotalMilliseconds;
-                    }
-                    else if (line == "Press [q] to stop, [?] for help")
-                    {
-                        started = true;
+                    reportProgress.Invoke(0, null);
+                }
+                else if (started && line.StartsWith("size="))
+                {
+                    int lineStart = line.IndexOf("time=") + 5;
+                    int length = "00:00:00.00".Length;
 
-                        reportProgress.Invoke(0, null);
-                    }
-                    else if (started && line.StartsWith("size="))
-                    {
-                        int lineStart = line.IndexOf("time=") + 5;
-                        int length = "00:00:00.00".Length;
+                    string time = line.Substring(lineStart, length);
 
-                        string time = line.Substring(lineStart, length);
+                    double currentMilli = TimeSpan.Parse(time).TotalMilliseconds;
+                    double percentage = (currentMilli / milliseconds) * 100;
 
-                        double currentMilli = TimeSpan.Parse(time).TotalMilliseconds;
-                        double percentage = (currentMilli / milliseconds) * 100;
+                    reportProgress.Invoke(System.Convert.ToInt32(percentage), null);
+                }
+                else if (started && line == string.Empty)
+                {
+                    started = false;
 
-                        reportProgress.Invoke(System.Convert.ToInt32(percentage), null);
-                    }
-                    else if (started && line == string.Empty)
-                    {
-                        started = false;
-
-                        reportProgress.Invoke(100, null);
-                    }
+                    reportProgress.Invoke(100, null);
                 }
             }
 
             process.WaitForExit();
+
+            if (process.ExitCode != 0)
+            {
+                string reportFile = FindReportFile(lines.ToString());
+
+                return new FFmpegResult<bool>(false, process.ExitCode, CheckForErrors(reportFile));
+            }
+
+            return new FFmpegResult<bool>(true);
         }
 
         /// <summary>
@@ -393,7 +444,7 @@ namespace YouTube_Downloader_DLL.Classes
         /// <param name="output">Where to save the output file.</param>
         /// <param name="start">The <see cref="System.TimeSpan"/> start position.</param>
         /// <param name="end">The <see cref="System.TimeSpan"/> end position.</param>
-        public static void Crop(Action<int, object> reportProgress, string input, string output, TimeSpan start, TimeSpan end)
+        public static FFmpegResult<bool> Crop(Action<int, object> reportProgress, string input, string output, TimeSpan start, TimeSpan end)
         {
             if (input == output)
             {
@@ -407,7 +458,7 @@ namespace YouTube_Downloader_DLL.Classes
                 string.Format("{0:00}:{1:00}:{2:00}.{3:000}", start.Hours, start.Minutes, start.Seconds, start.Milliseconds),
                 input,
                 string.Format("{0:00}:{1:00}:{2:00}.{3:000}", length.Hours, length.Minutes, length.Seconds, length.Milliseconds),
-                GetFileType(input) == FFmpegFileType.Video ? " -vcodec copy" : "",
+                GetFileType(input).Value == FFmpegFileType.Video ? " -vcodec copy" : "",
                 output
             };
             string processArgs = string.Format(Commands.CropFromTo, argsInfo);
@@ -419,16 +470,20 @@ namespace YouTube_Downloader_DLL.Classes
 
             bool started = false;
             double milliseconds = 0;
+            string line = string.Empty;
+            StringBuilder lines = new StringBuilder();
 
             process.Start();
 
             if (reportProgress != null)
             {
-                string line = string.Empty;
-
                 while ((line = process.ReadLineError()) != null)
                 {
-                    line = line.Trim();
+                    lines.AppendLine(line = line.Trim());
+
+                    // If reportProgress is null it can't be invoked. So skip code below
+                    if (reportProgress == null)
+                        continue;
 
                     milliseconds = end.TotalMilliseconds;
 
@@ -460,24 +515,35 @@ namespace YouTube_Downloader_DLL.Classes
             }
 
             process.WaitForExit();
+
+            if (process.ExitCode != 0)
+            {
+                string reportFile = FindReportFile(lines.ToString());
+
+                return new FFmpegResult<bool>(false, process.ExitCode, CheckForErrors(reportFile));
+            }
+
+            return new FFmpegResult<bool>(true);
         }
 
         /// <summary>
         /// Returns the bit rate of the given file.
         /// </summary>
-        public static int GetBitRate(string file)
+        public static FFmpegResult<int> GetBitRate(string file)
         {
             int result = -1;
-            string line = string.Empty;
-            string processArgs = string.Format(" -i \"{0}\"", file);
             Regex regex = new Regex(@"^Stream\s#\d:\d.*\s(\d+)\skb/s.*$", RegexOptions.Compiled);
+            string processArgs = string.Format(" -i \"{0}\"", file);
             var process = CreateProcess(processArgs);
+
+            string line = string.Empty;
+            StringBuilder lines = new StringBuilder();
 
             process.Start();
 
             while ((line = process.ReadLineError()) != null)
             {
-                line = line.Trim();
+                lines.AppendLine(line = line.Trim());
 
                 if (line.StartsWith("Stream"))
                 {
@@ -490,25 +556,34 @@ namespace YouTube_Downloader_DLL.Classes
 
             process.WaitForExit();
 
-            return result;
+            if (process.ExitCode != 0)
+            {
+                string reportFile = FindReportFile(lines.ToString());
+
+                return new FFmpegResult<int>(process.ExitCode, CheckForErrors(reportFile));
+            }
+
+            return new FFmpegResult<int>(result);
         }
 
         /// <summary>
         /// Returns the <see cref="System.TimeSpan"/> duration of the given file.
         /// </summary>
         /// <param name="file">The file to get <see cref="System.TimeSpan"/> duration from.</param>
-        public static TimeSpan GetDuration(string file)
+        public static FFmpegResult<TimeSpan> GetDuration(string file)
         {
             TimeSpan result = TimeSpan.Zero;
-            string line = string.Empty;
             string processArgs = string.Format(" -i \"{0}\"", file);
             var process = CreateProcess(processArgs);
+
+            string line = string.Empty;
+            StringBuilder lines = new StringBuilder();
 
             process.Start();
 
             while ((line = process.ReadLineError()) != null)
             {
-                line = line.Trim();
+                lines.AppendLine(line = line.Trim());
 
                 // Example line, including whitespace:
                 //  Duration: 00:00:00.00, start: 0.000000, bitrate: *** kb/s
@@ -522,25 +597,34 @@ namespace YouTube_Downloader_DLL.Classes
 
             process.WaitForExit();
 
-            return result;
+            if (process.ExitCode != 0)
+            {
+                string reportFile = FindReportFile(lines.ToString());
+
+                return new FFmpegResult<TimeSpan>(process.ExitCode, CheckForErrors(reportFile));
+            }
+
+            return new FFmpegResult<TimeSpan>(result);
         }
 
         /// <summary>
         /// Returns the <see cref="FileType"/> of the given file.
         /// </summary>
         /// <param name="file">The file to get <see cref="FileType"/> from.</param>
-        public static FFmpegFileType GetFileType(string file)
+        public static FFmpegResult<FFmpegFileType> GetFileType(string file)
         {
             FFmpegFileType result = FFmpegFileType.Error;
-            string line = string.Empty;
             string processArgs = string.Format(" -i \"{0}\"", file);
             var process = CreateProcess(processArgs);
+
+            string line = string.Empty;
+            StringBuilder lines = new StringBuilder();
 
             process.Start();
 
             while ((line = process.ReadLineError()) != null)
             {
-                line = line.Trim();
+                lines.AppendLine(line = line.Trim());
 
                 // Example lines, including whitespace:
                 //    Stream #0:0(und): Video: h264 ([33][0][0][0] / 0x0021), yuv420p, 320x240 [SAR 717:716 DAR 239:179], q=2-31, 242 kb/s, 29.01 fps, 90k tbn, 90k tbc (default)
@@ -563,23 +647,67 @@ namespace YouTube_Downloader_DLL.Classes
 
             process.WaitForExit();
 
-            return result;
+            if (process.ExitCode != 0)
+            {
+                string reportFile = FindReportFile(lines.ToString());
+
+                return new FFmpegResult<FFmpegFileType>(FFmpegFileType.Error, process.ExitCode, CheckForErrors(reportFile));
+            }
+
+            return new FFmpegResult<FFmpegFileType>(result);
+        }
+
+        /// <summary>
+        /// Returns list of errors, if any, from given FFmpeg report file.
+        /// </summary>
+        /// <param name="filename">The report file to check.</param>
+        private static IEnumerable<string> CheckForErrors(string filename)
+        {
+            var errors = new List<string>();
+
+            using (var reader = new StreamReader(filename))
+            {
+                string line = string.Empty;
+
+                // Skip first 2 lines
+                reader.ReadLine();
+                reader.ReadLine();
+
+                while ((line = reader.ReadLine()) != null)
+                {
+                    errors.Add(line);
+                }
+            }
+
+            return errors;
+        }
+
+        /// <summary>
+        /// Find where the FFmpeg report file is from the output using Regex.
+        /// </summary>
+        private static string FindReportFile(string lines)
+        {
+            return Regex.Match(lines, RegexFindReportFile).Groups[1].Value;
         }
 
         /// <summary>
         /// Gets current ffmpeg version.
         /// </summary>
-        private static string GetVersion()
+        private static FFmpegResult<string> GetVersion()
         {
-            string line = string.Empty;
             string version = string.Empty;
             Regex regex = new Regex("^ffmpeg version (.*) Copyright.*$", RegexOptions.Compiled);
             var process = CreateProcess(Commands.Version);
+
+            string line = string.Empty;
+            StringBuilder lines = new StringBuilder();
 
             process.Start();
 
             while ((line = process.ReadLineError()) != null)
             {
+                lines.AppendLine(line);
+
                 Match match = regex.Match(line);
 
                 if (match.Success)
@@ -590,7 +718,14 @@ namespace YouTube_Downloader_DLL.Classes
 
             process.WaitForExit();
 
-            return version;
+            if (process.ExitCode != 0)
+            {
+                string reportFile = FindReportFile(lines.ToString());
+
+                return new FFmpegResult<string>(process.ExitCode, CheckForErrors(reportFile));
+            }
+
+            return new FFmpegResult<string>(version);
         }
 
         /// <summary>
