@@ -524,12 +524,13 @@ namespace YouTube_Downloader_DLL.Operations
 
         private void Worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            if (e.ProgressPercentage < 0)
-                return;
-
-            this.ProgressPercentage = e.ProgressPercentage;
-            this.OnProgressChanged(e);
+            if (e.ProgressPercentage >= 0)
+            {
+                this.ProgressPercentage = e.ProgressPercentage;
+            }
+            
             this.WorkerProgressChanged(e);
+            this.OnProgressChanged(e);
         }
 
         private bool Wait()
