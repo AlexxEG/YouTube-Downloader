@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Windows.Forms;
 using ListViewEmbeddedControls;
 using YouTube_Downloader_DLL.Classes;
@@ -102,7 +103,16 @@ namespace YouTube_Downloader.Controls
             sw.Stop();
             sw = null;
 
-            this.FileSize = Helper.GetFileSizeFormatted(this.Operation.Output);
+            if (File.Exists(this.Operation.Output))
+            {
+                this.FileSize = Helper.GetFileSizeFormatted(this.Operation.Output);
+            }
+            else if (Directory.Exists(this.Operation.Output))
+            {
+                // ToDo: Make PlaylistOperation keep track of downloaded files
+                // and only count those instead of whole directory.
+                this.FileSize = Helper.GetDirectorySizeFormatted(this.Operation.Output);
+            }
 
             if (_progressBar != null)
                 _progressBar.Value = _progressBar.Maximum;
@@ -113,7 +123,7 @@ namespace YouTube_Downloader.Controls
         private void Operation_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             if (_progressBar != null)
-                _progressBar.Value = e.ProgressPercentage;
+                _progressBar.Value = Math.Min(_progressBar.Maximum, Math.Max(_progressBar.Minimum, e.ProgressPercentage));
 
             if (!string.IsNullOrEmpty(this.WorkingText))
                 this.Status = this.WorkingText;
