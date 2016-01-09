@@ -20,7 +20,7 @@ namespace YouTube_Downloader_DLL.Classes
         /// <param name="files">The files to delete.</param>
         public static void DeleteFiles(params string[] files)
         {
-            new Thread(delegate()
+            new Thread(delegate ()
             {
                 var dict = new Dictionary<string, int>();
                 var keys = new List<string>();
@@ -133,6 +133,23 @@ namespace YouTube_Downloader_DLL.Classes
         public static string FormatVideoLength(long duration)
         {
             return FormatVideoLength(TimeSpan.FromSeconds(duration));
+        }
+
+        public static long GetDirectorySize(string directory)
+        {
+            long size = 0;
+
+            foreach (string file in Directory.GetFiles(directory, "*.*", SearchOption.AllDirectories))
+            {
+                size += new FileInfo(file).Length;
+            }
+
+            return size;
+        }
+
+        public static string GetDirectorySizeFormatted(string directory)
+        {
+            return FormatFileSize(GetDirectorySize(directory));
         }
 
         /// <summary>
