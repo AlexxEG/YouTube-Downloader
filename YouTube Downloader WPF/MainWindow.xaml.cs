@@ -220,11 +220,9 @@ namespace YouTube_Downloader_WPF
 
         private void GetVideoButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!Helper.IsValidYouTubeUrl(VideoLink.Text))
+            if (!Helper.IsValidUrl(VideoLink.Text))
             {
-                MessageBox.Show(this, "You entered invalid YouTube URL, Please correct it.\r\n\n" +
-                    "Note: URL should start with: " + @"http://www.youtube.com/watch?",
-                    "Invalid URL", MessageBoxButton.OK);
+                MessageBox.Show(this, "Input link is not a valid Twitch/YouTube link", "Invalid URL", MessageBoxButton.OK);
             }
             else
             {
@@ -493,12 +491,14 @@ namespace YouTube_Downloader_WPF
                     {
                         foreach (var video in this.PlaylistItems)
                             video.Selected = true;
-                    } break;
+                    }
+                    break;
                 case "Select None":
                     {
                         foreach (var video in this.PlaylistItems)
                             video.Selected = false;
-                    } break;
+                    }
+                    break;
             }
         }
 

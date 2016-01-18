@@ -26,7 +26,7 @@ namespace YouTube_Downloader_DLL.Classes
                 this.OnPropertyChanged();
             }
         }
-        
+
         /// <summary>
         /// Gets or sets whether there was a failure retrieving video information.
         /// </summary>
@@ -41,6 +41,11 @@ namespace YouTube_Downloader_DLL.Classes
         /// Gets the video ID.
         /// </summary>
         public string ID { get; private set; }
+
+        /// <summary>
+        /// Gets the video source (Twitch/YouTube).
+        /// </summary>
+        public VideoSource VideoSource { get; private set; }
 
         /// <summary>
         /// Gets the video title.
@@ -121,8 +126,19 @@ namespace YouTube_Downloader_DLL.Classes
 
             string displayId = jObject["display_id"].ToString();
 
-            // Don't use thumbnail from .json as this fits better
-            this.ThumbnailUrl = string.Format("https://i.ytimg.com/vi/{0}/mqdefault.jpg", displayId);
+            // Get thumbnail
+            if (jObject["extractor"].ToString() == "twitch:vod")
+            {
+                this.VideoSource = VideoSource.Twitch;
+                this.ThumbnailUrl = jObject["thumbnail"].ToString();
+            }
+            else
+            {
+                this.VideoSource = VideoSource.YouTube;
+                // Don't use thumbnail from .json as this fits better
+                this.ThumbnailUrl = string.Format("https://i.ytimg.com/vi/{0}/mqdefault.jpg", displayId);
+            }
+
             this.Url = jObject["webpage_url"].ToString();
 
             JArray array = (JArray)jObject["formats"];

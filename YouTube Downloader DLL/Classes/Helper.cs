@@ -296,6 +296,15 @@ namespace YouTube_Downloader_DLL.Classes
         }
 
         /// <summary>
+        /// Returns true if the given url is a valid and supported url.
+        /// </summary>
+        /// <param name="url">The url to check.</param>
+        public static bool IsValidUrl(string url)
+        {
+            return IsValidTwitchUrl(url) || IsValidYouTubeUrl(url);
+        }
+
+        /// <summary>
         /// Returns true if the given url is a valid YouTube url.
         /// </summary>
         /// <param name="url">The url to check.</param>
@@ -308,6 +317,17 @@ namespace YouTube_Downloader_DLL.Classes
             Regex regex = new Regex(pattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
             return regex.IsMatch(url);
+        }
+
+        /// <summary>
+        /// Returns true if the given url is a valid Twitch url.
+        /// </summary>
+        /// <param name="url">The url to check.</param>
+        public static bool IsValidTwitchUrl(string url)
+        {
+            string pattern = @"^(https?:\/\/)?(www.)?twitch\.tv\/(?!_)[a-zA-Z0-9_]{4,25}\/(v|c)\/\d+$";
+
+            return Regex.IsMatch(url, pattern, RegexOptions.IgnoreCase);
         }
     }
 
