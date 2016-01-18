@@ -52,6 +52,11 @@ namespace YouTube_Downloader_DLL.Classes
         public string Format { get; private set; }
 
         /// <summary>
+        /// Gets the format ID.
+        /// </summary>
+        public string FormatID { get; private set; }
+
+        /// <summary>
         /// Gets the format type.
         /// </summary>
         public FormatType FormatType { get; private set; }
@@ -170,6 +175,7 @@ namespace YouTube_Downloader_DLL.Classes
             this.DownloadUrl = token["url"].ToString();
             this.Extension = token["ext"].ToString();
             this.Format = token["format"].ToString();
+            this.FormatID = token["format_id"].ToString();
 
             // Check if format is audio only
             this.AudioOnly = this.Format.Contains("audio only");

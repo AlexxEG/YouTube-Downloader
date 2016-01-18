@@ -51,6 +51,7 @@
     <Compile Include="Classes\ProcessLogger.cs" />
     <Compile Include="Classes\VideoFormat.cs" />
     <Compile Include="Classes\VideoInfo.cs" />
+    <Compile Include="Classes\VideoSource.cs" />
     <Compile Include="Classes\YoutubeDlHelper.cs" />
     <Compile Include="Dialogs\OpenFolderDialog.cs" />
     <Compile Include="Enums\FFmpegFileType.cs" />

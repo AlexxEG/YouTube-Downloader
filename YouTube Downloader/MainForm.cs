@@ -155,10 +155,9 @@ namespace YouTube_Downloader
 
         private void btnGetVideo_Click(object sender, EventArgs e)
         {
-            if (!Helper.IsValidYouTubeUrl(txtYoutubeLink.Text))
+            if (!Helper.IsValidUrl(txtYoutubeLink.Text))
             {
-                MessageBox.Show(this, "You entered invalid YouTube URL, Please correct it.\r\n\nNote: URL should start with:\r\nhttp://www.youtube.com/watch?",
-                    "Invalid URL", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(this, "Input link is not a valid Twitch/YouTube link.", "Invalid URL", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             else
             {
@@ -285,7 +284,7 @@ namespace YouTube_Downloader
             // Display file size.
             VideoFormat format = (VideoFormat)cbQuality.SelectedItem;
 
-            if (format == null)
+            if (format == null || selectedVideo.VideoSource == VideoSource.Twitch)
             {
                 lFileSize.Text = "";
             }
@@ -307,6 +306,9 @@ namespace YouTube_Downloader
 
         private void videoInfo_FileSizeUpdated(object sender, FileSizeUpdateEventArgs e)
         {
+            if (this.selectedVideo.VideoSource == VideoSource.Twitch)
+                return;
+
             if (lFileSize.InvokeRequired)
             {
                 lFileSize.Invoke(new UpdateFileSize(videoInfo_FileSizeUpdated), sender, e);
@@ -1183,6 +1185,7 @@ namespace YouTube_Downloader
                 VideoFormat f = formats[i];
 
                 if (f.Extension.Contains("webm") ||
+                    f.FormatID.Contains("meta") ||
                     !Settings.Default.IncludeNonDASH && f.Format.ToLower().Contains("nondash") ||
                     !Settings.Default.IncludeDASH && f.Format.ToLower().Contains("dash") ||
                     !Settings.Default.IncludeNormal && !f.Format.ToLower().Contains("dash"))
