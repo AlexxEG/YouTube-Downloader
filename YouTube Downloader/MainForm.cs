@@ -24,9 +24,9 @@ namespace YouTube_Downloader
 {
     public partial class MainForm : Form
     {
-        private string[] args;
-        private VideoInfo selectedVideo;
-        private Settings settings = Settings.Default;
+        private string[] _args;
+        private VideoInfo _selectedVideo;
+        private Settings _settings = Settings.Default;
 
         private delegate void UpdateFileSize(object sender, FileSizeUpdateEventArgs e);
 
@@ -48,7 +48,7 @@ namespace YouTube_Downloader
         public MainForm(string[] args)
             : this()
         {
-            this.args = args;
+            this._args = args;
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -70,11 +70,11 @@ namespace YouTube_Downloader
                 return;
             }
 
-            if (selectedVideo != null)
-                selectedVideo.AbortUpdateFileSizes();
+            if (_selectedVideo != null)
+                _selectedVideo.AbortUpdateFileSizes();
 
-            settings.WindowStates[this.Name].SaveForm(this);
-            settings.SaveToDirectories.Clear();
+            _settings.WindowStates[this.Name].SaveForm(this);
+            _settings.SaveToDirectories.Clear();
 
             string[] paths = new string[cbSaveTo.Items.Count];
             cbSaveTo.Items.CopyTo(paths, 0);
@@ -84,11 +84,11 @@ namespace YouTube_Downloader
             // Merge paths, removing duplicates
             paths = paths.Union(pathsPlaylist).ToArray();
 
-            settings.SaveToDirectories.AddRange(paths);
-            settings.SelectedDirectory = cbSaveTo.SelectedIndex;
-            settings.AutoConvert = chbAutoConvert.Checked;
+            _settings.SaveToDirectories.AddRange(paths);
+            _settings.SelectedDirectory = cbSaveTo.SelectedIndex;
+            _settings.AutoConvert = chbAutoConvert.Checked;
 
-            settings.Save();
+            _settings.Save();
 
             Application.Exit();
         }
@@ -100,11 +100,11 @@ namespace YouTube_Downloader
 
         private void MainForm_Shown(object sender, EventArgs e)
         {
-            if (args != null)
+            if (_args != null)
             {
-                txtYoutubeLink.Text = args[0];
+                txtYoutubeLink.Text = _args[0];
                 btnGetVideo.PerformClick();
-                args = null;
+                _args = null;
             }
 
             // Disable & enable functions depending on if FFmpeg is available, and
@@ -163,7 +163,7 @@ namespace YouTube_Downloader
             {
                 txtYoutubeLink.Text = Helper.FixUrl(txtYoutubeLink.Text);
 
-                settings.LastYouTubeUrl = txtYoutubeLink.Text;
+                _settings.LastYouTubeUrl = txtYoutubeLink.Text;
 
                 txtTitle.Text = string.Empty;
                 cbQuality.Items.Clear();
@@ -284,7 +284,7 @@ namespace YouTube_Downloader
             // Display file size.
             VideoFormat format = (VideoFormat)cbQuality.SelectedItem;
 
-            if (format == null || selectedVideo.VideoSource == VideoSource.Twitch)
+            if (format == null || _selectedVideo.VideoSource == VideoSource.Twitch)
             {
                 lFileSize.Text = "";
             }
@@ -306,7 +306,7 @@ namespace YouTube_Downloader
 
         private void videoInfo_FileSizeUpdated(object sender, FileSizeUpdateEventArgs e)
         {
-            if (this.selectedVideo.VideoSource == VideoSource.Twitch)
+            if (this._selectedVideo.VideoSource == VideoSource.Twitch)
                 return;
 
             if (lFileSize.InvokeRequired)
@@ -338,7 +338,7 @@ namespace YouTube_Downloader
             }
             else
             {
-                selectedVideo = videoInfo;
+                _selectedVideo = videoInfo;
 
                 videoInfo.FileSizeUpdated += videoInfo_FileSizeUpdated;
 
@@ -417,7 +417,7 @@ namespace YouTube_Downloader
                 lvPlaylistVideos.UseWaitCursor = true;
 
                 // Save playlist url
-                settings.LastPlaylistUrl = txtPlaylistLink.Text;
+                _settings.LastPlaylistUrl = txtPlaylistLink.Text;
             }
             else if (btnGetPlaylist.Text == "Cancel")
             {
@@ -507,17 +507,17 @@ namespace YouTube_Downloader
 
         private void cbPlaylistSaveTo_SelectedIndexChanged(object sender, EventArgs e)
         {
-            settings.SelectedDirectoryPlaylist = cbPlaylistSaveTo.SelectedIndex;
+            _settings.SelectedDirectoryPlaylist = cbPlaylistSaveTo.SelectedIndex;
         }
 
         private void cbPlaylistQuality_SelectedIndexChanged(object sender, EventArgs e)
         {
-            settings.PreferredQualityPlaylist = cbPlaylistQuality.SelectedIndex;
+            _settings.PreferredQualityPlaylist = cbPlaylistQuality.SelectedIndex;
         }
 
         private void chbPlaylistDASH_CheckedChanged(object sender, EventArgs e)
         {
-            settings.UseDashPlaylist = chbPlaylistDASH.Checked;
+            _settings.UseDashPlaylist = chbPlaylistDASH.Checked;
         }
 
         private void playlistSelectAllMenuItem_Click(object sender, EventArgs e)
@@ -543,7 +543,7 @@ namespace YouTube_Downloader
             if (!cbPlaylistSaveTo.Items.Contains(path))
                 cbPlaylistSaveTo.Items.Add(path);
 
-            settings.LastPlaylistUrl = txtPlaylistLink.Text;
+            _settings.LastPlaylistUrl = txtPlaylistLink.Text;
 
             try
             {
@@ -717,10 +717,10 @@ namespace YouTube_Downloader
             {
                 if (of.ShowDialog(this) == DialogResult.OK)
                 {
-                    if (selectedVideo != null)
+                    if (_selectedVideo != null)
                     {
                         cbQuality.Items.Clear();
-                        cbQuality.Items.AddRange(this.CheckFormats(selectedVideo.Formats));
+                        cbQuality.Items.AddRange(this.CheckFormats(_selectedVideo.Formats));
                         cbQuality.SelectedIndex = cbQuality.Items.Count - 1;
                     }
                 }
@@ -1001,38 +1001,38 @@ namespace YouTube_Downloader
         {
             // Upgrade settings between new versions. 
             // More information: http://www.ngpixel.com/2011/05/05/c-keep-user-settings-between-versions/
-            if (settings.UpdateSettings)
+            if (_settings.UpdateSettings)
             {
-                settings.Upgrade();
-                settings.UpdateSettings = false;
-                settings.Save();
+                _settings.Upgrade();
+                _settings.UpdateSettings = false;
+                _settings.Save();
             }
 
             // Initialize WindowStates collection if null
-            if (settings.WindowStates == null)
+            if (_settings.WindowStates == null)
             {
-                settings.WindowStates = new WindowStates();
+                _settings.WindowStates = new WindowStates();
             }
 
             // Add WindowState for form if WindowStates doesn't have a entry for it
-            if (!settings.WindowStates.Contains(this.Name))
+            if (!_settings.WindowStates.Contains(this.Name))
             {
-                settings.WindowStates.Add(this.Name);
+                _settings.WindowStates.Add(this.Name);
             }
 
             // Restore form location, size & window state, if not null
-            settings.WindowStates[this.Name].RestoreForm(this);
+            _settings.WindowStates[this.Name].RestoreForm(this);
 
             // Initialize StringCollection if null
-            if (settings.SaveToDirectories == null)
+            if (_settings.SaveToDirectories == null)
             {
-                settings.SaveToDirectories = new System.Collections.Specialized.StringCollection();
+                _settings.SaveToDirectories = new System.Collections.Specialized.StringCollection();
             }
 
             // Copy StringCollection to string array
-            string[] directories = new string[settings.SaveToDirectories.Count];
+            string[] directories = new string[_settings.SaveToDirectories.Count];
 
-            settings.SaveToDirectories.CopyTo(directories, 0);
+            _settings.SaveToDirectories.CopyTo(directories, 0);
 
             // Add string array to ComboBoxes
             cbSaveTo.Items.AddRange(directories);
@@ -1040,20 +1040,20 @@ namespace YouTube_Downloader
 
             // Restore ComboBox.SelectedIndex if it's not empty
             if (cbSaveTo.Items.Count > 0)
-                cbSaveTo.SelectedIndex = settings.SelectedDirectory;
+                cbSaveTo.SelectedIndex = _settings.SelectedDirectory;
 
             if (cbPlaylistSaveTo.Items.Count > 0)
-                cbPlaylistSaveTo.SelectedIndex = settings.SelectedDirectoryPlaylist;
+                cbPlaylistSaveTo.SelectedIndex = _settings.SelectedDirectoryPlaylist;
 
-            cbPlaylistQuality.SelectedIndex = settings.PreferredQualityPlaylist;
+            cbPlaylistQuality.SelectedIndex = _settings.PreferredQualityPlaylist;
 
             // Restore CheckBox.Checked
-            chbAutoConvert.Checked = settings.AutoConvert;
-            chbPlaylistDASH.Checked = settings.UseDashPlaylist;
+            chbAutoConvert.Checked = _settings.AutoConvert;
+            chbPlaylistDASH.Checked = _settings.UseDashPlaylist;
 
             // Restore last used links
-            if (settings.LastYouTubeUrl != null) txtYoutubeLink.Text = settings.LastYouTubeUrl;
-            if (settings.LastPlaylistUrl != null) txtPlaylistLink.Text = settings.LastPlaylistUrl;
+            if (_settings.LastYouTubeUrl != null) txtYoutubeLink.Text = _settings.LastYouTubeUrl;
+            if (_settings.LastPlaylistUrl != null) txtPlaylistLink.Text = _settings.LastPlaylistUrl;
         }
 
         /// <summary>
