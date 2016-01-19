@@ -56,6 +56,11 @@ namespace YouTube_Downloader_DLL.Classes
             _log.AppendLine(string.Format(format, args));
         }
 
+        public void Kill()
+        {
+            _process.Kill();
+        }
+
         /// <summary>
         /// Starts the Process and logs the output, if enabled.
         /// </summary>
