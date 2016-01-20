@@ -225,13 +225,23 @@ namespace YouTube_Downloader
                     File.Delete(Path.Combine(path, filename));
                 }
 
-                var operation = new DownloadOperation(tempFormat);
+                Operation operation;
+
+                if (_selectedVideo.VideoSource == VideoSource.Twitch)
+                {
+                    operation = new TwitchOperation(tempFormat);
+                }
+                else
+                {
+                    operation = new DownloadOperation(tempFormat);
+                }
+
                 var item = new OperationListViewItem(Path.GetFileName(filename), tempFormat.VideoInfo.Url, operation);
 
                 item.Duration = Helper.FormatVideoLength(tempFormat.VideoInfo.Duration);
 
                 // Combine video and audio file size if the format is DASH and not AudioOnly
-                if (tempFormat.FormatType != FormatType.Normal && !tempFormat.AudioOnly)
+                if (_selectedVideo.VideoSource == VideoSource.YouTube && tempFormat.FormatType != FormatType.Normal && !tempFormat.AudioOnly)
                     item.FileSize = Helper.FormatFileSize(tempFormat.FileSize + Helper.GetAudioFormat(tempFormat).FileSize);
                 else
                     item.FileSize = Helper.FormatFileSize(tempFormat.FileSize);
@@ -242,13 +252,24 @@ namespace YouTube_Downloader
 
                 this.SelectOneItem(item);
 
-                if (tempFormat.AudioOnly || tempFormat.FormatType == FormatType.Normal)
-                    operation.Start(operation.Args(tempFormat.DownloadUrl, Path.Combine(path, filename)));
+                if (_selectedVideo.VideoSource == VideoSource.Twitch)
+                {
+                    operation.Start(TwitchOperation.Args(Path.Combine(path, filename),
+                        tempFormat));
+                }
                 else
                 {
-                    VideoFormat audio = Helper.GetAudioFormat(tempFormat);
+                    if (tempFormat.AudioOnly || tempFormat.FormatType == FormatType.Normal)
+                        operation.Start(DownloadOperation.Args(tempFormat.DownloadUrl,
+                            Path.Combine(path, filename)));
+                    else
+                    {
+                        VideoFormat audio = Helper.GetAudioFormat(tempFormat);
 
-                    operation.Start(operation.Args(audio.DownloadUrl, tempFormat.DownloadUrl, Path.Combine(path, filename)));
+                        operation.Start(DownloadOperation.Args(audio.DownloadUrl,
+                            tempFormat.DownloadUrl,
+                            Path.Combine(path, filename)));
+                    }
                 }
 
                 tabControl1.SelectedTab = queueTabPage;

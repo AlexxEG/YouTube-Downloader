@@ -106,7 +106,7 @@ namespace YouTube_Downloader_DLL.Classes
         /// </summary>
         public async void UpdateFileSizeAsync()
         {
-            if (this.FileSize > 0)
+            if (this.FileSize > 0 || VideoInfo.VideoSource == VideoSource.Twitch)
             {
                 // Probably already got the file size from .json file.
                 this.VideoInfo.OnFileSizeUpdated(this);

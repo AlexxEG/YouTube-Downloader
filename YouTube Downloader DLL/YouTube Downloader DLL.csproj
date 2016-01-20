@@ -49,6 +49,7 @@
     <Compile Include="Classes\Playlist.cs" />
     <Compile Include="Classes\PlaylistReader.cs" />
     <Compile Include="Classes\ProcessLogger.cs" />
+    <Compile Include="Classes\TwitchOperationProgress.cs" />
     <Compile Include="Classes\VideoFormat.cs" />
     <Compile Include="Classes\VideoInfo.cs" />
     <Compile Include="Classes\VideoSource.cs" />
@@ -65,6 +66,7 @@
     <Compile Include="Operations\OperationEventHandler.cs" />
     <Compile Include="Operations\OperationStatus.cs" />
     <Compile Include="Operations\PlaylistOperation.cs" />
+    <Compile Include="Operations\TwitchOperation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

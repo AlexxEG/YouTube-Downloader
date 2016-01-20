@@ -278,12 +278,12 @@ namespace YouTube_Downloader_DLL.Operations
             downloader.Start();
         }
 
-        public object[] Args(string url, string output)
+        public static object[] Args(string url, string output)
         {
             return new object[] { url, output };
         }
 
-        public object[] Args(string audio, string video, string output)
+        public static object[] Args(string audio, string video, string output)
         {
             return new object[] { audio, video, output };
         }
