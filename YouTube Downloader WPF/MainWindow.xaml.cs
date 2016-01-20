@@ -285,8 +285,10 @@ namespace YouTube_Downloader_WPF
                 if (File.Exists(Path.Combine(path, filename)))
                 {
                     MessageBoxResult result = MessageBox.Show(this,
-                        string.Format("File '{1}' already exists.{0}{0}Overwrite?", Environment.NewLine, filename),
-                        "Overwrite?",
+                        string.Format("File '{1}' already exists.{0}{0}Overwrite?",
+                            Environment.NewLine,
+                            filename),
+                            "Overwrite?",
                         MessageBoxButton.YesNo);
 
                     if (result == MessageBoxResult.No)
