@@ -295,20 +295,39 @@ namespace YouTube_Downloader_WPF
                     File.Delete(Path.Combine(path, filename));
                 }
 
-                var operation = new DownloadOperation(this.SelectedFormat);
+                Operation operation;
+
+                if (VideoInformation.VideoSource == VideoSource.Twitch)
+                {
+                    operation = new TwitchOperation(this.SelectedFormat);
+                }
+                else
+                {
+                    operation = new DownloadOperation(this.SelectedFormat);
+                }
 
                 operation.Completed += DownloadOperation_Completed;
 
                 this.Queue.Add(operation);
                 this.SelectOneItem(operation);
 
-                if (this.SelectedFormat.AudioOnly || this.SelectedFormat.FormatType == FormatType.Normal)
-                    operation.Start(operation.Args(this.SelectedFormat.DownloadUrl, Path.Combine(path, filename)));
+                if (VideoInformation.VideoSource == VideoSource.Twitch)
+                {
+                    operation.Start(TwitchOperation.Args(Path.Combine(path, filename), this.SelectedFormat));
+                }
                 else
                 {
-                    VideoFormat audio = Helper.GetAudioFormat(this.SelectedFormat);
+                    if (this.SelectedFormat.AudioOnly || this.SelectedFormat.FormatType == FormatType.Normal)
+                        operation.Start(DownloadOperation.Args(this.SelectedFormat.DownloadUrl,
+                            Path.Combine(path, filename)));
+                    else
+                    {
+                        VideoFormat audio = Helper.GetAudioFormat(this.SelectedFormat);
 
-                    operation.Start(operation.Args(audio.DownloadUrl, this.SelectedFormat.DownloadUrl, Path.Combine(path, filename)));
+                        operation.Start(DownloadOperation.Args(audio.DownloadUrl,
+                            this.SelectedFormat.DownloadUrl,
+                            Path.Combine(path, filename)));
+                    }
                 }
 
                 TabControl.SelectedIndex = 3;
