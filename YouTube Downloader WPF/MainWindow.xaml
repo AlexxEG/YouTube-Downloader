@@ -143,6 +143,11 @@
                                                   Mode=TwoWay}"
                               Checked="VideoFormats_CheckedUnchecked"
                               Unchecked="VideoFormats_CheckedUnchecked" />
+                    
+                    <Button Name="CheckForUpdatesButton"
+                            Content="Check for updates"
+                            Margin="0,10,0,5"
+                            Click="CheckForUpdatesButton_Click"/>
                 </StackPanel>
             </Controls:Flyout>
         </Controls:FlyoutsControl>

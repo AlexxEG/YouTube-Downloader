@@ -13,6 +13,7 @@ using System.Windows.Documents;
 using System.Windows.Interop;
 using MahApps.Metro.Controls;
 using Microsoft.Win32;
+using YouTube_Downloader_DLL;
 using YouTube_Downloader_DLL.Classes;
 using YouTube_Downloader_DLL.Dialogs;
 using YouTube_Downloader_DLL.Enums;
@@ -110,6 +111,11 @@ namespace YouTube_Downloader_WPF
         private void OptionsButton_Click(object sender, RoutedEventArgs e)
         {
             OptionsFlyout.IsOpen = true;
+        }
+
+        private void CheckForUpdatesButton_Click(object sender, RoutedEventArgs e)
+        {
+            new UpdateDownloader().ShowDialog(this);
         }
 
         private void VideoFormats_CheckedUnchecked(object sender, RoutedEventArgs e)
