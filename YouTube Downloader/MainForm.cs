@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using YouTube_Downloader.Classes;
 using YouTube_Downloader.Controls;
 using YouTube_Downloader.Properties;
+using YouTube_Downloader_DLL;
 using YouTube_Downloader_DLL.Classes;
 using YouTube_Downloader_DLL.Dialogs;
 using YouTube_Downloader_DLL.Enums;
@@ -701,6 +702,9 @@ namespace YouTube_Downloader
         MenuItem exitMenuItem;
         MenuItem toolsMenuItem;
         MenuItem optionsMenuItem;
+        MenuItem helpMenuItem;
+        MenuItem checkForUpdateMenuItem;
+        MenuItem aboutMenuItem;
 
         private void InitializeMainMenu()
         {
@@ -708,21 +712,20 @@ namespace YouTube_Downloader
             {
                 exitMenuItem = new MenuItem("&Exit", exitMenuItem_Click, Shortcut.CtrlQ)
             };
-
-            fileMenuItem = new MenuItem("&File");
-            fileMenuItem.MenuItems.AddRange(fileMenuItems);
-
             MenuItem[] toolsMenuItems = new MenuItem[]
             {
                 optionsMenuItem = new MenuItem("&Options", optionsMenuItem_Click),
             };
-
-            toolsMenuItem = new MenuItem("&Tools");
-            toolsMenuItem.MenuItems.AddRange(toolsMenuItems);
+            MenuItem[] helpMenuItems = new MenuItem[]
+            {
+                checkForUpdateMenuItem = new MenuItem("&Check for updates", checkForUpdateMenuItem_Click),
+                aboutMenuItem = new MenuItem("&About", aboutMenuItem_Click)
+            };
 
             mainMenu1 = new MainMenu();
-            mainMenu1.MenuItems.Add(fileMenuItem);
-            mainMenu1.MenuItems.Add(toolsMenuItem);
+            mainMenu1.MenuItems.Add(fileMenuItem = new MenuItem("&File", fileMenuItems));
+            mainMenu1.MenuItems.Add(toolsMenuItem = new MenuItem("&Tools", toolsMenuItems));
+            mainMenu1.MenuItems.Add(helpMenuItem = new MenuItem("&Help", helpMenuItems));
 
             this.Menu = mainMenu1;
         }
@@ -746,6 +749,16 @@ namespace YouTube_Downloader
                     }
                 }
             }
+        }
+
+        private void checkForUpdateMenuItem_Click(object sender, EventArgs e)
+        {
+            new UpdateDownloader().ShowDialog(this);
+        }
+
+        private void aboutMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
 
         #endregion
