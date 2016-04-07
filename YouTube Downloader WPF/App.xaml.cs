@@ -40,6 +40,8 @@ namespace YouTube_Downloader_WPF
         /// </summary>
         private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
+            ProcessLogger.KillAll();
+
             App.SaveException(e.Exception);
         }
 
