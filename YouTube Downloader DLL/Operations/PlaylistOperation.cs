@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using YouTube_Downloader_DLL.Classes;
@@ -42,7 +43,6 @@ namespace YouTube_Downloader_DLL.Operations
             // If one or more files fail, whole operation failed. Might handle it more
             // elegantly in the future.
             _downloaderSuccessful = false;
-            downloader.Stop(false);
         }
 
         private void downloader_CalculatedTotalFileSize(object sender, EventArgs e)
@@ -229,6 +229,7 @@ namespace YouTube_Downloader_DLL.Operations
                     while (downloader.IsBusy || downloader.IsPaused)
                         Thread.Sleep(200);
 
+                    // Download successful. Combine video & audio if download is a DASH video
                     if (_useDash && _downloaderSuccessful == true)
                     {
                         this.ReportProgress(-1, new Dictionary<string, object>()
@@ -244,6 +245,12 @@ namespace YouTube_Downloader_DLL.Operations
                             { "Text", string.Empty },
                             { "ReportsProgress", true }
                         });
+                    }
+                    // Download failed, cleanup and continue
+                    else if (_downloaderSuccessful == false)
+                    {
+                        // Delete all related files. Helper method will check if it exists, throwing no errors
+                        Helper.DeleteFiles(fileDownloads.Select(x => x.Path).ToArray());
                     }
 
                     // Reset before starting new download.
