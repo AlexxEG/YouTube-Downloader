@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -16,7 +17,7 @@ namespace YouTube_Downloader_DLL.Classes
     {
         public static class Commands
         {
-            public const string CombineDash = " -y -i \"{0}\" -i \"{1}\" -vcodec copy -acodec libvo_aacenc \"{2}\"";
+            public const string CombineDash = " -report -y -i \"{0}\" -i \"{1}\" -vcodec copy -acodec libvo_aacenc \"{2}\"";
             /* Convert options:
              *
              * -y  - Overwrite output file without asking
@@ -25,15 +26,16 @@ namespace YouTube_Downloader_DLL.Classes
              * -f  - Forces file format, but isn't needed if output has .mp3 extensions
              * -ab - Sets the audio bitrate
              */
-            public const string Convert = " -y -i \"{0}\" -vn -f mp3 -ab {1}k \"{2}\"";
-            public const string CropFrom = " -y -ss {0} -i \"{1}\" -acodec copy{2} \"{3}\"";
-            public const string CropFromTo = " -y -ss {0} -i \"{1}\" -to {2} -acodec copy{3} \"{4}\"";
-            public const string GetFileInfo = " -i \"{0}\"";
+            public const string Convert = " -report -y -i \"{0}\" -vn -f mp3 -ab {1}k \"{2}\"";
+            public const string CropFrom = " -report -y -ss {0} -i \"{1}\" -acodec copy{2} \"{3}\"";
+            public const string CropFromTo = " -report -y -ss {0} -i \"{1}\" -to {2} -acodec copy{3} \"{4}\"";
+            public const string GetFileInfo = " -report -i \"{0}\"";
             public const string Version = " -version";
         }
 
         private const string LogFilename = "ffmpeg-{0}.log";
-        private const string RegexFindReportFile = "^Report written to \"(.*)\"$";
+        private const string RegexFindReportFile = "Report written to \"(.*)\"";
+        private const string ReportFile = "ffreport-%t.log";
 
         /// <summary>
         /// Gets the path to FFmpeg executable.
@@ -69,8 +71,10 @@ namespace YouTube_Downloader_DLL.Classes
             if (process.ExitCode != 0)
             {
                 string reportFile = FindReportFile(lines.ToString());
+                var errors = (List<string>)CheckForErrors(reportFile);
 
-                return new FFmpegResult<bool>(process.ExitCode, CheckForErrors(reportFile));
+                if (errors[0] != "At least one output file must be specified")
+                    return new FFmpegResult<bool>(process.ExitCode, CheckForErrors(reportFile));
             }
 
             return new FFmpegResult<bool>(hasAudioStream);
@@ -241,7 +245,7 @@ namespace YouTube_Downloader_DLL.Classes
                 throw new Exception("Input & output can't be the same.");
             }
 
-            string[] argsInfo = new string[] { input, GetBitRate(input).ToString(), output };
+            string[] argsInfo = new string[] { input, GetBitRate(input).Value.ToString(), output };
             string processArgs = string.Format(Commands.Convert, argsInfo);
 
             var process = FFmpegHelper.CreateProcess(processArgs);
@@ -316,7 +320,7 @@ namespace YouTube_Downloader_DLL.Classes
         /// Creates a Process with the given arguments, then returns it after it has started.
         /// </summary>
         /// <param name="arguments">The process arguments.</param>
-        public static ProcessLogger CreateProcess(string arguments, bool noLog = false)
+        public static ProcessLogger CreateProcess(string arguments, bool noLog = false, [CallerMemberName] string caller = "")
         {
             var psi = new ProcessStartInfo(FFmpegHelper.FFmpegPath, arguments)
             {
@@ -325,10 +329,12 @@ namespace YouTube_Downloader_DLL.Classes
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 CreateNoWindow = true,
-                WindowStyle = ProcessWindowStyle.Hidden
+                WindowStyle = ProcessWindowStyle.Hidden,
+                WorkingDirectory = Common.GetLogsDirectory()
             };
+            psi.EnvironmentVariables.Add("FFREPORT", string.Format("file={0}:level=8", ReportFile));
 
-            string filename = string.Format(LogFilename, DateTime.Now.ToString("ddMMyyyy-HHmmss-fff"));
+            string filename = string.Format(LogFilename, DateTime.Now.ToString("yyyyMMdd-HHmmss-ff"));
             string fullpath = Path.Combine(Common.GetLogsDirectory(), filename);
             ProcessLogger process = null;
 
@@ -337,7 +343,7 @@ namespace YouTube_Downloader_DLL.Classes
             else
                 process = new ProcessLogger(fullpath)
                 {
-                    Header = BuildLogHeader(arguments),
+                    Header = BuildLogHeader(arguments, caller),
                     Footer = BuildLogFooter()
                 };
 
@@ -533,8 +539,7 @@ namespace YouTube_Downloader_DLL.Classes
         {
             int result = -1;
             Regex regex = new Regex(@"^Stream\s#\d:\d.*\s(\d+)\skb/s.*$", RegexOptions.Compiled);
-            string processArgs = string.Format(" -i \"{0}\"", file);
-            var process = CreateProcess(processArgs);
+            var process = CreateProcess(string.Format(Commands.GetFileInfo, file));
 
             string line = string.Empty;
             StringBuilder lines = new StringBuilder();
@@ -559,8 +564,10 @@ namespace YouTube_Downloader_DLL.Classes
             if (process.ExitCode != 0)
             {
                 string reportFile = FindReportFile(lines.ToString());
+                var errors = (List<string>)CheckForErrors(reportFile);
 
-                return new FFmpegResult<int>(process.ExitCode, CheckForErrors(reportFile));
+                if (errors[0] != "At least one output file must be specified")
+                    return new FFmpegResult<int>(process.ExitCode, CheckForErrors(reportFile));
             }
 
             return new FFmpegResult<int>(result);
@@ -573,8 +580,7 @@ namespace YouTube_Downloader_DLL.Classes
         public static FFmpegResult<TimeSpan> GetDuration(string file)
         {
             TimeSpan result = TimeSpan.Zero;
-            string processArgs = string.Format(" -i \"{0}\"", file);
-            var process = CreateProcess(processArgs);
+            var process = CreateProcess(string.Format(Commands.GetFileInfo, file));
 
             string line = string.Empty;
             StringBuilder lines = new StringBuilder();
@@ -600,8 +606,10 @@ namespace YouTube_Downloader_DLL.Classes
             if (process.ExitCode != 0)
             {
                 string reportFile = FindReportFile(lines.ToString());
+                var errors = (List<string>)CheckForErrors(reportFile);
 
-                return new FFmpegResult<TimeSpan>(process.ExitCode, CheckForErrors(reportFile));
+                if (errors[0] != "At least one output file must be specified")
+                    return new FFmpegResult<TimeSpan>(process.ExitCode, CheckForErrors(reportFile));
             }
 
             return new FFmpegResult<TimeSpan>(result);
@@ -614,8 +622,7 @@ namespace YouTube_Downloader_DLL.Classes
         public static FFmpegResult<FFmpegFileType> GetFileType(string file)
         {
             FFmpegFileType result = FFmpegFileType.Error;
-            string processArgs = string.Format(" -i \"{0}\"", file);
-            var process = CreateProcess(processArgs);
+            var process = CreateProcess(string.Format(Commands.GetFileInfo, file));
 
             string line = string.Empty;
             StringBuilder lines = new StringBuilder();
@@ -650,8 +657,10 @@ namespace YouTube_Downloader_DLL.Classes
             if (process.ExitCode != 0)
             {
                 string reportFile = FindReportFile(lines.ToString());
+                var errors = (List<string>)CheckForErrors(reportFile);
 
-                return new FFmpegResult<FFmpegFileType>(FFmpegFileType.Error, process.ExitCode, CheckForErrors(reportFile));
+                if (errors[0] != "At least one output file must be specified")
+                    return new FFmpegResult<FFmpegFileType>(FFmpegFileType.Error, process.ExitCode, CheckForErrors(reportFile));
             }
 
             return new FFmpegResult<FFmpegFileType>(result);
@@ -687,7 +696,11 @@ namespace YouTube_Downloader_DLL.Classes
         /// </summary>
         private static string FindReportFile(string lines)
         {
-            return Regex.Match(lines, RegexFindReportFile).Groups[1].Value;
+            Match m;
+            if ((m = Regex.Match(lines, RegexFindReportFile)).Success)
+                return Path.Combine(Common.GetLogsDirectory(), m.Groups[1].Value);
+
+            return string.Empty;
         }
 
         /// <summary>
@@ -742,11 +755,12 @@ namespace YouTube_Downloader_DLL.Classes
         /// Writes log header to log.
         /// </summary>
         /// <param name="arguments">The arguments to log in header.</param>
-        private static string BuildLogHeader(string arguments)
+        private static string BuildLogHeader(string arguments, string caller)
         {
             var sb = new StringBuilder();
 
             sb.AppendLine("[" + DateTime.Now + "]");
+            sb.AppendLine("caller: " + caller);
             sb.AppendLine("cmd: " + arguments);
             sb.AppendLine();
             sb.AppendLine("OUTPUT");

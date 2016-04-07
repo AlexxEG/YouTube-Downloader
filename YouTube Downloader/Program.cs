@@ -40,6 +40,8 @@ namespace YouTube_Downloader
         /// </summary>
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
+            ProcessLogger.KillAll();
+
             Common.SaveException((Exception)e.ExceptionObject);
         }
     }

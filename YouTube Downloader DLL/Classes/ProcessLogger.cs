@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace YouTube_Downloader_DLL.Classes
 {
@@ -10,9 +13,13 @@ namespace YouTube_Downloader_DLL.Classes
     /// </summary>
     public class ProcessLogger
     {
+        public static List<ProcessLogger> ActiveLoggers = new List<ProcessLogger>();
+
+        private bool _exited = false;
+        private bool _finished = false;
         private Encoding _logEncoding = Encoding.UTF8;
         private Process _process;
-        private StringBuilder _log;
+        private StreamWriter _log;
 
         public int ExitCode
         {
@@ -37,10 +44,15 @@ namespace YouTube_Downloader_DLL.Classes
 
         public ProcessLogger(string logFile)
         {
-            _log = new StringBuilder();
+            this.LogFile = logFile;
+
+            _log = new StreamWriter(new FileStream(this.LogFile, FileMode.Create, FileAccess.Write))
+            {
+                AutoFlush = true
+            };
             _process = new Process();
 
-            this.LogFile = logFile;
+            ProcessLogger.ActiveLoggers.Add(this);
         }
 
         public void Log(string line)
@@ -53,12 +65,13 @@ namespace YouTube_Downloader_DLL.Classes
             if (_log == null)
                 return;
 
-            _log.AppendLine(string.Format(format, args));
+            _log.WriteLine(string.Format(format, args));
         }
 
         public void Kill()
         {
-            _process.Kill();
+            if (!_process.HasExited)
+                _process.Kill();
         }
 
         /// <summary>
@@ -76,14 +89,26 @@ namespace YouTube_Downloader_DLL.Classes
 
         public void WaitForExit()
         {
-            _process.WaitForExit();
+            // Process has already exited, return immediately
+            if (_process.HasExited)
+                return;
+
+            // If log is disabled just wait for Process normally, since we
+            // don't have to wait for footer to be logged
+            if (_log == null)
+                _process.WaitForExit();
+
+            // Wait for 'WaitForExitAsync' to set '_exited' to true,
+            // which makes sure footer is written before closing stream
+            while (!_exited)
+                Thread.Sleep(200);
         }
 
         public string ReadLineError()
         {
             string line = _process.StandardError.ReadLine();
 
-            if (!string.IsNullOrEmpty(line))
+            if (line != null)
                 this.Log(line);
 
             return line;
@@ -99,33 +124,42 @@ namespace YouTube_Downloader_DLL.Classes
             return line;
         }
 
-        /// <summary>
-        /// Invokes the callback when process is done.
-        /// </summary>
-        public async void WaitForExitAsync(Action callback)
+        private void Finish()
         {
-            await System.Threading.Tasks.Task.Run(delegate
-            {
-                _process.WaitForExit();
-            });
-            callback.Invoke();
+            if (_finished)
+                return;
+
+            _finished = true;
+
+            this.Log(this.Footer);
+
+            _log.Flush();
+            _log.Close();
+
+            _exited = true;
+
+            ProcessLogger.ActiveLoggers.Remove(this);
         }
 
         private async void WaitForExitAsync()
         {
-            await System.Threading.Tasks.Task.Run(delegate
+            await Task.Run(delegate
             {
                 _process.WaitForExit();
             });
 
-            this.Log(this.Footer);
+            this.Finish();
+        }
 
-            using (var logger = new FileStream(this.LogFile, FileMode.Append, FileAccess.Write, FileShare.ReadWrite))
+        public static void KillAll()
+        {
+            ProcessLogger[] loggers = new ProcessLogger[ActiveLoggers.Count];
+            ActiveLoggers.CopyTo(loggers);
+
+            foreach (ProcessLogger pl in loggers)
             {
-                byte[] bytes = _logEncoding.GetBytes(_log.ToString());
-
-                logger.Write(bytes, 0, bytes.Length);
-                logger.Flush();
+                pl.Kill();
+                pl.Finish();
             }
         }
     }
