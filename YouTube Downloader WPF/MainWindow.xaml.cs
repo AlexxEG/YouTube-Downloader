@@ -456,6 +456,10 @@ namespace YouTube_Downloader_WPF
         {
             this.EnablePlaylistControls = false;
 
+            // Reset playlist variables
+            _playlistName = string.Empty;
+            this.PlaylistItems.Clear();
+
             _backgroundWorkerPlaylist = new BackgroundWorker()
             {
                 WorkerReportsProgress = true,
