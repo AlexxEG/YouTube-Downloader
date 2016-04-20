@@ -453,6 +453,9 @@ namespace YouTube_Downloader
             PlaylistReader reader = new PlaylistReader(playlistUrl);
             VideoInfo video;
 
+            // Set playlist list's Tag property to Playlist object
+            _backgroundWorkerPlaylist.ReportProgress(1, reader.Playlist);
+
             while ((video = reader.Next()) != null)
             {
                 if (_backgroundWorkerPlaylist.CancellationPending)
@@ -466,7 +469,7 @@ namespace YouTube_Downloader
                 item.Checked = true;
                 item.Tag = video;
 
-                _backgroundWorkerPlaylist.ReportProgress(1, item);
+                _backgroundWorkerPlaylist.ReportProgress(2, item);
             }
 
             e.Result = true;
@@ -474,10 +477,18 @@ namespace YouTube_Downloader
 
         private void _backgroundWorkerPlaylist_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            ListViewItem item = e.UserState as ListViewItem;
+            switch (e.ProgressPercentage)
+            {
+                case 1:
+                    lvPlaylistVideos.Tag = e.UserState as Playlist;
+                    break;
+                case 2:
+                    ListViewItem item = e.UserState as ListViewItem;
 
-            lvPlaylistVideos.Items.Add(item);
-            lvPlaylistVideos.TopItem = item;
+                    lvPlaylistVideos.Items.Add(item);
+                    lvPlaylistVideos.TopItem = item;
+                    break;
+            }
         }
 
         private void _backgroundWorkerPlaylist_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -580,6 +591,7 @@ namespace YouTube_Downloader
                                     path,
                                     chbPlaylistDASH.Checked,
                                     Settings.Default.PreferredQualityPlaylist,
+                                    (lvPlaylistVideos.Tag as Playlist).Name,
                                     videos)
                                 );
 

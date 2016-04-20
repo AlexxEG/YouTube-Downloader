@@ -398,6 +398,7 @@ namespace YouTube_Downloader_WPF
         bool _canDownloadPlaylist = false;
         bool _enablePlaylistControls = true;
         bool _isPlaylistLinkValid = false;
+        string _playlistName = string.Empty;
 
         BackgroundWorker _backgroundWorkerPlaylist;
 
@@ -535,6 +536,8 @@ namespace YouTube_Downloader_WPF
             PlaylistReader reader = new PlaylistReader(playlistUrl);
             VideoInfo video;
 
+            _playlistName = reader.Playlist.Name;
+
             while ((video = reader.Next()) != null)
             {
                 if (_backgroundWorkerPlaylist.CancellationPending)
@@ -597,6 +600,7 @@ namespace YouTube_Downloader_WPF
                                     path,
                                     settings.UseDashPlaylist,
                                     Settings.Default.PreferredQualityPlaylist,
+                                    _playlistName,
                                     videos)
                                 );
 

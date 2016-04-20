@@ -12,11 +12,13 @@ namespace YouTube_Downloader_DLL.Operations
 {
     public class PlaylistOperation : Operation
     {
+        int _failures = 0;
         int _preferredQuality;
         bool _combining, _processing, _useDash;
         bool? _downloaderSuccessful;
         FileDownloader downloader;
 
+        public string PlaylistName { get; private set; }
         public List<string> DownloadedFiles { get; set; }
         public List<VideoInfo> Videos { get; set; }
 
@@ -155,7 +157,23 @@ namespace YouTube_Downloader_DLL.Operations
 
         #endregion
 
-        protected override void WorkerCompleted(RunWorkerCompletedEventArgs e) { }
+        protected override void WorkerCompleted(RunWorkerCompletedEventArgs e)
+        {
+            if (_failures == 0)
+            {
+                this.Title = string.Format("Downloaded \"{0}\" playlist. {1} videos",
+                                        this.PlaylistName,
+                                        this.Videos.Count);
+            }
+            else
+            {
+                this.Title = string.Format("Downloaded \"{0}\" playlist. {1} of {2} videos, {3} failed",
+                                        this.PlaylistName,
+                                        this.Videos.Count - _failures,
+                                        this.Videos.Count,
+                                        _failures);
+            }
+        }
 
         protected override void WorkerDoWork(DoWorkEventArgs e)
         {
@@ -164,7 +182,7 @@ namespace YouTube_Downloader_DLL.Operations
                 int count = 0;
 
                 if (this.Videos.Count == 0)
-                    this.Videos.AddRange(this.GetVideosFromInput());
+                    this.GetPlaylistInfo();
 
                 foreach (VideoInfo video in this.Videos)
                 {
@@ -239,6 +257,7 @@ namespace YouTube_Downloader_DLL.Operations
                     // Download failed, cleanup and continue
                     else if (_downloaderSuccessful == false)
                     {
+                        _failures++;
                         // Delete all related files. Helper method will check if it exists, throwing no errors
                         Helper.DeleteFiles(fileDownloads.Select(x => x.Path).ToArray());
                     }
@@ -274,7 +293,7 @@ namespace YouTube_Downloader_DLL.Operations
 
         protected override void WorkerStart(object[] args)
         {
-            if (!(args.Length == 4 || args.Length == 5))
+            if (!(args.Length == 4 || args.Length == 6))
                 throw new ArgumentException();
 
             // Temporary title.
@@ -288,8 +307,11 @@ namespace YouTube_Downloader_DLL.Operations
             _useDash = (bool)args[2];
             _preferredQuality = (int)args[3];
 
-            if (args.Length == 4)
-                this.Videos = (List<VideoInfo>)args[3];
+            if (args.Length == 6)
+            {
+                this.PlaylistName = (string)args[4];
+                this.Videos = (List<VideoInfo>)args[5];
+            }
 
             downloader = new FileDownloader();
 
@@ -330,18 +352,17 @@ namespace YouTube_Downloader_DLL.Operations
             return true;
         }
 
-        public List<VideoInfo> GetVideosFromInput()
+        public void GetPlaylistInfo()
         {
             var reader = new PlaylistReader(this.Input);
-            var videos = new List<VideoInfo>();
             VideoInfo video;
+
+            this.PlaylistName = reader.Playlist.Name;
 
             while (!this.CancellationPending && (video = reader.Next()) != null)
             {
-                videos.Add(video);
+                this.Videos.Add(video);
             }
-
-            return videos;
         }
 
         public object[] Args(string url, string output, bool dash, int preferredQuality)
@@ -349,9 +370,9 @@ namespace YouTube_Downloader_DLL.Operations
             return new object[] { url, output, dash, preferredQuality };
         }
 
-        public object[] Args(string url, string output, bool dash, int preferredQuality, ICollection<VideoInfo> videos)
+        public object[] Args(string url, string output, bool dash, int preferredQuality, string playlistName, ICollection<VideoInfo> videos)
         {
-            return new object[] { url, output, dash, preferredQuality, videos };
+            return new object[] { url, output, dash, preferredQuality, playlistName, videos };
         }
     }
 }
