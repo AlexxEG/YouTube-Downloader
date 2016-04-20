@@ -249,7 +249,7 @@ namespace YouTube_Downloader_DLL.Classes
         {
             // Write log footer to stream.
             // Possibly write elapsed time and/or error in future.
-            return Environment.NewLine;
+            return "-" + Environment.NewLine;
         }
 
         /// <summary>
