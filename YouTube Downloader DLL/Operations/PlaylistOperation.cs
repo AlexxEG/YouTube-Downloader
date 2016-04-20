@@ -162,19 +162,9 @@ namespace YouTube_Downloader_DLL.Operations
             try
             {
                 int count = 0;
-                PlaylistReader reader = new PlaylistReader(this.Input);
 
-                this.Videos = new List<VideoInfo>();
-
-                // Populate 'Videos' list
-                {
-                    VideoInfo video;
-
-                    while (!this.CancellationPending && (video = reader.Next()) != null)
-                    {
-                        this.Videos.Add(video);
-                    }
-                }
+                if (this.Videos.Count == 0)
+                    this.Videos.AddRange(this.GetVideosFromInput());
 
                 foreach (VideoInfo video in this.Videos)
                 {
@@ -338,6 +328,20 @@ namespace YouTube_Downloader_DLL.Operations
             }
 
             return true;
+        }
+
+        public List<VideoInfo> GetVideosFromInput()
+        {
+            var reader = new PlaylistReader(this.Input);
+            var videos = new List<VideoInfo>();
+            VideoInfo video;
+
+            while (!this.CancellationPending && (video = reader.Next()) != null)
+            {
+                videos.Add(video);
+            }
+
+            return videos;
         }
 
         public object[] Args(string url, string output, bool dash, int preferredQuality)
