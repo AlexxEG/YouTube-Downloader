@@ -46,7 +46,7 @@ namespace YouTube_Downloader_DLL.Classes
         {
             this.LogFile = logFile;
 
-            _log = new StreamWriter(new FileStream(this.LogFile, FileMode.Create, FileAccess.Write))
+            _log = new StreamWriter(new FileStream(this.LogFile, FileMode.Append, FileAccess.Write))
             {
                 AutoFlush = true
             };
