@@ -591,6 +591,7 @@ namespace YouTube_Downloader
 
                 this.SelectOneItem(item);
 
+                operation.FileDownloadComplete += playlistOperation_FileDownloadComplete;
                 operation.Start(operation.Args(txtPlaylistLink.Text,
                                     path,
                                     chbPlaylistDASH.Checked,
@@ -604,6 +605,17 @@ namespace YouTube_Downloader
             catch (Exception ex)
             {
                 MessageBox.Show(this, ex.Message, ex.Source, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void playlistOperation_FileDownloadComplete(object sender, string file)
+        {
+            if (chbAutoConvert.Enabled && chbAutoConvert.Checked)
+            {
+                string output = Path.Combine(Path.GetDirectoryName(file),
+                    Path.GetFileNameWithoutExtension(file)) + ".mp3";
+
+                this.Convert(file, output, false);
             }
         }
 
