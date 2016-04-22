@@ -22,6 +22,8 @@ namespace YouTube_Downloader_DLL.Operations
         public List<string> DownloadedFiles { get; set; }
         public List<VideoInfo> Videos { get; set; }
 
+        public event EventHandler<string> FileDownloadComplete;
+
         public PlaylistOperation()
         {
             this.DownloadedFiles = new List<string>();
@@ -238,21 +240,26 @@ namespace YouTube_Downloader_DLL.Operations
                         Thread.Sleep(200);
 
                     // Download successful. Combine video & audio if download is a DASH video
-                    if (_useDash && _downloaderSuccessful == true)
+                    if (_downloaderSuccessful == true)
                     {
-                        this.ReportProgress(-1, new Dictionary<string, object>()
+                        if (_useDash)
                         {
-                            { "Text", "Combining..." },
-                            { "ReportsProgress", false }
-                        });
+                            this.ReportProgress(-1, new Dictionary<string, object>()
+                            {
+                                { "Text", "Combining..." },
+                                { "ReportsProgress", false }
+                            });
 
-                        this.Combine();
+                            this.Combine();
 
-                        this.ReportProgress(-1, new Dictionary<string, object>()
-                        {
-                            { "Text", string.Empty },
-                            { "ReportsProgress", true }
-                        });
+                            this.ReportProgress(-1, new Dictionary<string, object>()
+                            {
+                                { "Text", string.Empty },
+                                { "ReportsProgress", true }
+                            });
+                        }
+
+                        this.ReportProgress(1000, finalFile);
                     }
                     // Download failed, cleanup and continue
                     else if (_downloaderSuccessful == false)
@@ -288,6 +295,10 @@ namespace YouTube_Downloader_DLL.Operations
                 {
                     this.GetType().GetProperty(pair.Key).SetValue(this, pair.Value);
                 }
+            }
+            else if (e.ProgressPercentage == 1000) // FileDownloadComplete
+            {
+                OnFileDownloadComplete(e.UserState as string);
             }
         }
 
@@ -350,6 +361,11 @@ namespace YouTube_Downloader_DLL.Operations
             }
 
             return true;
+        }
+
+        private void OnFileDownloadComplete(string file)
+        {
+            FileDownloadComplete?.Invoke(this, file);
         }
 
         public void GetPlaylistInfo()
