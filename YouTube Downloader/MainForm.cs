@@ -386,7 +386,7 @@ namespace YouTube_Downloader
 
         private void downloadItem_OperationComplete(object sender, OperationEventArgs e)
         {
-            Operation operation = (sender as OperationListViewItem).Operation;
+            var operation = (sender as OperationListViewItem).Operation;
 
             if (chbAutoConvert.Enabled && chbAutoConvert.Checked && operation.Status == OperationStatus.Success)
             {
@@ -611,15 +611,26 @@ namespace YouTube_Downloader
 
         #region Convert Tab
 
-        private void btnBrowseInput_Click(object sender, EventArgs e)
+        OpenFolderDialog openFolderDialog = new OpenFolderDialog();
+
+        private void ConvertRadioButtons_CheckedChanged(object sender, EventArgs e)
         {
-            openFileDialog1.FileName = Path.GetFileName(txtInput.Text);
+            pConvertFile.Visible = rbConvertFile.Checked;
+            pConvertFolder.Visible = rbConvertFolder.Checked;
+
+            // Disable cropping tool when selecting folder
+            gCropping.Enabled = rbConvertFile.Checked;
+        }
+
+        private void btnBrowseInputFile_Click(object sender, EventArgs e)
+        {
+            openFileDialog1.FileName = Path.GetFileName(txtInputFile.Text);
 
             if (openFileDialog1.ShowDialog(this) == DialogResult.OK)
             {
-                txtInput.Text = openFileDialog1.FileName;
+                txtInputFile.Text = openFileDialog1.FileName;
 
-                if (txtOutput.Text == string.Empty)
+                if (txtOutputFile.Text == string.Empty)
                 {
                     // Suggest file name
                     string output = Path.GetDirectoryName(openFileDialog1.FileName);
@@ -627,63 +638,104 @@ namespace YouTube_Downloader
                     output = Path.Combine(output, Path.GetFileNameWithoutExtension(openFileDialog1.FileName));
                     output += ".mp3";
 
-                    txtOutput.Text = output;
+                    txtOutputFile.Text = output;
                 }
             }
         }
 
-        private void btnBrowseOutput_Click(object sender, EventArgs e)
+        private void btnBrowseOutputFile_Click(object sender, EventArgs e)
         {
-            if (File.Exists(txtInput.Text))
+            if (File.Exists(txtInputFile.Text))
             {
-                saveFileDialog1.FileName = Path.GetFileName(txtInput.Text);
+                saveFileDialog1.FileName = Path.GetFileName(txtInputFile.Text);
             }
             else
             {
-                saveFileDialog1.FileName = Path.GetFileName(txtOutput.Text);
+                saveFileDialog1.FileName = Path.GetFileName(txtOutputFile.Text);
             }
 
             if (saveFileDialog1.ShowDialog(this) == DialogResult.OK)
             {
-                txtOutput.Text = saveFileDialog1.FileName;
+                txtOutputFile.Text = saveFileDialog1.FileName;
+            }
+        }
+
+        private void btnBrowseInputFolder_Click(object sender, EventArgs e)
+        {
+            openFolderDialog.InitialFolder = Path.GetFileName(txtInputFolder.Text);
+
+            if (openFolderDialog.ShowDialog(this) == DialogResult.OK)
+            {
+                txtInputFolder.Text = openFolderDialog.Folder;
+
+                if (string.IsNullOrEmpty(txtOutputFolder.Text))
+                {
+                    // Suggest output path
+                    txtOutputFolder.Text = txtInputFolder.Text;
+                }
+            }
+        }
+
+        private void btnBrowseOutputFolder_Click(object sender, EventArgs e)
+        {
+            openFolderDialog.InitialFolder = Path.GetFileName(txtOutputFolder.Text);
+
+            if (openFolderDialog.ShowDialog(this) == DialogResult.OK)
+            {
+                txtOutputFolder.Text = openFolderDialog.Folder;
             }
         }
 
         private void btnConvert_Click(object sender, EventArgs e)
         {
-            if (!FFmpegHelper.CanConvertToMP3(txtInput.Text).Value)
+            if (rbConvertFile.Checked)
             {
-                string text = "Can't convert input file to MP3. File doesn't appear to have audio.";
-
-                MessageBox.Show(this, text, "Missing Audio", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            if (File.Exists(txtOutput.Text))
-            {
-                string filename = Path.GetFileName(txtOutput.Text);
-                string text = "File '" + filename + "' already exists.\n\nOverwrite?";
-
-                if (MessageBox.Show(this, text, "Overwrite", MessageBoxButtons.YesNo) == DialogResult.No)
+                if (!FFmpegHelper.CanConvertToMP3(txtInputFile.Text).Value)
                 {
+                    string text = "Can't convert input file to MP3. File doesn't appear to have audio.";
+
+                    MessageBox.Show(this, text, "Missing Audio", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
-            }
+                if (File.Exists(txtOutputFile.Text))
+                {
+                    string filename = Path.GetFileName(txtOutputFile.Text);
+                    string text = "File '" + filename + "' already exists.\n\nOverwrite?";
 
-            if (txtInput.Text == txtOutput.Text ||
-                // If they match, the user probably wants to crop. Right?
-                Path.GetExtension(txtInput.Text) == Path.GetExtension(txtOutput.Text))
-            {
-                this.Crop(txtInput.Text, txtOutput.Text);
+                    if (MessageBox.Show(this, text, "Overwrite", MessageBoxButtons.YesNo) == DialogResult.No)
+                    {
+                        return;
+                    }
+
+                }
+
+                if (txtInputFile.Text == txtOutputFile.Text ||
+                    // If they match, the user probably wants to crop. Right?
+                    Path.GetExtension(txtInputFile.Text) == Path.GetExtension(txtOutputFile.Text))
+                {
+                    this.Crop(txtInputFile.Text, txtOutputFile.Text);
+                }
+                else
+                {
+                    this.Convert(txtInputFile.Text, txtOutputFile.Text, true);
+                }
+
+                txtInputFile.Clear();
+                txtOutputFile.Clear();
             }
             else
             {
-                this.Convert(txtInput.Text, txtOutput.Text, true);
-            }
+                if (!Directory.Exists(txtInputFolder.Text))
+                    Directory.CreateDirectory(txtInputFolder.Text);
 
-            txtInput.Clear();
-            txtOutput.Clear();
+                if (!Directory.Exists(txtOutputFolder.Text))
+                    Directory.CreateDirectory(txtOutputFolder.Text);
+
+                this.ConvertFolder(txtInputFolder.Text,
+                                   txtOutputFolder.Text,
+                                   txtExtension.Text.TrimStart('.'));
+            }
 
             tabControl1.SelectedTab = queueTabPage;
         }
@@ -876,8 +928,8 @@ namespace YouTube_Downloader
                     string input = (operation as DownloadOperation).Output;
                     string output = Path.GetDirectoryName(input) + "\\" + Path.GetFileNameWithoutExtension(input) + ".mp3";
 
-                    txtInput.Text = input;
-                    txtOutput.Text = output;
+                    txtInputFile.Text = input;
+                    txtOutputFile.Text = output;
                     tabControl1.SelectedTab = convertTabPage;
                     break;
                 }
@@ -997,6 +1049,26 @@ namespace YouTube_Downloader
             this.SelectOneItem(item);
 
             operation.Start(operation.Args(input, output, start, end));
+        }
+
+        /// <summary>
+        /// Starts a ConvertOperation to convert all files in folder, matching extension.
+        /// </summary>
+        /// <param name="input">The folder to convert files from.</param>
+        /// <param name="output">The output folder, where all converted files will be placed.</param>
+        /// <param name="extension">The extension to match.</param>
+        private void ConvertFolder(string input, string output, string extension)
+        {
+            var operation = new ConvertOperation();
+            var item = new OperationListViewItem(Path.GetFileName(output), input, Path.GetFileName(input), operation);
+
+            item.WorkingText = "Converting";
+
+            lvQueue.Items.Add(item);
+
+            this.SelectOneItem(item);
+
+            operation.Start(operation.Args(input, output, extension));
         }
 
         /// <summary>

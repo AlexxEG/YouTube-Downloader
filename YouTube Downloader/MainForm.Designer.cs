@@ -80,25 +80,31 @@
             this.btnCheckAgain = new System.Windows.Forms.Button();
             this.lFFmpegMissing = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.btnBrowseOutput = new System.Windows.Forms.Button();
-            this.btnBrowseInput = new System.Windows.Forms.Button();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.rbConvertFolder = new System.Windows.Forms.RadioButton();
+            this.rbConvertFile = new System.Windows.Forms.RadioButton();
+            this.pConvertFolder = new System.Windows.Forms.Panel();
+            this.label7 = new System.Windows.Forms.Label();
+            this.btnBrowseOutputFolder = new System.Windows.Forms.Button();
+            this.txtInputFolder = new System.Windows.Forms.TextBox();
+            this.btnBrowseInputFolder = new System.Windows.Forms.Button();
+            this.label8 = new System.Windows.Forms.Label();
+            this.txtOutputFolder = new System.Windows.Forms.TextBox();
+            this.pConvertFile = new System.Windows.Forms.Panel();
+            this.label5 = new System.Windows.Forms.Label();
+            this.btnBrowseOutputFile = new System.Windows.Forms.Button();
+            this.txtInputFile = new System.Windows.Forms.TextBox();
+            this.btnBrowseInputFile = new System.Windows.Forms.Button();
+            this.label6 = new System.Windows.Forms.Label();
+            this.txtOutputFile = new System.Windows.Forms.TextBox();
+            this.gCropping = new System.Windows.Forms.GroupBox();
             this.chbCropFrom = new System.Windows.Forms.CheckBox();
             this.mtxtTo = new System.Windows.Forms.MaskedTextBox();
             this.chbCropTo = new System.Windows.Forms.CheckBox();
             this.mtxtFrom = new System.Windows.Forms.MaskedTextBox();
             this.btnConvert = new System.Windows.Forms.Button();
-            this.txtOutput = new System.Windows.Forms.TextBox();
-            this.label6 = new System.Windows.Forms.Label();
-            this.txtInput = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
             this.queueTabPage = new System.Windows.Forms.TabPage();
             this.chbAutoConvert = new System.Windows.Forms.CheckBox();
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.cmPlaylistList = new System.Windows.Forms.ContextMenu();
-            this.playlistSelectAllMenuItem = new System.Windows.Forms.MenuItem();
-            this.playlistSelectNoneMenuItem = new System.Windows.Forms.MenuItem();
             this.lvQueue = new ListViewEmbeddedControls.ListViewEx();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -106,6 +112,13 @@
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.cmPlaylistList = new System.Windows.Forms.ContextMenu();
+            this.playlistSelectAllMenuItem = new System.Windows.Forms.MenuItem();
+            this.playlistSelectNoneMenuItem = new System.Windows.Forms.MenuItem();
+            this.txtExtension = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.bottomPanel.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -116,7 +129,10 @@
             this.groupBox7.SuspendLayout();
             this.convertTabPage.SuspendLayout();
             this.groupBox2.SuspendLayout();
-            this.groupBox4.SuspendLayout();
+            this.groupBox5.SuspendLayout();
+            this.pConvertFolder.SuspendLayout();
+            this.pConvertFile.SuspendLayout();
+            this.gCropping.SuspendLayout();
             this.queueTabPage.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -647,14 +663,9 @@
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox2.Controls.Add(this.btnBrowseOutput);
-            this.groupBox2.Controls.Add(this.btnBrowseInput);
-            this.groupBox2.Controls.Add(this.groupBox4);
+            this.groupBox2.Controls.Add(this.groupBox5);
+            this.groupBox2.Controls.Add(this.gCropping);
             this.groupBox2.Controls.Add(this.btnConvert);
-            this.groupBox2.Controls.Add(this.txtOutput);
-            this.groupBox2.Controls.Add(this.label6);
-            this.groupBox2.Controls.Add(this.txtInput);
-            this.groupBox2.Controls.Add(this.label5);
             this.groupBox2.Location = new System.Drawing.Point(6, 6);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(584, 204);
@@ -662,41 +673,216 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Convert to MP3";
             // 
-            // btnBrowseOutput
+            // groupBox5
             // 
-            this.btnBrowseOutput.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBrowseOutput.Location = new System.Drawing.Point(554, 44);
-            this.btnBrowseOutput.Name = "btnBrowseOutput";
-            this.btnBrowseOutput.Size = new System.Drawing.Size(24, 22);
-            this.btnBrowseOutput.TabIndex = 7;
-            this.btnBrowseOutput.Text = "...";
-            this.btnBrowseOutput.UseVisualStyleBackColor = true;
-            this.btnBrowseOutput.Click += new System.EventHandler(this.btnBrowseOutput_Click);
+            this.groupBox5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox5.Controls.Add(this.rbConvertFolder);
+            this.groupBox5.Controls.Add(this.rbConvertFile);
+            this.groupBox5.Controls.Add(this.pConvertFolder);
+            this.groupBox5.Controls.Add(this.pConvertFile);
+            this.groupBox5.Location = new System.Drawing.Point(6, 19);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(572, 109);
+            this.groupBox5.TabIndex = 8;
+            this.groupBox5.TabStop = false;
             // 
-            // btnBrowseInput
+            // rbConvertFolder
             // 
-            this.btnBrowseInput.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBrowseInput.Location = new System.Drawing.Point(554, 18);
-            this.btnBrowseInput.Name = "btnBrowseInput";
-            this.btnBrowseInput.Size = new System.Drawing.Size(24, 22);
-            this.btnBrowseInput.TabIndex = 6;
-            this.btnBrowseInput.Text = "...";
-            this.btnBrowseInput.UseVisualStyleBackColor = true;
-            this.btnBrowseInput.Click += new System.EventHandler(this.btnBrowseInput_Click);
+            this.rbConvertFolder.AutoSize = true;
+            this.rbConvertFolder.BackColor = System.Drawing.SystemColors.Window;
+            this.rbConvertFolder.Location = new System.Drawing.Point(55, -2);
+            this.rbConvertFolder.Name = "rbConvertFolder";
+            this.rbConvertFolder.Size = new System.Drawing.Size(54, 17);
+            this.rbConvertFolder.TabIndex = 1;
+            this.rbConvertFolder.Text = "Folder";
+            this.rbConvertFolder.UseVisualStyleBackColor = false;
+            this.rbConvertFolder.CheckedChanged += new System.EventHandler(this.ConvertRadioButtons_CheckedChanged);
             // 
-            // groupBox4
+            // rbConvertFile
             // 
-            this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.groupBox4.Controls.Add(this.chbCropFrom);
-            this.groupBox4.Controls.Add(this.mtxtTo);
-            this.groupBox4.Controls.Add(this.chbCropTo);
-            this.groupBox4.Controls.Add(this.mtxtFrom);
-            this.groupBox4.Location = new System.Drawing.Point(6, 134);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(372, 64);
-            this.groupBox4.TabIndex = 5;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Crop";
+            this.rbConvertFile.AutoSize = true;
+            this.rbConvertFile.BackColor = System.Drawing.SystemColors.Window;
+            this.rbConvertFile.Checked = true;
+            this.rbConvertFile.Location = new System.Drawing.Point(8, -2);
+            this.rbConvertFile.Name = "rbConvertFile";
+            this.rbConvertFile.Size = new System.Drawing.Size(41, 17);
+            this.rbConvertFile.TabIndex = 0;
+            this.rbConvertFile.TabStop = true;
+            this.rbConvertFile.Text = "File";
+            this.rbConvertFile.UseVisualStyleBackColor = false;
+            this.rbConvertFile.CheckedChanged += new System.EventHandler(this.ConvertRadioButtons_CheckedChanged);
+            // 
+            // pConvertFolder
+            // 
+            this.pConvertFolder.Controls.Add(this.label9);
+            this.pConvertFolder.Controls.Add(this.txtExtension);
+            this.pConvertFolder.Controls.Add(this.label7);
+            this.pConvertFolder.Controls.Add(this.btnBrowseOutputFolder);
+            this.pConvertFolder.Controls.Add(this.txtInputFolder);
+            this.pConvertFolder.Controls.Add(this.btnBrowseInputFolder);
+            this.pConvertFolder.Controls.Add(this.label8);
+            this.pConvertFolder.Controls.Add(this.txtOutputFolder);
+            this.pConvertFolder.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pConvertFolder.Location = new System.Drawing.Point(3, 16);
+            this.pConvertFolder.Name = "pConvertFolder";
+            this.pConvertFolder.Padding = new System.Windows.Forms.Padding(3);
+            this.pConvertFolder.Size = new System.Drawing.Size(566, 90);
+            this.pConvertFolder.TabIndex = 3;
+            this.pConvertFolder.Visible = false;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(6, 9);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(31, 13);
+            this.label7.TabIndex = 8;
+            this.label7.Text = "Input";
+            // 
+            // btnBrowseOutputFolder
+            // 
+            this.btnBrowseOutputFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBrowseOutputFolder.Location = new System.Drawing.Point(536, 31);
+            this.btnBrowseOutputFolder.Name = "btnBrowseOutputFolder";
+            this.btnBrowseOutputFolder.Size = new System.Drawing.Size(24, 22);
+            this.btnBrowseOutputFolder.TabIndex = 13;
+            this.btnBrowseOutputFolder.Text = "...";
+            this.btnBrowseOutputFolder.UseVisualStyleBackColor = true;
+            this.btnBrowseOutputFolder.Click += new System.EventHandler(this.btnBrowseOutputFolder_Click);
+            // 
+            // txtInputFolder
+            // 
+            this.txtInputFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtInputFolder.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.txtInputFolder.Location = new System.Drawing.Point(51, 6);
+            this.txtInputFolder.Name = "txtInputFolder";
+            this.txtInputFolder.ReadOnly = true;
+            this.txtInputFolder.Size = new System.Drawing.Size(479, 20);
+            this.txtInputFolder.TabIndex = 10;
+            // 
+            // btnBrowseInputFolder
+            // 
+            this.btnBrowseInputFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBrowseInputFolder.Location = new System.Drawing.Point(536, 5);
+            this.btnBrowseInputFolder.Name = "btnBrowseInputFolder";
+            this.btnBrowseInputFolder.Size = new System.Drawing.Size(24, 22);
+            this.btnBrowseInputFolder.TabIndex = 12;
+            this.btnBrowseInputFolder.Text = "...";
+            this.btnBrowseInputFolder.UseVisualStyleBackColor = true;
+            this.btnBrowseInputFolder.Click += new System.EventHandler(this.btnBrowseInputFolder_Click);
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(6, 35);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(39, 13);
+            this.label8.TabIndex = 9;
+            this.label8.Text = "Output";
+            // 
+            // txtOutputFolder
+            // 
+            this.txtOutputFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtOutputFolder.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.txtOutputFolder.Location = new System.Drawing.Point(51, 32);
+            this.txtOutputFolder.Name = "txtOutputFolder";
+            this.txtOutputFolder.ReadOnly = true;
+            this.txtOutputFolder.Size = new System.Drawing.Size(479, 20);
+            this.txtOutputFolder.TabIndex = 11;
+            // 
+            // pConvertFile
+            // 
+            this.pConvertFile.Controls.Add(this.label5);
+            this.pConvertFile.Controls.Add(this.btnBrowseOutputFile);
+            this.pConvertFile.Controls.Add(this.txtInputFile);
+            this.pConvertFile.Controls.Add(this.btnBrowseInputFile);
+            this.pConvertFile.Controls.Add(this.label6);
+            this.pConvertFile.Controls.Add(this.txtOutputFile);
+            this.pConvertFile.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pConvertFile.Location = new System.Drawing.Point(3, 16);
+            this.pConvertFile.Name = "pConvertFile";
+            this.pConvertFile.Padding = new System.Windows.Forms.Padding(3);
+            this.pConvertFile.Size = new System.Drawing.Size(566, 90);
+            this.pConvertFile.TabIndex = 2;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(6, 9);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(31, 13);
+            this.label5.TabIndex = 0;
+            this.label5.Text = "Input";
+            // 
+            // btnBrowseOutputFile
+            // 
+            this.btnBrowseOutputFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBrowseOutputFile.Location = new System.Drawing.Point(536, 31);
+            this.btnBrowseOutputFile.Name = "btnBrowseOutputFile";
+            this.btnBrowseOutputFile.Size = new System.Drawing.Size(24, 22);
+            this.btnBrowseOutputFile.TabIndex = 7;
+            this.btnBrowseOutputFile.Text = "...";
+            this.btnBrowseOutputFile.UseVisualStyleBackColor = true;
+            this.btnBrowseOutputFile.Click += new System.EventHandler(this.btnBrowseOutputFile_Click);
+            // 
+            // txtInputFile
+            // 
+            this.txtInputFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtInputFile.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.txtInputFile.Location = new System.Drawing.Point(51, 6);
+            this.txtInputFile.Name = "txtInputFile";
+            this.txtInputFile.ReadOnly = true;
+            this.txtInputFile.Size = new System.Drawing.Size(479, 20);
+            this.txtInputFile.TabIndex = 2;
+            // 
+            // btnBrowseInputFile
+            // 
+            this.btnBrowseInputFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBrowseInputFile.Location = new System.Drawing.Point(536, 5);
+            this.btnBrowseInputFile.Name = "btnBrowseInputFile";
+            this.btnBrowseInputFile.Size = new System.Drawing.Size(24, 22);
+            this.btnBrowseInputFile.TabIndex = 6;
+            this.btnBrowseInputFile.Text = "...";
+            this.btnBrowseInputFile.UseVisualStyleBackColor = true;
+            this.btnBrowseInputFile.Click += new System.EventHandler(this.btnBrowseInputFile_Click);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(6, 35);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(39, 13);
+            this.label6.TabIndex = 1;
+            this.label6.Text = "Output";
+            // 
+            // txtOutputFile
+            // 
+            this.txtOutputFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtOutputFile.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.txtOutputFile.Location = new System.Drawing.Point(51, 32);
+            this.txtOutputFile.Name = "txtOutputFile";
+            this.txtOutputFile.ReadOnly = true;
+            this.txtOutputFile.Size = new System.Drawing.Size(479, 20);
+            this.txtOutputFile.TabIndex = 3;
+            // 
+            // gCropping
+            // 
+            this.gCropping.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.gCropping.Controls.Add(this.chbCropFrom);
+            this.gCropping.Controls.Add(this.mtxtTo);
+            this.gCropping.Controls.Add(this.chbCropTo);
+            this.gCropping.Controls.Add(this.mtxtFrom);
+            this.gCropping.Location = new System.Drawing.Point(6, 134);
+            this.gCropping.Name = "gCropping";
+            this.gCropping.Size = new System.Drawing.Size(372, 64);
+            this.gCropping.TabIndex = 5;
+            this.gCropping.TabStop = false;
+            this.gCropping.Text = "Crop";
             // 
             // chbCropFrom
             // 
@@ -752,46 +938,6 @@
             this.btnConvert.UseVisualStyleBackColor = true;
             this.btnConvert.Click += new System.EventHandler(this.btnConvert_Click);
             // 
-            // txtOutput
-            // 
-            this.txtOutput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtOutput.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.txtOutput.Location = new System.Drawing.Point(51, 45);
-            this.txtOutput.Name = "txtOutput";
-            this.txtOutput.ReadOnly = true;
-            this.txtOutput.Size = new System.Drawing.Size(497, 20);
-            this.txtOutput.TabIndex = 3;
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(6, 48);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(39, 13);
-            this.label6.TabIndex = 1;
-            this.label6.Text = "Output";
-            // 
-            // txtInput
-            // 
-            this.txtInput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtInput.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.txtInput.Location = new System.Drawing.Point(51, 19);
-            this.txtInput.Name = "txtInput";
-            this.txtInput.ReadOnly = true;
-            this.txtInput.Size = new System.Drawing.Size(497, 20);
-            this.txtInput.TabIndex = 2;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(6, 22);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(31, 13);
-            this.label5.TabIndex = 0;
-            this.label5.Text = "Input";
-            // 
             // queueTabPage
             // 
             this.queueTabPage.Controls.Add(this.chbAutoConvert);
@@ -814,32 +960,6 @@
             this.chbAutoConvert.TabIndex = 3;
             this.chbAutoConvert.Text = "Convert to MP3 automatically";
             this.chbAutoConvert.UseVisualStyleBackColor = true;
-            // 
-            // openFileDialog1
-            // 
-            this.openFileDialog1.Filter = "MP4 files|*.mp4|MP3 files|*.mp3|All files|*.*";
-            // 
-            // saveFileDialog1
-            // 
-            this.saveFileDialog1.Filter = "MP3 files|*.mp3|MP4 files|*.mp4|All files|*.*";
-            // 
-            // cmPlaylistList
-            // 
-            this.cmPlaylistList.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.playlistSelectAllMenuItem,
-            this.playlistSelectNoneMenuItem});
-            // 
-            // playlistSelectAllMenuItem
-            // 
-            this.playlistSelectAllMenuItem.Index = 0;
-            this.playlistSelectAllMenuItem.Text = "Select all";
-            this.playlistSelectAllMenuItem.Click += new System.EventHandler(this.playlistSelectAllMenuItem_Click);
-            // 
-            // playlistSelectNoneMenuItem
-            // 
-            this.playlistSelectNoneMenuItem.Index = 1;
-            this.playlistSelectNoneMenuItem.Text = "Select none";
-            this.playlistSelectNoneMenuItem.Click += new System.EventHandler(this.playlistSelectNoneMenuItem_Click);
             // 
             // lvQueue
             // 
@@ -885,6 +1005,49 @@
             // 
             this.columnHeader6.Text = "Input";
             // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.Filter = "MP4 files|*.mp4|MP3 files|*.mp3|All files|*.*";
+            // 
+            // saveFileDialog1
+            // 
+            this.saveFileDialog1.Filter = "MP3 files|*.mp3|MP4 files|*.mp4|All files|*.*";
+            // 
+            // cmPlaylistList
+            // 
+            this.cmPlaylistList.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.playlistSelectAllMenuItem,
+            this.playlistSelectNoneMenuItem});
+            // 
+            // playlistSelectAllMenuItem
+            // 
+            this.playlistSelectAllMenuItem.Index = 0;
+            this.playlistSelectAllMenuItem.Text = "Select all";
+            this.playlistSelectAllMenuItem.Click += new System.EventHandler(this.playlistSelectAllMenuItem_Click);
+            // 
+            // playlistSelectNoneMenuItem
+            // 
+            this.playlistSelectNoneMenuItem.Index = 1;
+            this.playlistSelectNoneMenuItem.Text = "Select none";
+            this.playlistSelectNoneMenuItem.Click += new System.EventHandler(this.playlistSelectNoneMenuItem_Click);
+            // 
+            // txtExtension
+            // 
+            this.txtExtension.Location = new System.Drawing.Point(87, 64);
+            this.txtExtension.Name = "txtExtension";
+            this.txtExtension.Size = new System.Drawing.Size(100, 20);
+            this.txtExtension.TabIndex = 14;
+            this.txtExtension.Text = "mp4";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(6, 67);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(75, 13);
+            this.label9.TabIndex = 15;
+            this.label9.Text = "Extension filter";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -913,9 +1076,14 @@
             this.convertTabPage.ResumeLayout(false);
             this.convertTabPage.PerformLayout();
             this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
-            this.groupBox4.ResumeLayout(false);
-            this.groupBox4.PerformLayout();
+            this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
+            this.pConvertFolder.ResumeLayout(false);
+            this.pConvertFolder.PerformLayout();
+            this.pConvertFile.ResumeLayout(false);
+            this.pConvertFile.PerformLayout();
+            this.gCropping.ResumeLayout(false);
+            this.gCropping.PerformLayout();
             this.queueTabPage.ResumeLayout(false);
             this.queueTabPage.PerformLayout();
             this.ResumeLayout(false);
@@ -963,18 +1131,18 @@
         private System.Windows.Forms.TabPage queueTabPage;
         private System.Windows.Forms.TabPage convertTabPage;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.GroupBox gCropping;
         private System.Windows.Forms.CheckBox chbCropFrom;
         private System.Windows.Forms.MaskedTextBox mtxtFrom;
         private System.Windows.Forms.Button btnConvert;
-        private System.Windows.Forms.TextBox txtOutput;
+        private System.Windows.Forms.TextBox txtOutputFile;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.TextBox txtInput;
+        private System.Windows.Forms.TextBox txtInputFile;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.MaskedTextBox mtxtTo;
         private System.Windows.Forms.CheckBox chbCropTo;
-        private System.Windows.Forms.Button btnBrowseOutput;
-        private System.Windows.Forms.Button btnBrowseInput;
+        private System.Windows.Forms.Button btnBrowseOutputFile;
+        private System.Windows.Forms.Button btnBrowseInputFile;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.CheckBox chbAutoConvert;
@@ -1001,6 +1169,19 @@
         private System.Windows.Forms.ContextMenu cmPlaylistList;
         private System.Windows.Forms.MenuItem playlistSelectAllMenuItem;
         private System.Windows.Forms.MenuItem playlistSelectNoneMenuItem;
+        private System.Windows.Forms.GroupBox groupBox5;
+        private System.Windows.Forms.Panel pConvertFolder;
+        private System.Windows.Forms.Panel pConvertFile;
+        private System.Windows.Forms.RadioButton rbConvertFolder;
+        private System.Windows.Forms.RadioButton rbConvertFile;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Button btnBrowseOutputFolder;
+        private System.Windows.Forms.TextBox txtInputFolder;
+        private System.Windows.Forms.Button btnBrowseInputFolder;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.TextBox txtOutputFolder;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.TextBox txtExtension;
     }
 }
 
