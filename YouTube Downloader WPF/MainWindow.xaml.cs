@@ -600,6 +600,7 @@ namespace YouTube_Downloader_WPF
                 this.Queue.Add(operation);
                 this.SelectOneItem(operation);
 
+                operation.FileDownloadComplete += playlistOperation_FileDownloadComplete;
                 operation.Start(operation.Args(this.PlaylistLink.Text,
                                     path,
                                     settings.UseDashPlaylist,
@@ -616,6 +617,17 @@ namespace YouTube_Downloader_WPF
                     ex.Message, ex.Source,
                     WinForms.MessageBoxButtons.OK,
                     WinForms.MessageBoxIcon.Error);
+            }
+        }
+
+        private void playlistOperation_FileDownloadComplete(object sender, string file)
+        {
+            if (AutoConvert.IsEnabled && AutoConvert.IsChecked == true)
+            {
+                string output = Path.Combine(Path.GetDirectoryName(file),
+                    Path.GetFileNameWithoutExtension(file)) + ".mp3";
+
+                this.Convert(file, output, false);
             }
         }
 
