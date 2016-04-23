@@ -143,7 +143,7 @@
                                                   Mode=TwoWay}"
                               Checked="VideoFormats_CheckedUnchecked"
                               Unchecked="VideoFormats_CheckedUnchecked" />
-                    
+
                     <Button Name="CheckForUpdatesButton"
                             Content="Check for updates"
                             Margin="0,10,0,5"
@@ -492,10 +492,33 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <Label Content="CONVERT TO MP3"
-                           FontSize="16"
-                           Margin="0,0,0,10"
-                           BorderBrush="LightGray" BorderThickness="0,0,0,1"/>
+                    <Border BorderBrush="LightGray" BorderThickness="0,0,0,1" Margin="0,0,0,10">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <Label Content="CONVERT TO MP3"
+                                   FontSize="16"/>
+
+                            <StackPanel Grid.Column="2" Orientation="Horizontal">
+                                <RadioButton Name="FileRadioButton"
+                                             Content="File"
+                                             IsChecked="True"
+                                             FontSize="14"
+                                             Margin="0,0,10,0"
+                                             Checked="FileFolderRadioButtons_Checked"/>
+
+                                <RadioButton Name="FolderRadioButton"
+                                             Content="Folder"
+                                             FontSize="14"
+                                             Margin="0,0,5,0"
+                                             Checked="FileFolderRadioButtons_Checked"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
 
                     <Grid Grid.Row="1">
                         <Grid.ColumnDefinitions>
@@ -504,6 +527,7 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
@@ -535,9 +559,27 @@
                                 Grid.Column="2" Grid.Row="1"
                                 Click="ConvertOutputBrowse_Click" />
 
+                        <Label Content="Extension"
+                               Grid.Row="2"
+                               Margin="0,5,0,5"
+                               Visibility="{Binding ElementName=FolderRadioButton,
+                                                    Path=IsChecked,
+                                                    Mode=TwoWay,
+                                                    Converter={converters:BooleanToVisibilityConverter}}" />
+
+                        <TextBox Name="ConvertExtension"
+                                 Grid.Column="1" Grid.Row="2"
+                                 HorizontalAlignment="Left"
+                                 Margin="0,5,0,5"
+                                 Width="50"
+                                 Visibility="{Binding ElementName=FolderRadioButton,
+                                                      Path=IsChecked,
+                                                      Mode=TwoWay,
+                                                      Converter={converters:BooleanToVisibilityConverter}}" />
+
                         <StackPanel Width="300" Margin="5,0,0,10"
                                     HorizontalAlignment="Left" VerticalAlignment="Bottom"
-                                    Grid.ColumnSpan="2" Grid.Row="2">
+                                    Grid.ColumnSpan="2" Grid.Row="3">
 
                             <CheckBox Name="CropFrom"
                                       Content="Crop"
@@ -589,7 +631,7 @@
                                 Height="24" Width="120" Margin="0,0,5,5"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Bottom"
-                                Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
+                                Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"
                                 Click="Convert_Click" />
                     </Grid>
                 </Grid>

@@ -75,6 +75,7 @@
     </ApplicationDefinition>
     <Compile Include="Classes\WindowState.cs" />
     <Compile Include="Classes\WindowStates.cs" />
+    <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\FileSizeToStringConverter.cs" />
     <Compile Include="Converters\InverseBooleanConverter.cs" />
     <Compile Include="Converters\InverseBooleanToVisibilityConverter.cs" />
