@@ -635,46 +635,128 @@ namespace YouTube_Downloader_WPF
 
         OpenFileDialog openFileDialog = new OpenFileDialog();
         SaveFileDialog saveFileDialog = new SaveFileDialog();
+        OpenFolderDialog openFolderDialog = new OpenFolderDialog();
+
+        string _convertInputFile;
+        string _convertInputFolder;
+        string _convertOutputFile;
+        string _convertOutputFolder;
+
+        private void FileFolderRadioButtons_Checked(object sender, RoutedEventArgs e)
+        {
+            // Stop event from running before radio buttons has been initialized
+            if (ConvertInput == null || ConvertOutput == null)
+                return;
+
+            if (FileRadioButton.IsChecked == true)
+            {
+                // Store folder paths
+                _convertInputFolder = ConvertInput.Text;
+                _convertOutputFolder = ConvertOutput.Text;
+
+                // Insert file paths
+                ConvertInput.Text = _convertInputFile;
+                ConvertOutput.Text = _convertOutputFile;
+            }
+            else
+            {
+                // Store file paths
+                _convertInputFile = ConvertInput.Text;
+                _convertOutputFile = ConvertOutput.Text;
+
+                // Insert folder paths
+                ConvertInput.Text = _convertInputFolder;
+                ConvertOutput.Text = _convertOutputFolder;
+            }
+        }
 
         private void ConvertInputBrowse_Click(object sender, RoutedEventArgs e)
         {
-            openFileDialog.FileName = Path.GetFileName(ConvertInput.Text);
-
-            if (openFileDialog.ShowDialog(this) == true)
+            if (FileRadioButton.IsChecked == true)
             {
-                ConvertInput.Text = openFileDialog.FileName;
+                openFileDialog.FileName = Path.GetFileName(ConvertInput.Text);
 
-                if (ConvertOutput.Text == string.Empty)
+                if (openFileDialog.ShowDialog(this) == true)
                 {
-                    // Suggest file name
-                    string output = Path.GetDirectoryName(openFileDialog.FileName);
+                    ConvertInput.Text = openFileDialog.FileName;
 
-                    output = Path.Combine(output, Path.GetFileNameWithoutExtension(openFileDialog.FileName));
-                    output += ".mp3";
+                    if (ConvertOutput.Text == string.Empty)
+                    {
+                        // Suggest file name
+                        string output = Path.GetDirectoryName(openFileDialog.FileName);
 
-                    ConvertOutput.Text = output;
+                        output = Path.Combine(output, Path.GetFileNameWithoutExtension(openFileDialog.FileName));
+                        output += ".mp3";
+
+                        ConvertOutput.Text = output;
+                    }
+                }
+            }
+            else if (FolderRadioButton.IsChecked == true)
+            {
+                openFolderDialog.InitialFolder = Path.GetFileName(ConvertInput.Text);
+
+                if (openFolderDialog.ShowDialog(this) == WinForms.DialogResult.OK)
+                {
+                    ConvertInput.Text = openFolderDialog.Folder;
+
+                    if (string.IsNullOrEmpty(ConvertInput.Text))
+                    {
+                        // Suggest output path
+                        ConvertInput.Text = ConvertInput.Text;
+                    }
                 }
             }
         }
 
         private void ConvertOutputBrowse_Click(object sender, RoutedEventArgs e)
         {
-            if (File.Exists(ConvertInput.Text))
+            if (FileRadioButton.IsChecked == true)
             {
-                saveFileDialog.FileName = Path.GetFileName(ConvertInput.Text);
-            }
-            else
-            {
-                saveFileDialog.FileName = Path.GetFileName(ConvertOutput.Text);
-            }
+                if (File.Exists(ConvertInput.Text))
+                {
+                    saveFileDialog.FileName = Path.GetFileName(ConvertInput.Text);
+                }
+                else
+                {
+                    saveFileDialog.FileName = Path.GetFileName(ConvertOutput.Text);
+                }
 
-            if (saveFileDialog.ShowDialog(this) == true)
+                if (saveFileDialog.ShowDialog(this) == true)
+                {
+                    ConvertOutput.Text = saveFileDialog.FileName;
+                }
+            }
+            else if (FolderRadioButton.IsChecked == true)
             {
-                ConvertOutput.Text = saveFileDialog.FileName;
+                if (Directory.Exists(ConvertOutput.Text))
+                    openFolderDialog.InitialFolder = Path.GetFileName(ConvertOutput.Text);
+
+                if (openFolderDialog.ShowDialog(this) == WinForms.DialogResult.OK)
+                {
+                    ConvertOutput.Text = openFolderDialog.Folder;
+                }
             }
         }
 
         private void Convert_Click(object sender, RoutedEventArgs e)
+        {
+            if (FileRadioButton.IsChecked == true)
+            {
+                this.ConvertFile();
+            }
+            else
+            {
+                this.ConvertFolder();
+            }
+
+            ConvertInput.Clear();
+            ConvertOutput.Clear();
+
+            TabControl.SelectedIndex = 3;
+        }
+
+        private void ConvertFile()
         {
             if (!FFmpegHelper.CanConvertToMP3(ConvertInput.Text).Value)
             {
@@ -710,11 +792,19 @@ namespace YouTube_Downloader_WPF
             {
                 this.Convert(ConvertInput.Text, ConvertOutput.Text, true);
             }
+        }
 
-            ConvertInput.Clear();
-            ConvertOutput.Clear();
+        private void ConvertFolder()
+        {
+            if (!Directory.Exists(ConvertInput.Text))
+                Directory.CreateDirectory(ConvertInput.Text);
 
-            TabControl.SelectedIndex = 3;
+            if (!Directory.Exists(ConvertOutput.Text))
+                Directory.CreateDirectory(ConvertOutput.Text);
+
+            this.ConvertFolder(ConvertInput.Text,
+                               ConvertInput.Text,
+                               ConvertExtension.Text);
         }
 
         #endregion
@@ -788,6 +878,22 @@ namespace YouTube_Downloader_WPF
             this.SelectOneItem(operation);
 
             operation.Start(operation.Args(input, output, start, end));
+        }
+
+        /// <summary>
+        /// Starts a ConvertOperation to convert all files in folder, matching extension.
+        /// </summary>
+        /// <param name="input">The folder to convert files from.</param>
+        /// <param name="output">The output folder, where all converted files will be placed.</param>
+        /// <param name="extension">The extension to match.</param>
+        private void ConvertFolder(string input, string output, string extension)
+        {
+            var operation = new ConvertOperation();
+
+            this.Queue.Add(operation);
+            this.SelectOneItem(operation);
+
+            operation.Start(operation.Args(input, output, extension));
         }
 
         /// <summary>
