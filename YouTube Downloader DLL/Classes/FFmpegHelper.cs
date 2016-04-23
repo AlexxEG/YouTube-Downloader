@@ -335,7 +335,7 @@ namespace YouTube_Downloader_DLL.Classes
             psi.EnvironmentVariables.Add("FFREPORT", string.Format("file={0}:level=8", ReportFile));
 
             string filename = string.Format(LogFilename, DateTime.Now.ToString("yyyyMMdd-HHmmss-ff"));
-            string fullpath = Path.Combine(Common.GetLogsDirectory(), filename);
+            string fullpath = Path.Combine(Common.GetLogsDirectory(), "ffmpeg", filename);
             ProcessLogger process = null;
 
             if (noLog)

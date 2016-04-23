@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -20,14 +21,14 @@ namespace YouTube_Downloader_DLL.Classes
             public const string Version = " --version";
         }
 
-        private const string LogFilename = "youtube-dl.log";
+        private const string LogFilename = "youtube-dl-{0}.log";
 
         private static string YouTubeDlPath = Path.Combine(Application.StartupPath, "Externals", "youtube-dl.exe");
 
         /// <summary>
         /// Creates a Process with the given arguments, then returns it.
         /// </summary>
-        public static ProcessLogger CreateProcess(string arguments, bool noLog = false)
+        public static ProcessLogger CreateProcess(string arguments, bool noLog = false, [CallerMemberName] string caller = "")
         {
             var psi = new ProcessStartInfo(YoutubeDlHelper.YouTubeDlPath, arguments)
             {
@@ -39,15 +40,16 @@ namespace YouTube_Downloader_DLL.Classes
                 WindowStyle = ProcessWindowStyle.Hidden
             };
 
+            string filename = string.Format(LogFilename, DateTime.Now.ToString("yyyyMMdd-HHmmss-ff"));
+            string fullpath = Path.Combine(Common.GetLogsDirectory(), "youtube-dl", filename);
             ProcessLogger process = null;
-            string filename = Path.Combine(Common.GetLogsDirectory(), LogFilename);
 
             if (noLog)
                 process = new ProcessLogger();
             else
-                process = new ProcessLogger(filename)
+                process = new ProcessLogger(fullpath)
                 {
-                    Header = BuildLogHeader(arguments),
+                    Header = BuildLogHeader(arguments, caller),
                     Footer = BuildLogFooter()
                 };
 
@@ -257,12 +259,13 @@ namespace YouTube_Downloader_DLL.Classes
         /// </summary>
         /// <param name="arguments">The arguments to log in header.</param>
         /// <param name="url">The URL to log in header.</param>
-        public static string BuildLogHeader(string arguments)
+        public static string BuildLogHeader(string arguments, string caller)
         {
             var sb = new StringBuilder();
 
             sb.AppendLine("[" + DateTime.Now + "]");
             sb.AppendLine("version: " + GetVersion());
+            sb.AppendLine("caller: " + caller);
             sb.AppendLine("cmd: " + arguments.Trim());
             sb.AppendLine();
             sb.AppendLine("OUTPUT");
