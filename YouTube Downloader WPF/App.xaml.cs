@@ -33,6 +33,8 @@ namespace YouTube_Downloader_WPF
 
             // Up the connection limit for getting the file sizes of video formats
             System.Net.ServicePointManager.DefaultConnectionLimit = 20;
+
+            LogCleanup.RunAsync();
         }
 
         /// <summary>
