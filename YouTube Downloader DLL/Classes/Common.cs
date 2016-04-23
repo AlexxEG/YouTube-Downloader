@@ -52,16 +52,23 @@ namespace YouTube_Downloader_DLL.Classes
             return path;
         }
 
+        public static string GetStackTracesDirectory()
+        {
+            string path = Path.Combine(GetAppDataDirectory(), "stack traces");
+
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+
+            return path;
+        }
+
         /// <summary>
         /// Saves given Exception's stack trace to a readable file in the local application data folder.
         /// </summary>
         /// <param name="ex">The Exception to save.</param>
         public static void SaveException(Exception ex)
         {
-            string directory = Path.Combine(GetAppDataDirectory(), "stack traces");
-
-            if (!Directory.Exists(directory))
-                Directory.CreateDirectory(directory);
+            string directory = GetStackTracesDirectory();
 
             string dateFormat = "yyyy_MM_dd-HH_mm_ss";
             string file = string.Format("{0}\\stackTrace.{1}.log", directory, DateTime.Now.ToString(dateFormat));
