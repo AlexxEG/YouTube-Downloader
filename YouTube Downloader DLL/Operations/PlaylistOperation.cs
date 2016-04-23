@@ -22,6 +22,9 @@ namespace YouTube_Downloader_DLL.Operations
         public List<string> DownloadedFiles { get; set; }
         public List<VideoInfo> Videos { get; set; }
 
+        /// <summary>
+        /// Occurs when a single file download from the playlist is complete.
+        /// </summary>
         public event EventHandler<string> FileDownloadComplete;
 
         public PlaylistOperation()
