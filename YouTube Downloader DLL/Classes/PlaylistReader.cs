@@ -28,7 +28,7 @@ namespace YouTube_Downloader_DLL.Classes
             _url = url;
 
             _youtubeDl = YoutubeDlHelper.CreateProcess(_arguments);
-            _youtubeDl.Header = YoutubeDlHelper.BuildLogHeader(_arguments);
+            _youtubeDl.Header = YoutubeDlHelper.BuildLogHeader(_arguments, "PlaylistReader(string url)");
             _youtubeDl.Footer = YoutubeDlHelper.BuildLogFooter();
             _youtubeDl.Start();
 
