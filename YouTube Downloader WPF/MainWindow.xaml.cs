@@ -580,6 +580,17 @@ namespace YouTube_Downloader_WPF
             this.EnablePlaylistControls = true;
         }
 
+        private void playlistOperation_FileDownloadComplete(object sender, string file)
+        {
+            if (AutoConvert.IsEnabled && AutoConvert.IsChecked == true)
+            {
+                string output = Path.Combine(Path.GetDirectoryName(file),
+                    Path.GetFileNameWithoutExtension(file)) + ".mp3";
+
+                this.Convert(file, output, false);
+            }
+        }
+
         private void StartPlaylistOperation(ICollection<VideoInfo> videos)
         {
             string path = this.PlaylistSaveTo.Text;
@@ -619,18 +630,7 @@ namespace YouTube_Downloader_WPF
                     WinForms.MessageBoxIcon.Error);
             }
         }
-
-        private void playlistOperation_FileDownloadComplete(object sender, string file)
-        {
-            if (AutoConvert.IsEnabled && AutoConvert.IsChecked == true)
-            {
-                string output = Path.Combine(Path.GetDirectoryName(file),
-                    Path.GetFileNameWithoutExtension(file)) + ".mp3";
-
-                this.Convert(file, output, false);
-            }
-        }
-
+        
         private PlaylistItem[] GetSelectedPlaylistVideos()
         {
             List<PlaylistItem> videos = new List<PlaylistItem>();
