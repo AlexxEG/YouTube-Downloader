@@ -401,6 +401,7 @@ namespace YouTube_Downloader
 
         #region Playlist Tab
 
+        private string _playlistName = string.Empty;
         private BackgroundWorker _backgroundWorkerPlaylist;
 
         private void btnPlaylistBrowse_Click(object sender, EventArgs e)
@@ -424,7 +425,7 @@ namespace YouTube_Downloader
             if (btnGetPlaylist.Text == "Get Playlist")
             {
                 // Reset playlist variables
-                lvPlaylistVideos.Tag = null;
+                _playlistName = string.Empty;
                 lvPlaylistVideos.Items.Clear();
 
                 btnGetPlaylist.Text = "Cancel";
@@ -457,9 +458,6 @@ namespace YouTube_Downloader
             PlaylistReader reader = new PlaylistReader(playlistUrl);
             VideoInfo video;
 
-            // Set playlist list's Tag property to Playlist object
-            _backgroundWorkerPlaylist.ReportProgress(1, reader.Playlist);
-
             while ((video = reader.Next()) != null)
             {
                 if (_backgroundWorkerPlaylist.CancellationPending)
@@ -473,7 +471,7 @@ namespace YouTube_Downloader
                 item.Checked = true;
                 item.Tag = video;
 
-                _backgroundWorkerPlaylist.ReportProgress(2, item);
+                _backgroundWorkerPlaylist.ReportProgress(-1, item);
             }
 
             e.Result = true;
@@ -481,17 +479,12 @@ namespace YouTube_Downloader
 
         private void _backgroundWorkerPlaylist_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            switch (e.ProgressPercentage)
+            if (e.UserState is ListViewItem)
             {
-                case 1:
-                    lvPlaylistVideos.Tag = e.UserState as Playlist;
-                    break;
-                case 2:
-                    ListViewItem item = e.UserState as ListViewItem;
+                var item = e.UserState as ListViewItem;
 
-                    lvPlaylistVideos.Items.Add(item);
-                    lvPlaylistVideos.TopItem = item;
-                    break;
+                lvPlaylistVideos.Items.Add(item);
+                lvPlaylistVideos.TopItem = item;
             }
         }
 
@@ -591,17 +584,12 @@ namespace YouTube_Downloader
 
                 this.SelectOneItem(item);
 
-                string playlistName = string.Empty;
-
-                // Set playlistName if Tag is not null
-                playlistName = (lvPlaylistVideos.Tag as Playlist)?.Name;
-
                 operation.FileDownloadComplete += playlistOperation_FileDownloadComplete;
                 operation.Start(operation.Args(txtPlaylistLink.Text,
                                     path,
                                     chbPlaylistDASH.Checked,
                                     Settings.Default.PreferredQualityPlaylist,
-                                    playlistName,
+                                    _playlistName,
                                     videos)
                                 );
 
