@@ -591,12 +591,17 @@ namespace YouTube_Downloader
 
                 this.SelectOneItem(item);
 
+                string playlistName = string.Empty;
+
+                // Set playlistName if Tag is not null
+                playlistName = (lvPlaylistVideos.Tag as Playlist)?.Name;
+
                 operation.FileDownloadComplete += playlistOperation_FileDownloadComplete;
                 operation.Start(operation.Args(txtPlaylistLink.Text,
                                     path,
                                     chbPlaylistDASH.Checked,
                                     Settings.Default.PreferredQualityPlaylist,
-                                    (lvPlaylistVideos.Tag as Playlist).Name,
+                                    playlistName,
                                     videos)
                                 );
 
