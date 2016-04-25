@@ -1,4 +1,4 @@
-﻿namespace YouTube_Downloader_DLL.Enums
+﻿namespace YouTube_Downloader_DLL.FFmpeg
 {
     public enum FFmpegFileType
     {
