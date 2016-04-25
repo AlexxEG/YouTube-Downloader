@@ -76,9 +76,6 @@ namespace YouTube_Downloader_DLL.Classes
         /// </summary>
         public VideoInfo VideoInfo { get; private set; }
 
-        private WebRequest request;
-        private CancellationTokenSource cts;
-
         public VideoFormat(VideoInfo videoInfo, JToken token)
         {
             this.AudioBitRate = -1;
@@ -87,7 +84,10 @@ namespace YouTube_Downloader_DLL.Classes
             this.DeserializeJson(token);
         }
 
-        #region Update file size methods
+        #region Update file size
+
+        private WebRequest request;
+        private CancellationTokenSource cts;
 
         /// <summary>
         /// Aborts request for file size.
