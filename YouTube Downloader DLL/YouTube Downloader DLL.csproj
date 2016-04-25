@@ -63,7 +63,7 @@
     <Compile Include="Classes\YoutubeDlHelper.cs" />
     <Compile Include="Dialogs\OpenFolderDialog.cs" />
     <Compile Include="Enums\ConvertingMode.cs" />
-    <Compile Include="Enums\FFmpegFileType.cs" />
+    <Compile Include="FFmpeg\FFmpegFileType.cs" />
     <Compile Include="Enums\FormatType.cs" />
     <Compile Include="FFmpeg\FFmpegResult.cs" />
     <Compile Include="Operations\ConvertOperation.cs" />
