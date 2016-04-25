@@ -630,7 +630,7 @@ namespace YouTube_Downloader_WPF
                     WinForms.MessageBoxIcon.Error);
             }
         }
-        
+
         private PlaylistItem[] GetSelectedPlaylistVideos()
         {
             List<PlaylistItem> videos = new List<PlaylistItem>();
