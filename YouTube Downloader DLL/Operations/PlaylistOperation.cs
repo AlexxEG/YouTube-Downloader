@@ -50,6 +50,8 @@ namespace YouTube_Downloader_DLL.Operations
             // If one or more files fail, whole operation failed. Might handle it more
             // elegantly in the future.
             _downloaderSuccessful = false;
+
+            Common.SaveException(ex);
         }
 
         private void downloader_CalculatedTotalFileSize(object sender, EventArgs e)
@@ -324,7 +326,9 @@ namespace YouTube_Downloader_DLL.Operations
             if (args.Length == 6)
             {
                 this.PlaylistName = (string)args[4];
-                this.Videos = (List<VideoInfo>)args[5];
+
+                if (args[5] != null)
+                    this.Videos.AddRange((IEnumerable<VideoInfo>)args[5]);
             }
 
             downloader = new FileDownloader();
