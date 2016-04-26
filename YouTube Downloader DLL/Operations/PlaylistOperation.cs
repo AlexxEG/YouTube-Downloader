@@ -45,13 +45,15 @@ namespace YouTube_Downloader_DLL.Operations
             if (_downloaderSuccessful == null) _downloaderSuccessful = true;
         }
 
-        private void downloader_FileDownloadFailed(object sender, Exception ex)
+        private void downloader_FileDownloadFailed(object sender, FileDownloadFailedEventArgs e)
         {
             // If one or more files fail, whole operation failed. Might handle it more
             // elegantly in the future.
             _downloaderSuccessful = false;
 
-            Common.SaveException(ex);
+            e.Exception.Data.Add("FileDownload", e.FileDownload);
+
+            Common.SaveException(e.Exception);
         }
 
         private void downloader_CalculatedTotalFileSize(object sender, EventArgs e)

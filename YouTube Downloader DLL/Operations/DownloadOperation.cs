@@ -37,7 +37,7 @@ namespace YouTube_Downloader_DLL.Operations
                 this.Status = OperationStatus.Success;
         }
 
-        private void downloader_FileDownloadFailed(object sender, Exception ex)
+        private void downloader_FileDownloadFailed(object sender, FileDownloadFailedEventArgs e)
         {
             // If one or more files fail, whole operation failed. Might handle it more
             // elegantly in the future.

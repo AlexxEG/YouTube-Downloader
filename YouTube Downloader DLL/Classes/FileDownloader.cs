@@ -26,9 +26,9 @@ namespace YouTube_Downloader_DLL.Classes
         public event EventHandler Resumed;
         public event EventHandler Started;
         public event EventHandler Stopped;
-        public event ExceptionEventHandler FileDownloadFailed;
         public event FileDownloadEventHandler FileDownloadComplete;
         public event FileDownloadEventHandler FileDownloadSucceeded;
+        public event FileDownloadFailedEventHandler FileDownloadFailed;
 
         public int PackageSize { get; set; }
         public int Speed { get; set; }
@@ -62,8 +62,8 @@ namespace YouTube_Downloader_DLL.Classes
 
         public List<FileDownload> Files { get; set; }
 
-        public delegate void ExceptionEventHandler(object sender, Exception ex);
         public delegate void FileDownloadEventHandler(object sender, FileDownloadEventArgs e);
+        public delegate void FileDownloadFailedEventHandler(object sender, FileDownloadFailedEventArgs e);
 
         private enum BackgroundEvents
         {
@@ -358,7 +358,7 @@ namespace YouTube_Downloader_DLL.Classes
         {
             if (e.UserState is Exception)
             {
-                this.OnFileDownloadFailed(e.UserState as Exception);
+                this.OnFileDownloadFailed(e.UserState as Exception, this.CurrentFile);
             }
             else if (e.UserState is object[])
             {
@@ -407,10 +407,10 @@ namespace YouTube_Downloader_DLL.Classes
                 FileDownloadComplete(this, e);
         }
 
-        protected void OnFileDownloadFailed(Exception exception)
+        protected void OnFileDownloadFailed(Exception exception, FileDownload fileDownload)
         {
             if (this.FileDownloadFailed != null)
-                this.FileDownloadFailed(this, exception);
+                this.FileDownloadFailed(this, new FileDownloadFailedEventArgs(exception, fileDownload));
         }
 
         protected void OnFileDownloadSucceeded(FileDownloadEventArgs e)
