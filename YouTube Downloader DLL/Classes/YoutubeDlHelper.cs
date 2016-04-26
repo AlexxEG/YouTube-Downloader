@@ -25,10 +25,22 @@ namespace YouTube_Downloader_DLL.Classes
 
         private static string YouTubeDlPath = Path.Combine(Application.StartupPath, "Externals", "youtube-dl.exe");
 
+        public static ProcessLogger CreateLogger(string arguments, [CallerMemberName]string caller = "")
+        {
+            string filename = string.Format(LogFilename, DateTime.Now.ToString("yyyyMMdd-HHmmss-ff"));
+            string fullpath = Path.Combine(Common.GetLogsDirectory(), "youtube-dl", filename);
+
+            return new ProcessLogger(CreateProcess(arguments), fullpath)
+            {
+                Header = BuildLogHeader(arguments, caller),
+                Footer = BuildLogFooter()
+            };
+        }
+
         /// <summary>
         /// Creates a Process with the given arguments, then returns it.
         /// </summary>
-        public static ProcessLogger CreateProcess(string arguments, bool noLog = false, [CallerMemberName] string caller = "")
+        public static Process CreateProcess(string arguments)
         {
             var psi = new ProcessStartInfo(YoutubeDlHelper.YouTubeDlPath, arguments)
             {
@@ -39,21 +51,10 @@ namespace YouTube_Downloader_DLL.Classes
                 CreateNoWindow = true,
                 WindowStyle = ProcessWindowStyle.Hidden
             };
-
-            string filename = string.Format(LogFilename, DateTime.Now.ToString("yyyyMMdd-HHmmss-ff"));
-            string fullpath = Path.Combine(Common.GetLogsDirectory(), "youtube-dl", filename);
-            ProcessLogger process = null;
-
-            if (noLog)
-                process = new ProcessLogger();
-            else
-                process = new ProcessLogger(fullpath)
-                {
-                    Header = BuildLogHeader(arguments, caller),
-                    Footer = BuildLogFooter()
-                };
-
-            process.StartInfo = psi;
+            var process = new Process()
+            {
+                StartInfo = psi
+            };
 
             return process;
         }
@@ -76,14 +77,11 @@ namespace YouTube_Downloader_DLL.Classes
             if (format.VideoInfo.VideoSource != VideoSource.Twitch)
                 throw new ArgumentException("This method only supports videos from Twitch.", "format");
 
-            string line = string.Empty;
             string arguments = string.Format(Commands.Download,
                 output,
                 format.FormatID,
                 format.VideoInfo.Url);
-            ProcessLogger process = CreateProcess(arguments);
-
-            process.Start();
+            ProcessLogger logger = CreateLogger(arguments);
 
             DateTime nextUpdate = DateTime.Now;
 
@@ -99,18 +97,18 @@ namespace YouTube_Downloader_DLL.Classes
                 @"^\[download\]\s+(\d+\.\d+)%.*~(\d+\.\d+)([K|M|G]iB).*\s(\d+\.\d+)([K|M]iB)\/s.*(\d{2}:\d{2}).*$",
                 RegexOptions.Compiled);
 
-            while ((line = process.ReadLineOutput()) != null)
+            logger.StartProcess(delegate (string line)
             {
                 line = line.Trim();
 
                 if (ct != null && ct.IsCancellationRequested)
                 {
-                    process.Kill();
-                    break;
+                    logger.Process.Kill();
+                    return;
                 }
 
                 if (progressUpdateCallback == null)
-                    continue;
+                    return;
 
                 if (line.Contains("100%")) // Only the last line will show 100% as "100%" and not "100.0%"
                 {
@@ -146,19 +144,19 @@ namespace YouTube_Downloader_DLL.Classes
                         nextUpdate = DateTime.Now.AddMilliseconds(500);
                     }
                 }
-            }
-            while ((line = process.ReadLineError()) != null)
+            },
+            delegate (string error)
             {
-                line = line.Trim();
+                error = error.Trim();
 
-                if (line.StartsWith("ERROR:"))
+                if (error.StartsWith("ERROR:"))
                 {
                     format.VideoInfo.Failure = true;
-                    format.VideoInfo.FailureReason = line.Substring("ERROR: ".Length);
+                    format.VideoInfo.FailureReason = error.Substring("ERROR: ".Length);
                 }
-            }
+            });
 
-            process.WaitForExit();
+            logger.Process.WaitForExit();
         }
 
         /// <summary>
@@ -167,17 +165,14 @@ namespace YouTube_Downloader_DLL.Classes
         /// <param name="url">The url to the video.</param>
         public static VideoInfo GetVideoInfo(string url)
         {
-            string line = string.Empty;
             string json_dir = Common.GetJsonDirectory();
             string json_file = string.Empty;
             string arguments = string.Format(Commands.GetJsonInfo, json_dir, url);
             VideoInfo video = new VideoInfo();
 
-            var process = CreateProcess(arguments);
+            var logger = CreateLogger(arguments);
 
-            process.Start();
-
-            while ((line = process.ReadLineOutput()) != null)
+            logger.StartProcess(delegate (string line)
             {
                 line = line.Trim();
 
@@ -186,19 +181,19 @@ namespace YouTube_Downloader_DLL.Classes
                     // Store file path
                     json_file = line.Substring(line.IndexOf(":") + 1).Trim();
                 }
-            }
-            while ((line = process.ReadLineError()) != null)
+            },
+            delegate (string error)
             {
-                line = line.Trim();
+                error = error.Trim();
 
-                if (line.StartsWith("ERROR:"))
+                if (error.StartsWith("ERROR:"))
                 {
                     video.Failure = true;
-                    video.FailureReason = line.Substring("ERROR: ".Length);
+                    video.FailureReason = error.Substring("ERROR: ".Length);
                 }
-            }
+            });
 
-            process.WaitForExit();
+            logger.Process.WaitForExit();
 
             if (!video.Failure)
                 video.DeserializeJson(json_file);
@@ -226,13 +221,12 @@ namespace YouTube_Downloader_DLL.Classes
         /// </summary>
         public static string GetVersion()
         {
-            var process = CreateProcess(Commands.Version, true);
-            string line = string.Empty,
-                   version = string.Empty;
+            var process = CreateProcess(Commands.Version);
+            string line, version = string.Empty;
 
             process.Start();
 
-            while ((line = process.ReadLineOutput()) != null)
+            while ((line = process.StandardOutput.ReadLine()) != null)
             {
                 // Only one line gets printed, so assume any non-empty line is the version
                 if (!string.IsNullOrEmpty(line))
