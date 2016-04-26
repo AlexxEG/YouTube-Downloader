@@ -351,6 +351,12 @@ namespace YouTube_Downloader_WPF
             }
         }
 
+        private void VideoFormats_TargetUpdated(object sender, DataTransferEventArgs e)
+        {
+            // Select last item
+            this.VideoFormats.SelectedIndex = this.VideoFormats.Items.Count - 1;
+        }
+
         private void FilteredFormats_Filter(object sender, FilterEventArgs e)
         {
             VideoFormat f = e.Item as VideoFormat;
@@ -362,6 +368,8 @@ namespace YouTube_Downloader_WPF
             {
                 e.Accepted = false;
             }
+
+            this.VideoInformation.SortFormats();
         }
 
         private void DownloadOperation_Completed(object sender, OperationEventArgs e)
@@ -587,7 +595,9 @@ namespace YouTube_Downloader_WPF
                 string output = Path.Combine(Path.GetDirectoryName(file),
                     Path.GetFileNameWithoutExtension(file)) + ".mp3";
 
-                this.Convert(file, output, false);
+                var operation = this.Convert(file, output, false);
+
+                operation.Completed += delegate { this.Queue.Remove(operation); };
             }
         }
 
@@ -869,7 +879,7 @@ namespace YouTube_Downloader_WPF
         /// <param name="input">The file to convert.</param>
         /// <param name="output">The path to save converted file.</param>
         /// <param name="crop">True if converted file should be cropped.</param>
-        private void Convert(string input, string output, bool crop)
+        private ConvertOperation Convert(string input, string output, bool crop)
         {
             TimeSpan start, end;
             start = end = TimeSpan.MinValue;
@@ -878,7 +888,7 @@ namespace YouTube_Downloader_WPF
             {
                 // Validate cropping input. Shows error messages automatically.
                 if (!this.ValidateCropping())
-                    return;
+                    return null;
 
                 start = TimeSpan.Parse(CropFromTextBox.Text);
                 end = TimeSpan.Parse(CropToTextBox.Text);
@@ -890,6 +900,8 @@ namespace YouTube_Downloader_WPF
             this.SelectOneItem(operation);
 
             operation.Start(operation.Args(input, output, start, end));
+
+            return operation;
         }
 
         /// <summary>
