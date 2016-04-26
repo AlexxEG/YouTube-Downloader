@@ -1326,6 +1326,11 @@ namespace YouTube_Downloader
                 }
             }
 
+            // Move DASH formats to bottom
+            var dash = formats.FindAll(x => x.ToString().StartsWith("DASH"));
+            formats.RemoveAll(x => x.ToString().StartsWith("DASH"));
+            formats.AddRange(dash);
+
             return formats.ToArray();
         }
     }
