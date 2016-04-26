@@ -1,17 +1,23 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace YouTube_Downloader_DLL.Classes
 {
     public class PlaylistReader
     {
-        public const string Cmd_JSON_Info_Playlist = " -i -o \"{0}\\playlist-{1}\\%(playlist_index)s-%(title)s\" --restrict-filenames --skip-download --write-info-json \"{2}\"";
+        public const string CmdJSONInfoPlaylist = " -i -o \"{0}\\playlist-{1}\\%(playlist_index)s-%(title)s\" --restrict-filenames --skip-download --write-info-json \"{2}\"";
+
+        int _index = 0;
+
+        bool _processFinished = false;
 
         string _arguments;
-        string _line;
         string _playlist_id;
         string _url;
+
+        List<string> _jsonPaths = new List<string>();
 
         Regex _regexPlaylistInfo = new Regex(@"^\[youtube:playlist\] playlist (.*):.*Downloading\s+(\d+)\s+.*$", RegexOptions.Compiled);
         Regex _regexVideoJson = new Regex(@"^\[info\].*JSON.*:\s(.*)$", RegexOptions.Compiled);
@@ -24,39 +30,60 @@ namespace YouTube_Downloader_DLL.Classes
             string json_dir = Common.GetJsonDirectory();
 
             _playlist_id = Helper.GetPlaylistId(url);
-            _arguments = string.Format(Cmd_JSON_Info_Playlist, json_dir, _playlist_id, url);
+            _arguments = string.Format(CmdJSONInfoPlaylist, json_dir, _playlist_id, url);
             _url = url;
 
-            _youtubeDl = YoutubeDlHelper.CreateProcess(_arguments);
+            _youtubeDl = YoutubeDlHelper.CreateLogger(_arguments);
             _youtubeDl.Header = YoutubeDlHelper.BuildLogHeader(_arguments, "PlaylistReader(string url)");
             _youtubeDl.Footer = YoutubeDlHelper.BuildLogFooter();
-            _youtubeDl.Start();
+            _youtubeDl.Process.Exited += delegate { _processFinished = true; };
+            _youtubeDl.StartProcess(OutputReadLine, ErrorReadLine);
+        }
 
-            ReadPlaylistInfo();
+        public void OutputReadLine(string line)
+        {
+            Match m;
+
+            if ((m = _regexPlaylistInfo.Match(line)).Success)
+            {
+                // Get the playlist info
+                string name = m.Groups[1].Value;
+                int onlineCount = int.Parse(m.Groups[2].Value);
+
+                this.Playlist = new Playlist(_playlist_id, name, onlineCount);
+            }
+            // New json found, break & create a VideoInfo instance
+            else if ((m = _regexVideoJson.Match(line)).Success)
+            {
+                _jsonPaths.Add(m.Groups[1].Value.Trim());
+            }
+        }
+
+        public void ErrorReadLine(string line)
+        {
+
         }
 
         public VideoInfo Next()
         {
             int attempts = 0;
-            string json_path = string.Empty;
+            string jsonPath = null;
             VideoInfo video = null;
 
-            while ((_line = _youtubeDl.ReadLineOutput()) != null)
+            while (!_processFinished)
             {
-                Match m;
-
-                // New json found, break & create a VideoInfo instance
-                if ((m = _regexVideoJson.Match(_line)).Success)
+                if (_jsonPaths.Count > _index)
                 {
-                    json_path = m.Groups[1].Value.Trim();
-                    break;
+                    jsonPath = _jsonPaths[_index];
+                    _index++;
                 }
             }
 
             // If it's the end of the stream finish up the process.
-            if (_line == null)
+            if (jsonPath == null)
             {
-                _youtubeDl.WaitForExit();
+                if (!_youtubeDl.Process.HasExited)
+                    _youtubeDl.Process.WaitForExit();
 
                 return null;
             }
@@ -66,44 +93,22 @@ namespace YouTube_Downloader_DLL.Classes
             {
                 try
                 {
-                    video = new VideoInfo(json_path);
+                    video = new VideoInfo(jsonPath);
                     break;
                 }
                 catch (IOException)
                 {
                     attempts++;
-                    System.Threading.Thread.Sleep(100);
+                    Thread.Sleep(100);
                 }
             }
 
             if (video == null)
-                throw new FileNotFoundException("File not found.", json_path);
+                throw new FileNotFoundException("File not found.", jsonPath);
 
             this.Playlist.Videos.Add(video);
 
             return video;
-        }
-
-        private void ReadPlaylistInfo()
-        {
-            int onlineCount = 0;
-            string name = string.Empty,
-                   line = string.Empty;
-
-            while ((line = _youtubeDl.ReadLineOutput()) != null)
-            {
-                Match m;
-
-                if ((m = _regexPlaylistInfo.Match(line)).Success)
-                {
-                    // Get the playlist info
-                    name = m.Groups[1].Value;
-                    onlineCount = int.Parse(m.Groups[2].Value);
-                    break;
-                }
-            }
-
-            this.Playlist = new Playlist(_playlist_id, name, onlineCount);
         }
     }
 }
