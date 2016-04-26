@@ -608,7 +608,10 @@ namespace YouTube_Downloader
                 string output = Path.Combine(Path.GetDirectoryName(file),
                     Path.GetFileNameWithoutExtension(file)) + ".mp3";
 
-                this.Convert(file, output, false);
+                var item = this.Convert(file, output, false);
+
+                // Automatically remove convert operation from queue when done
+                item.OperationComplete += delegate { item.Remove(); };
             }
         }
 
@@ -1027,7 +1030,7 @@ namespace YouTube_Downloader
         /// <param name="input">The file to convert.</param>
         /// <param name="output">The path to save converted file.</param>
         /// <param name="crop">True if converted file should be cropped.</param>
-        private void Convert(string input, string output, bool crop)
+        private OperationListViewItem Convert(string input, string output, bool crop)
         {
             TimeSpan start, end;
             start = end = TimeSpan.MinValue;
@@ -1036,7 +1039,7 @@ namespace YouTube_Downloader
             {
                 // Validate cropping input. Shows error messages automatically.
                 if (!this.ValidateCropping())
-                    return;
+                    return null;
 
                 start = (TimeSpan)mtxtFrom.ValidateText();
                 end = (TimeSpan)mtxtTo.ValidateText();
@@ -1054,6 +1057,8 @@ namespace YouTube_Downloader
             this.SelectOneItem(item);
 
             operation.Start(operation.Args(input, output, start, end));
+
+            return item;
         }
 
         /// <summary>
