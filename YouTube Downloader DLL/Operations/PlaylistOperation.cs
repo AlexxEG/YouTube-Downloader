@@ -12,10 +12,18 @@ namespace YouTube_Downloader_DLL.Operations
 {
     public class PlaylistOperation : Operation
     {
+        /// <summary>
+        /// Constant used to identify a FileDownloadComplete event in ProgressChanged handler.
+        /// </summary>
+        const int EventFileDownloadComplete = 1000;
+
+        int _downloads = 0;
         int _failures = 0;
         int _preferredQuality;
         bool _combining, _processing, _useDash;
         bool? _downloaderSuccessful;
+
+        Exception _operationException;
         FileDownloader downloader;
 
         public string PlaylistName { get; private set; }
@@ -168,19 +176,33 @@ namespace YouTube_Downloader_DLL.Operations
 
         protected override void WorkerCompleted(RunWorkerCompletedEventArgs e)
         {
+            switch ((OperationStatus)e.Result)
+            {
+                case OperationStatus.Canceled:
+                    // Tell user how many videos was downloaded before being canceled
+                    this.Title = $"\"{PlaylistName}\" canceled. {_downloads} of {Videos.Count} videos downloaded";
+                    return;
+                case OperationStatus.Failed:
+                    // Tell user about known exceptions. Otherwise just a simple failed message
+                    if (_operationException is TimeoutException)
+                        this.Title = $"Couldn't get playlist information for \"{PlaylistName}\"";
+                    else
+                        this.Title = $"\"{PlaylistName}\" failed";
+                    return;
+            }
+
+            // If code reaches here, it means operation was successful
             if (_failures == 0)
             {
+                // All videos downloaded successfully
                 this.Title = string.Format("Downloaded \"{0}\" playlist. {1} videos",
-                                        this.PlaylistName,
-                                        this.Videos.Count);
+                    this.PlaylistName, this.Videos.Count);
             }
             else
             {
+                // Some or all videos failed. Tell user how many
                 this.Title = string.Format("Downloaded \"{0}\" playlist. {1} of {2} videos, {3} failed",
-                                        this.PlaylistName,
-                                        this.Videos.Count - _failures,
-                                        this.Videos.Count,
-                                        _failures);
+                    this.PlaylistName, _downloads, this.Videos.Count, _failures);
             }
         }
 
@@ -188,10 +210,20 @@ namespace YouTube_Downloader_DLL.Operations
         {
             try
             {
-                int count = 0;
-
                 if (this.Videos.Count == 0)
                     this.GetPlaylistInfo();
+            }
+            catch (TimeoutException ex)
+            {
+                e.Cancel = true;
+                e.Result = OperationStatus.Failed;
+                _operationException = ex;
+                return;
+            }
+
+            try
+            {
+                int count = 0;
 
                 foreach (VideoInfo video in this.Videos)
                 {
@@ -266,6 +298,7 @@ namespace YouTube_Downloader_DLL.Operations
                             });
                         }
 
+                        _downloads++;
                         this.ReportProgress(1000, finalFile);
                     }
                     // Download failed, cleanup and continue
@@ -286,7 +319,9 @@ namespace YouTube_Downloader_DLL.Operations
             catch (Exception ex)
             {
                 Common.SaveException(ex);
+                e.Cancel = true;
                 e.Result = OperationStatus.Failed;
+                _operationException = ex;
             }
         }
 
