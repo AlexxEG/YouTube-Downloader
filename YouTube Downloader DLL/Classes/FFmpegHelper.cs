@@ -331,6 +331,7 @@ namespace YouTube_Downloader_DLL.Classes
 
             return new Process()
             {
+                EnableRaisingEvents = true,
                 StartInfo = psi
             };
         }
