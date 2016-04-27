@@ -53,6 +53,7 @@ namespace YouTube_Downloader_DLL.Classes
             };
             var process = new Process()
             {
+                EnableRaisingEvents = true,
                 StartInfo = psi
             };
 
