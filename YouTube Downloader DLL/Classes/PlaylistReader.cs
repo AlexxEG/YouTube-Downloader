@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -112,11 +114,17 @@ namespace YouTube_Downloader_DLL.Classes
             return video;
         }
 
-        public Playlist WaitForPlaylist()
+        public Playlist WaitForPlaylist(int timeoutMS = 10000)
         {
+            var sw = new Stopwatch();
+            sw.Start();
+
             while (this.Playlist == null)
             {
                 Thread.Sleep(50);
+
+                if (sw.ElapsedMilliseconds > timeoutMS)
+                    throw new TimeoutException("Couldn't get Playlist information.");
             }
 
             return this.Playlist;
