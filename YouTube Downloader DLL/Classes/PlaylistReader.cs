@@ -23,7 +23,7 @@ namespace YouTube_Downloader_DLL.Classes
         Regex _regexVideoJson = new Regex(@"^\[info\].*JSON.*:\s(.*)$", RegexOptions.Compiled);
         ProcessLogger _youtubeDl;
 
-        public Playlist Playlist { get; set; }
+        public Playlist Playlist { get; set; } = null;
 
         public PlaylistReader(string url)
         {
@@ -76,6 +76,7 @@ namespace YouTube_Downloader_DLL.Classes
                 {
                     jsonPath = _jsonPaths[_index];
                     _index++;
+                    break;
                 }
             }
 
@@ -109,6 +110,16 @@ namespace YouTube_Downloader_DLL.Classes
             this.Playlist.Videos.Add(video);
 
             return video;
+        }
+
+        public Playlist WaitForPlaylist()
+        {
+            while (this.Playlist == null)
+            {
+                Thread.Sleep(50);
+            }
+
+            return this.Playlist;
         }
     }
 }
