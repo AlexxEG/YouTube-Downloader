@@ -117,6 +117,8 @@ namespace YouTube_Downloader_DLL.Classes
         public Playlist WaitForPlaylist(int timeoutMS = 10000)
         {
             var sw = new Stopwatch();
+            Exception exception = null;
+
             sw.Start();
 
             while (this.Playlist == null)
@@ -124,8 +126,14 @@ namespace YouTube_Downloader_DLL.Classes
                 Thread.Sleep(50);
 
                 if (sw.ElapsedMilliseconds > timeoutMS)
-                    throw new TimeoutException("Couldn't get Playlist information.");
+                {
+                    exception = new TimeoutException("Couldn't get Playlist information.");
+                    break;
+                }
             }
+
+            if (exception != null)
+                throw exception;
 
             return this.Playlist;
         }
