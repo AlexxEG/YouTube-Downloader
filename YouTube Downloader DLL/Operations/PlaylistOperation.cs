@@ -179,15 +179,23 @@ namespace YouTube_Downloader_DLL.Operations
             switch ((OperationStatus)e.Result)
             {
                 case OperationStatus.Canceled:
-                    // Tell user how many videos was downloaded before being canceled
-                    this.Title = $"\"{PlaylistName}\" canceled. {_downloads} of {Videos.Count} videos downloaded";
+                    // Tell user how many videos was downloaded before being canceled, if any
+                    if (string.IsNullOrEmpty(this.Title))
+                        this.Title = $"Playlist canceled";
+                    else
+                        this.Title = $"\"{PlaylistName}\" canceled. {_downloads} of {Videos.Count} videos downloaded";
                     return;
                 case OperationStatus.Failed:
                     // Tell user about known exceptions. Otherwise just a simple failed message
                     if (_operationException is TimeoutException)
-                        this.Title = $"Couldn't get playlist information for \"{PlaylistName}\"";
+                        this.Title = $"Timeout. Couldn't get playlist information";
                     else
-                        this.Title = $"\"{PlaylistName}\" failed";
+                    {
+                        if (string.IsNullOrEmpty(this.Title))
+                            this.Title = $"Couldn't download playlist";
+                        else
+                            this.Title = $"Couldn't download \"{PlaylistName}\"";
+                    }
                     return;
             }
 
@@ -215,7 +223,6 @@ namespace YouTube_Downloader_DLL.Operations
             }
             catch (TimeoutException ex)
             {
-                e.Cancel = true;
                 e.Result = OperationStatus.Failed;
                 _operationException = ex;
                 return;
@@ -319,7 +326,6 @@ namespace YouTube_Downloader_DLL.Operations
             catch (Exception ex)
             {
                 Common.SaveException(ex);
-                e.Cancel = true;
                 e.Result = OperationStatus.Failed;
                 _operationException = ex;
             }
@@ -417,7 +423,7 @@ namespace YouTube_Downloader_DLL.Operations
             var reader = new PlaylistReader(this.Input);
             VideoInfo video;
 
-            this.PlaylistName = reader.WaitForPlaylist().Name;
+            this.PlaylistName = reader.WaitForPlaylist(1000).Name;
 
             while (!this.CancellationPending && (video = reader.Next()) != null)
             {
