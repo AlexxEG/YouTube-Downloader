@@ -13,6 +13,7 @@ using YouTube_Downloader_DLL;
 using YouTube_Downloader_DLL.Classes;
 using YouTube_Downloader_DLL.Dialogs;
 using YouTube_Downloader_DLL.Enums;
+using YouTube_Downloader_DLL.Helpers;
 using YouTube_Downloader_DLL.Operations;
 
 /* ToDo: 

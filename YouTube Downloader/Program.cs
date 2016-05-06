@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using YouTube_Downloader_DLL.Classes;
+using YouTube_Downloader_DLL.Helpers;
 using YouTube_Downloader_DLL.Operations;
 
 namespace YouTube_Downloader
