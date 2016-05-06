@@ -6,12 +6,12 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using YouTube_Downloader_DLL.Enums;
+using YouTube_Downloader_DLL.Classes;
 using YouTube_Downloader_DLL.FFmpeg;
 
 // ToDo: Catch errors from Process
 
-namespace YouTube_Downloader_DLL.Classes
+namespace YouTube_Downloader_DLL.Helpers
 {
     public class FFmpegHelper
     {

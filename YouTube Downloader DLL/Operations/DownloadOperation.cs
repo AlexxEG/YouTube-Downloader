@@ -6,6 +6,8 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
 using YouTube_Downloader_DLL.Classes;
+using YouTube_Downloader_DLL.FileDownloading;
+using YouTube_Downloader_DLL.Helpers;
 
 namespace YouTube_Downloader_DLL.Operations
 {

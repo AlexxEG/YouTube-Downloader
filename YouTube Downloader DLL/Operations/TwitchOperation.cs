@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using YouTube_Downloader_DLL.Classes;
+using YouTube_Downloader_DLL.Helpers;
 
 namespace YouTube_Downloader_DLL.Operations
 {

@@ -45,11 +45,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\Common.cs" />
-    <Compile Include="Classes\FFmpegHelper.cs" />
-    <Compile Include="Classes\FileDownload.cs" />
-    <Compile Include="Classes\FileDownloader.cs" />
-    <Compile Include="Classes\FileDownloadEventArgs.cs" />
-    <Compile Include="Classes\FileDownloadFailedEventArgs.cs" />
+    <Compile Include="Helpers\FFmpegHelper.cs" />
+    <Compile Include="FileDownloading\FileDownload.cs" />
+    <Compile Include="FileDownloading\FileDownloader.cs" />
+    <Compile Include="FileDownloading\FileDownloadEventArgs.cs" />
+    <Compile Include="FileDownloading\FileDownloadFailedEventArgs.cs" />
     <Compile Include="Classes\FileSizeFormatProvider.cs" />
     <Compile Include="Classes\FileSizeUpdateEventArgs.cs" />
     <Compile Include="Classes\Helper.cs" />
@@ -61,7 +61,7 @@
     <Compile Include="Classes\VideoFormat.cs" />
     <Compile Include="Classes\VideoInfo.cs" />
     <Compile Include="Classes\VideoSource.cs" />
-    <Compile Include="Classes\YoutubeDlHelper.cs" />
+    <Compile Include="Helpers\YoutubeDlHelper.cs" />
     <Compile Include="Dialogs\OpenFolderDialog.cs" />
     <Compile Include="Enums\ConvertingMode.cs" />
     <Compile Include="FFmpeg\FFmpegFileType.cs" />
