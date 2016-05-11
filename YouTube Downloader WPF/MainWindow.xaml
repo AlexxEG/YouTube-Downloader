@@ -661,7 +661,7 @@
                                     </Grid.ColumnDefinitions>
 
                                     <Border BorderBrush="Gray" BorderThickness="0.6"
-                                            Height="78" Width="138"
+                                            Height="93" Width="166"
                                             VerticalAlignment="Center">
 
                                         <Grid>
@@ -690,7 +690,7 @@
                                         </Grid>
                                     </Border>
 
-                                    <Grid Margin="5,0,0,0" Grid.Column="1">
+                                    <Grid Margin="5,5,0,5" Grid.Column="1">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto" />
                                             <RowDefinition Height="*" />
@@ -795,7 +795,7 @@
                                         </StackPanel>
 
                                         <!--Status Icons-->
-                                        <Grid MinHeight="24" MinWidth="24" Margin="5" HorizontalAlignment="Right" VerticalAlignment="Top">
+                                        <!--<Grid MinHeight="24" MinWidth="24" Margin="5" HorizontalAlignment="Right" VerticalAlignment="Top">
                                             <Rectangle RenderTransformOrigin="2.4,2.2"
                                                        Visibility="{Binding IsCanceled,
                                                                             Converter={StaticResource booleanToVisibilityConverter}}">
@@ -827,7 +827,7 @@
                                                     <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_download_gray}" />
                                                 </Rectangle.Fill>
                                             </Rectangle>
-                                        </Grid>
+                                        </Grid>-->
 
                                         <ProgressBar Value="{Binding ProgressPercentage}"
                                                      IsIndeterminate="{Binding ReportsProgress,
