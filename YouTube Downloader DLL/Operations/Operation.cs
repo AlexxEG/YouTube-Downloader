@@ -116,6 +116,19 @@ namespace YouTube_Downloader_DLL.Operations
             }
         }
 
+        /// <summary>
+        /// Returns True if Operation is done, regardless of result.
+        /// </summary>
+        public bool IsDone
+        {
+            get
+            {
+                return this.Status == OperationStatus.Canceled
+                    || this.Status == OperationStatus.Failed
+                    || this.Status == OperationStatus.Success;
+            }
+        }
+
         public bool IsPaused
         {
             get
