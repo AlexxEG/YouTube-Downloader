@@ -421,6 +421,7 @@
 
                         <!--Save to-->
                         <Label Content="Save to"
+                               Margin="0,0,5,0"
                                Grid.Row="2"/>
 
                         <ComboBox Name="PlaylistSaveTo"
