@@ -84,6 +84,8 @@
             this.rbConvertFolder = new System.Windows.Forms.RadioButton();
             this.rbConvertFile = new System.Windows.Forms.RadioButton();
             this.pConvertFolder = new System.Windows.Forms.Panel();
+            this.label9 = new System.Windows.Forms.Label();
+            this.txtExtension = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.btnBrowseOutputFolder = new System.Windows.Forms.Button();
             this.txtInputFolder = new System.Windows.Forms.TextBox();
@@ -117,8 +119,6 @@
             this.cmPlaylistList = new System.Windows.Forms.ContextMenu();
             this.playlistSelectAllMenuItem = new System.Windows.Forms.MenuItem();
             this.playlistSelectNoneMenuItem = new System.Windows.Forms.MenuItem();
-            this.txtExtension = new System.Windows.Forms.TextBox();
-            this.label9 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.bottomPanel.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -178,7 +178,7 @@
             this.btnGetVideo.Name = "btnGetVideo";
             this.btnGetVideo.Size = new System.Drawing.Size(75, 23);
             this.btnGetVideo.TabIndex = 2;
-            this.btnGetVideo.Text = "Get Video";
+            this.btnGetVideo.Text = "Get";
             this.btnGetVideo.UseVisualStyleBackColor = true;
             this.btnGetVideo.Click += new System.EventHandler(this.btnGetVideo_Click);
             // 
@@ -731,6 +731,23 @@
             this.pConvertFolder.TabIndex = 3;
             this.pConvertFolder.Visible = false;
             // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(6, 67);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(75, 13);
+            this.label9.TabIndex = 15;
+            this.label9.Text = "Extension filter";
+            // 
+            // txtExtension
+            // 
+            this.txtExtension.Location = new System.Drawing.Point(87, 64);
+            this.txtExtension.Name = "txtExtension";
+            this.txtExtension.Size = new System.Drawing.Size(100, 20);
+            this.txtExtension.TabIndex = 14;
+            this.txtExtension.Text = "mp4";
+            // 
             // label7
             // 
             this.label7.AutoSize = true;
@@ -1030,23 +1047,6 @@
             this.playlistSelectNoneMenuItem.Index = 1;
             this.playlistSelectNoneMenuItem.Text = "Select none";
             this.playlistSelectNoneMenuItem.Click += new System.EventHandler(this.playlistSelectNoneMenuItem_Click);
-            // 
-            // txtExtension
-            // 
-            this.txtExtension.Location = new System.Drawing.Point(87, 64);
-            this.txtExtension.Name = "txtExtension";
-            this.txtExtension.Size = new System.Drawing.Size(100, 20);
-            this.txtExtension.TabIndex = 14;
-            this.txtExtension.Text = "mp4";
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(6, 67);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(75, 13);
-            this.label9.TabIndex = 15;
-            this.label9.Text = "Extension filter";
             // 
             // MainForm
             // 
