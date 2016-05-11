@@ -548,7 +548,7 @@ namespace YouTube_Downloader_WPF
             PlaylistReader reader = new PlaylistReader(playlistUrl);
             VideoInfo video;
 
-            _playlistName = reader.Playlist.Name;
+            _playlistName = reader.WaitForPlaylist().Name;
 
             while ((video = reader.Next()) != null)
             {
