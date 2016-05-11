@@ -223,7 +223,7 @@
                         </Button>
                     </Grid>
 
-                    <Button Content="Get Video"
+                    <Button Content="Get"
                             HorizontalAlignment="Right"
                             IsEnabled="{Binding EnableDownloadControls}"
                             Width="90"
