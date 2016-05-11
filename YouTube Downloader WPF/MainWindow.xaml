@@ -226,7 +226,7 @@
                     <Button Content="Get Video"
                             HorizontalAlignment="Right"
                             IsEnabled="{Binding EnableDownloadControls}"
-                            Width="80"
+                            Width="90"
                             Margin="5,10,5,0"
                             Click="GetVideoButton_Click" />
 
