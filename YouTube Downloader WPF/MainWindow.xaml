@@ -778,6 +778,15 @@
                                                             <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_control_resume}" />
                                                         </Rectangle.Fill>
                                                     </Rectangle>
+
+                                                    <Rectangle Width="10" Height="10"
+                                                               RenderTransformOrigin="2.4,2.2"
+                                                               Visibility="{Binding IsDone,
+                                                                                    Converter={StaticResource booleanToVisibilityConverter}}">
+                                                        <Rectangle.Fill>
+                                                            <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_check}" />
+                                                        </Rectangle.Fill>
+                                                    </Rectangle>
                                                 </Grid>
                                             </Button>
 
