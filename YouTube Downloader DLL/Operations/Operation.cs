@@ -331,12 +331,18 @@ namespace YouTube_Downloader_DLL.Operations
                 _status = value;
 
                 this.OnStatusChanged(EventArgs.Empty);
-
                 this.OnPropertyChanged();
-                this.OnPropertyChangedExplicit("IsCanceled");
-                this.OnPropertyChangedExplicit("IsPaused");
-                this.OnPropertyChangedExplicit("IsSuccessful");
-                this.OnPropertyChangedExplicit("IsWorking");
+
+                // Send Changed notification to following properties
+                foreach (string property in new string[] {
+                    "IsCanceled",
+                    "IsDone",
+                    "IsPaused",
+                    "IsSuccessful",
+                    "IsWorking" })
+                {
+                    this.OnPropertyChangedExplicit(property);
+                }
             }
         }
 
