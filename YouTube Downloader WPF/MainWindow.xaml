@@ -197,24 +197,38 @@
                            BorderBrush="LightGray"
                            BorderThickness="0,0,0,1"/>
 
-                    <TextBox Name="VideoLink"
-                             MaxLines="1"
-                             Controls:TextBoxHelper.Watermark="Enter youtube link"
-                             IsEnabled="{Binding EnableDownloadControls}"
-                             Margin="5,5,5,0" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
 
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
-                        <Button Content="Paste"
-                                IsEnabled="{Binding EnableDownloadControls}"
-                                MinWidth="80" Margin="0,0,5,0"
-                                Click="VideoLinkPasteButton_Click" />
+                        <TextBox Name="VideoLink"
+                                 MaxLines="1"
+                                 Controls:TextBoxHelper.Watermark="Enter youtube link"
+                                 IsEnabled="{Binding EnableDownloadControls}"
+                                 Margin="5,5,5,0"/>
 
-                        <Button Content="Get Video"
+                        <Button Height="26" Width="26"
                                 IsEnabled="{Binding EnableDownloadControls}"
-                                MinWidth="80"
-                                Margin="5,0,5,0"
-                                Click="GetVideoButton_Click" />
-                    </StackPanel>
+                                Margin="0,5,5,0"
+                                ToolTip="Paste"
+                                Grid.Column="1"
+                                Click="VideoLinkPasteButton_Click">
+                            <Rectangle Width="10" Height="10" RenderTransformOrigin="2.4,2.2">
+                                <Rectangle.Fill>
+                                    <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_clipboard_paste}" />
+                                </Rectangle.Fill>
+                            </Rectangle>
+                        </Button>
+                    </Grid>
+
+                    <Button Content="Get Video"
+                            HorizontalAlignment="Right"
+                            IsEnabled="{Binding EnableDownloadControls}"
+                            Width="80"
+                            Margin="5,10,5,0"
+                            Click="GetVideoButton_Click" />
 
                     <Label Content="VIDEO INFORMATION" 
                            FontSize="16"
@@ -364,6 +378,20 @@
                                  IsEnabled="{Binding EnablePlaylistControls}"
                                  Grid.Column="1"
                                  TextChanged="PlaylistLink_TextChanged" />
+
+                        <Button Height="26" Width="26"
+                                HorizontalAlignment="Left"
+                                IsEnabled="{Binding EnableDownloadControls}"
+                                Margin="5,0,0,0"
+                                ToolTip="Paste"
+                                Grid.Column="2"
+                                Click="PlaylistLinkPasteButton_Click">
+                            <Rectangle Width="10" Height="10" RenderTransformOrigin="2.4,2.2">
+                                <Rectangle.Fill>
+                                    <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_clipboard_paste}" />
+                                </Rectangle.Fill>
+                            </Rectangle>
+                        </Button>
                         <!--Link-->
 
                         <!--Quality-->

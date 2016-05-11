@@ -444,6 +444,11 @@ namespace YouTube_Downloader_WPF
             }
         }
 
+        private void PlaylistLinkPasteButton_Click(object sender, RoutedEventArgs e)
+        {
+            PlaylistLink.Text = Regex.Replace(Clipboard.GetText(), "\r\n", " \u200B");
+        }
+
         private void PlaylistBrowse_Click(object sender, RoutedEventArgs e)
         {
             OpenFolderDialog ofd = new OpenFolderDialog();
