@@ -646,11 +646,13 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
+                    <!-- Disabling HorizontalScrollBarVisibility fixes ProgressBar in items only growing, not shrinking -->
                     <ListView Name="QueueList"
                               ItemsSource="{Binding Queue}"
                               BorderBrush="LightGray"
                               BorderThickness="0.6"
-                              Margin="5">
+                              Margin="5"
+                              ScrollViewer.HorizontalScrollBarVisibility="Disabled">
 
                         <ListView.ItemTemplate>
                             <DataTemplate>
