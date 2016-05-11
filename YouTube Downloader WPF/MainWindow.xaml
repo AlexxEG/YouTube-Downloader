@@ -699,6 +699,7 @@
 
                                         <StackPanel Margin="0,0,0,5">
                                             <TextBlock Text="{Binding Title}"
+                                                       ToolTip="{Binding Title}"
                                                        FontSize="16" />
 
                                             <TextBlock Text="{Binding Text}" />
