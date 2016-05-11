@@ -459,6 +459,8 @@ namespace YouTube_Downloader
             PlaylistReader reader = new PlaylistReader(playlistUrl);
             VideoInfo video;
 
+            _playlistName = reader.WaitForPlaylist().Name;
+
             while ((video = reader.Next()) != null)
             {
                 if (_backgroundWorkerPlaylist.CancellationPending)
