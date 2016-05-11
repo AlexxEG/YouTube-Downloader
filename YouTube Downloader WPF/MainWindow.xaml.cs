@@ -171,11 +171,12 @@ namespace YouTube_Downloader_WPF
 
                     break;
                 case "Remove":
-                    if (!operation.CanStop())
-                        return;
+                    if (operation.CanStop())
+                        operation.Stop(true);
 
-                    operation.Stop(true);
-                    this.Queue.Remove(operation);
+                    if (operation.IsDone)
+                        this.Queue.Remove(operation);
+
                     break;
             }
         }
