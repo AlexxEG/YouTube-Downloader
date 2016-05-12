@@ -252,9 +252,9 @@
 
                         <Border Name="Thumbnail"
                                 BorderBrush="Gray" BorderThickness="0.6"
-                                Height="78" Width="138"
+                                Height="92" Width="164"
                                 VerticalAlignment="Center"
-                                Margin="0,0,5,0"
+                                Margin="0,1,5,0"
                                 Grid.RowSpan="3">
 
                             <Grid>
@@ -279,10 +279,13 @@
                         </Border>
 
                         <Label Content="Title"
+                               VerticalAlignment="Center"
                                Grid.Column="1" />
 
                         <TextBox Text="{Binding Path=VideoInformation.Title}"
+                                 Height="26"
                                  IsEnabled="{Binding EnableDownloadControls}"
+                                 Margin="0,2,0,0"
                                  Grid.Column="2"
                                  Grid.ColumnSpan="2"/>
 
@@ -291,6 +294,7 @@
                                Grid.Column="1" Grid.Row="1" />
 
                         <ComboBox Name="VideoFormats"
+                                  Height="26"
                                   ItemsSource="{Binding Source={StaticResource FilteredFormats}, NotifyOnTargetUpdated=True}"
                                   SelectedItem="{Binding SelectedFormat, Mode=TwoWay}"
                                   SelectedIndex="0"
@@ -312,14 +316,17 @@
                         </ComboBox>
 
                         <Label Content="Save to"
+                               VerticalAlignment="Center"
                                Grid.Column="1" Grid.Row="2" />
 
                         <ComboBox Name="VideoSaveTo"
+                                  Height="26"
                                   ItemsSource="{Binding Source={x:Static properties:Settings.Default},
                                                         Path=SaveToDirectories,
                                                         Mode=TwoWay}"
                                   IsEditable="True"
                                   IsEnabled="{Binding EnableDownloadControls}"
+                                  Margin="0,0,0,0"
                                   SelectedIndex="{Binding Source={x:Static properties:Settings.Default},
                                                           Path=SelectedDirectory,
                                                           Mode=TwoWay}"
@@ -328,7 +335,7 @@
                         <Button Name="VideoBrowseButton"
                                 Content="..."
                                 IsEnabled="{Binding EnableDownloadControls}"
-                                Width="25" Margin="5,0,0,0"
+                                Height="26" Width="25" Margin="5,0,0,0"
                                 Grid.Column="3" Grid.Row="2"
                                 Click="VideoBrowseButton_Click" />
 
