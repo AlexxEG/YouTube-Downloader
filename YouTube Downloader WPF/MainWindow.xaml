@@ -457,30 +457,19 @@
                                     Grid.Row="3">
 
                             <Grid>
-                                <Button Content="Get Playlist"
+                                <Button Content="Get"
                                         IsEnabled="{Binding IsPlaylistLinkValid}"
-                                        MinWidth="80"
+                                        MinWidth="90"
                                         Visibility="{Binding EnablePlaylistControls,
                                                              Converter={StaticResource booleanToVisibilityConverter}}"
                                         Click="PlaylistGet_Click" />
 
                                 <Button Content="Cancel"
-                                        MinWidth="80"
+                                        MinWidth="90"
                                         Visibility="{Binding EnablePlaylistControls,
                                                              Converter={StaticResource inverseBooleanToVisibilityConverter}}"
                                         Click="PlaylistCancel_Click" />
                             </Grid>
-
-                            <Button Content="Download All"
-                                    Margin="5,0,0,0"
-                                    Click="PlaylistDownloadAll_Click">
-                                <Button.IsEnabled>
-                                    <MultiBinding Converter="{StaticResource multiBoolConverter}">
-                                        <Binding Path="EnablePlaylistControls" />
-                                        <Binding Path="IsPlaylistLinkValid" />
-                                    </MultiBinding>
-                                </Button.IsEnabled>
-                            </Button>
                         </StackPanel>
                         <!--Button row-->
                     </Grid>
@@ -514,12 +503,26 @@
                         </ListView.View>
                     </ListView>
 
-                    <Button Content="Download Selected"
-                            IsEnabled="{Binding CanDownloadPlaylist}"
-                            Margin="5,0,5,5"
-                            HorizontalAlignment="Right"
-                            Grid.Row="3"
-                            Click="PlaylistDownloadSelected_Click" />
+                    <StackPanel HorizontalAlignment="Right"
+                                Margin="5,0,5,5"
+                                Orientation="Horizontal"
+                                Grid.Row="3">
+
+                        <Button Content="Download Selected"
+                                IsEnabled="{Binding CanDownloadPlaylist}"
+                                Click="PlaylistDownloadSelected_Click" />
+
+                        <Button Content="Download All"
+                                Margin="5,0,0,0"
+                                Click="PlaylistDownloadAll_Click">
+                            <Button.IsEnabled>
+                                <MultiBinding Converter="{StaticResource multiBoolConverter}">
+                                    <Binding Path="EnablePlaylistControls" />
+                                    <Binding Path="IsPlaylistLinkValid" />
+                                </MultiBinding>
+                            </Button.IsEnabled>
+                        </Button>
+                    </StackPanel>
                 </Grid>
             </TabItem>
 
@@ -666,7 +669,7 @@
                         </StackPanel>
 
                         <Button Content="Convert"
-                                Height="24" Width="120" Margin="0,0,5,5"
+                                Height="24" Width="90" Margin="0,0,5,5"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Bottom"
                                 Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"
