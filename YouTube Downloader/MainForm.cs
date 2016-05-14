@@ -115,17 +115,6 @@ namespace YouTube_Downloader
             lFFmpegMissing.Visible = btnCheckAgain.Visible = !Program.FFmpegAvailable;
         }
 
-        private void btnExit_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
-
-        private void bottomPanel_Paint(object sender, PaintEventArgs e)
-        {
-            // Draw line on top of panel.
-            e.Graphics.DrawLine(new Pen(Color.Silver, 2), new Point(0, 1), new Point(bottomPanel.Width, 1));
-        }
-
         private void linkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             try

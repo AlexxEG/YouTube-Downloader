@@ -28,10 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label2 = new System.Windows.Forms.Label();
             this.btnPaste = new System.Windows.Forms.Button();
+            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.btnGetVideo = new System.Windows.Forms.Button();
             this.txtYoutubeLink = new System.Windows.Forms.TextBox();
             this.btnBrowse = new System.Windows.Forms.Button();
@@ -40,8 +42,6 @@
             this.label4 = new System.Windows.Forms.Label();
             this.btnDownload = new System.Windows.Forms.Button();
             this.cbQuality = new System.Windows.Forms.ComboBox();
-            this.bottomPanel = new System.Windows.Forms.Panel();
-            this.btnExit = new System.Windows.Forms.Button();
             this.bwGetVideo = new System.ComponentModel.BackgroundWorker();
             this.contextMenu1 = new System.Windows.Forms.ContextMenu();
             this.openMenuItem = new System.Windows.Forms.MenuItem();
@@ -61,21 +61,21 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.downloadTabPage = new System.Windows.Forms.TabPage();
             this.playlistTabPage = new System.Windows.Forms.TabPage();
+            this.btnPlaylistDownloadSelected = new System.Windows.Forms.Button();
             this.lvPlaylistVideos = new System.Windows.Forms.ListView();
             this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.groupBox7 = new System.Windows.Forms.GroupBox();
-            this.btnPlaylistDownloadSelected = new System.Windows.Forms.Button();
             this.btnGetPlaylist = new System.Windows.Forms.Button();
             this.chbPlaylistDASH = new System.Windows.Forms.CheckBox();
             this.label14 = new System.Windows.Forms.Label();
             this.cbPlaylistQuality = new System.Windows.Forms.ComboBox();
             this.btnPlaylistBrowse = new System.Windows.Forms.Button();
-            this.btnPlaylistDownloadAll = new System.Windows.Forms.Button();
             this.label13 = new System.Windows.Forms.Label();
             this.cbPlaylistSaveTo = new System.Windows.Forms.ComboBox();
             this.label12 = new System.Windows.Forms.Label();
             this.txtPlaylistLink = new System.Windows.Forms.TextBox();
+            this.btnPlaylistDownloadAll = new System.Windows.Forms.Button();
             this.convertTabPage = new System.Windows.Forms.TabPage();
             this.btnCheckAgain = new System.Windows.Forms.Button();
             this.lFFmpegMissing = new System.Windows.Forms.Label();
@@ -119,8 +119,8 @@
             this.cmPlaylistList = new System.Windows.Forms.ContextMenu();
             this.playlistSelectAllMenuItem = new System.Windows.Forms.MenuItem();
             this.playlistSelectNoneMenuItem = new System.Windows.Forms.MenuItem();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.groupBox1.SuspendLayout();
-            this.bottomPanel.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.videoThumbnail)).BeginInit();
             this.tabControl1.SuspendLayout();
@@ -146,7 +146,7 @@
             this.groupBox1.Controls.Add(this.txtYoutubeLink);
             this.groupBox1.Location = new System.Drawing.Point(6, 6);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(584, 74);
+            this.groupBox1.Size = new System.Drawing.Size(590, 74);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Video Link";
@@ -163,20 +163,28 @@
             // btnPaste
             // 
             this.btnPaste.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPaste.Location = new System.Drawing.Point(422, 45);
+            this.btnPaste.ImageIndex = 0;
+            this.btnPaste.ImageList = this.imageList1;
+            this.btnPaste.Location = new System.Drawing.Point(562, 18);
             this.btnPaste.Name = "btnPaste";
-            this.btnPaste.Size = new System.Drawing.Size(75, 23);
+            this.btnPaste.Size = new System.Drawing.Size(22, 22);
             this.btnPaste.TabIndex = 2;
-            this.btnPaste.Text = "Paste";
+            this.toolTip1.SetToolTip(this.btnPaste, "Paste");
             this.btnPaste.UseVisualStyleBackColor = true;
             this.btnPaste.Click += new System.EventHandler(this.btnPaste_Click);
+            // 
+            // imageList1
+            // 
+            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageList1.Images.SetKeyName(0, "Paste-64.png");
             // 
             // btnGetVideo
             // 
             this.btnGetVideo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnGetVideo.Location = new System.Drawing.Point(503, 45);
+            this.btnGetVideo.Location = new System.Drawing.Point(494, 45);
             this.btnGetVideo.Name = "btnGetVideo";
-            this.btnGetVideo.Size = new System.Drawing.Size(75, 23);
+            this.btnGetVideo.Size = new System.Drawing.Size(90, 23);
             this.btnGetVideo.TabIndex = 2;
             this.btnGetVideo.Text = "Get";
             this.btnGetVideo.UseVisualStyleBackColor = true;
@@ -188,13 +196,13 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtYoutubeLink.Location = new System.Drawing.Point(39, 19);
             this.txtYoutubeLink.Name = "txtYoutubeLink";
-            this.txtYoutubeLink.Size = new System.Drawing.Size(539, 20);
+            this.txtYoutubeLink.Size = new System.Drawing.Size(517, 20);
             this.txtYoutubeLink.TabIndex = 1;
             // 
             // btnBrowse
             // 
             this.btnBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBrowse.Location = new System.Drawing.Point(547, 73);
+            this.btnBrowse.Location = new System.Drawing.Point(553, 73);
             this.btnBrowse.Name = "btnBrowse";
             this.btnBrowse.Size = new System.Drawing.Size(31, 23);
             this.btnBrowse.TabIndex = 7;
@@ -218,7 +226,7 @@
             this.cbSaveTo.FormattingEnabled = true;
             this.cbSaveTo.Location = new System.Drawing.Point(182, 74);
             this.cbSaveTo.Name = "cbSaveTo";
-            this.cbSaveTo.Size = new System.Drawing.Size(359, 21);
+            this.cbSaveTo.Size = new System.Drawing.Size(365, 21);
             this.cbSaveTo.TabIndex = 5;
             // 
             // label4
@@ -234,9 +242,9 @@
             // 
             this.btnDownload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnDownload.Enabled = false;
-            this.btnDownload.Location = new System.Drawing.Point(503, 102);
+            this.btnDownload.Location = new System.Drawing.Point(494, 102);
             this.btnDownload.Name = "btnDownload";
-            this.btnDownload.Size = new System.Drawing.Size(75, 23);
+            this.btnDownload.Size = new System.Drawing.Size(90, 23);
             this.btnDownload.TabIndex = 3;
             this.btnDownload.Text = "Download";
             this.btnDownload.UseVisualStyleBackColor = true;
@@ -251,33 +259,9 @@
             this.cbQuality.FormattingEnabled = true;
             this.cbQuality.Location = new System.Drawing.Point(182, 46);
             this.cbQuality.Name = "cbQuality";
-            this.cbQuality.Size = new System.Drawing.Size(278, 21);
+            this.cbQuality.Size = new System.Drawing.Size(284, 21);
             this.cbQuality.TabIndex = 1;
             this.cbQuality.SelectedIndexChanged += new System.EventHandler(this.cbQuality_SelectedIndexChanged);
-            // 
-            // bottomPanel
-            // 
-            this.bottomPanel.BackColor = System.Drawing.Color.Gainsboro;
-            this.bottomPanel.Controls.Add(this.btnExit);
-            this.bottomPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.bottomPanel.Location = new System.Drawing.Point(0, 341);
-            this.bottomPanel.Margin = new System.Windows.Forms.Padding(3, 9, 3, 3);
-            this.bottomPanel.Name = "bottomPanel";
-            this.bottomPanel.Padding = new System.Windows.Forms.Padding(5);
-            this.bottomPanel.Size = new System.Drawing.Size(628, 46);
-            this.bottomPanel.TabIndex = 1;
-            this.bottomPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.bottomPanel_Paint);
-            // 
-            // btnExit
-            // 
-            this.btnExit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnExit.Location = new System.Drawing.Point(541, 11);
-            this.btnExit.Name = "btnExit";
-            this.btnExit.Size = new System.Drawing.Size(75, 23);
-            this.btnExit.TabIndex = 3;
-            this.btnExit.Text = "Exit";
-            this.btnExit.UseVisualStyleBackColor = true;
-            this.btnExit.Click += new System.EventHandler(this.btnExit_Click);
             // 
             // bwGetVideo
             // 
@@ -368,7 +352,7 @@
             this.groupBox3.Controls.Add(this.cbSaveTo);
             this.groupBox3.Location = new System.Drawing.Point(6, 86);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(584, 131);
+            this.groupBox3.Size = new System.Drawing.Size(590, 131);
             this.groupBox3.TabIndex = 8;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Video Information";
@@ -379,14 +363,14 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtTitle.Location = new System.Drawing.Point(182, 20);
             this.txtTitle.Name = "txtTitle";
-            this.txtTitle.Size = new System.Drawing.Size(359, 20);
+            this.txtTitle.Size = new System.Drawing.Size(365, 20);
             this.txtTitle.TabIndex = 12;
             // 
             // lFileSize
             // 
             this.lFileSize.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lFileSize.AutoSize = true;
-            this.lFileSize.Location = new System.Drawing.Point(466, 49);
+            this.lFileSize.Location = new System.Drawing.Point(472, 49);
             this.lFileSize.Name = "lFileSize";
             this.lFileSize.Size = new System.Drawing.Size(44, 13);
             this.lFileSize.TabIndex = 11;
@@ -425,7 +409,7 @@
             this.tabControl1.Location = new System.Drawing.Point(12, 12);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(604, 317);
+            this.tabControl1.Size = new System.Drawing.Size(610, 387);
             this.tabControl1.TabIndex = 9;
             // 
             // downloadTabPage
@@ -435,22 +419,36 @@
             this.downloadTabPage.Location = new System.Drawing.Point(4, 22);
             this.downloadTabPage.Name = "downloadTabPage";
             this.downloadTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.downloadTabPage.Size = new System.Drawing.Size(596, 291);
+            this.downloadTabPage.Size = new System.Drawing.Size(602, 361);
             this.downloadTabPage.TabIndex = 0;
             this.downloadTabPage.Text = "Download";
             this.downloadTabPage.UseVisualStyleBackColor = true;
             // 
             // playlistTabPage
             // 
+            this.playlistTabPage.Controls.Add(this.btnPlaylistDownloadSelected);
             this.playlistTabPage.Controls.Add(this.lvPlaylistVideos);
             this.playlistTabPage.Controls.Add(this.groupBox7);
+            this.playlistTabPage.Controls.Add(this.btnPlaylistDownloadAll);
             this.playlistTabPage.Location = new System.Drawing.Point(4, 22);
             this.playlistTabPage.Name = "playlistTabPage";
             this.playlistTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.playlistTabPage.Size = new System.Drawing.Size(596, 291);
+            this.playlistTabPage.Size = new System.Drawing.Size(602, 361);
             this.playlistTabPage.TabIndex = 4;
             this.playlistTabPage.Text = "Playlist";
             this.playlistTabPage.UseVisualStyleBackColor = true;
+            // 
+            // btnPlaylistDownloadSelected
+            // 
+            this.btnPlaylistDownloadSelected.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnPlaylistDownloadSelected.Enabled = false;
+            this.btnPlaylistDownloadSelected.Location = new System.Drawing.Point(385, 332);
+            this.btnPlaylistDownloadSelected.Name = "btnPlaylistDownloadSelected";
+            this.btnPlaylistDownloadSelected.Size = new System.Drawing.Size(115, 23);
+            this.btnPlaylistDownloadSelected.TabIndex = 16;
+            this.btnPlaylistDownloadSelected.Text = "Download Selected";
+            this.btnPlaylistDownloadSelected.UseVisualStyleBackColor = true;
+            this.btnPlaylistDownloadSelected.Click += new System.EventHandler(this.btnPlaylistDownloadSelected_Click);
             // 
             // lvPlaylistVideos
             // 
@@ -462,9 +460,9 @@
             this.columnHeader7,
             this.columnHeader8});
             this.lvPlaylistVideos.FullRowSelect = true;
-            this.lvPlaylistVideos.Location = new System.Drawing.Point(6, 171);
+            this.lvPlaylistVideos.Location = new System.Drawing.Point(6, 143);
             this.lvPlaylistVideos.Name = "lvPlaylistVideos";
-            this.lvPlaylistVideos.Size = new System.Drawing.Size(584, 114);
+            this.lvPlaylistVideos.Size = new System.Drawing.Size(590, 183);
             this.lvPlaylistVideos.TabIndex = 1;
             this.lvPlaylistVideos.UseCompatibleStateImageBehavior = false;
             this.lvPlaylistVideos.View = System.Windows.Forms.View.Details;
@@ -483,44 +481,30 @@
             // 
             this.groupBox7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox7.Controls.Add(this.btnPlaylistDownloadSelected);
             this.groupBox7.Controls.Add(this.btnGetPlaylist);
             this.groupBox7.Controls.Add(this.chbPlaylistDASH);
             this.groupBox7.Controls.Add(this.label14);
             this.groupBox7.Controls.Add(this.cbPlaylistQuality);
             this.groupBox7.Controls.Add(this.btnPlaylistBrowse);
-            this.groupBox7.Controls.Add(this.btnPlaylistDownloadAll);
             this.groupBox7.Controls.Add(this.label13);
             this.groupBox7.Controls.Add(this.cbPlaylistSaveTo);
             this.groupBox7.Controls.Add(this.label12);
             this.groupBox7.Controls.Add(this.txtPlaylistLink);
             this.groupBox7.Location = new System.Drawing.Point(6, 6);
             this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(584, 159);
+            this.groupBox7.Size = new System.Drawing.Size(590, 131);
             this.groupBox7.TabIndex = 0;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Playlist Link";
             // 
-            // btnPlaylistDownloadSelected
-            // 
-            this.btnPlaylistDownloadSelected.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPlaylistDownloadSelected.Enabled = false;
-            this.btnPlaylistDownloadSelected.Location = new System.Drawing.Point(367, 130);
-            this.btnPlaylistDownloadSelected.Name = "btnPlaylistDownloadSelected";
-            this.btnPlaylistDownloadSelected.Size = new System.Drawing.Size(115, 23);
-            this.btnPlaylistDownloadSelected.TabIndex = 16;
-            this.btnPlaylistDownloadSelected.Text = "Download Selected";
-            this.btnPlaylistDownloadSelected.UseVisualStyleBackColor = true;
-            this.btnPlaylistDownloadSelected.Click += new System.EventHandler(this.btnPlaylistDownloadSelected_Click);
-            // 
             // btnGetPlaylist
             // 
             this.btnGetPlaylist.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnGetPlaylist.Location = new System.Drawing.Point(281, 130);
+            this.btnGetPlaylist.Location = new System.Drawing.Point(494, 102);
             this.btnGetPlaylist.Name = "btnGetPlaylist";
-            this.btnGetPlaylist.Size = new System.Drawing.Size(80, 23);
+            this.btnGetPlaylist.Size = new System.Drawing.Size(90, 23);
             this.btnGetPlaylist.TabIndex = 15;
-            this.btnGetPlaylist.Text = "Get Playlist";
+            this.btnGetPlaylist.Text = "Get";
             this.btnGetPlaylist.UseVisualStyleBackColor = true;
             this.btnGetPlaylist.Click += new System.EventHandler(this.btnGetPlaylist_Click);
             // 
@@ -561,25 +545,13 @@
             // btnPlaylistBrowse
             // 
             this.btnPlaylistBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPlaylistBrowse.Location = new System.Drawing.Point(547, 71);
+            this.btnPlaylistBrowse.Location = new System.Drawing.Point(553, 71);
             this.btnPlaylistBrowse.Name = "btnPlaylistBrowse";
             this.btnPlaylistBrowse.Size = new System.Drawing.Size(31, 23);
             this.btnPlaylistBrowse.TabIndex = 11;
             this.btnPlaylistBrowse.Text = "...";
             this.btnPlaylistBrowse.UseVisualStyleBackColor = true;
             this.btnPlaylistBrowse.Click += new System.EventHandler(this.btnPlaylistBrowse_Click);
-            // 
-            // btnPlaylistDownloadAll
-            // 
-            this.btnPlaylistDownloadAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPlaylistDownloadAll.Enabled = false;
-            this.btnPlaylistDownloadAll.Location = new System.Drawing.Point(488, 130);
-            this.btnPlaylistDownloadAll.Name = "btnPlaylistDownloadAll";
-            this.btnPlaylistDownloadAll.Size = new System.Drawing.Size(90, 23);
-            this.btnPlaylistDownloadAll.TabIndex = 8;
-            this.btnPlaylistDownloadAll.Text = "Download All";
-            this.btnPlaylistDownloadAll.UseVisualStyleBackColor = true;
-            this.btnPlaylistDownloadAll.Click += new System.EventHandler(this.btnPlaylistDownloadAll_Click);
             // 
             // label13
             // 
@@ -597,7 +569,7 @@
             this.cbPlaylistSaveTo.FormattingEnabled = true;
             this.cbPlaylistSaveTo.Location = new System.Drawing.Point(60, 72);
             this.cbPlaylistSaveTo.Name = "cbPlaylistSaveTo";
-            this.cbPlaylistSaveTo.Size = new System.Drawing.Size(481, 21);
+            this.cbPlaylistSaveTo.Size = new System.Drawing.Size(487, 21);
             this.cbPlaylistSaveTo.TabIndex = 9;
             this.cbPlaylistSaveTo.SelectedIndexChanged += new System.EventHandler(this.cbPlaylistSaveTo_SelectedIndexChanged);
             // 
@@ -616,9 +588,21 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtPlaylistLink.Location = new System.Drawing.Point(60, 19);
             this.txtPlaylistLink.Name = "txtPlaylistLink";
-            this.txtPlaylistLink.Size = new System.Drawing.Size(518, 20);
+            this.txtPlaylistLink.Size = new System.Drawing.Size(524, 20);
             this.txtPlaylistLink.TabIndex = 4;
             this.txtPlaylistLink.TextChanged += new System.EventHandler(this.txtPlaylistLink_TextChanged);
+            // 
+            // btnPlaylistDownloadAll
+            // 
+            this.btnPlaylistDownloadAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnPlaylistDownloadAll.Enabled = false;
+            this.btnPlaylistDownloadAll.Location = new System.Drawing.Point(506, 332);
+            this.btnPlaylistDownloadAll.Name = "btnPlaylistDownloadAll";
+            this.btnPlaylistDownloadAll.Size = new System.Drawing.Size(90, 23);
+            this.btnPlaylistDownloadAll.TabIndex = 8;
+            this.btnPlaylistDownloadAll.Text = "Download All";
+            this.btnPlaylistDownloadAll.UseVisualStyleBackColor = true;
+            this.btnPlaylistDownloadAll.Click += new System.EventHandler(this.btnPlaylistDownloadAll_Click);
             // 
             // convertTabPage
             // 
@@ -628,7 +612,7 @@
             this.convertTabPage.Location = new System.Drawing.Point(4, 22);
             this.convertTabPage.Name = "convertTabPage";
             this.convertTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.convertTabPage.Size = new System.Drawing.Size(596, 291);
+            this.convertTabPage.Size = new System.Drawing.Size(602, 361);
             this.convertTabPage.TabIndex = 2;
             this.convertTabPage.Text = "Convert";
             this.convertTabPage.UseVisualStyleBackColor = true;
@@ -636,7 +620,7 @@
             // btnCheckAgain
             // 
             this.btnCheckAgain.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCheckAgain.Location = new System.Drawing.Point(484, 216);
+            this.btnCheckAgain.Location = new System.Drawing.Point(490, 286);
             this.btnCheckAgain.Name = "btnCheckAgain";
             this.btnCheckAgain.Size = new System.Drawing.Size(106, 23);
             this.btnCheckAgain.TabIndex = 11;
@@ -651,7 +635,7 @@
             this.lFFmpegMissing.AutoSize = true;
             this.lFFmpegMissing.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lFFmpegMissing.ForeColor = System.Drawing.Color.Red;
-            this.lFFmpegMissing.Location = new System.Drawing.Point(6, 216);
+            this.lFFmpegMissing.Location = new System.Drawing.Point(6, 286);
             this.lFFmpegMissing.Name = "lFFmpegMissing";
             this.lFFmpegMissing.Size = new System.Drawing.Size(429, 20);
             this.lFFmpegMissing.TabIndex = 10;
@@ -668,7 +652,7 @@
             this.groupBox2.Controls.Add(this.btnConvert);
             this.groupBox2.Location = new System.Drawing.Point(6, 6);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(584, 204);
+            this.groupBox2.Size = new System.Drawing.Size(590, 274);
             this.groupBox2.TabIndex = 5;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Convert to MP3";
@@ -683,7 +667,7 @@
             this.groupBox5.Controls.Add(this.pConvertFile);
             this.groupBox5.Location = new System.Drawing.Point(6, 19);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(572, 109);
+            this.groupBox5.Size = new System.Drawing.Size(578, 109);
             this.groupBox5.TabIndex = 8;
             this.groupBox5.TabStop = false;
             // 
@@ -727,7 +711,7 @@
             this.pConvertFolder.Location = new System.Drawing.Point(3, 16);
             this.pConvertFolder.Name = "pConvertFolder";
             this.pConvertFolder.Padding = new System.Windows.Forms.Padding(3);
-            this.pConvertFolder.Size = new System.Drawing.Size(566, 90);
+            this.pConvertFolder.Size = new System.Drawing.Size(572, 90);
             this.pConvertFolder.TabIndex = 3;
             this.pConvertFolder.Visible = false;
             // 
@@ -760,7 +744,7 @@
             // btnBrowseOutputFolder
             // 
             this.btnBrowseOutputFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBrowseOutputFolder.Location = new System.Drawing.Point(536, 31);
+            this.btnBrowseOutputFolder.Location = new System.Drawing.Point(542, 31);
             this.btnBrowseOutputFolder.Name = "btnBrowseOutputFolder";
             this.btnBrowseOutputFolder.Size = new System.Drawing.Size(24, 22);
             this.btnBrowseOutputFolder.TabIndex = 13;
@@ -776,13 +760,13 @@
             this.txtInputFolder.Location = new System.Drawing.Point(51, 6);
             this.txtInputFolder.Name = "txtInputFolder";
             this.txtInputFolder.ReadOnly = true;
-            this.txtInputFolder.Size = new System.Drawing.Size(479, 20);
+            this.txtInputFolder.Size = new System.Drawing.Size(485, 20);
             this.txtInputFolder.TabIndex = 10;
             // 
             // btnBrowseInputFolder
             // 
             this.btnBrowseInputFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBrowseInputFolder.Location = new System.Drawing.Point(536, 5);
+            this.btnBrowseInputFolder.Location = new System.Drawing.Point(542, 5);
             this.btnBrowseInputFolder.Name = "btnBrowseInputFolder";
             this.btnBrowseInputFolder.Size = new System.Drawing.Size(24, 22);
             this.btnBrowseInputFolder.TabIndex = 12;
@@ -807,7 +791,7 @@
             this.txtOutputFolder.Location = new System.Drawing.Point(51, 32);
             this.txtOutputFolder.Name = "txtOutputFolder";
             this.txtOutputFolder.ReadOnly = true;
-            this.txtOutputFolder.Size = new System.Drawing.Size(479, 20);
+            this.txtOutputFolder.Size = new System.Drawing.Size(485, 20);
             this.txtOutputFolder.TabIndex = 11;
             // 
             // pConvertFile
@@ -822,7 +806,7 @@
             this.pConvertFile.Location = new System.Drawing.Point(3, 16);
             this.pConvertFile.Name = "pConvertFile";
             this.pConvertFile.Padding = new System.Windows.Forms.Padding(3);
-            this.pConvertFile.Size = new System.Drawing.Size(566, 90);
+            this.pConvertFile.Size = new System.Drawing.Size(572, 90);
             this.pConvertFile.TabIndex = 2;
             // 
             // label5
@@ -837,7 +821,7 @@
             // btnBrowseOutputFile
             // 
             this.btnBrowseOutputFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBrowseOutputFile.Location = new System.Drawing.Point(536, 31);
+            this.btnBrowseOutputFile.Location = new System.Drawing.Point(542, 31);
             this.btnBrowseOutputFile.Name = "btnBrowseOutputFile";
             this.btnBrowseOutputFile.Size = new System.Drawing.Size(24, 22);
             this.btnBrowseOutputFile.TabIndex = 7;
@@ -853,13 +837,13 @@
             this.txtInputFile.Location = new System.Drawing.Point(51, 6);
             this.txtInputFile.Name = "txtInputFile";
             this.txtInputFile.ReadOnly = true;
-            this.txtInputFile.Size = new System.Drawing.Size(479, 20);
+            this.txtInputFile.Size = new System.Drawing.Size(485, 20);
             this.txtInputFile.TabIndex = 2;
             // 
             // btnBrowseInputFile
             // 
             this.btnBrowseInputFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBrowseInputFile.Location = new System.Drawing.Point(536, 5);
+            this.btnBrowseInputFile.Location = new System.Drawing.Point(542, 5);
             this.btnBrowseInputFile.Name = "btnBrowseInputFile";
             this.btnBrowseInputFile.Size = new System.Drawing.Size(24, 22);
             this.btnBrowseInputFile.TabIndex = 6;
@@ -884,7 +868,7 @@
             this.txtOutputFile.Location = new System.Drawing.Point(51, 32);
             this.txtOutputFile.Name = "txtOutputFile";
             this.txtOutputFile.ReadOnly = true;
-            this.txtOutputFile.Size = new System.Drawing.Size(479, 20);
+            this.txtOutputFile.Size = new System.Drawing.Size(485, 20);
             this.txtOutputFile.TabIndex = 3;
             // 
             // gCropping
@@ -894,7 +878,7 @@
             this.gCropping.Controls.Add(this.mtxtTo);
             this.gCropping.Controls.Add(this.chbCropTo);
             this.gCropping.Controls.Add(this.mtxtFrom);
-            this.gCropping.Location = new System.Drawing.Point(6, 134);
+            this.gCropping.Location = new System.Drawing.Point(6, 204);
             this.gCropping.Name = "gCropping";
             this.gCropping.Size = new System.Drawing.Size(372, 64);
             this.gCropping.TabIndex = 5;
@@ -947,7 +931,7 @@
             // btnConvert
             // 
             this.btnConvert.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnConvert.Location = new System.Drawing.Point(503, 175);
+            this.btnConvert.Location = new System.Drawing.Point(509, 245);
             this.btnConvert.Name = "btnConvert";
             this.btnConvert.Size = new System.Drawing.Size(75, 23);
             this.btnConvert.TabIndex = 4;
@@ -962,7 +946,7 @@
             this.queueTabPage.Location = new System.Drawing.Point(4, 22);
             this.queueTabPage.Name = "queueTabPage";
             this.queueTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.queueTabPage.Size = new System.Drawing.Size(596, 291);
+            this.queueTabPage.Size = new System.Drawing.Size(602, 361);
             this.queueTabPage.TabIndex = 1;
             this.queueTabPage.Text = "Queue";
             this.queueTabPage.UseVisualStyleBackColor = true;
@@ -971,7 +955,7 @@
             // 
             this.chbAutoConvert.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chbAutoConvert.AutoSize = true;
-            this.chbAutoConvert.Location = new System.Drawing.Point(6, 268);
+            this.chbAutoConvert.Location = new System.Drawing.Point(6, 338);
             this.chbAutoConvert.Name = "chbAutoConvert";
             this.chbAutoConvert.Size = new System.Drawing.Size(164, 17);
             this.chbAutoConvert.TabIndex = 3;
@@ -993,7 +977,7 @@
             this.lvQueue.FullRowSelect = true;
             this.lvQueue.Location = new System.Drawing.Point(6, 6);
             this.lvQueue.Name = "lvQueue";
-            this.lvQueue.Size = new System.Drawing.Size(584, 256);
+            this.lvQueue.Size = new System.Drawing.Size(590, 326);
             this.lvQueue.TabIndex = 2;
             this.lvQueue.UseCompatibleStateImageBehavior = false;
             this.lvQueue.View = System.Windows.Forms.View.Details;
@@ -1052,9 +1036,8 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(628, 387);
+            this.ClientSize = new System.Drawing.Size(634, 411);
             this.Controls.Add(this.tabControl1);
-            this.Controls.Add(this.bottomPanel);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(644, 425);
             this.Name = "MainForm";
@@ -1064,7 +1047,6 @@
             this.Shown += new System.EventHandler(this.MainForm_Shown);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            this.bottomPanel.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.videoThumbnail)).EndInit();
@@ -1096,8 +1078,6 @@
         private System.Windows.Forms.Button btnGetVideo;
         private System.Windows.Forms.ComboBox cbQuality;
         private System.Windows.Forms.TextBox txtYoutubeLink;
-        private System.Windows.Forms.Panel bottomPanel;
-        private System.Windows.Forms.Button btnExit;
         private System.Windows.Forms.Button btnPaste;
         private ListViewEmbeddedControls.ListViewEx lvQueue;
         private System.Windows.Forms.ColumnHeader columnHeader1;
@@ -1182,6 +1162,8 @@
         private System.Windows.Forms.TextBox txtOutputFolder;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.TextBox txtExtension;
+        private System.Windows.Forms.ImageList imageList1;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }
 
