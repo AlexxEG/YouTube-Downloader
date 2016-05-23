@@ -325,7 +325,6 @@ namespace YouTube_Downloader_DLL.Operations
                     this.ReportProgress(ProgressMin, null);
                 }
 
-                e.Cancel = this.CancellationPending;
                 e.Result = e.Cancel ? OperationStatus.Canceled : OperationStatus.Success;
             }
             catch (Exception ex)
