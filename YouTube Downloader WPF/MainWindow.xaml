@@ -832,10 +832,26 @@
                                                 </Grid>
                                             </Button>
 
+                                            <!--Stop-->
+                                            <Button Height="26" Width="26"
+                                                    Tag="{Binding}"
+                                                    ToolTip="Stop"
+                                                    Visibility="{Binding IsWorking,
+                                                                         Converter={converters:BooleanToVisibilityConverter Collapse=True}}"
+                                                    Click="QueueButton_Click">
+                                                <Rectangle Width="10" Height="10" RenderTransformOrigin="2.4,2.2">
+                                                    <Rectangle.Fill>
+                                                        <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_control_stop}" />
+                                                    </Rectangle.Fill>
+                                                </Rectangle>
+                                            </Button>
+
                                             <!--Remove-->
                                             <Button Height="26" Width="26"
                                                     Tag="{Binding}"
                                                     ToolTip="Remove"
+                                                    Visibility="{Binding IsWorking,
+                                                                         Converter={converters:BooleanToVisibilityConverter Collapse=True, Reverse=True}}"
                                                     Click="QueueButton_Click">
                                                 <Rectangle Width="10" Height="10" RenderTransformOrigin="2.4,2.2">
                                                     <Rectangle.Fill>
