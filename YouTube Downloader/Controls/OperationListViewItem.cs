@@ -109,9 +109,25 @@ namespace YouTube_Downloader.Controls
             }
             else if (Directory.Exists(this.Operation.Output))
             {
-                // ToDo: Make PlaylistOperation keep track of downloaded files
-                // and only count those instead of whole directory.
-                this.FileSize = Helper.GetDirectorySizeFormatted(this.Operation.Output);
+                /* Get total file size of all affected files
+                 *
+                 * Directory can contain unrelated files, so use make use of List properties
+                 * from Operation that contains the affected files only. */
+                string[] fileList = null;
+
+                if (this.Operation is ConvertOperation)
+                    fileList = (this.Operation as ConvertOperation).ProcessedFiles.ToArray();
+                else if (this.Operation is PlaylistOperation)
+                    fileList = (this.Operation as PlaylistOperation).DownloadedFiles.ToArray();
+                else
+                    throw new Exception("Couldn't get affected file list from operation " + this.Operation.GetType().Name);
+
+                long fileSize = 0;
+
+                foreach (string file in fileList)
+                    fileSize += Helper.GetFileSize(file);
+
+                this.FileSize = Helper.FormatFileSize(fileSize);
             }
 
             if (_progressBar != null)
