@@ -25,8 +25,8 @@ namespace YouTube_Downloader_DLL.Classes
         {
             this.LogFile = logFile;
 
-            if (!Directory.Exists(Path.GetDirectoryName(this.LogFile)))
-                Directory.CreateDirectory(this.LogFile);
+            if (!File.Exists(this.LogFile))
+                File.Create(this.LogFile);
 
             _log = new StreamWriter(new FileStream(this.LogFile, FileMode.Append, FileAccess.Write))
             {
