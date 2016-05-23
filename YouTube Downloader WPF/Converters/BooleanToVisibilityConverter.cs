@@ -24,7 +24,7 @@ namespace YouTube_Downloader_WPF.Converters
         {
             get
             {
-                return !this.Reverse ? Visibility.Visible : HiddenVisibility;
+                return Visibility.Visible;
             }
         }
 
@@ -45,7 +45,11 @@ namespace YouTube_Downloader_WPF.Converters
                 Nullable<bool> tmp = (Nullable<bool>)value;
                 bValue = tmp.HasValue ? tmp.Value : false;
             }
-            return bValue ? this.Visibility : this.HiddenVisibility;
+
+            if (!this.Reverse)
+                return bValue ? this.Visibility : this.HiddenVisibility;
+            else
+                return bValue ? this.HiddenVisibility : this.Visibility;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
