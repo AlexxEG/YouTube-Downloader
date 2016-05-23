@@ -25,9 +25,6 @@ namespace YouTube_Downloader_DLL.Classes
         {
             this.LogFile = logFile;
 
-            if (!File.Exists(this.LogFile))
-                File.Create(this.LogFile);
-
             _log = new StreamWriter(new FileStream(this.LogFile, FileMode.Append, FileAccess.Write))
             {
                 AutoFlush = true
