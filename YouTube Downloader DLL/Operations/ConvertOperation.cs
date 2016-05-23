@@ -19,6 +19,8 @@ namespace YouTube_Downloader_DLL.Operations
         Process _process;
         ConvertingMode _mode = ConvertingMode.File;
 
+        public List<string> ProcessedFiles { get; set; } = new List<string>();
+
         #region Operation members
 
         public override void Dispose()
@@ -149,6 +151,8 @@ namespace YouTube_Downloader_DLL.Operations
                         });
 
                         FFmpegHelper.Convert(this.ReportProgress, input, output);
+
+                        this.ProcessedFiles.Add(output);
                     }
                     catch (Exception ex)
                     {
