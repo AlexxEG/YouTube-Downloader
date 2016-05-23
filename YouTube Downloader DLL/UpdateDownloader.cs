@@ -55,7 +55,17 @@ namespace YouTube_Downloader_DLL
                     return;
                 }
 
-                Process.Start(Path.GetFileName(_latestDownloadUrl));
+                try
+                {
+                    Process.Start(Path.GetFileName(_latestDownloadUrl));
+                }
+                catch (Exception ex)
+                {
+                    Common.SaveException(ex);
+                    MessageBox.Show(this, "Couldn't open installer. Exception message: " + ex.Message);
+                    return;
+                }
+
                 this.Close();
 
                 if (this.Owner is Form) // WinForms
