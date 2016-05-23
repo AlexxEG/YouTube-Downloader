@@ -115,7 +115,7 @@ namespace YouTube_Downloader_DLL.Classes
             return video;
         }
 
-        public Playlist WaitForPlaylist(int timeoutMS = 10000)
+        public Playlist WaitForPlaylist(int timeoutMS = 30000)
         {
             var sw = new Stopwatch();
             Exception exception = null;
