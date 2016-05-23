@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using YouTube_Downloader_DLL.Classes;
+using YouTube_Downloader_DLL.FFmpeg;
 using YouTube_Downloader_DLL.FileDownloading;
 using YouTube_Downloader_DLL.Helpers;
 
@@ -298,7 +299,8 @@ namespace YouTube_Downloader_DLL.Operations
                                 { "ReportsProgress", false }
                             });
 
-                            this.Combine();
+                            if (!this.Combine())
+                                _failures++;
 
                             this.ReportProgress(-1, new Dictionary<string, object>()
                             {
@@ -392,14 +394,15 @@ namespace YouTube_Downloader_DLL.Operations
             string video = downloader.Files[1].Path;
             // Remove '_video' from video file to get a final filename.
             string output = video.Replace("_video", string.Empty);
+            FFmpegResult<bool> result = null;
 
             _combining = true;
 
             try
             {
-                FFmpegHelper.CombineDash(video, audio, output);
+                result = FFmpegHelper.CombineDash(video, audio, output);
 
-                // Cleanup the extra files.
+                // Cleanup the separate audio and video files
                 Helper.DeleteFiles(audio, video);
             }
             catch (Exception ex)
@@ -412,7 +415,7 @@ namespace YouTube_Downloader_DLL.Operations
                 _combining = false;
             }
 
-            return true;
+            return result.Value;
         }
 
         private void OnFileDownloadComplete(string file)
