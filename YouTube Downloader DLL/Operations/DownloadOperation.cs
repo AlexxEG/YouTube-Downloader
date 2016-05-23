@@ -196,10 +196,15 @@ namespace YouTube_Downloader_DLL.Operations
 
                 try
                 {
-                    if (FFmpegHelper.CombineDash(video, audio, this.Output).Value)
+                    var result = FFmpegHelper.CombineDash(video, audio, this.Output);
+
+                    if (result.Value)
                         e.Result = OperationStatus.Success;
                     else
+                    {
                         e.Result = OperationStatus.Failed;
+                        this.ErrorsInternal.AddRange(result.Errors);
+                    }
 
                     // Cleanup the separate audio and video files
                     Helper.DeleteFiles(audio, video);
