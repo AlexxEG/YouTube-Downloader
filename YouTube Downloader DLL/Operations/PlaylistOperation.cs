@@ -425,7 +425,7 @@ namespace YouTube_Downloader_DLL.Operations
             var reader = new PlaylistReader(this.Input);
             VideoInfo video;
 
-            this.PlaylistName = reader.WaitForPlaylist(1000).Name;
+            this.PlaylistName = reader.WaitForPlaylist().Name;
 
             while (!this.CancellationPending && (video = reader.Next()) != null)
             {
