@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using YouTube_Downloader_DLL.Classes;
@@ -401,6 +402,18 @@ namespace YouTube_Downloader_DLL.Operations
             try
             {
                 result = FFmpegHelper.CombineDash(video, audio, output);
+
+                if (!result.Value)
+                {
+                    var sb = new StringBuilder();
+
+                    sb.AppendLine(this.Title);
+
+                    foreach (string error in result.Errors)
+                        sb.AppendLine($" - {error}");
+
+                    this.ErrorsInternal.Add(sb.ToString());
+                }
 
                 // Cleanup the separate audio and video files
                 Helper.DeleteFiles(audio, video);

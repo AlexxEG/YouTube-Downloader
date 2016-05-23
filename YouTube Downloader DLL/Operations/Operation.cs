@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -77,6 +79,7 @@ namespace YouTube_Downloader_DLL.Operations
         string _thumbnail;
         string _title;
 
+        List<string> _errors = new List<string>();
         OperationStatus _status = OperationStatus.None;
 
         Stopwatch sw;
@@ -321,6 +324,14 @@ namespace YouTube_Downloader_DLL.Operations
         }
 
         /// <summary>
+        /// Gets a human readable list of errors caused by the operation.
+        /// </summary>
+        public ReadOnlyCollection<string> Errors
+        {
+            get { return new ReadOnlyCollection<string>(_errors); }
+        }
+
+        /// <summary>
         /// Gets the operation status.
         /// </summary>
         public OperationStatus Status
@@ -344,6 +355,15 @@ namespace YouTube_Downloader_DLL.Operations
                     this.OnPropertyChangedExplicit(property);
                 }
             }
+        }
+
+        /// <summary>
+        /// Gets or sets a editable list of errors.
+        /// </summary>
+        protected List<string> ErrorsInternal
+        {
+            get { return _errors; }
+            set { _errors = value; }
         }
 
         #endregion
