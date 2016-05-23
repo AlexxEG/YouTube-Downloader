@@ -9,8 +9,6 @@ using System.Windows.Forms;
 using YouTube_Downloader_DLL.Classes;
 using YouTube_Downloader_DLL.FFmpeg;
 
-// ToDo: Catch errors from Process
-
 namespace YouTube_Downloader_DLL.Helpers
 {
     public class FFmpegHelper

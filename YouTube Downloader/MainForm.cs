@@ -16,12 +16,6 @@ using YouTube_Downloader_DLL.Enums;
 using YouTube_Downloader_DLL.Helpers;
 using YouTube_Downloader_DLL.Operations;
 
-/* ToDo: 
- *
- * - Handle aborting operations better when closing form.
- * - Make sure OperationStatus is set for operations in BackgroundWorker.DoWork.
- */
-
 namespace YouTube_Downloader
 {
     public partial class MainForm : Form
