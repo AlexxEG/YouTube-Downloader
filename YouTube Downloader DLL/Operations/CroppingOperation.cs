@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -9,13 +10,13 @@ namespace YouTube_Downloader_DLL.Operations
 {
     public class CroppingOperation : Operation
     {
-        class ArgsConstants
+        class ArgKeys
         {
             public const int Count = 4;
-            public const int Input = 0;
-            public const int Output = 1;
-            public const int Start = 2;
-            public const int End = 3;
+            public const string Input = "input";
+            public const string Output = "output";
+            public const string Start = "start";
+            public const string End = "end";
         }
 
         TimeSpan _start = TimeSpan.MinValue;
@@ -146,25 +147,34 @@ namespace YouTube_Downloader_DLL.Operations
             }
         }
 
-        protected override void WorkerStart(object[] args)
+        protected override void WorkerStart(Dictionary<string, object> args)
         {
-            if (args.Length != ArgsConstants.Count)
+            if (args.Count != ArgKeys.Count)
                 throw new ArgumentException();
 
-            this.Input = (string)args[ArgsConstants.Input];
-            this.Output = (string)args[ArgsConstants.Output];
+            this.Input = (string)args[ArgKeys.Input];
+            this.Output = (string)args[ArgKeys.Output];
 
-            _start = (TimeSpan)args[ArgsConstants.Start];
-            _end = (TimeSpan)args[ArgsConstants.End];
+            _start = (TimeSpan)args[ArgKeys.Start];
+            _end = (TimeSpan)args[ArgKeys.End];
 
             this.Duration = (long)FFmpegHelper.GetDuration(this.Input).Value.TotalSeconds;
             this.Text = "Cropping...";
             this.Title = Path.GetFileName(this.Output);
         }
 
-        public object[] Args(string input, string output, TimeSpan start, TimeSpan end)
+        public Dictionary<string, object> Args(string input,
+                                               string output,
+                                               TimeSpan start,
+                                               TimeSpan end)
         {
-            return new object[] { input, output, start, end };
+            return new Dictionary<string, object>()
+            {
+                { ArgKeys.Input, input },
+                { ArgKeys.Output, output },
+                { ArgKeys.Start, start },
+                { ArgKeys.End, end }
+            };
         }
     }
 }

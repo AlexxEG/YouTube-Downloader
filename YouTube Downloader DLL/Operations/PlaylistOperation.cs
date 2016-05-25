@@ -16,20 +16,20 @@ namespace YouTube_Downloader_DLL.Operations
 {
     public class PlaylistOperation : Operation
     {
-        public const int EventFileDownloadComplete = 1000;
-        public const int UpdateProperties = -1;
-
-        class ArgsConstants
+        class ArgKeys
         {
             public const int Max = 6;
             public const int Min = 4;
-            public const int Input = 0;
-            public const int Output = 1;
-            public const int DASH = 2;
-            public const int PreferredQuality = 3;
-            public const int PlaylistName = 4;
-            public const int Videos = 5;
+            public const string Input = "input";
+            public const string Output = "output";
+            public const string DASH = "dash";
+            public const string PreferredQuality = "preferred_quality";
+            public const string PlaylistName = "playlist_name";
+            public const string Videos = "videos";
         }
+
+        public const int EventFileDownloadComplete = 1000;
+        public const int UpdateProperties = -1;
 
         int _downloads = 0;
         int _failures = 0;
@@ -361,28 +361,28 @@ namespace YouTube_Downloader_DLL.Operations
             }
         }
 
-        protected override void WorkerStart(object[] args)
+        protected override void WorkerStart(Dictionary<string, object> args)
         {
-            if (!(args.Length.Any(ArgsConstants.Min, ArgsConstants.Max)))
+            if (!(args.Count.Any(ArgKeys.Min, ArgKeys.Max)))
                 throw new ArgumentException();
 
             // Temporary title.
             this.Title = "Getting playlist info...";
             this.ReportsProgress = true;
 
-            this.Input = (string)args[ArgsConstants.Input];
-            this.Output = (string)args[ArgsConstants.Output];
+            this.Input = (string)args[ArgKeys.Input];
+            this.Output = (string)args[ArgKeys.Output];
             this.Link = this.Input;
 
-            _useDash = (bool)args[ArgsConstants.DASH];
-            _preferredQuality = (int)args[ArgsConstants.PreferredQuality];
+            _useDash = (bool)args[ArgKeys.DASH];
+            _preferredQuality = (int)args[ArgKeys.PreferredQuality];
 
-            if (args.Length == ArgsConstants.Max)
+            if (args.Count == ArgKeys.Max)
             {
-                this.PlaylistName = (string)args[ArgsConstants.PlaylistName];
+                this.PlaylistName = (string)args[ArgKeys.PlaylistName];
 
-                if (args[5] != null)
-                    this.Videos.AddRange((IEnumerable<VideoInfo>)args[ArgsConstants.Videos]);
+                if (args[ArgKeys.Videos] != null)
+                    this.Videos.AddRange((IEnumerable<VideoInfo>)args[ArgKeys.Videos]);
             }
 
             downloader = new FileDownloader();
@@ -462,22 +462,36 @@ namespace YouTube_Downloader_DLL.Operations
             }
         }
 
-        public object[] Args(string url,
-                             string output,
-                             bool dash,
-                             int preferredQuality)
+        public Dictionary<string, object> Args(string url,
+                                               string output,
+                                               bool dash,
+                                               int preferredQuality)
         {
-            return new object[] { url, output, dash, preferredQuality };
+            return new Dictionary<string, object>()
+            {
+                { ArgKeys.Input, url },
+                { ArgKeys.Output, output },
+                { ArgKeys.DASH, dash },
+                { ArgKeys.PreferredQuality, preferredQuality }
+            };
         }
 
-        public object[] Args(string url,
-                             string output,
-                             bool dash,
-                             int preferredQuality,
-                             string playlistName,
-                             ICollection<VideoInfo> videos)
+        public Dictionary<string, object> Args(string url,
+                                               string output,
+                                               bool dash,
+                                               int preferredQuality,
+                                               string playlistName,
+                                               ICollection<VideoInfo> videos)
         {
-            return new object[] { url, output, dash, preferredQuality, playlistName, videos };
+            return new Dictionary<string, object>()
+            {
+                { ArgKeys.Input, url },
+                { ArgKeys.Output, output },
+                { ArgKeys.DASH, dash },
+                { ArgKeys.PreferredQuality, preferredQuality },
+                { ArgKeys.PlaylistName, playlistName },
+                { ArgKeys.Videos, videos }
+            };
         }
     }
 }

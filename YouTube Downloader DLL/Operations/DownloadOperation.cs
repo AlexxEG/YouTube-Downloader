@@ -13,13 +13,14 @@ namespace YouTube_Downloader_DLL.Operations
 {
     public class DownloadOperation : Operation
     {
-        class ArgsConstants
+        class ArgKeys
         {
             public const int Min = 2;
             public const int Max = 3;
-            public const int Input1 = 0;
-            public const int Input2 = 1;
-            public const int Output = 2;
+            public const string Url = "url";
+            public const string Audio = "audio";
+            public const string Video = "video";
+            public const string Output = "output";
         }
 
         bool _combining, _dash, _processing;
@@ -243,29 +244,29 @@ namespace YouTube_Downloader_DLL.Operations
             }
         }
 
-        protected override void WorkerStart(object[] args)
+        protected override void WorkerStart(Dictionary<string, object> args)
         {
             downloader = new FileDownloader();
 
-            switch (args.Length)
+            switch (args.Count)
             {
-                case ArgsConstants.Min:
-                    this.Input = (string)args[ArgsConstants.Input1];
-                    this.Output = (string)args[1];
+                case ArgKeys.Min:
+                    this.Input = (string)args[ArgKeys.Url];
+                    this.Output = (string)args[ArgKeys.Output];
 
                     string file = Path.GetFileName(this.Output).Trim();
 
                     downloader.Files.Add(new FileDownload(this.Output, this.Input));
                     break;
-                case ArgsConstants.Max:
+                case ArgKeys.Max:
                     _dash = true;
-                    this.Input = $"{args[ArgsConstants.Input1]}|{args[ArgsConstants.Input2]}";
-                    this.Output = (string)args[ArgsConstants.Output];
+                    this.Input = $"{args[ArgKeys.Audio]}|{args[ArgKeys.Video]}";
+                    this.Output = (string)args[ArgKeys.Output];
 
                     Regex regex = new Regex(@"^(\w:.*\\.*)(\..*)$");
 
-                    downloader.Files.Add(new FileDownload(regex.Replace(this.Output, "$1_audio$2"), (string)args[0]));
-                    downloader.Files.Add(new FileDownload(regex.Replace(this.Output, "$1_video$2"), (string)args[1]));
+                    downloader.Files.Add(new FileDownload(regex.Replace(this.Output, "$1_audio$2"), (string)args[ArgKeys.Audio]));
+                    downloader.Files.Add(new FileDownload(regex.Replace(this.Output, "$1_video$2"), (string)args[ArgKeys.Video]));
                     break;
                 default:
                     throw new ArgumentException();
@@ -281,14 +282,26 @@ namespace YouTube_Downloader_DLL.Operations
             downloader.Start();
         }
 
-        public static object[] Args(string url, string output)
+        public static Dictionary<string, object> Args(string url,
+                                                      string output)
         {
-            return new object[] { url, output };
+            return new Dictionary<string, object>()
+            {
+                { ArgKeys.Url, url },
+                { ArgKeys.Output, output }
+            };
         }
 
-        public static object[] Args(string audio, string video, string output)
+        public static Dictionary<string, object> Args(string audio,
+                                                      string video,
+                                                      string output)
         {
-            return new object[] { audio, video, output };
+            return new Dictionary<string, object>()
+            {
+                { ArgKeys.Audio, audio },
+                { ArgKeys.Video, video },
+                { ArgKeys.Output, output }
+            };
         }
     }
 }

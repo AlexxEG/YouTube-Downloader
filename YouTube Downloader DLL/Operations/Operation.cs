@@ -416,7 +416,7 @@ namespace YouTube_Downloader_DLL.Operations
 
         #endregion
 
-        public void Start(object[] args)
+        public void Start(Dictionary<string, object> args)
         {
             WorkerStart(args);
 
@@ -547,7 +547,7 @@ namespace YouTube_Downloader_DLL.Operations
 
         protected abstract void WorkerProgressChanged(ProgressChangedEventArgs e);
 
-        protected abstract void WorkerStart(object[] args);
+        protected abstract void WorkerStart(Dictionary<string, object> args);
 
         private void Worker_Completed(object sender, RunWorkerCompletedEventArgs e)
         {
