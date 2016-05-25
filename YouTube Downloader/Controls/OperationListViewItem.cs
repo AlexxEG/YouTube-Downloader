@@ -14,6 +14,8 @@ namespace YouTube_Downloader.Controls
     /// </summary>
     public class OperationListViewItem : ListViewItem
     {
+        public const int ProgressUpdateDelay = 250;
+
         LinkLabel _inputLabel;
         ProgressBar _progressBar;
         Stopwatch sw;
@@ -249,7 +251,7 @@ namespace YouTube_Downloader.Controls
             if (sw == null || !sw.IsRunning)
                 return false;
 
-            return sw.ElapsedMilliseconds < 1000;
+            return sw.ElapsedMilliseconds < ProgressUpdateDelay;
         }
     }
 }
