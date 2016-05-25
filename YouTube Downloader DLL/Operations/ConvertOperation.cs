@@ -11,6 +11,19 @@ namespace YouTube_Downloader_DLL.Operations
 {
     public class ConvertOperation : Operation
     {
+        class ArgKeys
+        {
+            public const int Min = 3;
+            public const int Max = 4;
+            public const string Input = "input";
+            public const string Output = "output";
+            public const string Start = "start";
+            public const string End = "end";
+            public const string SearchPattern = "search_pattern";
+        }
+
+        public const int UpdateProperties = -1;
+
         int _count = 0;
         int _failures = 0;
         string _searchPattern;
@@ -20,6 +33,11 @@ namespace YouTube_Downloader_DLL.Operations
         ConvertingMode _mode = ConvertingMode.File;
 
         public List<string> ProcessedFiles { get; set; } = new List<string>();
+
+        public ConvertOperation()
+        {
+            this.ReportsProgress = true;
+        }
 
         #region Operation members
 
@@ -33,6 +51,17 @@ namespace YouTube_Downloader_DLL.Operations
                 _process.Dispose();
                 _process = null;
             }
+        }
+
+        public override bool CanOpen()
+        {
+            return this.Status == OperationStatus.Success;
+        }
+
+        public override bool CanStop()
+        {
+            // Can stop if working.
+            return this.Status == OperationStatus.Working;
         }
 
         public override bool Open()
@@ -63,8 +92,6 @@ namespace YouTube_Downloader_DLL.Operations
 
         public override bool Stop(bool cleanup)
         {
-            bool success = true;
-
             if (this.Status == OperationStatus.Paused || this.Status == OperationStatus.Working)
             {
                 try
@@ -89,18 +116,7 @@ namespace YouTube_Downloader_DLL.Operations
                     Helper.DeleteFiles(this.Output);
             }
 
-            return success;
-        }
-
-        public override bool CanOpen()
-        {
-            return this.Status == OperationStatus.Success;
-        }
-
-        public override bool CanStop()
-        {
-            // Can stop if working.
-            return this.Status == OperationStatus.Working;
+            return true;
         }
 
         #endregion
@@ -136,6 +152,9 @@ namespace YouTube_Downloader_DLL.Operations
             {
                 foreach (string input in Directory.GetFiles(this.Input, _searchPattern))
                 {
+                    if (this.CancellationPending)
+                        break;
+
                     _count++;
                     try
                     {
@@ -143,11 +162,11 @@ namespace YouTube_Downloader_DLL.Operations
                                                         this.Output,
                                                         Path.GetFileNameWithoutExtension(input));
 
-                        this.ReportProgress(-1, new Dictionary<string, object>()
+                        this.ReportProgress(UpdateProperties, new Dictionary<string, object>()
                         {
-                            { "Title", Path.GetFileName(input) },
-                            { "Duration", (int)FFmpegHelper.GetDuration(input).Value.TotalSeconds },
-                            { "FileSize", Helper.GetFileSize(input) }
+                            { nameof(Title), Path.GetFileName(input) },
+                            { nameof(Duration), (int)FFmpegHelper.GetDuration(input).Value.TotalSeconds },
+                            { nameof(FileSize), Helper.GetFileSize(input) }
                         });
 
                         FFmpegHelper.Convert(this.ReportProgress, input, output);
@@ -204,27 +223,25 @@ namespace YouTube_Downloader_DLL.Operations
             }
         }
 
-        protected override void WorkerStart(object[] args)
+        protected override void WorkerStart(Dictionary<string, object> args)
         {
-            if (!(args.Length == 3 || args.Length == 4))
-                throw new ArgumentException("ConvertOperation: Invalid argument count. (" + args.Length + ")");
+            if (!(args.Count.Any(ArgKeys.Min, ArgKeys.Max)))
+                throw new ArgumentException($"{nameof(ConvertOperation)}: Invalid argument count: ({args.Count}).");
 
-            this.ReportsProgress = true;
+            this.Input = (string)args[ArgKeys.Input];
+            this.Output = (string)args[ArgKeys.Output];
 
-            this.Input = (string)args[0];
-            this.Output = (string)args[1];
-
-            if (args.Length == 3)
+            if (args.Count == ArgKeys.Min)
             {
                 _mode = ConvertingMode.Folder;
 
                 this.Title = Path.GetFileName(this.Input);
-                this.ValidateSearchPattern((string)args[2], out _searchPattern);
+                this.ValidateSearchPattern((string)args[ArgKeys.SearchPattern], out _searchPattern);
             }
-            else if (args.Length == 4)
+            else if (args.Count == ArgKeys.Max)
             {
-                _start = (TimeSpan)args[2];
-                _end = (TimeSpan)args[3];
+                _start = (TimeSpan)args[ArgKeys.Start];
+                _end = (TimeSpan)args[ArgKeys.End];
                 _mode = ConvertingMode.File;
 
                 this.Duration = (long)FFmpegHelper.GetDuration(this.Input).Value.TotalSeconds;
@@ -234,14 +251,30 @@ namespace YouTube_Downloader_DLL.Operations
             this.Text = "Converting...";
         }
 
-        public object[] Args(string input, string output, string searchPattern)
+        public Dictionary<string, object> Args(string input,
+                                               string output,
+                                               string searchPattern)
         {
-            return new object[] { input, output, searchPattern };
+            return new Dictionary<string, object>()
+            {
+                { ArgKeys.Input, input },
+                { ArgKeys.Output, output },
+                { ArgKeys.SearchPattern, searchPattern }
+            };
         }
 
-        public object[] Args(string input, string output, TimeSpan start, TimeSpan end)
+        public Dictionary<string, object> Args(string input,
+                                               string output,
+                                               TimeSpan start,
+                                               TimeSpan end)
         {
-            return new object[] { input, output, start, end };
+            return new Dictionary<string, object>()
+            {
+                { ArgKeys.Input, input },
+                { ArgKeys.Output, output },
+                { ArgKeys.Start, start },
+                { ArgKeys.End, end }
+            };
         }
 
         private bool ValidateSearchPattern(string searchPattern, out string fixedSearchPattern)

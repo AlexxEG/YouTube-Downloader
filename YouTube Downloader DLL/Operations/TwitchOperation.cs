@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -10,11 +11,11 @@ namespace YouTube_Downloader_DLL.Operations
 {
     public class TwitchOperation : Operation
     {
-        class ArgsConstants
+        class ArgKeys
         {
             public const int Count = 2;
-            public const int Output = 0;
-            public const int Format = 1;
+            public const string Output = "output";
+            public const string Format = "format";
         }
 
         bool _processing = false;
@@ -139,20 +140,24 @@ namespace YouTube_Downloader_DLL.Operations
             }
         }
 
-        protected override void WorkerStart(object[] args)
+        protected override void WorkerStart(Dictionary<string, object> args)
         {
-            if (args.Length != ArgsConstants.Count)
+            if (args.Count != ArgKeys.Count)
                 throw new ArgumentException();
 
-            this.Output = (string)args[ArgsConstants.Output];
+            this.Output = (string)args[ArgKeys.Output];
 
-            _format = (VideoFormat)args[ArgsConstants.Format];
+            _format = (VideoFormat)args[ArgKeys.Format];
         }
 
-        public static object[] Args(string output,
-                                    VideoFormat format)
+        public static Dictionary<string, object> Args(string output,
+                                                      VideoFormat format)
         {
-            return new object[] { output, format };
+            return new Dictionary<string, object>()
+            {
+                { ArgKeys.Output,  output },
+                { ArgKeys.Format, format }
+            };
         }
     }
 }
