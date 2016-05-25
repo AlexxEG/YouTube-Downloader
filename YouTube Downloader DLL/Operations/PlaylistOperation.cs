@@ -443,7 +443,7 @@ namespace YouTube_Downloader_DLL.Operations
             this.FileDownloadComplete?.Invoke(this, file);
         }
 
-        public void GetPlaylistInfo()
+        private void GetPlaylistInfo()
         {
             var reader = new PlaylistReader(this.Input);
             VideoInfo video;
