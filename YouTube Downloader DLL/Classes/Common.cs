@@ -7,7 +7,7 @@ namespace YouTube_Downloader_DLL.Classes
     public class Common
     {
         public const string Name = "YouTube Downloader";
-        public const string VersionString = "1.0.0";
+        public const string VersionString = "2.0.0";
 
         public static Encoding LogEncoding = Encoding.UTF8;
         public static Version Version = new Version(VersionString);
