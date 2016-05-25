@@ -1,0 +1,48 @@
+<html>
+	<head>
+		<style type="text/css">
+			body {{
+				border-left: 1px solid #DCDCDC;
+				border-right: 1px solid #DCDCDC;
+				border-top: 1px solid #DCDCDC;
+				border-bottom: 1px solid #DCDCDC;
+				font-family: RobotoDraft, "Helvetica Neue", Helvetica, Arial;
+				font-size: 14px;
+			}}
+
+			.container #content {{
+				padding: 5px;
+			}}
+
+			#content {{
+				position: relative;
+				top: 0;
+				left: 0;
+				bottom: 0;
+				right: 0;
+				overflow: auto;
+			}}
+
+			.info {{
+				height: 500px;
+				width: 100%;
+				max-width: 100%;
+				min-width: 100%;
+				white-space: pre-wrap;
+				box-sizing:border-box;
+			}}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<div class="header">
+				<div>Couldn't get changelog. <a href="https//github.com/AlexxEG/YouTube-Downloader/blob/master/README.md">Try this direct link to changelog.</a></div>
+				<br>
+				<button id="toggle">Toggle Exception</button>
+			</div>
+			<div id="content" style="display: none;">
+				<textarea class="info" readonly>{0}</textarea>
+			</div>
+		</div>
+	</body>
+</html>

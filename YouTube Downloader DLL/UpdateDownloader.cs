@@ -13,6 +13,7 @@ namespace YouTube_Downloader_DLL
 {
     public partial class UpdateDownloader : Form
     {
+        public const string ChangelogUrl = "https://raw.githubusercontent.com/AlexxEG/YouTube-Downloader/master/CHANGELOG.md";
         public const string GetReleasesAPIUrl = "https://api.github.com/repos/AlexxEG/YouTube-Downloader/releases";
         public const string UserAgent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2;)";
 
@@ -31,6 +32,8 @@ namespace YouTube_Downloader_DLL
             lLocalVersion.Text = Common.VersionString;
 
             this.GetJsonResponseAsync(GetJsonResponse_Callback);
+
+            this.GetChangelogAsync();
         }
 
         private void btnDownload_Click(object sender, EventArgs e)
@@ -118,6 +121,19 @@ namespace YouTube_Downloader_DLL
             _webClient = null;
         }
 
+        private void webBrowser1_Navigating(object sender, WebBrowserNavigatingEventArgs e)
+        {
+            if (e.Url.LocalPath == "blank")
+                return;
+
+            e.Cancel = true;
+
+            if (e.Url.AbsoluteUri.StartsWith("about"))
+                return;
+
+            Process.Start(e.Url.ToString());
+        }
+
         private void GetJsonResponse_Callback(JArray response)
         {
             // Store download url instead of requesting it twice
@@ -173,6 +189,44 @@ namespace YouTube_Downloader_DLL
         {
             this.Owner = owner;
             base.ShowDialog(owner);
+        }
+
+        private async void GetChangelogAsync()
+        {
+            // Here we're using .html files stored in resources to render the pages. These .html files contains
+            // the styles needed. This code will insert the data using string.Format.
+            try
+            {
+                var wc = new WebClient();
+                var task = await wc.DownloadStringTaskAsync(ChangelogUrl);
+                var html = CommonMark.CommonMarkConverter.Convert(task);
+
+                // Insert changelog into html template
+                html = string.Format(Properties.Resources.Changelog, html);
+
+                webBrowser1.DocumentText = html;
+            }
+            catch (Exception ex)
+            {
+                // Insert exception info into html template
+                var html = string.Format(Properties.Resources.Exception, ex.ToString());
+
+                webBrowser1.DocumentText = html;
+
+                // Make the button toggle detailed exception info
+                webBrowser1.DocumentCompleted += delegate
+                {
+                    webBrowser1.Document.GetElementById("toggle").Click += delegate
+                    {
+                        var content = webBrowser1.Document.GetElementById("content");
+
+                        if (content.Style.Contains("none"))
+                            content.Style = "display: block;";
+                        else
+                            content.Style = "display: none;";
+                    };
+                };
+            }
         }
 
         private async void GetJsonResponseAsync(Action<JArray> callback)
