@@ -9,9 +9,23 @@ namespace YouTube_Downloader_DLL.Operations
 {
     public class CroppingOperation : Operation
     {
+        class ArgsConstants
+        {
+            public const int Count = 4;
+            public const int Input = 0;
+            public const int Output = 1;
+            public const int Start = 2;
+            public const int End = 3;
+        }
+
         TimeSpan _start = TimeSpan.MinValue;
         TimeSpan _end = TimeSpan.MinValue;
         Process _process;
+
+        public CroppingOperation()
+        {
+            this.ReportsProgress = true;
+        }
 
         #region Operation members
 
@@ -34,7 +48,6 @@ namespace YouTube_Downloader_DLL.Operations
 
         public override bool CanStop()
         {
-            /* Can stop if working. */
             return this.Status == OperationStatus.Working;
         }
 
@@ -66,8 +79,6 @@ namespace YouTube_Downloader_DLL.Operations
 
         public override bool Stop(bool cleanup)
         {
-            bool success = true;
-
             if (this.Status == OperationStatus.Paused || this.Status == OperationStatus.Working)
             {
                 try
@@ -92,7 +103,7 @@ namespace YouTube_Downloader_DLL.Operations
                     Helper.DeleteFiles(this.Output);
             }
 
-            return success;
+            return true;
         }
 
         #endregion
@@ -108,14 +119,7 @@ namespace YouTube_Downloader_DLL.Operations
 
                 _start = _end = TimeSpan.MinValue;
 
-                if (this.CancellationPending)
-                {
-                    e.Result = OperationStatus.Canceled;
-                }
-                else
-                {
-                    e.Result = OperationStatus.Success;
-                }
+                e.Result = this.CancellationPending ? OperationStatus.Canceled : OperationStatus.Success;
             }
             catch (Exception ex)
             {
@@ -144,13 +148,14 @@ namespace YouTube_Downloader_DLL.Operations
 
         protected override void WorkerStart(object[] args)
         {
-            this.ReportsProgress = true;
+            if (args.Length != ArgsConstants.Count)
+                throw new ArgumentException();
 
-            this.Input = (string)args[0];
-            this.Output = (string)args[1];
+            this.Input = (string)args[ArgsConstants.Input];
+            this.Output = (string)args[ArgsConstants.Output];
 
-            _start = (TimeSpan)args[2];
-            _end = (TimeSpan)args[3];
+            _start = (TimeSpan)args[ArgsConstants.Start];
+            _end = (TimeSpan)args[ArgsConstants.End];
 
             this.Duration = (long)FFmpegHelper.GetDuration(this.Input).Value.TotalSeconds;
             this.Text = "Cropping...";
