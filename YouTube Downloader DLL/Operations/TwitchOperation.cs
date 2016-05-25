@@ -10,6 +10,13 @@ namespace YouTube_Downloader_DLL.Operations
 {
     public class TwitchOperation : Operation
     {
+        class ArgsConstants
+        {
+            public const int Count = 2;
+            public const int Output = 0;
+            public const int Format = 1;
+        }
+
         bool _processing = false;
         VideoFormat _format;
         CancellationTokenSource _cts;
@@ -78,10 +85,7 @@ namespace YouTube_Downloader_DLL.Operations
 
         #endregion
 
-        protected override void WorkerCompleted(RunWorkerCompletedEventArgs e)
-        {
-            this.Status = (OperationStatus)e.Result;
-        }
+        protected override void WorkerCompleted(RunWorkerCompletedEventArgs e) { }
 
         protected override void WorkerDoWork(DoWorkEventArgs e)
         {
@@ -89,10 +93,13 @@ namespace YouTube_Downloader_DLL.Operations
 
             try
             {
-                YoutubeDlHelper.DownloadTwitchVOD(this.Output, _format, delegate (TwitchOperationProgress progressUpdate)
-                {
-                    this.ReportProgress((int)progressUpdate.ProgressPercentage, progressUpdate);
-                }, _cts.Token);
+                YoutubeDlHelper.DownloadTwitchVOD(this.Output,
+                    _format,
+                    delegate (TwitchOperationProgress progressUpdate)
+                    {
+                        this.ReportProgress((int)progressUpdate.ProgressPercentage, progressUpdate);
+                    },
+                    _cts.Token);
 
                 // Make sure progress reaches 100%
                 if (this.Progress < ProgressMax)
@@ -123,10 +130,10 @@ namespace YouTube_Downloader_DLL.Operations
             {
                 _processing = true;
 
-                TwitchOperationProgress progressUpdate = e.UserState as TwitchOperationProgress;
+                var progressUpdate = e.UserState as TwitchOperationProgress;
 
                 this.ETA = progressUpdate.ETA;
-                this.Speed = string.Format("{0} {1}/s", progressUpdate.Speed, progressUpdate.SpeedSuffix);
+                this.Speed = $"{progressUpdate.Speed} {progressUpdate.SpeedSuffix}/s";
 
                 _processing = false;
             }
@@ -134,12 +141,16 @@ namespace YouTube_Downloader_DLL.Operations
 
         protected override void WorkerStart(object[] args)
         {
-            this.Output = (string)args[0];
+            if (args.Length != ArgsConstants.Count)
+                throw new ArgumentException();
 
-            _format = (VideoFormat)args[1];
+            this.Output = (string)args[ArgsConstants.Output];
+
+            _format = (VideoFormat)args[ArgsConstants.Format];
         }
 
-        public static object[] Args(string output, VideoFormat format)
+        public static object[] Args(string output,
+                                    VideoFormat format)
         {
             return new object[] { output, format };
         }
