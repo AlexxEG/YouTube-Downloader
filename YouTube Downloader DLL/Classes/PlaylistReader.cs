@@ -25,7 +25,9 @@ namespace YouTube_Downloader_DLL.Classes
         Regex _regexPlaylistInfo = new Regex(@"^\[youtube:playlist\] playlist (.*):.*Downloading\s+(\d+)\s+.*$", RegexOptions.Compiled);
         Regex _regexVideoJson = new Regex(@"^\[info\].*JSON.*:\s(.*)$", RegexOptions.Compiled);
         ProcessLogger _youtubeDl;
+        CancellationTokenSource _cts = new CancellationTokenSource();
 
+        public bool Canceled { get; set; } = false;
         public Playlist Playlist { get; set; } = null;
 
         public PlaylistReader(string url)
@@ -67,6 +69,14 @@ namespace YouTube_Downloader_DLL.Classes
 
         }
 
+        public void Stop()
+        {
+            _youtubeDl.Process.Kill();
+            _cts.Cancel();
+
+            this.Canceled = true;
+        }
+
         public VideoInfo Next()
         {
             int attempts = 0;
@@ -95,6 +105,9 @@ namespace YouTube_Downloader_DLL.Classes
             // Sometimes youtube-dl is slower to create the json file, try a couple times
             while (attempts < 10)
             {
+                if (_cts.IsCancellationRequested)
+                    return null;
+
                 try
                 {
                     video = new VideoInfo(jsonPath);
@@ -124,6 +137,9 @@ namespace YouTube_Downloader_DLL.Classes
 
             while (this.Playlist == null)
             {
+                if (_cts.Token.IsCancellationRequested)
+                    break;
+
                 Thread.Sleep(50);
 
                 if (sw.ElapsedMilliseconds > timeoutMS)
