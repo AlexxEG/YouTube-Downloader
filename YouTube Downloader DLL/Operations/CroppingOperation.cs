@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using YouTube_Downloader_DLL.Classes;
 using YouTube_Downloader_DLL.Helpers;
 
@@ -22,6 +23,7 @@ namespace YouTube_Downloader_DLL.Operations
         TimeSpan _start = TimeSpan.MinValue;
         TimeSpan _end = TimeSpan.MinValue;
         Process _process;
+        CancellationTokenSource _cts = new CancellationTokenSource();
 
         public CroppingOperation()
         {
@@ -84,11 +86,8 @@ namespace YouTube_Downloader_DLL.Operations
             {
                 try
                 {
+                    _cts.Cancel();
                     this.CancelAsync();
-
-                    if (_process != null && !_process.HasExited)
-                        _process.StandardInput.WriteLine("\x71");
-
                     this.Status = OperationStatus.Canceled;
                 }
                 catch (Exception ex)
@@ -114,9 +113,9 @@ namespace YouTube_Downloader_DLL.Operations
             try
             {
                 if (_end == TimeSpan.MinValue)
-                    FFmpegHelper.Crop(this.ReportProgress, this.Input, this.Output, _start);
+                    FFmpegHelper.Crop(this.ReportProgress, this.Input, this.Output, _start, _cts.Token);
                 else
-                    FFmpegHelper.Crop(this.ReportProgress, this.Input, this.Output, _start, _end);
+                    FFmpegHelper.Crop(this.ReportProgress, this.Input, this.Output, _start, _end, _cts.Token);
 
                 _start = _end = TimeSpan.MinValue;
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using YouTube_Downloader_DLL.Classes;
 using YouTube_Downloader_DLL.Enums;
 using YouTube_Downloader_DLL.Helpers;
@@ -31,6 +32,7 @@ namespace YouTube_Downloader_DLL.Operations
         TimeSpan _end = TimeSpan.MinValue;
         Process _process;
         ConvertingMode _mode = ConvertingMode.File;
+        CancellationTokenSource _cts = new CancellationTokenSource();
 
         public List<string> ProcessedFiles { get; set; } = new List<string>();
 
@@ -96,11 +98,8 @@ namespace YouTube_Downloader_DLL.Operations
             {
                 try
                 {
+                    _cts.Cancel();
                     this.CancelAsync();
-
-                    if (_process != null && !_process.HasExited)
-                        _process.StandardInput.WriteLine("\x71");
-
                     this.Status = OperationStatus.Canceled;
                 }
                 catch (Exception ex)
@@ -127,16 +126,16 @@ namespace YouTube_Downloader_DLL.Operations
             {
                 try
                 {
-                    FFmpegHelper.Convert(this.ReportProgress, this.Input, this.Output);
+                    FFmpegHelper.Convert(this.ReportProgress, this.Input, this.Output, _cts.Token);
 
                     // Crop if not operation wasn't canceled and _start has a valid value
                     if (!this.CancellationPending && _start != TimeSpan.MinValue)
                     {
                         // Crop to end of file, unless _end has a valid value
                         if (_end == TimeSpan.MinValue)
-                            FFmpegHelper.Crop(this.ReportProgress, this.Output, this.Output, _start);
+                            FFmpegHelper.Crop(this.ReportProgress, this.Output, this.Output, _start, _cts.Token);
                         else
-                            FFmpegHelper.Crop(this.ReportProgress, this.Output, this.Output, _start, _end);
+                            FFmpegHelper.Crop(this.ReportProgress, this.Output, this.Output, _start, _end, _cts.Token);
                     }
 
                     // Reset variables
@@ -169,7 +168,7 @@ namespace YouTube_Downloader_DLL.Operations
                             { nameof(FileSize), Helper.GetFileSize(input) }
                         });
 
-                        FFmpegHelper.Convert(this.ReportProgress, input, output);
+                        FFmpegHelper.Convert(this.ReportProgress, input, output, _cts.Token);
 
                         this.ProcessedFiles.Add(output);
                     }

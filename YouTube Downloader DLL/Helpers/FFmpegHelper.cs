@@ -5,6 +5,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows.Forms;
 using YouTube_Downloader_DLL.Classes;
 using YouTube_Downloader_DLL.FFmpeg;
@@ -112,7 +113,7 @@ namespace YouTube_Downloader_DLL.Helpers
         /// <param name="reportProgress">The method to call when there is progress. Can be null.</param>
         /// <param name="input">The input file.</param>
         /// <param name="output">Where to save the output file.</param>
-        public static FFmpegResult<bool> Convert(Action<int, object> reportProgress, string input, string output)
+        public static FFmpegResult<bool> Convert(Action<int, object> reportProgress, string input, string output, CancellationToken ct)
         {
             if (input == output)
             {
@@ -127,13 +128,25 @@ namespace YouTube_Downloader_DLL.Helpers
             if (reportProgress != null)
                 reportProgress.Invoke(0, logger);
 
+            bool canceled = false;
             bool started = false;
             double milliseconds = 0;
             StringBuilder lines = new StringBuilder();
 
             logger.StartProcess(null, delegate (string line)
             {
+                // Queued lines might still fire even after canceling process, don't actually know
+                if (canceled)
+                    return;
+
                 lines.AppendLine(line = line.Trim());
+
+                if (ct != null && ct.IsCancellationRequested)
+                {
+                    logger.Process.StandardInput.WriteLine("q");
+                    canceled = true;
+                    return;
+                }
 
                 // If reportProgress is null it can't be invoked. So skip code below
                 if (reportProgress == null)
@@ -176,7 +189,11 @@ namespace YouTube_Downloader_DLL.Helpers
 
             logger.Process.WaitForExit();
 
-            if (logger.Process.ExitCode != 0)
+            if (canceled)
+            {
+                return new FFmpegResult<bool>(false);
+            }
+            else if (logger.Process.ExitCode != 0)
             {
                 string reportFile = FindReportFile(lines.ToString());
 
@@ -231,7 +248,7 @@ namespace YouTube_Downloader_DLL.Helpers
         /// <param name="input">The input file.</param>
         /// <param name="output">Where to save the output file.</param>
         /// <param name="start">The <see cref="System.TimeSpan"/> start position.</param>
-        public static FFmpegResult<bool> Crop(Action<int, object> reportProgress, string input, string output, TimeSpan start)
+        public static FFmpegResult<bool> Crop(Action<int, object> reportProgress, string input, string output, TimeSpan start, CancellationToken ct)
         {
             if (input == output)
             {
@@ -252,13 +269,25 @@ namespace YouTube_Downloader_DLL.Helpers
             if (reportProgress != null)
                 reportProgress.Invoke(0, logger);
 
+            bool canceled = false;
             bool started = false;
             double milliseconds = 0;
             StringBuilder lines = new StringBuilder();
 
             logger.StartProcess(null, delegate (string line)
             {
+                // Queued lines might still fire even after canceling process, don't actually know
+                if (canceled)
+                    return;
+
                 lines.AppendLine(line = line.Trim());
+
+                if (ct != null && ct.IsCancellationRequested)
+                {
+                    logger.Process.StandardInput.WriteLine("q");
+                    canceled = true;
+                    return;
+                }
 
                 // If reportProgress is null it can't be invoked. So skip code below
                 if (reportProgress == null)
@@ -301,7 +330,11 @@ namespace YouTube_Downloader_DLL.Helpers
 
             logger.Process.WaitForExit();
 
-            if (logger.Process.ExitCode != 0)
+            if (canceled)
+            {
+                return new FFmpegResult<bool>(false);
+            }
+            else if (logger.Process.ExitCode != 0)
             {
                 string reportFile = FindReportFile(lines.ToString());
 
@@ -319,7 +352,7 @@ namespace YouTube_Downloader_DLL.Helpers
         /// <param name="output">Where to save the output file.</param>
         /// <param name="start">The <see cref="System.TimeSpan"/> start position.</param>
         /// <param name="end">The <see cref="System.TimeSpan"/> end position.</param>
-        public static FFmpegResult<bool> Crop(Action<int, object> reportProgress, string input, string output, TimeSpan start, TimeSpan end)
+        public static FFmpegResult<bool> Crop(Action<int, object> reportProgress, string input, string output, TimeSpan start, TimeSpan end, CancellationToken ct)
         {
             if (input == output)
             {
@@ -343,19 +376,43 @@ namespace YouTube_Downloader_DLL.Helpers
             if (reportProgress != null)
                 reportProgress.Invoke(0, logger);
 
+            bool canceled = false;
             bool started = false;
             double milliseconds = 0;
             StringBuilder lines = new StringBuilder();
 
             if (reportProgress == null)
             {
-                logger.StartProcess(null, null);
+                logger.StartProcess(null, delegate (string line)
+                {
+                    // Queued lines might still fire even after canceling process, don't actually know
+                    if (canceled)
+                        return;
+
+                    if (ct != null && ct.IsCancellationRequested)
+                    {
+                        logger.Process.StandardInput.WriteLine("q");
+                        canceled = true;
+                        return;
+                    }
+                });
             }
             else
             {
                 logger.StartProcess(null, delegate (string line)
                 {
+                    // Queued lines might still fire even after canceling process, don't actually know
+                    if (canceled)
+                        return;
+
                     lines.AppendLine(line = line.Trim());
+
+                    if (ct != null && ct.IsCancellationRequested)
+                    {
+                        logger.Process.StandardInput.WriteLine("q");
+                        canceled = true;
+                        return;
+                    }
 
                     // If reportProgress is null it can't be invoked. So skip code below
                     if (reportProgress == null)
@@ -392,7 +449,11 @@ namespace YouTube_Downloader_DLL.Helpers
 
             logger.Process.WaitForExit();
 
-            if (logger.Process.ExitCode != 0)
+            if (canceled)
+            {
+                return new FFmpegResult<bool>(false);
+            }
+            else if (logger.Process.ExitCode != 0)
             {
                 string reportFile = FindReportFile(lines.ToString());
 
