@@ -13,6 +13,15 @@ namespace YouTube_Downloader_DLL.Operations
 {
     public class DownloadOperation : Operation
     {
+        class ArgsConstants
+        {
+            public const int Min = 2;
+            public const int Max = 3;
+            public const int Input1 = 0;
+            public const int Input2 = 1;
+            public const int Output = 2;
+        }
+
         bool _combining, _dash, _processing;
         FileDownloader downloader;
 
@@ -236,45 +245,31 @@ namespace YouTube_Downloader_DLL.Operations
 
         protected override void WorkerStart(object[] args)
         {
-            this.ReportsProgress = true;
-
-            FileDownload[] fileDownloads;
-
-            if (args.Length == 2)
-            {
-                this.Input = (string)args[0];
-                this.Output = (string)args[1];
-
-                string file = Path.GetFileName(this.Output).Trim();
-
-                fileDownloads = new FileDownload[]
-                {
-                    new FileDownload(this.Output, this.Input)
-                };
-            }
-            else if (args.Length == 3)
-            {
-                _dash = true;
-                this.Input = string.Format("{0}|{1}", args[0], args[1]);
-                this.Output = (string)args[2];
-
-                Regex regex = new Regex(@"^(\w:.*\\.*)(\..*)$");
-
-                fileDownloads = new FileDownload[]
-                {
-                    new FileDownload(regex.Replace(this.Output, "$1_audio$2"), (string)args[0]),
-                    new FileDownload(regex.Replace(this.Output, "$1_video$2"), (string)args[1])
-                };
-            }
-            else
-            {
-                throw new ArgumentException();
-            }
-
-            string folder = Path.GetDirectoryName(this.Output);
-
             downloader = new FileDownloader();
-            downloader.Files.AddRange(fileDownloads);
+
+            switch (args.Length)
+            {
+                case ArgsConstants.Min:
+                    this.Input = (string)args[ArgsConstants.Input1];
+                    this.Output = (string)args[1];
+
+                    string file = Path.GetFileName(this.Output).Trim();
+
+                    downloader.Files.Add(new FileDownload(this.Output, this.Input));
+                    break;
+                case ArgsConstants.Max:
+                    _dash = true;
+                    this.Input = $"{args[ArgsConstants.Input1]}|{args[ArgsConstants.Input2]}";
+                    this.Output = (string)args[ArgsConstants.Output];
+
+                    Regex regex = new Regex(@"^(\w:.*\\.*)(\..*)$");
+
+                    downloader.Files.Add(new FileDownload(regex.Replace(this.Output, "$1_audio$2"), (string)args[0]));
+                    downloader.Files.Add(new FileDownload(regex.Replace(this.Output, "$1_video$2"), (string)args[1]));
+                    break;
+                default:
+                    throw new ArgumentException();
+            }
 
             // Attach events.
             downloader.Canceled += downloader_Canceled;
