@@ -462,12 +462,20 @@ namespace YouTube_Downloader_DLL.Operations
             }
         }
 
-        public object[] Args(string url, string output, bool dash, int preferredQuality)
+        public object[] Args(string url,
+                             string output,
+                             bool dash,
+                             int preferredQuality)
         {
             return new object[] { url, output, dash, preferredQuality };
         }
 
-        public object[] Args(string url, string output, bool dash, int preferredQuality, string playlistName, ICollection<VideoInfo> videos)
+        public object[] Args(string url,
+                             string output,
+                             bool dash,
+                             int preferredQuality,
+                             string playlistName,
+                             ICollection<VideoInfo> videos)
         {
             return new object[] { url, output, dash, preferredQuality, playlistName, videos };
         }
