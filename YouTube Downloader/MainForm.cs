@@ -385,6 +385,7 @@ namespace YouTube_Downloader
 
         #region Playlist Tab
 
+        private bool _playlistCancel;
         private string _playlistName = string.Empty;
         private BackgroundWorker _backgroundWorkerPlaylist;
 
@@ -406,10 +407,15 @@ namespace YouTube_Downloader
 
         private void btnGetPlaylist_Click(object sender, EventArgs e)
         {
-            if (btnGetPlaylist.Text == "Get Playlist")
+            if (_playlistCancel)
+            {
+                _backgroundWorkerPlaylist.CancelAsync();
+            }
+            else
             {
                 // Reset playlist variables
                 _playlistName = string.Empty;
+                _playlistCancel = true;
                 lvPlaylistVideos.Items.Clear();
 
                 btnGetPlaylist.Text = "Cancel";
@@ -429,10 +435,6 @@ namespace YouTube_Downloader
 
                 // Save playlist url
                 _settings.LastPlaylistUrl = txtPlaylistLink.Text;
-            }
-            else if (btnGetPlaylist.Text == "Cancel")
-            {
-                _backgroundWorkerPlaylist.CancelAsync();
             }
         }
 
@@ -478,7 +480,7 @@ namespace YouTube_Downloader
         {
             bool result = (bool)e.Result;
 
-            btnGetPlaylist.Text = "Get Playlist";
+            btnGetPlaylist.Text = "Get";
             btnPlaylistDownloadAll.Enabled = result;
             btnPlaylistDownloadSelected.Enabled = result;
             lvPlaylistVideos.UseWaitCursor = false;
