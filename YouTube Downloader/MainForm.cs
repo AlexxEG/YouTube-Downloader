@@ -219,6 +219,7 @@ namespace YouTube_Downloader
                 else
                 {
                     operation = new DownloadOperation(tempFormat);
+                    (operation as DownloadOperation).Combining += DownloadOperation_Combining;
                 }
 
                 var item = new OperationListViewItem(Path.GetFileName(filename), tempFormat.VideoInfo.Url, operation);
@@ -366,6 +367,20 @@ namespace YouTube_Downloader
             btnGetVideo.Enabled = txtYoutubeLink.Enabled = true;
             cbQuality.Enabled = videoInfo.Formats.Count > 0;
             btnDownload.Enabled = true;
+        }
+
+        private void DownloadOperation_Combining(object sender, EventArgs e)
+        {
+            var operation = sender as DownloadOperation;
+
+            foreach (OperationListViewItem item in lvQueue.Items)
+            {
+                if (item.Operation == operation)
+                {
+                    item.WorkingText = "Combining...";
+                    return;
+                }
+            }
         }
 
         private void downloadItem_OperationComplete(object sender, OperationEventArgs e)
@@ -1037,7 +1052,7 @@ namespace YouTube_Downloader
             var operation = new ConvertOperation();
             var item = new OperationListViewItem(Path.GetFileName(output), input, Path.GetFileName(input), operation);
 
-            item.WorkingText = "Converting";
+            item.WorkingText = "Converting...";
             item.Duration = Helper.FormatVideoLength(FFmpegHelper.GetDuration(input).Value);
             item.FileSize = Helper.GetFileSizeFormatted(input);
 
@@ -1061,7 +1076,7 @@ namespace YouTube_Downloader
             var operation = new ConvertOperation();
             var item = new OperationListViewItem(Path.GetFileName(output), input, Path.GetFileName(input), operation);
 
-            item.WorkingText = "Converting";
+            item.WorkingText = "Converting...";
 
             lvQueue.Items.Add(item);
 
@@ -1087,7 +1102,7 @@ namespace YouTube_Downloader
             var operation = new CroppingOperation();
             var item = new OperationListViewItem(Path.GetFileName(output), input, Path.GetFileName(input), operation);
 
-            item.WorkingText = "Cropping";
+            item.WorkingText = "Cropping...";
             item.Duration = Helper.FormatVideoLength(FFmpegHelper.GetDuration(input).Value);
             item.FileSize = Helper.GetFileSizeFormatted(input);
 

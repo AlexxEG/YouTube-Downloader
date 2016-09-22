@@ -23,8 +23,15 @@ namespace YouTube_Downloader_DLL.Operations
             public const string Output = "output";
         }
 
+        enum Events
+        {
+            Combining
+        }
+
         bool _combining, _dash, _processing;
         FileDownloader downloader;
+
+        public event EventHandler Combining;
 
         public DownloadOperation(VideoFormat format)
         {
@@ -85,6 +92,11 @@ namespace YouTube_Downloader_DLL.Operations
             {
                 _processing = false;
             }
+        }
+
+        private void OnCombining()
+        {
+            this.Combining?.Invoke(this, EventArgs.Empty);
         }
 
         #region Operation members
@@ -206,6 +218,8 @@ namespace YouTube_Downloader_DLL.Operations
 
                 try
                 {
+                    this.ReportProgress(-1, Events.Combining);
+
                     var result = FFmpegHelper.CombineDash(video, audio, this.Output);
 
                     if (result.Value)
@@ -233,6 +247,17 @@ namespace YouTube_Downloader_DLL.Operations
         {
             if (e.UserState == null)
                 return;
+
+            // Raise event on correct thread
+            if (e.UserState is Events)
+            {
+                switch ((Events)e.UserState)
+                {
+                    case Events.Combining:
+                        this.OnCombining();
+                        break;
+                }
+            }
 
             // Used to set multiple properties
             if (e.UserState is Dictionary<string, object>)
