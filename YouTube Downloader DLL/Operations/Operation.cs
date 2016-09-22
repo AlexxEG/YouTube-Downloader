@@ -74,6 +74,7 @@ namespace YouTube_Downloader_DLL.Operations
         string _eta;
         string _link;
         string _progressText = string.Empty;
+        string _progressTextOverride = string.Empty;
         string _speed;
         string _text;
         string _thumbnail;
@@ -184,7 +185,7 @@ namespace YouTube_Downloader_DLL.Operations
             {
                 _fileSize = value;
                 this.OnPropertyChanged();
-                this.OnPropertyChangedExplicit("ProgressText");
+                this.OnPropertyChangedExplicit(nameof(ProgressText));
             }
         }
 
@@ -195,7 +196,7 @@ namespace YouTube_Downloader_DLL.Operations
             {
                 _progress = value;
                 this.OnPropertyChanged();
-                this.OnPropertyChangedExplicit("ProgressText");
+                this.OnPropertyChangedExplicit(nameof(ProgressText));
             }
         }
 
@@ -233,6 +234,9 @@ namespace YouTube_Downloader_DLL.Operations
         {
             get
             {
+                if (!string.IsNullOrEmpty(this.ProgressTextOverride))
+                    return _progressText = this.ProgressTextOverride;
+
                 if (this.Wait() && !string.IsNullOrEmpty(_progressText))
                     return _progressText;
 
@@ -268,6 +272,17 @@ namespace YouTube_Downloader_DLL.Operations
             }
         }
 
+        public string ProgressTextOverride
+        {
+            get { return _progressTextOverride; }
+            set
+            {
+                _progressTextOverride = value;
+                OnPropertyChanged();
+                OnPropertyChangedExplicit(nameof(ProgressText));
+            }
+        }
+
         public string Speed
         {
             get { return _speed; }
@@ -275,7 +290,7 @@ namespace YouTube_Downloader_DLL.Operations
             {
                 _speed = value;
                 this.OnPropertyChanged();
-                this.OnPropertyChangedExplicit("ProgressText");
+                this.OnPropertyChangedExplicit(nameof(ProgressText));
             }
         }
 
@@ -319,7 +334,7 @@ namespace YouTube_Downloader_DLL.Operations
             {
                 _progressPercentage = value;
                 this.OnPropertyChanged();
-                this.OnPropertyChangedExplicit("ProgressText");
+                this.OnPropertyChangedExplicit(nameof(ProgressText));
             }
         }
 
@@ -528,7 +543,7 @@ namespace YouTube_Downloader_DLL.Operations
             if (this.Status == OperationStatus.Success)
                 this.ProgressPercentage = ProgressMax;
 
-            this.OnPropertyChangedExplicit("ProgressText");
+            this.OnPropertyChangedExplicit(nameof(ProgressText));
 
             this.Text = string.Empty;
 

@@ -28,7 +28,7 @@ namespace YouTube_Downloader_DLL.Operations
             Combining
         }
 
-        bool _combining, _dash, _processing;
+        bool _combining, _dash, _processing, _downloadSuccessful;
         FileDownloader downloader;
 
         public event EventHandler Combining;
@@ -53,7 +53,10 @@ namespace YouTube_Downloader_DLL.Operations
         {
             // Set status to successful if no download(s) failed.
             if (this.Status != OperationStatus.Failed)
-                this.Status = OperationStatus.Success;
+                if (_dash)
+                    _downloadSuccessful = true;
+                else
+                    this.Status = OperationStatus.Success;
         }
 
         private void downloader_FileDownloadFailed(object sender, FileDownloadFailedEventArgs e)
@@ -194,14 +197,17 @@ namespace YouTube_Downloader_DLL.Operations
 
         #endregion
 
-        protected override void WorkerCompleted(RunWorkerCompletedEventArgs e) { }
+        protected override void WorkerCompleted(RunWorkerCompletedEventArgs e)
+        {
+            this.ProgressTextOverride = string.Empty;
+        }
 
         protected override void WorkerDoWork(DoWorkEventArgs e)
         {
             while (downloader != null && downloader.IsBusy)
                 Thread.Sleep(200);
 
-            if (_dash && this.Status == OperationStatus.Success)
+            if (_dash && _downloadSuccessful)
             {
                 _combining = true;
 
@@ -210,9 +216,10 @@ namespace YouTube_Downloader_DLL.Operations
 
                 this.ReportProgress(-1, new Dictionary<string, object>()
                 {
-                    { "Text", "Combining..." },
-                    { "ReportsProgress", false },
-                    { "Progress", 0 }
+                    { nameof(Text), "Combining..." },
+                    { nameof(ReportsProgress), false },
+                    { nameof(Progress), 0 },
+                    { nameof(ProgressTextOverride), "Combining..." }
                 });
                 this.ReportProgress(ProgressMax, null);
 
@@ -239,8 +246,10 @@ namespace YouTube_Downloader_DLL.Operations
                     e.Result = OperationStatus.Failed;
                 }
             }
-
-            e.Result = this.Status;
+            else
+            {
+                e.Result = this.Status;
+            }
         }
 
         protected override void WorkerProgressChanged(ProgressChangedEventArgs e)
