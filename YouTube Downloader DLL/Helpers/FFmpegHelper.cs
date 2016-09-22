@@ -16,16 +16,16 @@ namespace YouTube_Downloader_DLL.Helpers
     {
         public static class Commands
         {
-            public const string CombineDash = " -report -y -i \"{0}\" -i \"{1}\" -vcodec copy -acodec libvo_aacenc \"{2}\"";
+            public const string CombineDash = " -report -y -i \"{0}\" -i \"{1}\" -c:v copy -c:a aac \"{2}\"";
             /* Convert options:
              *
-             * -y  - Overwrite output file without asking
-             * -i  - Input file name
-             * -vn - Disables video recording.
-             * -f  - Forces file format, but isn't needed if output has .mp3 extensions
-             * -ab - Sets the audio bitrate
+             * -y   - Overwrite output file without asking
+             * -i   - Input file name
+             * -vn  - Disables video recording.
+             * -f   - Forces file format, but isn't needed if output has .mp3 extensions
+             * -b:a - Sets the audio bitrate. Output bitrate will not match exact.
              */
-            public const string Convert = " -report -y -i \"{0}\" -vn -f mp3 -ab {1}k \"{2}\"";
+            public const string Convert = " -report -y -i \"{0}\" -vn -f mp3 -b:a {1}k \"{2}\"";
             public const string CropFrom = " -report -y -ss {0} -i \"{1}\" -acodec copy{2} \"{3}\"";
             public const string CropFromTo = " -report -y -ss {0} -i \"{1}\" -to {2} -acodec copy{3} \"{4}\"";
             public const string GetFileInfo = " -report -i \"{0}\"";
@@ -469,7 +469,7 @@ namespace YouTube_Downloader_DLL.Helpers
         public static FFmpegResult<int> GetBitRate(string file)
         {
             int result = -1;
-            Regex regex = new Regex(@"^Stream\s#\d:\d.*\s(\d+)\skb/s.*$", RegexOptions.Compiled);
+            Regex regex = new Regex(@"^Stream\s#\d:\d.*\s(\d+)\skb\/s.*$", RegexOptions.Compiled);
             StringBuilder lines = new StringBuilder();
             var logger = CreateLogger(string.Format(Commands.GetFileInfo, file));
 
