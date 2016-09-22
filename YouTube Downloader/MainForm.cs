@@ -415,9 +415,9 @@ namespace YouTube_Downloader
             {
                 // Reset playlist variables
                 _playlistName = string.Empty;
-                _playlistCancel = true;
                 lvPlaylistVideos.Items.Clear();
 
+                _playlistCancel = true;
                 btnGetPlaylist.Text = "Cancel";
                 btnPlaylistDownloadAll.Enabled = false;
 
@@ -480,6 +480,7 @@ namespace YouTube_Downloader
         {
             bool result = (bool)e.Result;
 
+            _playlistCancel = false;
             btnGetPlaylist.Text = "Get";
             btnPlaylistDownloadAll.Enabled = result;
             btnPlaylistDownloadSelected.Enabled = result;
