@@ -467,8 +467,8 @@ namespace YouTube_Downloader_DLL.Helpers
         /// Returns the bit rate of the given file.
         /// </summary>
         public static FFmpegResult<int> GetBitRate(string file)
-        {
-            int result = -1;
+        { 
+            int result = 128; // Default to 128k bitrate
             Regex regex = new Regex(@"^Stream\s#\d:\d.*\s(\d+)\skb\/s.*$", RegexOptions.Compiled);
             StringBuilder lines = new StringBuilder();
             var logger = CreateLogger(string.Format(Commands.GetFileInfo, file));
