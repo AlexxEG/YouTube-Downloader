@@ -38,7 +38,10 @@ namespace ListViewEmbeddedControls
 
         private ArrayList _embeddedControls = new ArrayList();
 
-        public ListViewEx() { }
+        public ListViewEx() 
+        {
+            DoubleBuffered = true;
+        }
 
         /// <summary>
         /// Retrieve the order in which columns appear
