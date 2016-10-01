@@ -403,6 +403,14 @@ namespace YouTube_Downloader
         private string _playlistName = string.Empty;
         private BackgroundWorker _backgroundWorkerPlaylist;
 
+        private void btnPlaylistPaste_Click(object sender, EventArgs e)
+        {
+            if (txtPlaylistLink.Enabled)
+            {
+                txtPlaylistLink.Text = Clipboard.GetText();
+            }
+        }
+
         private void btnPlaylistBrowse_Click(object sender, EventArgs e)
         {
             OpenFolderDialog ofd = new OpenFolderDialog();

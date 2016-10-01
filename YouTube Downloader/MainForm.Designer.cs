@@ -119,6 +119,7 @@
             this.playlistSelectAllMenuItem = new System.Windows.Forms.MenuItem();
             this.playlistSelectNoneMenuItem = new System.Windows.Forms.MenuItem();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.btnPlaylistPaste = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.videoThumbnail)).BeginInit();
@@ -480,6 +481,7 @@
             // 
             this.groupBox7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox7.Controls.Add(this.btnPlaylistPaste);
             this.groupBox7.Controls.Add(this.btnGetPlaylist);
             this.groupBox7.Controls.Add(this.label14);
             this.groupBox7.Controls.Add(this.cbPlaylistQuality);
@@ -575,7 +577,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtPlaylistLink.Location = new System.Drawing.Point(60, 19);
             this.txtPlaylistLink.Name = "txtPlaylistLink";
-            this.txtPlaylistLink.Size = new System.Drawing.Size(524, 20);
+            this.txtPlaylistLink.Size = new System.Drawing.Size(496, 20);
             this.txtPlaylistLink.TabIndex = 4;
             this.txtPlaylistLink.TextChanged += new System.EventHandler(this.txtPlaylistLink_TextChanged);
             // 
@@ -1019,6 +1021,19 @@
             this.playlistSelectNoneMenuItem.Text = "Select none";
             this.playlistSelectNoneMenuItem.Click += new System.EventHandler(this.playlistSelectNoneMenuItem_Click);
             // 
+            // btnPlaylistPaste
+            // 
+            this.btnPlaylistPaste.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnPlaylistPaste.ImageIndex = 0;
+            this.btnPlaylistPaste.ImageList = this.imageList1;
+            this.btnPlaylistPaste.Location = new System.Drawing.Point(562, 18);
+            this.btnPlaylistPaste.Name = "btnPlaylistPaste";
+            this.btnPlaylistPaste.Size = new System.Drawing.Size(22, 22);
+            this.btnPlaylistPaste.TabIndex = 16;
+            this.toolTip1.SetToolTip(this.btnPlaylistPaste, "Paste");
+            this.btnPlaylistPaste.UseVisualStyleBackColor = true;
+            this.btnPlaylistPaste.Click += new System.EventHandler(this.btnPlaylistPaste_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1150,6 +1165,7 @@
         private System.Windows.Forms.TextBox txtExtension;
         private System.Windows.Forms.ImageList imageList1;
         private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.Button btnPlaylistPaste;
     }
 }
 
