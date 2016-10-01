@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using YouTube_Downloader_DLL.Classes;
 using YouTube_Downloader_DLL.FFmpeg;
 using YouTube_Downloader_DLL.FileDownloading;
@@ -222,27 +223,32 @@ namespace YouTube_Downloader_DLL.Operations
 
         protected override void WorkerDoWork(DoWorkEventArgs e)
         {
-            try
-            {
-                // Retrieve playlist name and videos
-                if (this.Videos.Count == 0)
-                    this.GetPlaylistInfo();
-            }
-            catch (TimeoutException ex)
-            {
-                e.Result = OperationStatus.Failed;
-                _operationException = ex;
-                return;
-            }
+            /* ToDo:
+             * [ ] 'this.Videos' will always be empty now. Instead '_videoIds' is to be used to only download selected videos
+             * 
+             * [x] Get video information in background while downloading available videos. 
+             *     That means it will query video information while it's downloading
+             *   
+             * [ ] Handle TimeoutException from PlaylistReader in 'GetPlaylistInfoAsync' somehow
+             */
+
+            // Start querying for video information
+            this.GetPlaylistInfoAsync();
 
             try
             {
                 int count = 0;
 
-                foreach (VideoInfo video in this.Videos)
+                while (count < this.Videos.Count || _queryingVideos)
                 {
                     if (this.CancellationPending)
                         break;
+
+                    while (count == this.Videos.Count)
+                    {
+                        Thread.Sleep(200);
+                        continue;
+                    }
 
                     // Reset variable(s)
                     _downloaderSuccessful = null;
@@ -250,6 +256,7 @@ namespace YouTube_Downloader_DLL.Operations
 
                     count++;
 
+                    var video = this.Videos[count - 1];
                     VideoFormat format = Helper.GetPreferredFormat(video, _preferredQuality);
 
                     // Update properties for new video
@@ -276,7 +283,7 @@ namespace YouTube_Downloader_DLL.Operations
                         string audioFile = Regex.Replace(finalFile, @"^(.*)(\..*)$", "$1_audio$2");
                         string videoFile = Regex.Replace(finalFile, @"^(.*)(\..*)$", "$1_video$2");
 
-                        // Download audio and video, since DASH has them separated
+                        // Download audio and video
                         downloader.Files.Add(new FileDownload(audioFile, audioFormat.DownloadUrl));
                         downloader.Files.Add(new FileDownload(videoFile, format.DownloadUrl));
                     }
@@ -295,7 +302,7 @@ namespace YouTube_Downloader_DLL.Operations
                         Thread.Sleep(200);
                     }
 
-                    // Download successful. Combine video & audio if download is a DASH video
+                    // Download successful. Combine video & audio if necessary
                     if (_downloaderSuccessful == true)
                     {
                         if (!format.AudioOnly)
@@ -360,6 +367,11 @@ namespace YouTube_Downloader_DLL.Operations
             }
         }
 
+
+        private List<string> _videoIds = new List<string>();
+        private bool _queryingVideos = false;
+
+
         protected override void WorkerStart(Dictionary<string, object> args)
         {
             if (!(args.Count.Any(ArgKeys.Min, ArgKeys.Max)))
@@ -380,7 +392,7 @@ namespace YouTube_Downloader_DLL.Operations
                 this.PlaylistName = (string)args[ArgKeys.PlaylistName];
 
                 if (args[ArgKeys.Videos] != null)
-                    this.Videos.AddRange((IEnumerable<VideoInfo>)args[ArgKeys.Videos]);
+                    _videoIds.AddRange((IEnumerable<string>)args[ArgKeys.Videos]);
             }
 
             downloader = new FileDownloader();
@@ -441,23 +453,31 @@ namespace YouTube_Downloader_DLL.Operations
             this.FileDownloadComplete?.Invoke(this, file);
         }
 
-        private void GetPlaylistInfo()
+        private async void GetPlaylistInfoAsync()
         {
+            _queryingVideos = true;
+
             var reader = new PlaylistReader(this.Input);
             VideoInfo video;
 
             this.PlaylistName = reader.WaitForPlaylist().Name;
 
-            while ((video = reader.Next()) != null)
+            await Task.Run(delegate
             {
-                if (this.CancellationPending)
+                while ((video = reader.Next()) != null)
                 {
-                    reader.Stop();
-                    break;
-                }
+                    if (this.CancellationPending)
+                    {
+                        reader.Stop();
+                        break;
+                    }
 
-                this.Videos.Add(video);
-            }
+                    if (_videoIds.Count == 0 || _videoIds.Contains(video.ID))
+                        this.Videos.Add(video);
+                }
+            });
+
+            _queryingVideos = false;
         }
 
         public Dictionary<string, object> Args(string url,
@@ -476,7 +496,7 @@ namespace YouTube_Downloader_DLL.Operations
                                                string output,
                                                int preferredQuality,
                                                string playlistName,
-                                               ICollection<VideoInfo> videos)
+                                               ICollection<string> videoIds)
         {
             return new Dictionary<string, object>()
             {
@@ -484,7 +504,7 @@ namespace YouTube_Downloader_DLL.Operations
                 { ArgKeys.Output, output },
                 { ArgKeys.PreferredQuality, preferredQuality },
                 { ArgKeys.PlaylistName, playlistName },
-                { ArgKeys.Videos, videos }
+                { ArgKeys.Videos, videoIds }
             };
         }
     }

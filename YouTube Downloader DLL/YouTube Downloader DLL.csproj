@@ -51,6 +51,8 @@
   <ItemGroup>
     <Compile Include="Classes\Common.cs" />
     <Compile Include="Classes\IntegerExtensions.cs" />
+    <Compile Include="Classes\QuickPlaylist.cs" />
+    <Compile Include="Classes\QuickVideoInfo.cs" />
     <Compile Include="Helpers\FFmpegHelper.cs" />
     <Compile Include="FileDownloading\FileDownload.cs" />
     <Compile Include="FileDownloading\FileDownloader.cs" />
