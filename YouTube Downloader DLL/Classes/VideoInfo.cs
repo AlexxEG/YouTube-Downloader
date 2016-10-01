@@ -150,13 +150,6 @@ namespace YouTube_Downloader_DLL.Classes
             }
         }
 
-        public void SortFormats()
-        {
-            var dash = this.Formats.FindAll(x => x.ToString().StartsWith("DASH"));
-            this.Formats.RemoveAll(x => x.ToString().StartsWith("DASH"));
-            this.Formats.AddRange(dash);
-        }
-
         private static string ReadJSON(string json_file)
         {
             string json = string.Empty;
