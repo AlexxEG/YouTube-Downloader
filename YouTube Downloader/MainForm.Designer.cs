@@ -67,7 +67,6 @@
             this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.groupBox7 = new System.Windows.Forms.GroupBox();
             this.btnGetPlaylist = new System.Windows.Forms.Button();
-            this.chbPlaylistDASH = new System.Windows.Forms.CheckBox();
             this.label14 = new System.Windows.Forms.Label();
             this.cbPlaylistQuality = new System.Windows.Forms.ComboBox();
             this.btnPlaylistBrowse = new System.Windows.Forms.Button();
@@ -482,7 +481,6 @@
             this.groupBox7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox7.Controls.Add(this.btnGetPlaylist);
-            this.groupBox7.Controls.Add(this.chbPlaylistDASH);
             this.groupBox7.Controls.Add(this.label14);
             this.groupBox7.Controls.Add(this.cbPlaylistQuality);
             this.groupBox7.Controls.Add(this.btnPlaylistBrowse);
@@ -507,17 +505,6 @@
             this.btnGetPlaylist.Text = "Get";
             this.btnGetPlaylist.UseVisualStyleBackColor = true;
             this.btnGetPlaylist.Click += new System.EventHandler(this.btnGetPlaylist_Click);
-            // 
-            // chbPlaylistDASH
-            // 
-            this.chbPlaylistDASH.AutoSize = true;
-            this.chbPlaylistDASH.Location = new System.Drawing.Point(522, 48);
-            this.chbPlaylistDASH.Name = "chbPlaylistDASH";
-            this.chbPlaylistDASH.Size = new System.Drawing.Size(56, 17);
-            this.chbPlaylistDASH.TabIndex = 14;
-            this.chbPlaylistDASH.Text = "DASH";
-            this.chbPlaylistDASH.UseVisualStyleBackColor = true;
-            this.chbPlaylistDASH.CheckedChanged += new System.EventHandler(this.chbPlaylistDASH_CheckedChanged);
             // 
             // label14
             // 
@@ -1137,7 +1124,6 @@
         private System.Windows.Forms.ComboBox cbPlaylistSaveTo;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.TextBox txtPlaylistLink;
-        private System.Windows.Forms.CheckBox chbPlaylistDASH;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.ComboBox cbPlaylistQuality;
         private System.Windows.Forms.TextBox txtTitle;

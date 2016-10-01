@@ -16,7 +16,7 @@ namespace YouTube_Downloader_DLL.Helpers
     {
         public static class Commands
         {
-            public const string CombineDash = " -report -y -i \"{0}\" -i \"{1}\" -c:v copy -c:a aac \"{2}\"";
+            public const string Combine = " -report -y -i \"{0}\" -i \"{1}\" -c:v copy -c:a aac \"{2}\"";
             /* Convert options:
              *
              * -y   - Overwrite output file without asking
@@ -77,15 +77,15 @@ namespace YouTube_Downloader_DLL.Helpers
         }
 
         /// <summary>
-        /// Combines DASH audio &amp; video to a single MP4 file.
+        /// Combines separate audio &amp; video to a single MP4 file.
         /// </summary>
         /// <param name="video">The input video file.</param>
         /// <param name="audio">The input audio file.</param>
         /// <param name="output">Where to save the output file.</param>
-        public static FFmpegResult<bool> CombineDash(string video, string audio, string output)
+        public static FFmpegResult<bool> Combine(string video, string audio, string output)
         {
             string[] argsInfo = new string[] { video, audio, output };
-            string processArgs = string.Format(Commands.CombineDash, argsInfo);
+            string processArgs = string.Format(Commands.Combine, argsInfo);
             StringBuilder lines = new StringBuilder();
             var logger = FFmpegHelper.CreateLogger(processArgs);
 
@@ -467,7 +467,7 @@ namespace YouTube_Downloader_DLL.Helpers
         /// Returns the bit rate of the given file.
         /// </summary>
         public static FFmpegResult<int> GetBitRate(string file)
-        { 
+        {
             int result = 128; // Default to 128k bitrate
             Regex regex = new Regex(@"^Stream\s#\d:\d.*\s(\d+)\skb\/s.*$", RegexOptions.Compiled);
             StringBuilder lines = new StringBuilder();

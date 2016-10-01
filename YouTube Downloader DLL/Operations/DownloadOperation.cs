@@ -28,7 +28,7 @@ namespace YouTube_Downloader_DLL.Operations
             Combining
         }
 
-        bool _combining, _dash, _processing, _downloadSuccessful;
+        bool _combining, _combine, _processing, _downloadSuccessful;
         FileDownloader downloader;
 
         public event EventHandler Combining;
@@ -53,7 +53,7 @@ namespace YouTube_Downloader_DLL.Operations
         {
             // Set status to successful if no download(s) failed.
             if (this.Status != OperationStatus.Failed)
-                if (_dash)
+                if (_combine)
                     _downloadSuccessful = true;
                 else
                     this.Status = OperationStatus.Success;
@@ -207,7 +207,7 @@ namespace YouTube_Downloader_DLL.Operations
             while (downloader != null && downloader.IsBusy)
                 Thread.Sleep(200);
 
-            if (_dash && _downloadSuccessful)
+            if (_combine && _downloadSuccessful)
             {
                 _combining = true;
 
@@ -227,7 +227,7 @@ namespace YouTube_Downloader_DLL.Operations
                 {
                     this.ReportProgress(-1, Events.Combining);
 
-                    var result = FFmpegHelper.CombineDash(video, audio, this.Output);
+                    var result = FFmpegHelper.Combine(video, audio, this.Output);
 
                     if (result.Value)
                         e.Result = OperationStatus.Success;
@@ -293,7 +293,7 @@ namespace YouTube_Downloader_DLL.Operations
                     downloader.Files.Add(new FileDownload(this.Output, this.Input));
                     break;
                 case ArgKeys.Max:
-                    _dash = true;
+                    _combine = true;
                     this.Input = $"{args[ArgKeys.Audio]}|{args[ArgKeys.Video]}";
                     this.Output = (string)args[ArgKeys.Output];
 

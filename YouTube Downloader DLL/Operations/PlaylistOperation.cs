@@ -18,11 +18,10 @@ namespace YouTube_Downloader_DLL.Operations
     {
         class ArgKeys
         {
-            public const int Max = 6;
-            public const int Min = 4;
+            public const int Max = 5;
+            public const int Min = 3;
             public const string Input = "input";
             public const string Output = "output";
-            public const string DASH = "dash";
             public const string PreferredQuality = "preferred_quality";
             public const string PlaylistName = "playlist_name";
             public const string Videos = "videos";
@@ -34,7 +33,7 @@ namespace YouTube_Downloader_DLL.Operations
         int _downloads = 0;
         int _failures = 0;
         int _preferredQuality;
-        bool _combining, _processing, _useDash;
+        bool _combining, _processing;
         bool? _downloaderSuccessful;
 
         Exception _operationException;
@@ -251,35 +250,35 @@ namespace YouTube_Downloader_DLL.Operations
 
                     count++;
 
-                    VideoFormat videoFormat = Helper.GetPreferredFormat(video, _useDash, _preferredQuality);
+                    VideoFormat format = Helper.GetPreferredFormat(video, _preferredQuality);
 
                     // Update properties for new video
                     this.ReportProgress(UpdateProperties, new Dictionary<string, object>()
                     {
                         { nameof(Title), $"({count}/{this.Videos.Count}) {video.Title}" },
                         { nameof(Duration), video.Duration },
-                        { nameof(FileSize), videoFormat.FileSize }
+                        { nameof(FileSize), format.FileSize }
                     });
 
                     string finalFile = Path.Combine(this.Output,
-                                                    $"{Helper.FormatTitle(videoFormat.VideoInfo.Title)}.{videoFormat.Extension}");
+                                                    $"{Helper.FormatTitle(format.VideoInfo.Title)}.{format.Extension}");
 
                     this.DownloadedFiles.Add(finalFile);
 
-                    if (!_useDash)
+                    if (format.AudioOnly)
                     {
-                        downloader.Files.Add(new FileDownload(finalFile, videoFormat.DownloadUrl));
+                        downloader.Files.Add(new FileDownload(finalFile, format.DownloadUrl));
                     }
                     else
                     {
-                        VideoFormat audioFormat = Helper.GetAudioFormat(videoFormat);
+                        VideoFormat audioFormat = Helper.GetAudioFormat(format);
                         // Add '_audio' & '_video' to end of filename. Only get filename, not full path.
                         string audioFile = Regex.Replace(finalFile, @"^(.*)(\..*)$", "$1_audio$2");
                         string videoFile = Regex.Replace(finalFile, @"^(.*)(\..*)$", "$1_video$2");
 
                         // Download audio and video, since DASH has them separated
                         downloader.Files.Add(new FileDownload(audioFile, audioFormat.DownloadUrl));
-                        downloader.Files.Add(new FileDownload(videoFile, videoFormat.DownloadUrl));
+                        downloader.Files.Add(new FileDownload(videoFile, format.DownloadUrl));
                     }
 
                     downloader.Start();
@@ -299,7 +298,7 @@ namespace YouTube_Downloader_DLL.Operations
                     // Download successful. Combine video & audio if download is a DASH video
                     if (_downloaderSuccessful == true)
                     {
-                        if (_useDash)
+                        if (!format.AudioOnly)
                         {
                             this.ReportProgress(UpdateProperties, new Dictionary<string, object>()
                             {
@@ -374,7 +373,6 @@ namespace YouTube_Downloader_DLL.Operations
             this.Output = (string)args[ArgKeys.Output];
             this.Link = this.Input;
 
-            _useDash = (bool)args[ArgKeys.DASH];
             _preferredQuality = (int)args[ArgKeys.PreferredQuality];
 
             if (args.Count == ArgKeys.Max)
@@ -407,7 +405,7 @@ namespace YouTube_Downloader_DLL.Operations
 
             try
             {
-                result = FFmpegHelper.CombineDash(video, audio, output);
+                result = FFmpegHelper.Combine(video, audio, output);
 
                 // Save errors if combining failed
                 if (!result.Value)
@@ -464,21 +462,18 @@ namespace YouTube_Downloader_DLL.Operations
 
         public Dictionary<string, object> Args(string url,
                                                string output,
-                                               bool dash,
                                                int preferredQuality)
         {
             return new Dictionary<string, object>()
             {
                 { ArgKeys.Input, url },
                 { ArgKeys.Output, output },
-                { ArgKeys.DASH, dash },
                 { ArgKeys.PreferredQuality, preferredQuality }
             };
         }
 
         public Dictionary<string, object> Args(string url,
                                                string output,
-                                               bool dash,
                                                int preferredQuality,
                                                string playlistName,
                                                ICollection<VideoInfo> videos)
@@ -487,7 +482,6 @@ namespace YouTube_Downloader_DLL.Operations
             {
                 { ArgKeys.Input, url },
                 { ArgKeys.Output, output },
-                { ArgKeys.DASH, dash },
                 { ArgKeys.PreferredQuality, preferredQuality },
                 { ArgKeys.PlaylistName, playlistName },
                 { ArgKeys.Videos, videos }

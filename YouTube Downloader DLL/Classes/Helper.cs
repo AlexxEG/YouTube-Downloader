@@ -197,7 +197,7 @@ namespace YouTube_Downloader_DLL.Classes
         }
 
         /// <summary>
-        /// Returns the highest quality DASH audio format from the given VideoFormat.
+        /// Returns the highest quality audio format from the given VideoFormat.
         /// </summary>
         /// <param name="format">The format to get audio format from.</param>
         public static VideoFormat GetAudioFormat(VideoFormat format)
@@ -219,10 +219,9 @@ namespace YouTube_Downloader_DLL.Classes
         /// Returns the preferred video format quality based on application setting.
         /// </summary>
         /// <param name="video">The video to get format from.</param>
-        /// <param name="dash">True to only get DASH formats.</param>
-        public static VideoFormat GetPreferredFormat(VideoInfo video, bool dash, int preferredQuality)
+        public static VideoFormat GetPreferredFormat(VideoInfo video, int preferredQuality)
         {
-            VideoFormat[] qualities = Helper.GetVideoFormats(video, dash);
+            VideoFormat[] qualities = Helper.GetVideoFormats(video);
 
             /* Find a format based on user's preference.
              * 
@@ -236,13 +235,13 @@ namespace YouTube_Downloader_DLL.Classes
             switch (preferredQuality)
             {
                 case PreferredQualityMedium:
-                    if ((index = qualities.IndexOf("720", dash)) > -1)
+                    if ((index = qualities.IndexOf("720")) > -1)
                     {
                         return qualities[index];
                     }
                     break;
                 case PreferredQualityLow:
-                    if ((index = qualities.IndexOf("360", dash)) > -1)
+                    if ((index = qualities.IndexOf("360")) > -1)
                     {
                         return qualities[index];
                     }
@@ -258,8 +257,7 @@ namespace YouTube_Downloader_DLL.Classes
         /// Returns a list of formats from the given VideoInfo, excluding vp9 and .webm videos.
         /// </summary>
         /// <param name="video">The video to get formats from.</param>
-        /// <param name="dash">True to only get DASH formats.</param>
-        public static VideoFormat[] GetVideoFormats(VideoInfo video, bool dash)
+        public static VideoFormat[] GetVideoFormats(VideoInfo video)
         {
             var formats = new List<VideoFormat>();
 
@@ -270,7 +268,7 @@ namespace YouTube_Downloader_DLL.Classes
                     continue;
 
                 // Only include .mp4 videos, and exclude vp9 vcodec
-                if (format.VCodec.Contains("vp9") || !format.Extension.Contains("mp4"))
+                if (format.HasAudioAndVideo || format.VCodec.Contains("vp9") || !format.Extension.Contains("mp4"))
                     continue;
 
                 formats.Add(format);
@@ -362,12 +360,10 @@ namespace YouTube_Downloader_DLL.Classes
         /// </summary>
         /// <param name="thiz">The VideoFormat array to search.</param>
         /// <param name="format">The video format to find.</param>
-        /// <param name="dash">True to find DASH format, false if otherwise.</param>
-        public static int IndexOf(this VideoFormat[] thiz, string format, bool dash)
+        public static int IndexOf(this VideoFormat[] thiz, string format)
         {
-            string pattern = @"^\d*\s-\s\d*x" + format + "$";
-            string patternDASH = @"^\d*\s-\s\d*x" + format + @"\s\(DASH video\)$";
-            Regex regex = new Regex(dash ? patternDASH : pattern);
+            string pattern = @"^\d*x" + format + "$";
+            Regex regex = new Regex(pattern);
 
             for (int i = 0; i < thiz.Length; i++)
             {
@@ -377,7 +373,6 @@ namespace YouTube_Downloader_DLL.Classes
                 if (f.Extension.Contains("webm"))
                     continue;
 
-                // Ignore '(DASH video)' suffix
                 if (regex.IsMatch(f.Format))
                     return i;
             }

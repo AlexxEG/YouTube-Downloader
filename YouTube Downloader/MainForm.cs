@@ -549,11 +549,6 @@ namespace YouTube_Downloader
             _settings.PreferredQualityPlaylist = cbPlaylistQuality.SelectedIndex;
         }
 
-        private void chbPlaylistDASH_CheckedChanged(object sender, EventArgs e)
-        {
-            _settings.UseDashPlaylist = chbPlaylistDASH.Checked;
-        }
-
         private void playlistSelectAllMenuItem_Click(object sender, EventArgs e)
         {
             foreach (ListViewItem item in lvPlaylistVideos.Items)
@@ -591,7 +586,6 @@ namespace YouTube_Downloader
                 operation.FileDownloadComplete += playlistOperation_FileDownloadComplete;
                 operation.Start(operation.Args(txtPlaylistLink.Text,
                                     path,
-                                    chbPlaylistDASH.Checked,
                                     Settings.Default.PreferredQualityPlaylist,
                                     _playlistName,
                                     videos)
@@ -1185,7 +1179,6 @@ namespace YouTube_Downloader
 
             // Restore CheckBox.Checked
             chbAutoConvert.Checked = _settings.AutoConvert;
-            chbPlaylistDASH.Checked = _settings.UseDashPlaylist;
 
             // Restore last used links
             if (_settings.LastYouTubeUrl != null) txtYoutubeLink.Text = _settings.LastYouTubeUrl;

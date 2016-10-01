@@ -73,18 +73,6 @@ namespace YouTube_Downloader.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool UseDashPlaylist {
-            get {
-                return ((bool)(this["UseDashPlaylist"]));
-            }
-            set {
-                this["UseDashPlaylist"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public int SelectedDirectoryPlaylist {
             get {
