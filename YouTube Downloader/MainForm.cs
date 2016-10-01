@@ -12,7 +12,6 @@ using YouTube_Downloader.Properties;
 using YouTube_Downloader_DLL;
 using YouTube_Downloader_DLL.Classes;
 using YouTube_Downloader_DLL.Dialogs;
-using YouTube_Downloader_DLL.Enums;
 using YouTube_Downloader_DLL.Helpers;
 using YouTube_Downloader_DLL.Operations;
 
@@ -152,7 +151,7 @@ namespace YouTube_Downloader
 
                 txtTitle.Text = string.Empty;
                 cbQuality.Items.Clear();
-                btnGetVideo.Enabled = txtYoutubeLink.Enabled = btnDownload.Enabled = cbQuality.Enabled = false;
+                btnGetVideo.Enabled = txtYoutubeLink.Enabled = btnDownload.Enabled = cbQuality.Enabled = btnPaste.Enabled = false;
                 videoThumbnail.Tag = null;
 
                 bwGetVideo.RunWorkerAsync(txtYoutubeLink.Text);
@@ -226,8 +225,8 @@ namespace YouTube_Downloader
 
                 item.Duration = Helper.FormatVideoLength(tempFormat.VideoInfo.Duration);
 
-                // Combine video and audio file size if the format is DASH and not AudioOnly
-                if (_selectedVideo.VideoSource == VideoSource.YouTube && tempFormat.FormatType != FormatType.Normal && !tempFormat.AudioOnly)
+                // Combine video and audio file size if the format only has video
+                if (_selectedVideo.VideoSource == VideoSource.YouTube && tempFormat.VideoOnly)
                     item.FileSize = Helper.FormatFileSize(tempFormat.FileSize + Helper.GetAudioFormat(tempFormat).FileSize);
                 else
                     item.FileSize = Helper.FormatFileSize(tempFormat.FileSize);
@@ -245,7 +244,7 @@ namespace YouTube_Downloader
                 }
                 else
                 {
-                    if (tempFormat.AudioOnly || tempFormat.FormatType == FormatType.Normal)
+                    if (tempFormat.AudioOnly || tempFormat.HasAudioAndVideo)
                         operation.Start(DownloadOperation.Args(tempFormat.DownloadUrl,
                             Path.Combine(path, filename)));
                     else
@@ -303,8 +302,8 @@ namespace YouTube_Downloader
             {
                 long total = format.FileSize;
 
-                // If the format is DASH and not a AudioOnly format, combine audio and video size.
-                if (format.FormatType != FormatType.Normal && !format.AudioOnly)
+                // If the format is VideoOnly, combine audio and video size.
+                if (format.VideoOnly)
                     total += Helper.GetAudioFormat(format).FileSize;
 
                 lFileSize.Text = Helper.FormatFileSize(total);
@@ -364,7 +363,7 @@ namespace YouTube_Downloader
                 videoThumbnail.ImageLocation = videoInfo.ThumbnailUrl;
             }
 
-            btnGetVideo.Enabled = txtYoutubeLink.Enabled = true;
+            btnGetVideo.Enabled = txtYoutubeLink.Enabled = btnPaste.Enabled = true;
             cbQuality.Enabled = videoInfo.Formats.Count > 0;
             btnDownload.Enabled = true;
         }
@@ -456,6 +455,7 @@ namespace YouTube_Downloader
         private void _backgroundWorkerPlaylist_DoWork(object sender, DoWorkEventArgs e)
         {
             string playlistUrl = e.Argument as string;
+
             PlaylistReader reader = new PlaylistReader(playlistUrl);
             VideoInfo video;
 
@@ -1320,20 +1320,10 @@ namespace YouTube_Downloader
             {
                 VideoFormat f = formats[i];
 
-                if (f.Extension.Contains("webm") ||
-                    f.FormatID.Contains("meta") ||
-                    !Settings.Default.IncludeNonDASH && f.Format.ToLower().Contains("nondash") ||
-                    !Settings.Default.IncludeDASH && f.Format.ToLower().Contains("dash") ||
-                    !Settings.Default.IncludeNormal && !f.Format.ToLower().Contains("dash"))
-                {
+                // Remove .webm and formats with audio and video in one
+                if (f.Extension.Contains("webm") || f.HasAudioAndVideo)
                     formats.RemoveAt(i);
-                }
             }
-
-            // Move DASH formats to bottom
-            var dash = formats.FindAll(x => x.ToString().StartsWith("DASH"));
-            formats.RemoveAll(x => x.ToString().StartsWith("DASH"));
-            formats.AddRange(dash);
 
             return formats.ToArray();
         }

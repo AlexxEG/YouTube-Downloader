@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
-using YouTube_Downloader_DLL.Enums;
 
 namespace YouTube_Downloader_DLL.Classes
 {
@@ -206,7 +205,7 @@ namespace YouTube_Downloader_DLL.Classes
             List<VideoFormat> audio = new List<VideoFormat>();
 
             // Add all audio only formats
-            audio.AddRange(format.VideoInfo.Formats.FindAll(f => f.AudioOnly == true && f.FormatType == format.FormatType));
+            audio.AddRange(format.VideoInfo.Formats.FindAll(f => f.AudioOnly == true));
 
             // Return null if no audio is found
             if (audio.Count == 0)
@@ -256,7 +255,7 @@ namespace YouTube_Downloader_DLL.Classes
         }
 
         /// <summary>
-        /// Returns a list of formats from the given VideoInfo, excluding audio & DASH formats if dash is false.
+        /// Returns a list of formats from the given VideoInfo, excluding vp9 and .webm videos.
         /// </summary>
         /// <param name="video">The video to get formats from.</param>
         /// <param name="dash">True to only get DASH formats.</param>
@@ -270,12 +269,8 @@ namespace YouTube_Downloader_DLL.Classes
                 if (format.AudioOnly)
                     continue;
 
-                // Exclude DASH videos if dash is false.
-                if (!dash && format.FormatType != FormatType.Normal)
-                    continue;
-
-                // Only include .mp4 DASH videos if dash is true.
-                if (dash && format.FormatType == FormatType.Normal || !format.Extension.Contains("mp4"))
+                // Only include .mp4 videos, and exclude vp9 vcodec
+                if (format.VCodec.Contains("vp9") || !format.Extension.Contains("mp4"))
                     continue;
 
                 formats.Add(format);

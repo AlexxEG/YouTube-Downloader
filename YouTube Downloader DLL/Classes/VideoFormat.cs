@@ -6,7 +6,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
-using YouTube_Downloader_DLL.Enums;
 
 namespace YouTube_Downloader_DLL.Classes
 {
@@ -21,6 +20,11 @@ namespace YouTube_Downloader_DLL.Classes
         /// Gets whether the format is audio only.
         /// </summary>
         public bool AudioOnly { get; private set; }
+
+        /// <summary>
+        /// Gets whether format is a DASH format.
+        /// </summary>
+        public bool DASH { get; private set; }
 
         /// <summary>
         /// Gets the download url.
@@ -55,11 +59,6 @@ namespace YouTube_Downloader_DLL.Classes
         /// Gets the format ID.
         /// </summary>
         public string FormatID { get; private set; }
-
-        /// <summary>
-        /// Gets the format type.
-        /// </summary>
-        public FormatType FormatType { get; private set; }
 
         /// <summary>
         /// Gets the frames per second. Null if not defined.
@@ -152,33 +151,31 @@ namespace YouTube_Downloader_DLL.Classes
 
         #endregion
 
+        public bool VideoOnly { get; private set; }
+        public bool HasAudioAndVideo
+        {
+            get
+            {
+                return !this.AudioOnly && !this.VideoOnly;
+            }
+        }
+        public string ACodec { get; private set; }
+        public string VCodec { get; private set; }
+
         private void DeserializeJson(JToken token)
         {
-            JToken format_note = token.SelectToken("format_note");
-
-            if (format_note == null)
-            {
-                this.FormatType = FormatType.Normal;
-            }
-            else
-            {
-                if (format_note.ToString().ToLower().Contains("nondash"))
-                {
-                    this.FormatType = FormatType.NonDASH;
-                }
-                else if (format_note.ToString().ToLower().Contains("dash"))
-                {
-                    this.FormatType = FormatType.DASH;
-                }
-            }
+            this.ACodec = token["acodec"].ToString();
+            this.VCodec = token["vcodec"].ToString();
 
             this.DownloadUrl = token["url"].ToString();
+            this.DASH = token["format_note"].ToString().ToLower().Contains("dash");
             this.Extension = token["ext"].ToString();
-            this.Format = token["format"].ToString();
+            this.Format = Regex.Match(token["format"].ToString(), @".*-\s(.*)\s\(.*").Groups[1].Value;
             this.FormatID = token["format_id"].ToString();
 
-            // Check if format is audio only
+            // Check if format is audio only or video only
             this.AudioOnly = this.Format.Contains("audio only");
+            this.VideoOnly = this.ACodec == "none";
 
             // Check for abr token (audio bit rate?)
             JToken abr = token.SelectToken("abr");
@@ -195,7 +192,7 @@ namespace YouTube_Downloader_DLL.Classes
             // Check for 60fps videos. If there is no 'fps' token, default to 30fps.
             JToken fps = token.SelectToken("fps", false);
 
-            this.FPS = fps == null ? "30" : fps.ToString();
+            this.FPS = fps == null || fps.ToString() == "null" ? "30" : fps.ToString();
             this.UpdateFileSizeAsync();
         }
 
@@ -205,31 +202,14 @@ namespace YouTube_Downloader_DLL.Classes
 
             if (this.AudioOnly)
             {
-                text = string.Format("DASH Audio - {0} kbps (.{1})", this.AudioBitRate, this.Extension);
+                text = string.Format("Audio Only - {0} kbps (.{1})", this.AudioBitRate, this.Extension);
             }
             else
             {
-                // Only split by dash with whitespace around
-                string[] dash_split = new string[] { " - " };
-                string format = this.Format.Split(dash_split, StringSplitOptions.None)[1].Trim();
+                string fps = this.FPS != "30" && this.FPS != "24" ? $" {this.FPS}fps" : string.Empty;
 
-                if (this.FormatType != FormatType.Normal)
-                {
-                    format = format.Replace("(DASH video)", string.Empty).Trim();
-
-                    text = string.Format("DASH Video - {0} (.{1})", format, this.Extension);
-                }
-                else
-                {
-                    text = string.Format("{0} (.{1})", format, this.Extension);
-                }
-
-                if (this.FPS != "30")
-                    text = Regex.Replace(text, @"^(\d+x\d+)(\s.*)$", "$1x" + FPS + "$2");
+                text = string.Format("{0}{1} (.{2})", this.Format, fps, this.Extension);
             }
-
-            if (this.FormatType == FormatType.NonDASH)
-                text = "non-" + text;
 
             return text;
         }
