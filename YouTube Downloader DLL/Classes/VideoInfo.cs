@@ -123,6 +123,7 @@ namespace YouTube_Downloader_DLL.Classes
 
             this.Duration = long.Parse(jObject["duration"].ToString());
             this.Title = jObject["fulltitle"].ToString();
+            this.ID = jObject["id"].ToString();
 
             string displayId = jObject["display_id"].ToString();
 
