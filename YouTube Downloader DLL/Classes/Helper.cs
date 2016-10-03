@@ -205,7 +205,7 @@ namespace YouTube_Downloader_DLL.Classes
             List<VideoFormat> audio = new List<VideoFormat>();
 
             // Add all audio only formats
-            audio.AddRange(format.VideoInfo.Formats.FindAll(f => f.AudioOnly == true));
+            audio.AddRange(format.VideoInfo.Formats.FindAll(f => f.AudioOnly == true && f.Extension != "webm"));
 
             // Return null if no audio is found
             if (audio.Count == 0)

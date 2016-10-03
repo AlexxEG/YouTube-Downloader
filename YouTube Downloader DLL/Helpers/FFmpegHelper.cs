@@ -16,7 +16,7 @@ namespace YouTube_Downloader_DLL.Helpers
     {
         public static class Commands
         {
-            public const string Combine = " -report -y -i \"{0}\" -i \"{1}\" -c:v copy -c:a aac \"{2}\"";
+            public const string Combine = " -report -y -i \"{0}\" -i \"{1}\" -c:v copy -c:a copy \"{2}\"";
             /* Convert options:
              *
              * -y   - Overwrite output file without asking
