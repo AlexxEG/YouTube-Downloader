@@ -1069,8 +1069,8 @@ namespace YouTube_Downloader
                 if (!this.ValidateCropping())
                     return null;
 
-                start = (TimeSpan)mtxtFrom.ValidateText();
-                end = (TimeSpan)mtxtTo.ValidateText();
+                start = TimeSpan.Parse(mtxtFrom.Text.Replace('.', ':'));
+                end = TimeSpan.Parse(mtxtTo.Text.Replace('.', ':'));
             }
 
             var operation = new ConvertOperation();
@@ -1120,8 +1120,11 @@ namespace YouTube_Downloader
             if (!this.ValidateCropping())
                 return;
 
-            TimeSpan start = (TimeSpan)mtxtFrom.ValidateText();
-            TimeSpan end = (TimeSpan)mtxtTo.ValidateText();
+            TimeSpan start = TimeSpan.Parse(mtxtFrom.Text.Replace('.', ':'));
+            TimeSpan end = TimeSpan.Parse(mtxtTo.Text.Replace('.', ':'));
+
+            if (start > end)
+                end = TimeSpan.MinValue;
 
             var operation = new CroppingOperation();
             var item = new OperationListViewItem(Path.GetFileName(output), input, Path.GetFileName(input), operation);
