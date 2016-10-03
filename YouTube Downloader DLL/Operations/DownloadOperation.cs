@@ -213,7 +213,6 @@ namespace YouTube_Downloader_DLL.Operations
                 this.ReportProgress(-1, new Dictionary<string, object>()
                 {
                     { nameof(Text), "Combining..." },
-                    { nameof(ReportsProgress), false },
                     { nameof(Progress), 0 },
                     { nameof(ProgressTextOverride), "Combining..." }
                 });
@@ -223,7 +222,11 @@ namespace YouTube_Downloader_DLL.Operations
                 {
                     this.ReportProgress(-1, Events.Combining);
 
-                    var result = FFmpegHelper.Combine(video, audio, this.Output);
+                    var result = FFmpegHelper.Combine(video, audio, this.Output, delegate (int percentage)
+                    {
+                        // Combine progress
+                        this.ReportProgress(percentage, null);
+                    });
 
                     if (result.Value)
                         e.Result = OperationStatus.Success;

@@ -82,16 +82,57 @@ namespace YouTube_Downloader_DLL.Helpers
         /// <param name="video">The input video file.</param>
         /// <param name="audio">The input audio file.</param>
         /// <param name="output">Where to save the output file.</param>
-        public static FFmpegResult<bool> Combine(string video, string audio, string output)
+        public static FFmpegResult<bool> Combine(string video, string audio, string output, Action<int> reportProgress)
         {
             string[] argsInfo = new string[] { video, audio, output };
             string processArgs = string.Format(Commands.Combine, argsInfo);
             StringBuilder lines = new StringBuilder();
             var logger = FFmpegHelper.CreateLogger(processArgs);
 
+            bool started = false;
+            double milliseconds = 0;
+
             logger.StartProcess(null, delegate (string line)
             {
-                lines.AppendLine(line.Trim());
+                lines.AppendLine(line = line.Trim());
+
+                // If reportProgress is null it can't be invoked. So skip code below
+                if (reportProgress == null)
+                    return;
+
+                if (line.StartsWith("Duration: "))
+                {
+                    int lineStart = "Duration: ".Length;
+                    int length = "00:00:00.00".Length;
+
+                    string time = line.Substring(lineStart, length);
+
+                    milliseconds = TimeSpan.Parse(time).TotalMilliseconds;
+                }
+                else if (line == "Press [q] to stop, [?] for help")
+                {
+                    started = true;
+
+                    reportProgress.Invoke(0);
+                }
+                else if (started && line.StartsWith("frame="))
+                {
+                    int lineStart = line.IndexOf("time=") + 5;
+                    int length = "00:00:00.00".Length;
+
+                    string time = line.Substring(lineStart, length);
+
+                    double currentMilli = TimeSpan.Parse(time).TotalMilliseconds;
+                    double percentage = (currentMilli / milliseconds) * 100;
+
+                    reportProgress.Invoke(System.Convert.ToInt32(percentage));
+                }
+                else if (started && line == string.Empty)
+                {
+                    started = false;
+
+                    reportProgress.Invoke(100);
+                }
             });
 
             logger.Process.WaitForExit();
