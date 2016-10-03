@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using YouTube_Downloader.Classes;
 using YouTube_Downloader.Controls;
@@ -1024,11 +1025,13 @@ namespace YouTube_Downloader
         /// <summary>
         /// Cancels all active IOperations.
         /// </summary>
-        private void CancelOperations()
+        private async void CancelOperations()
         {
             this.Hide();
 
-            foreach (Operation operation in Program.RunningOperations)
+            ProcessLogger.KillAll();
+
+            foreach (Operation operation in Operation.Running)
             {
                 // Stop & delete unfinished files
                 if (operation.CanStop())
@@ -1038,10 +1041,13 @@ namespace YouTube_Downloader
             if (bwGetVideo.IsBusy)
                 bwGetVideo.CancelAsync();
 
-            while (Program.RunningOperations.Count > 0 || bwGetVideo.IsBusy)
+            await Task.Run(delegate
             {
-                // Wait for everything to finish
-            }
+                while (Operation.Running.Count > 0 || bwGetVideo.IsBusy)
+                {
+                    // Wait for everything to finish
+                }
+            });
 
             this.Close();
         }

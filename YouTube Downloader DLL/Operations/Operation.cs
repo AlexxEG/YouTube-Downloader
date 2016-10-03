@@ -18,6 +18,11 @@ namespace YouTube_Downloader_DLL.Operations
         /// </summary>
         protected const int ProgressDelay = 500;
 
+        /// <summary>
+        /// Store running operations that can be stopped automatically when closing application.
+        /// </summary>
+        public static List<Operation> Running = new List<Operation>();
+
         #region Events
 
         /// <summary>
@@ -448,6 +453,8 @@ namespace YouTube_Downloader_DLL.Operations
             _worker.RunWorkerCompleted += Worker_Completed;
             _worker.RunWorkerAsync(args);
 
+            Operation.Running.Add(this);
+
             this.Status = OperationStatus.Working;
             this.OnStarted(EventArgs.Empty);
         }
@@ -566,6 +573,8 @@ namespace YouTube_Downloader_DLL.Operations
 
         private void Worker_Completed(object sender, RunWorkerCompletedEventArgs e)
         {
+            Operation.Running.Remove(this);
+
             this.Status = (OperationStatus)e.Result;
             this.Complete();
             this.WorkerCompleted(e);

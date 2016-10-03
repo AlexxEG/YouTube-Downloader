@@ -188,11 +188,7 @@ namespace YouTube_Downloader_DLL.Operations
 
         public override bool CanStop()
         {
-            if (this.Status == OperationStatus.Paused || this.Status == OperationStatus.Working)
-                // Only downloader can stop, not the combiner currently.
-                return !_combining && downloader.CanStop;
-            else
-                return true;
+            return this.IsPaused || this.IsWorking;
         }
 
         #endregion

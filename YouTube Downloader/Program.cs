@@ -13,12 +13,7 @@ namespace YouTube_Downloader
         public const string Name = "YouTube Downloader";
 
         public static bool FFmpegAvailable = true;
-
-        /// <summary>
-        /// Store running operations that can be stopped automatically when closing application.
-        /// </summary>
-        public static List<Operation> RunningOperations = new List<Operation>();
-
+        
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
