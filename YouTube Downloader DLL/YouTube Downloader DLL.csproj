@@ -95,6 +95,7 @@
     <Compile Include="UpdateDownloader.Designer.cs">
       <DependentUpon>UpdateDownloader.cs</DependentUpon>
     </Compile>
+    <Compile Include="YoutubeDl\YTDAuthentication.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\Externals\ffmpeg.exe">

@@ -15,6 +15,7 @@ using YouTube_Downloader_DLL.Classes;
 using YouTube_Downloader_DLL.Dialogs;
 using YouTube_Downloader_DLL.Helpers;
 using YouTube_Downloader_DLL.Operations;
+using YouTube_Downloader_DLL.YoutubeDl;
 
 namespace YouTube_Downloader
 {
@@ -23,6 +24,7 @@ namespace YouTube_Downloader
         private string[] _args;
         private VideoInfo _selectedVideo;
         private Settings _settings = Settings.Default;
+        private YTDAuthentication _auth = null;
 
         private delegate void UpdateFileSize(object sender, FileSizeUpdateEventArgs e);
 
@@ -332,14 +334,25 @@ namespace YouTube_Downloader
 
         private void bwGetVideo_DoWork(object sender, DoWorkEventArgs e)
         {
-            e.Result = YoutubeDlHelper.GetVideoInfo((string)e.Argument);
+            e.Result = YoutubeDlHelper.GetVideoInfo((string)e.Argument, _auth);
         }
 
         private void bwGetVideo_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             VideoInfo videoInfo = e.Result as VideoInfo;
 
-            if (videoInfo.Failure)
+            if (videoInfo.RequiresAuthentication)
+            {
+                var auth = Dialogs.LoginDialog.Show(this);
+
+                if (auth != null)
+                {
+                    _auth = auth;
+                    btnGetVideo_Click(bwGetVideo, EventArgs.Empty);
+                    return;
+                }
+            }
+            else if (videoInfo.Failure)
             {
                 MessageBox.Show(this, "Couldn't retrieve video. Reason:\n\n" + videoInfo.FailureReason);
             }

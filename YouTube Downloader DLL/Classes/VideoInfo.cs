@@ -33,6 +33,11 @@ namespace YouTube_Downloader_DLL.Classes
         public bool Failure { get; set; }
 
         /// <summary>
+        /// Gets or sets whether authentication is required to get video information.
+        /// </summary>
+        public bool RequiresAuthentication { get; set; }
+
+        /// <summary>
         /// Gets or sets the reason for failure retrieving video information.
         /// </summary>
         public string FailureReason { get; set; }

@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using YouTube_Downloader_DLL.Classes;
+using YouTube_Downloader_DLL.YoutubeDl;
 
 namespace YouTube_Downloader_DLL.Helpers
 {
@@ -17,7 +18,9 @@ namespace YouTube_Downloader_DLL.Helpers
         public static class Commands
         {
             public const string Download = " -o \"{0}\" --hls-prefer-native -f {1} {2}";
-            public const string GetJsonInfo = " -o \"{0}\\%(title)s\" --no-playlist --skip-download --restrict-filenames --write-info-json \"{1}\"";
+            public const string GetJsonInfo = " -o \"{0}\\%(title)s\" --no-playlist --skip-download --restrict-filenames --write-info-json \"{1}\"{2}";
+            public const string Authentication = " -u {0} -p {1}";
+            public const string TwoFactor = " -2 {0}";
             public const string Version = " --version";
         }
 
@@ -164,11 +167,14 @@ namespace YouTube_Downloader_DLL.Helpers
         /// Returns a <see cref="VideoInfo"/> of the given video.
         /// </summary>
         /// <param name="url">The url to the video.</param>
-        public static VideoInfo GetVideoInfo(string url)
+        public static VideoInfo GetVideoInfo(string url, YTDAuthentication authentication = null)
         {
             string json_dir = Common.GetJsonDirectory();
             string json_file = string.Empty;
-            string arguments = string.Format(Commands.GetJsonInfo, json_dir, url);
+            string arguments = string.Format(Commands.GetJsonInfo,
+                json_dir,
+                url,
+                authentication == null ? string.Empty : authentication.ToCmdArgument());
             VideoInfo video = new VideoInfo();
 
             var logger = CreateLogger(arguments);
@@ -187,7 +193,11 @@ namespace YouTube_Downloader_DLL.Helpers
             {
                 error = error.Trim();
 
-                if (error.StartsWith("ERROR:"))
+                if (error.Contains("YouTube said: Please sign in to view this video."))
+                {
+                    video.RequiresAuthentication = true;
+                }
+                else if (error.StartsWith("ERROR:"))
                 {
                     video.Failure = true;
                     video.FailureReason = error.Substring("ERROR: ".Length);
@@ -196,7 +206,7 @@ namespace YouTube_Downloader_DLL.Helpers
 
             logger.Process.WaitForExit();
 
-            if (!video.Failure)
+            if (!video.Failure && !video.RequiresAuthentication)
                 video.DeserializeJson(json_file);
 
             return video;
