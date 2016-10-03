@@ -38,7 +38,7 @@ namespace YouTube_Downloader_DLL.Classes
                 var mTitle = title.Matches(source);
                 var mDuration = duration.Matches(source);
 
-                for (int i = 1; i < mId.Count; i++)
+                for (int i = 0; i < mId.Count; i++)
                 {
                     string resultId = mId[i].Groups[1].Value;
                     string resultTitle = mTitle[i].Groups[1].Value;
