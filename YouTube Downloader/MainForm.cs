@@ -471,7 +471,7 @@ namespace YouTube_Downloader
                 ListViewItem item = new ListViewItem(video.Title);
                 item.SubItems.Add(video.Duration);
                 item.Checked = true;
-                item.Tag = video.ID;
+                item.Tag = video;
 
                 _backgroundWorkerPlaylist.ReportProgress(-1, item);
             }
@@ -511,11 +511,11 @@ namespace YouTube_Downloader
             if (lvPlaylistVideos.CheckedItems.Count < 1)
                 return;
 
-            var videos = new List<string>();
+            var videos = new List<QuickVideoInfo>();
 
             foreach (ListViewItem item in lvPlaylistVideos.CheckedItems)
             {
-                videos.Add(item.Tag as string);
+                videos.Add(item.Tag as QuickVideoInfo);
             }
 
             this.StartPlaylistOperation(videos);
@@ -560,7 +560,7 @@ namespace YouTube_Downloader
                 item.Checked = false;
         }
 
-        private void StartPlaylistOperation(ICollection<string> videos)
+        private void StartPlaylistOperation(ICollection<QuickVideoInfo> videos)
         {
             string path = cbPlaylistSaveTo.Text;
 

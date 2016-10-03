@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using YouTube_Downloader_DLL.Helpers;
@@ -10,7 +11,8 @@ namespace YouTube_Downloader_DLL.Classes
 {
     public class PlaylistReader
     {
-        public const string CmdJSONInfoPlaylist = " -i -o \"{0}\\playlist-{1}\\%(playlist_index)s-%(title)s\" --restrict-filenames --skip-download --write-info-json \"{2}\"";
+        public const string CmdPlaylistInfo = " -i -o \"{0}\\playlist-{1}\\%(playlist_index)s-%(title)s\" --restrict-filenames --skip-download --write-info-json{2} \"{3}\"";
+        public const string CmdPlaylistRange = " --playlist-items {0}";
 
         int _index = 0;
 
@@ -30,12 +32,25 @@ namespace YouTube_Downloader_DLL.Classes
         public bool Canceled { get; set; } = false;
         public Playlist Playlist { get; set; } = null;
 
-        public PlaylistReader(string url)
+        public PlaylistReader(string url, int[] videos)
         {
             string json_dir = Common.GetJsonDirectory();
 
             _playlist_id = Helper.GetPlaylistId(url);
-            _arguments = string.Format(CmdJSONInfoPlaylist, json_dir, _playlist_id, url);
+
+            string range = string.Empty;
+
+            if (videos != null && videos.Length > 0)
+            {
+                var items = new StringBuilder(videos[0].ToString());
+
+                for (int i = 1; i < videos.Length; i++)
+                    items.Append("," + videos[i]);
+
+                range = string.Format(CmdPlaylistRange, items);
+            }
+
+            _arguments = string.Format(CmdPlaylistInfo, json_dir, _playlist_id, range, url);
             _url = url;
 
             _youtubeDl = YoutubeDlHelper.CreateLogger(_arguments);

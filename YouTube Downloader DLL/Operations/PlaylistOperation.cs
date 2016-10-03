@@ -39,7 +39,7 @@ namespace YouTube_Downloader_DLL.Operations
         bool _combining, _processing;
         bool? _downloaderSuccessful;
 
-        List<string> _videoIds = new List<string>();
+        List<QuickVideoInfo> _videos = new List<QuickVideoInfo>();
 
         Exception _operationException;
         FileDownloader downloader;
@@ -402,7 +402,7 @@ namespace YouTube_Downloader_DLL.Operations
             if (args.Count == ArgKeys.Max)
             {
                 if (args[ArgKeys.Videos] != null)
-                    _videoIds.AddRange((IEnumerable<string>)args[ArgKeys.Videos]);
+                    _videos.AddRange((IEnumerable<QuickVideoInfo>)args[ArgKeys.Videos]);
             }
 
             downloader = new FileDownloader();
@@ -485,20 +485,25 @@ namespace YouTube_Downloader_DLL.Operations
 
             await Task.Run(delegate
             {
-                var reader = new PlaylistReader(this.Input);
+                var items = new List<int>();
+
+                foreach (var v in _videos)
+                    items.Add(v.Index);
+
+                var reader = new PlaylistReader(this.Input, items.ToArray());
                 VideoInfo video;
 
                 this.PlaylistName = reader.WaitForPlaylist().Name;
 
-                if (_videoIds.Count == 0)
+                if (_videos.Count == 0)
                     _selectedVideosCount = reader.Playlist.OnlineCount;
                 else
-                    _selectedVideosCount = _videoIds.Count;
+                    _selectedVideosCount = _videos.Count;
 
                 while ((video = reader.Next()) != null)
                 {
                     // We're done! (I think)
-                    if (this.Videos.Count == _videoIds.Count)
+                    if (this.Videos.Count == _videos.Count)
                         break;
 
                     if (this.CancellationPending)
@@ -507,7 +512,7 @@ namespace YouTube_Downloader_DLL.Operations
                         break;
                     }
 
-                    if (_videoIds.Count == 0 || _videoIds.Contains(video.ID))
+                    if (_videos.Count == 0 || _videos.Any(x => x.ID == video.ID))
                         this.Videos.Add(video);
                 }
             });
@@ -530,14 +535,14 @@ namespace YouTube_Downloader_DLL.Operations
         public Dictionary<string, object> Args(string url,
                                                string output,
                                                int preferredQuality,
-                                               ICollection<string> videoIds)
+                                               ICollection<QuickVideoInfo> videos)
         {
             return new Dictionary<string, object>()
             {
                 { ArgKeys.Input, url },
                 { ArgKeys.Output, output },
                 { ArgKeys.PreferredQuality, preferredQuality },
-                { ArgKeys.Videos, videoIds }
+                { ArgKeys.Videos, videos }
             };
         }
     }

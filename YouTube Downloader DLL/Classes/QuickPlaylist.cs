@@ -49,7 +49,8 @@ namespace YouTube_Downloader_DLL.Classes
                     else
                         continue;
 
-                    videos.Add(new QuickVideoInfo(resultId,
+                    videos.Add(new QuickVideoInfo(i + 1, // Not zero-based
+                                                  resultId,
                                                   resultTitle,
                                                   resultDuration));
                 }
