@@ -271,7 +271,7 @@ namespace YouTube_Downloader_DLL.Operations
             // Used to set multiple properties
             if (e.UserState is Dictionary<string, object>)
             {
-                foreach (KeyValuePair<string, object> pair in (e.UserState as Dictionary<string, object>))
+                foreach (var pair in (e.UserState as Dictionary<string, object>))
                 {
                     this.GetType().GetProperty(pair.Key).SetValue(this, pair.Value);
                 }
@@ -306,7 +306,7 @@ namespace YouTube_Downloader_DLL.Operations
                     throw new ArgumentException();
             }
 
-            // Attach events.
+            // Attach events
             downloader.Canceled += downloader_Canceled;
             downloader.Completed += downloader_Completed;
             downloader.FileDownloadFailed += downloader_FileDownloadFailed;

@@ -19,23 +19,27 @@ namespace YouTube_Downloader_DLL.Operations
     {
         class ArgKeys
         {
-            public const int Max = 5;
+            public const int Max = 4;
             public const int Min = 3;
             public const string Input = "input";
             public const string Output = "output";
             public const string PreferredQuality = "preferred_quality";
-            public const string PlaylistName = "playlist_name";
             public const string Videos = "videos";
         }
 
-        public const int EventFileDownloadComplete = 1000;
-        public const int UpdateProperties = -1;
+        public const int EventCombined = 1000;
+        public const int EventCombining = 1001;
+        public const int EventFileDownloadComplete = 1002;
 
         int _downloads = 0;
         int _failures = 0;
         int _preferredQuality;
+        int _selectedVideosCount = 0;
+        bool _queryingVideos = false;
         bool _combining, _processing;
         bool? _downloaderSuccessful;
+
+        List<string> _videoIds = new List<string>();
 
         Exception _operationException;
         FileDownloader downloader;
@@ -44,6 +48,8 @@ namespace YouTube_Downloader_DLL.Operations
         public List<string> DownloadedFiles { get; set; } = new List<string>();
         public List<VideoInfo> Videos { get; set; } = new List<VideoInfo>();
 
+        public event EventHandler Combined;
+        public event EventHandler Combining;
         /// <summary>
         /// Occurs when a single file download from the playlist is complete.
         /// </summary>
@@ -190,7 +196,7 @@ namespace YouTube_Downloader_DLL.Operations
                     if (this.Videos.Count == 0)
                         this.Title = $"Playlist canceled";
                     else
-                        this.Title = $"\"{PlaylistName}\" canceled. {_downloads} of {Videos.Count} videos downloaded";
+                        this.Title = $"\"{PlaylistName}\" canceled. {_downloads} of {Videos.Count} video(s) downloaded";
                     return;
                 case OperationStatus.Failed:
                     // Tell user about known exceptions. Otherwise just a simple failed message
@@ -210,13 +216,13 @@ namespace YouTube_Downloader_DLL.Operations
             if (_failures == 0)
             {
                 // All videos downloaded successfully
-                this.Title = string.Format("Downloaded \"{0}\" playlist. {1} videos",
+                this.Title = string.Format("Downloaded \"{0}\" playlist. {1} video(s)",
                     this.PlaylistName, this.Videos.Count);
             }
             else
             {
                 // Some or all videos failed. Tell user how many
-                this.Title = string.Format("Downloaded \"{0}\" playlist. {1} of {2} videos, {3} failed",
+                this.Title = string.Format("Downloaded \"{0}\" playlist. {1} of {2} video(s), {3} failed",
                     this.PlaylistName, _downloads, this.Videos.Count, _failures);
             }
         }
@@ -224,7 +230,7 @@ namespace YouTube_Downloader_DLL.Operations
         protected override void WorkerDoWork(DoWorkEventArgs e)
         {
             /* ToDo:
-             * [ ] 'this.Videos' will always be empty now. Instead '_videoIds' is to be used to only download selected videos
+             * [x] 'this.Videos' will always be empty now. Instead '_videoIds' is to be used to only download selected videos
              * 
              * [x] Get video information in background while downloading available videos. 
              *     That means it will query video information while it's downloading
@@ -260,9 +266,9 @@ namespace YouTube_Downloader_DLL.Operations
                     VideoFormat format = Helper.GetPreferredFormat(video, _preferredQuality);
 
                     // Update properties for new video
-                    this.ReportProgress(UpdateProperties, new Dictionary<string, object>()
+                    this.ReportProgress(-1, new Dictionary<string, object>()
                     {
-                        { nameof(Title), $"({count}/{this.Videos.Count}) {video.Title}" },
+                        { nameof(Title), $"({count}/{_selectedVideosCount}) {video.Title}" },
                         { nameof(Duration), video.Duration },
                         { nameof(FileSize), format.FileSize }
                     });
@@ -307,19 +313,24 @@ namespace YouTube_Downloader_DLL.Operations
                     {
                         if (!format.AudioOnly)
                         {
-                            this.ReportProgress(UpdateProperties, new Dictionary<string, object>()
+                            this.ReportProgress(-1, new Dictionary<string, object>()
                             {
                                 { nameof(Text), "Combining..." },
-                                { nameof(ReportsProgress), false }
+                                { nameof(ReportsProgress), false },
+                                { nameof(Progress), 0 },
+                                { nameof(ProgressTextOverride), "Combining..." }
                             });
+                            this.ReportProgress(ProgressMax, null);
 
                             if (!this.Combine())
                                 _failures++;
 
-                            this.ReportProgress(UpdateProperties, new Dictionary<string, object>()
+                            this.ReportProgress(-1, new Dictionary<string, object>()
                             {
                                 { nameof(Text), string.Empty },
-                                { nameof(ReportsProgress), true }
+                                { nameof(ReportsProgress), true },
+                                { nameof(Progress), 0 },
+                                { nameof(ProgressTextOverride), string.Empty }
                             });
                         }
 
@@ -350,27 +361,28 @@ namespace YouTube_Downloader_DLL.Operations
 
         protected override void WorkerProgressChanged(ProgressChangedEventArgs e)
         {
-            if (e.UserState == null)
-                return;
+            switch (e.ProgressPercentage)
+            {
+                case EventCombined:
+                    this.OnCombined();
+                    break;
+                case EventCombining:
+                    this.OnCombining();
+                    break;
+                case EventFileDownloadComplete:
+                    this.OnFileDownloadComplete(e.UserState as string);
+                    break;
+            }
 
             // Used to set multiple properties
             if (e.UserState is Dictionary<string, object>)
             {
-                foreach (KeyValuePair<string, object> pair in (e.UserState as Dictionary<string, object>))
+                foreach (var pair in (e.UserState as Dictionary<string, object>))
                 {
                     this.GetType().GetProperty(pair.Key).SetValue(this, pair.Value);
                 }
             }
-            else if (e.ProgressPercentage == EventFileDownloadComplete) // FileDownloadComplete
-            {
-                OnFileDownloadComplete(e.UserState as string);
-            }
         }
-
-
-        private List<string> _videoIds = new List<string>();
-        private bool _queryingVideos = false;
-
 
         protected override void WorkerStart(Dictionary<string, object> args)
         {
@@ -389,20 +401,33 @@ namespace YouTube_Downloader_DLL.Operations
 
             if (args.Count == ArgKeys.Max)
             {
-                this.PlaylistName = (string)args[ArgKeys.PlaylistName];
-
                 if (args[ArgKeys.Videos] != null)
                     _videoIds.AddRange((IEnumerable<string>)args[ArgKeys.Videos]);
             }
 
             downloader = new FileDownloader();
 
-            // Attach downloader events
+            // Attach events
             downloader.Canceled += downloader_Canceled;
             downloader.Completed += downloader_Completed;
             downloader.FileDownloadFailed += downloader_FileDownloadFailed;
             downloader.CalculatedTotalFileSize += downloader_CalculatedTotalFileSize;
             downloader.ProgressChanged += downloader_ProgressChanged;
+        }
+
+        private void OnCombined()
+        {
+            this.Combined?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void OnCombining()
+        {
+            this.Combining?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void OnFileDownloadComplete(string file)
+        {
+            this.FileDownloadComplete?.Invoke(this, file);
         }
 
         private bool Combine()
@@ -417,6 +442,9 @@ namespace YouTube_Downloader_DLL.Operations
 
             try
             {
+                // Raise events on main thread
+                this.ReportProgress(EventCombining, null);
+
                 result = FFmpegHelper.Combine(video, audio, output);
 
                 // Save errors if combining failed
@@ -443,29 +471,36 @@ namespace YouTube_Downloader_DLL.Operations
             finally
             {
                 _combining = false;
+
+                // Raise events on main thread
+                this.ReportProgress(EventCombined, null);
             }
 
             return result.Value;
-        }
-
-        private void OnFileDownloadComplete(string file)
-        {
-            this.FileDownloadComplete?.Invoke(this, file);
         }
 
         private async void GetPlaylistInfoAsync()
         {
             _queryingVideos = true;
 
-            var reader = new PlaylistReader(this.Input);
-            VideoInfo video;
-
-            this.PlaylistName = reader.WaitForPlaylist().Name;
-
             await Task.Run(delegate
             {
+                var reader = new PlaylistReader(this.Input);
+                VideoInfo video;
+
+                this.PlaylistName = reader.WaitForPlaylist().Name;
+
+                if (_videoIds.Count == 0)
+                    _selectedVideosCount = reader.Playlist.OnlineCount;
+                else
+                    _selectedVideosCount = _videoIds.Count;
+
                 while ((video = reader.Next()) != null)
                 {
+                    // We're done! (I think)
+                    if (this.Videos.Count == _videoIds.Count)
+                        break;
+
                     if (this.CancellationPending)
                     {
                         reader.Stop();
@@ -495,7 +530,6 @@ namespace YouTube_Downloader_DLL.Operations
         public Dictionary<string, object> Args(string url,
                                                string output,
                                                int preferredQuality,
-                                               string playlistName,
                                                ICollection<string> videoIds)
         {
             return new Dictionary<string, object>()
@@ -503,7 +537,6 @@ namespace YouTube_Downloader_DLL.Operations
                 { ArgKeys.Input, url },
                 { ArgKeys.Output, output },
                 { ArgKeys.PreferredQuality, preferredQuality },
-                { ArgKeys.PlaylistName, playlistName },
                 { ArgKeys.Videos, videoIds }
             };
         }

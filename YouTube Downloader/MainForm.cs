@@ -370,11 +370,9 @@ namespace YouTube_Downloader
 
         private void DownloadOperation_Combining(object sender, EventArgs e)
         {
-            var operation = sender as DownloadOperation;
-
             foreach (OperationListViewItem item in lvQueue.Items)
             {
-                if (item.Operation == operation)
+                if (item.Operation == sender)
                 {
                     item.WorkingText = "Combining...";
                     return;
@@ -400,7 +398,6 @@ namespace YouTube_Downloader
         #region Playlist Tab
 
         private bool _playlistCancel;
-        private string _playlistName = string.Empty;
         private BackgroundWorker _backgroundWorkerPlaylist;
 
         private void btnPlaylistBrowse_Click(object sender, EventArgs e)
@@ -428,7 +425,6 @@ namespace YouTube_Downloader
             else
             {
                 // Reset playlist variables
-                _playlistName = string.Empty;
                 lvPlaylistVideos.Items.Clear();
 
                 _playlistCancel = true;
@@ -456,12 +452,7 @@ namespace YouTube_Downloader
         {
             string playlistUrl = e.Argument as string;
 
-            PlaylistReader reader = new PlaylistReader(playlistUrl);
-            VideoInfo video;
-
-            _playlistName = reader.WaitForPlaylist().Name;
-
-            while ((video = reader.Next()) != null)
+            foreach (var video in QuickPlaylist.GetAll(playlistUrl))
             {
                 if (_backgroundWorkerPlaylist.CancellationPending)
                 {
@@ -470,9 +461,9 @@ namespace YouTube_Downloader
                 }
 
                 ListViewItem item = new ListViewItem(video.Title);
-                item.SubItems.Add(Helper.FormatVideoLength(video.Duration));
+                item.SubItems.Add(video.Duration);
                 item.Checked = true;
-                item.Tag = video;
+                item.Tag = video.ID;
 
                 _backgroundWorkerPlaylist.ReportProgress(-1, item);
             }
@@ -512,11 +503,11 @@ namespace YouTube_Downloader
             if (lvPlaylistVideos.CheckedItems.Count < 1)
                 return;
 
-            List<VideoInfo> videos = new List<VideoInfo>();
+            var videos = new List<string>();
 
             foreach (ListViewItem item in lvPlaylistVideos.CheckedItems)
             {
-                videos.Add(item.Tag as VideoInfo);
+                videos.Add(item.Tag as string);
             }
 
             this.StartPlaylistOperation(videos);
@@ -561,7 +552,7 @@ namespace YouTube_Downloader
                 item.Checked = false;
         }
 
-        private void StartPlaylistOperation(ICollection<VideoInfo> videos)
+        private void StartPlaylistOperation(ICollection<string> videos)
         {
             string path = cbPlaylistSaveTo.Text;
 
@@ -583,11 +574,12 @@ namespace YouTube_Downloader
 
                 this.SelectOneItem(item);
 
+                operation.Combined += PlaylistOperation_Combined;
+                operation.Combining += PlaylistOperation_Combining;
                 operation.FileDownloadComplete += playlistOperation_FileDownloadComplete;
                 operation.Start(operation.Args(txtPlaylistLink.Text,
                                     path,
                                     Settings.Default.PreferredQualityPlaylist,
-                                    _playlistName,
                                     videos)
                                 );
 
@@ -596,6 +588,30 @@ namespace YouTube_Downloader
             catch (Exception ex)
             {
                 MessageBox.Show(this, ex.Message, ex.Source, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void PlaylistOperation_Combined(object sender, EventArgs e)
+        {
+            foreach (OperationListViewItem item in lvQueue.Items)
+            {
+                if (item.Operation == sender)
+                {
+                    item.WorkingText = null;
+                    return;
+                }
+            }
+        }
+
+        private void PlaylistOperation_Combining(object sender, EventArgs e)
+        {
+            foreach (OperationListViewItem item in lvQueue.Items)
+            {
+                if (item.Operation == sender)
+                {
+                    item.WorkingText = "Combining...";
+                    return;
+                }
             }
         }
 
