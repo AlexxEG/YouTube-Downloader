@@ -229,31 +229,45 @@ namespace YouTube_Downloader_DLL.FileDownloading
 
         private void DownloadFile()
         {
-            long size = 0;
+            long totalSize = 0;
 
             byte[] readBytes = new byte[this.PackageSize];
             int currentPackageSize;
             Stopwatch speedTimer = new Stopwatch();
             Exception exception = null;
 
-            FileStream writer = new FileStream(this.CurrentFile.Path, FileMode.Create);
+            long existLen = 0;
 
-            WebRequest webReq;
-            WebResponse webResp = null;
+            if (File.Exists(this.CurrentFile.Path))
+            {
+                existLen = new FileInfo(this.CurrentFile.Path).Length;
+            }
+
+            FileStream writer;
+
+            if (existLen > 0)
+                writer = new FileStream(this.CurrentFile.Path, FileMode.Append, FileAccess.Write);
+            else
+                writer = new FileStream(this.CurrentFile.Path, FileMode.Create, FileAccess.Write);
+
+            HttpWebRequest webReq;
+            HttpWebResponse webResp = null;
 
             try
             {
-                webReq = (WebRequest)WebRequest.Create(this.CurrentFile.Url);
-                webResp = (WebResponse)webReq.GetResponse();
+                webReq = (HttpWebRequest)WebRequest.Create(this.CurrentFile.Url);
+                webReq.AddRange(existLen);
 
-                size = webResp.ContentLength;
+                webResp = (HttpWebResponse)webReq.GetResponse();
+
+                totalSize = existLen + webResp.ContentLength;
             }
             catch (Exception ex)
             {
                 exception = ex;
             }
 
-            this.CurrentFile.TotalFileSize = size;
+            this.CurrentFile.TotalFileSize = totalSize;
 
             if (exception != null)
             {
@@ -261,10 +275,12 @@ namespace YouTube_Downloader_DLL.FileDownloading
             }
             else
             {
-                this.CurrentFile.Progress = 0;
+                this.CurrentFile.Progress = existLen;
+                this.TotalProgress += existLen;
+
                 long prevSize = 0;
 
-                while (this.CurrentFile.Progress < size && !_downloader.CancellationPending)
+                while (this.CurrentFile.Progress < totalSize && !_downloader.CancellationPending)
                 {
                     while (this.IsPaused)
                         Thread.Sleep(100);
@@ -338,8 +354,8 @@ namespace YouTube_Downloader_DLL.FileDownloading
             {
                 this.CurrentFile = file;
 
-                if (!IO.Directory.Exists(file.Directory))
-                    IO.Directory.CreateDirectory(file.Directory);
+                if (!Directory.Exists(file.Directory))
+                    Directory.CreateDirectory(file.Directory);
 
                 this.DownloadFile();
 
