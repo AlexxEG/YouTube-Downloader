@@ -71,12 +71,16 @@ namespace YouTube_Downloader_DLL.Classes
                 if (e == null || string.IsNullOrEmpty(e.Data))
                     return;
 
+                this.Log(e.Data);
+
                 output?.Invoke(e.Data);
             };
             this.Process.ErrorDataReceived += delegate (object process, DataReceivedEventArgs e)
             {
                 if (e == null || string.IsNullOrEmpty(e.Data))
                     return;
+
+                this.Log(e.Data);
 
                 error?.Invoke(e.Data);
             };
