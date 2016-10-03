@@ -30,9 +30,8 @@ namespace YouTube_Downloader_DLL.FileDownloading
         public event FileDownloadEventHandler FileDownloadSucceeded;
         public event FileDownloadFailedEventHandler FileDownloadFailed;
 
-        public int PackageSize { get; set; }
+        public int PackageSize { get; set; } = 4096;
         public int Speed { get; set; }
-        public int StopWatchCyclesAmount { get; set; }
 
         public bool CanPause
         {
@@ -111,8 +110,6 @@ namespace YouTube_Downloader_DLL.FileDownloading
             _downloader.ProgressChanged += downloader_ProgressChanged;
             _downloader.RunWorkerCompleted += downloader_RunWorkerCompleted;
 
-            this.PackageSize = 4096;
-            this.StopWatchCyclesAmount = 5;
             this.DeleteUnfinishedFilesOnCancel = true;
             this.Files = new List<FileDownload>();
         }
@@ -237,7 +234,6 @@ namespace YouTube_Downloader_DLL.FileDownloading
             byte[] readBytes = new byte[this.PackageSize];
             int currentPackageSize;
             Stopwatch speedTimer = new Stopwatch();
-            int readings = 0;
             Exception exception = null;
 
             FileStream writer = new FileStream(this.CurrentFile.Path, FileMode.Create);
@@ -266,11 +262,12 @@ namespace YouTube_Downloader_DLL.FileDownloading
             else
             {
                 this.CurrentFile.Progress = 0;
+                long prevSize = 0;
 
                 while (this.CurrentFile.Progress < size && !_downloader.CancellationPending)
                 {
                     while (this.IsPaused)
-                        System.Threading.Thread.Sleep(100);
+                        Thread.Sleep(100);
 
                     speedTimer.Start();
 
@@ -283,13 +280,15 @@ namespace YouTube_Downloader_DLL.FileDownloading
                     this.RaiseEventFromBackground(BackgroundEvents.ProgressChanged, EventArgs.Empty);
 
                     writer.Write(readBytes, 0, currentPackageSize);
-                    readings += 1;
 
-                    if (readings >= this.StopWatchCyclesAmount)
+                    if (speedTimer.Elapsed.TotalSeconds >= 1)
                     {
-                        this.Speed = (int)(this.PackageSize * StopWatchCyclesAmount * 1000 / (speedTimer.ElapsedMilliseconds + 1));
+                        long downloadedBytes = writer.Length - prevSize;
+                        prevSize = writer.Length;
+
+                        this.Speed = (int)downloadedBytes;
+
                         speedTimer.Reset();
-                        readings = 0;
                     }
                 }
 
