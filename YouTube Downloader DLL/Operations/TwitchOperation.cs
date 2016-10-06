@@ -94,13 +94,15 @@ namespace YouTube_Downloader_DLL.Operations
 
             try
             {
-                YoutubeDlHelper.DownloadTwitchVOD(this.Output,
-                    _format,
-                    delegate (TwitchOperationProgress progressUpdate)
-                    {
-                        this.ReportProgress((int)progressUpdate.ProgressPercentage, progressUpdate);
-                    },
-                    _cts.Token);
+                using (var logger = OperationLogger.Create(OperationLogger.YTDLogFile))
+                {
+                    YoutubeDlHelper.DownloadTwitchVOD(logger, this.Output, _format,
+                        delegate (TwitchOperationProgress progressUpdate)
+                        {
+                            this.ReportProgress((int)progressUpdate.ProgressPercentage, progressUpdate);
+                        },
+                        _cts.Token);
+                }
 
                 // Make sure progress reaches 100%
                 if (this.Progress < ProgressMax)

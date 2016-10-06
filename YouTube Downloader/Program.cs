@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using YouTube_Downloader_DLL.Classes;
 using YouTube_Downloader_DLL.Helpers;
-using YouTube_Downloader_DLL.Operations;
 
 namespace YouTube_Downloader
 {
@@ -13,7 +11,7 @@ namespace YouTube_Downloader
         public const string Name = "YouTube Downloader";
 
         public static bool FFmpegAvailable = true;
-        
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -38,8 +36,6 @@ namespace YouTube_Downloader
         /// </summary>
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            ProcessLogger.KillAll();
-
             Common.SaveException((Exception)e.ExceptionObject);
         }
     }

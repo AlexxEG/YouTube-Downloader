@@ -30,7 +30,6 @@ namespace YouTube_Downloader_DLL.Operations
         string _searchPattern;
         TimeSpan _start = TimeSpan.MinValue;
         TimeSpan _end = TimeSpan.MinValue;
-        Process _process;
         ConvertingMode _mode = ConvertingMode.File;
         CancellationTokenSource _cts = new CancellationTokenSource();
 
@@ -42,18 +41,6 @@ namespace YouTube_Downloader_DLL.Operations
         }
 
         #region Operation members
-
-        public override void Dispose()
-        {
-            base.Dispose();
-
-            // Free managed resources
-            if (_process != null)
-            {
-                _process.Dispose();
-                _process = null;
-            }
-        }
 
         public override bool CanOpen()
         {
@@ -126,16 +113,19 @@ namespace YouTube_Downloader_DLL.Operations
             {
                 try
                 {
-                    FFmpegHelper.Convert(this.ReportProgress, this.Input, this.Output, _cts.Token);
-
-                    // Crop if not operation wasn't canceled and _start has a valid value
-                    if (!this.CancellationPending && _start != TimeSpan.MinValue)
+                    using (var logger = OperationLogger.Create(OperationLogger.FFmpegDLogFile))
                     {
-                        // Crop to end of file, unless _end has a valid value
-                        if (_end == TimeSpan.MinValue)
-                            FFmpegHelper.Crop(this.ReportProgress, this.Output, this.Output, _start, _cts.Token);
-                        else
-                            FFmpegHelper.Crop(this.ReportProgress, this.Output, this.Output, _start, _end, _cts.Token);
+                        FFmpegHelper.Convert(logger, this.ReportProgress, this.Input, this.Output, _cts.Token);
+
+                        // Crop if not operation wasn't canceled and _start has a valid value
+                        if (!this.CancellationPending && _start != TimeSpan.MinValue)
+                        {
+                            // Crop to end of file, unless _end has a valid value
+                            if (_end == TimeSpan.MinValue)
+                                FFmpegHelper.Crop(logger, this.ReportProgress, this.Output, this.Output, _start, _cts.Token);
+                            else
+                                FFmpegHelper.Crop(logger, this.ReportProgress, this.Output, this.Output, _start, _end, _cts.Token);
+                        }
                     }
 
                     // Reset variables
@@ -168,7 +158,10 @@ namespace YouTube_Downloader_DLL.Operations
                             { nameof(FileSize), Helper.GetFileSize(input) }
                         });
 
-                        FFmpegHelper.Convert(this.ReportProgress, input, output, _cts.Token);
+                        using (var logger = OperationLogger.Create(OperationLogger.FFmpegDLogFile))
+                        {
+                            FFmpegHelper.Convert(logger, this.ReportProgress, input, output, _cts.Token);
+                        }
 
                         this.ProcessedFiles.Add(output);
                     }
@@ -190,13 +183,8 @@ namespace YouTube_Downloader_DLL.Operations
             if (e.UserState == null)
                 return;
 
-            if (e.UserState is Process)
-            {
-                // FFmpegHelper will return the ffmpeg process so it can be used to cancel.
-                _process = (Process)e.UserState;
-            }
             // Used to set multiple properties
-            else if (e.UserState is Dictionary<string, object>)
+            if (e.UserState is Dictionary<string, object>)
             {
                 foreach (KeyValuePair<string, object> pair in (e.UserState as Dictionary<string, object>))
                 {

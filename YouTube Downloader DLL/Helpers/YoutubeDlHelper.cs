@@ -6,7 +6,6 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using YouTube_Downloader_DLL.Classes;
 using YouTube_Downloader_DLL.YoutubeDl;
@@ -24,26 +23,16 @@ namespace YouTube_Downloader_DLL.Helpers
             public const string Version = " --version";
         }
 
-        private const string LogFilename = "youtube-dl-{0}.log";
-
         private static string YouTubeDlPath = Path.Combine(Application.StartupPath, "Externals", "youtube-dl.exe");
-
-        public static ProcessLogger CreateLogger(string arguments, [CallerMemberName]string caller = "")
-        {
-            string filename = string.Format(LogFilename, DateTime.Now.ToString("yyyyMMdd-HHmmss-ff"));
-            string fullpath = Path.Combine(Common.GetLogsDirectory(), "youtube-dl", filename);
-
-            return new ProcessLogger(CreateProcess(arguments), fullpath)
-            {
-                Header = BuildLogHeader(arguments, caller),
-                Footer = BuildLogFooter()
-            };
-        }
 
         /// <summary>
         /// Creates a Process with the given arguments, then returns it.
         /// </summary>
-        public static Process CreateProcess(string arguments)
+        public static Process StartProcess(OperationLogger logger,
+                                           string arguments,
+                                           string caller,
+                                           Action<Process, string> output,
+                                           Action<Process, string> error)
         {
             var psi = new ProcessStartInfo(YoutubeDlHelper.YouTubeDlPath, arguments)
             {
@@ -60,6 +49,34 @@ namespace YouTube_Downloader_DLL.Helpers
                 StartInfo = psi
             };
 
+            process.OutputDataReceived += delegate (object sender, DataReceivedEventArgs e)
+            {
+                if (string.IsNullOrEmpty(e.Data))
+                    return;
+
+                logger?.Log(e.Data);
+                output?.Invoke(process, e.Data);
+            };
+            process.ErrorDataReceived += delegate (object sender, DataReceivedEventArgs e)
+            {
+                if (string.IsNullOrEmpty(e.Data))
+                    return;
+
+                logger?.Log(e.Data);
+                error?.Invoke(process, e.Data);
+            };
+
+            logger?.Log(BuildLogHeader(arguments, caller));
+
+            process.Exited += delegate
+            {
+                logger?.Log(BuildLogFooter());
+            };
+
+            process.Start();
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
+
             return process;
         }
 
@@ -70,7 +87,12 @@ namespace YouTube_Downloader_DLL.Helpers
         /// <param name="format">The video format to download.</param>
         /// <param name="progressUpdateCallback">Callback for progress reporting. Can be null.</param>
         /// <param name="ct">Cancellation token for canceling download. Can be null.</param>
-        public static void DownloadTwitchVOD(string output, VideoFormat format, Action<TwitchOperationProgress> progressUpdateCallback, CancellationToken ct)
+        public static void DownloadTwitchVOD(OperationLogger logger,
+                                             string output,
+                                             VideoFormat format,
+                                             Action<TwitchOperationProgress> progressUpdateCallback,
+                                             CancellationToken ct,
+                                             [CallerMemberName]string caller = "")
         {
             if (string.IsNullOrEmpty(output))
                 throw new ArgumentNullException("output");
@@ -85,7 +107,6 @@ namespace YouTube_Downloader_DLL.Helpers
                 output,
                 format.FormatID,
                 format.VideoInfo.Url);
-            ProcessLogger logger = CreateLogger(arguments);
 
             DateTime nextUpdate = DateTime.Now;
 
@@ -101,73 +122,75 @@ namespace YouTube_Downloader_DLL.Helpers
                 @"^\[download\]\s+(\d+\.\d+)%.*~(\d+\.\d+)([K|M|G]iB).*\s(\d+\.\d+)([K|M]iB)\/s.*(\d{2}:\d{2}).*$",
                 RegexOptions.Compiled);
 
-            logger.StartProcess(delegate (string line)
-            {
-                line = line.Trim();
-
-                if (ct != null && ct.IsCancellationRequested)
+            StartProcess(logger, arguments, caller,
+                delegate (Process process, string line)
                 {
-                    logger.Process.Kill();
-                    return;
-                }
+                    line = line.Trim();
 
-                if (progressUpdateCallback == null)
-                    return;
-
-                if (line.Contains("100%")) // Only the last line will show 100% as "100%" and not "100.0%"
-                {
-                    // Regex for finding final file size
-                    Regex regexComplete = new Regex(
-                        @"^\[download\]\s+100%.*\s+(\d+\.?\d+)([K|M|G]iB).*$");
-
-                    Match m = regexComplete.Match(line);
-                    decimal totalSize = decimal.Parse(m.Groups[1].Value, CultureInfo.InvariantCulture);
-                    string suffix = m.Groups[2].Value;
-
-                    progressUpdateCallback.Invoke(new TwitchOperationProgress(
-                            100m, totalSize, suffix, 0m, string.Empty, string.Empty
-                        ));
-                }
-                else if (nextUpdate <= DateTime.Now) // Only update every 500 ms
-                {
-                    Match m;
-                    if ((m = regexUpdate.Match(line)).Success)
+                    if (ct != null && ct.IsCancellationRequested)
                     {
-                        decimal percentage = decimal.Parse(m.Groups[1].Value, CultureInfo.InvariantCulture);
-                        decimal totalSize = decimal.Parse(m.Groups[2].Value, CultureInfo.InvariantCulture);
-                        string totalSizeSuffix = m.Groups[3].Value;
-                        decimal speed = decimal.Parse(m.Groups[4].Value, CultureInfo.InvariantCulture);
-                        string speedSuffix = m.Groups[5].Value;
-                        string eta = m.Groups[6].Value;
-
-                        // Don't allow 100% here, it's reserved for above
-                        progressUpdateCallback.Invoke(new TwitchOperationProgress(
-                                Math.Min(99m, percentage), totalSize, totalSizeSuffix, speed, speedSuffix, eta
-                            ));
-
-                        nextUpdate = DateTime.Now.AddMilliseconds(500);
+                        process.Kill();
+                        return;
                     }
-                }
-            },
-            delegate (string error)
-            {
-                error = error.Trim();
 
-                if (error.StartsWith("ERROR:"))
+                    if (progressUpdateCallback == null)
+                        return;
+
+                    if (line.Contains("100%")) // Only the last line will show 100% as "100%" and not "100.0%"
+                    {
+                        // Regex for finding final file size
+                        Regex regexComplete = new Regex(
+                            @"^\[download\]\s+100%.*\s+(\d+\.?\d+)([K|M|G]iB).*$");
+
+                        Match m = regexComplete.Match(line);
+                        decimal totalSize = decimal.Parse(m.Groups[1].Value, CultureInfo.InvariantCulture);
+                        string suffix = m.Groups[2].Value;
+
+                        progressUpdateCallback.Invoke(new TwitchOperationProgress(
+                                100m, totalSize, suffix, 0m, string.Empty, string.Empty
+                            ));
+                    }
+                    else if (nextUpdate <= DateTime.Now) // Only update every 500 ms
+                    {
+                        Match m;
+                        if ((m = regexUpdate.Match(line)).Success)
+                        {
+                            decimal percentage = decimal.Parse(m.Groups[1].Value, CultureInfo.InvariantCulture);
+                            decimal totalSize = decimal.Parse(m.Groups[2].Value, CultureInfo.InvariantCulture);
+                            string totalSizeSuffix = m.Groups[3].Value;
+                            decimal speed = decimal.Parse(m.Groups[4].Value, CultureInfo.InvariantCulture);
+                            string speedSuffix = m.Groups[5].Value;
+                            string eta = m.Groups[6].Value;
+
+                            // Don't allow 100% here, it's reserved for above
+                            progressUpdateCallback.Invoke(new TwitchOperationProgress(
+                                    Math.Min(99m, percentage), totalSize, totalSizeSuffix, speed, speedSuffix, eta
+                                ));
+
+                            nextUpdate = DateTime.Now.AddMilliseconds(500);
+                        }
+                    }
+                },
+                delegate (Process process, string error)
                 {
-                    format.VideoInfo.Failure = true;
-                    format.VideoInfo.FailureReason = error.Substring("ERROR: ".Length);
-                }
-            });
+                    error = error.Trim();
 
-            logger.Process.WaitForExit();
+                    if (error.StartsWith("ERROR:"))
+                    {
+                        format.VideoInfo.Failure = true;
+                        format.VideoInfo.FailureReason = error.Substring("ERROR: ".Length);
+                    }
+                }).WaitForExit();
         }
 
         /// <summary>
         /// Returns a <see cref="VideoInfo"/> of the given video.
         /// </summary>
         /// <param name="url">The url to the video.</param>
-        public static VideoInfo GetVideoInfo(string url, YTDAuthentication authentication = null)
+        public static VideoInfo GetVideoInfo(OperationLogger logger,
+                                             string url,
+                                             YTDAuthentication authentication = null,
+                                             [CallerMemberName]string caller = "")
         {
             string json_dir = Common.GetJsonDirectory();
             string json_file = string.Empty;
@@ -177,34 +200,32 @@ namespace YouTube_Downloader_DLL.Helpers
                 authentication == null ? string.Empty : authentication.ToCmdArgument());
             VideoInfo video = new VideoInfo();
 
-            var logger = CreateLogger(arguments);
-
-            logger.StartProcess(delegate (string line)
-            {
-                line = line.Trim();
-
-                if (line.StartsWith("[info] Writing video description metadata as JSON to:"))
+            StartProcess(logger, arguments, caller,
+                delegate (Process process, string line)
                 {
-                    // Store file path
-                    json_file = line.Substring(line.IndexOf(":") + 1).Trim();
-                }
-            },
-            delegate (string error)
-            {
-                error = error.Trim();
+                    line = line.Trim();
 
-                if (error.Contains("YouTube said: Please sign in to view this video."))
+                    if (line.StartsWith("[info] Writing video description metadata as JSON to:"))
+                    {
+                        // Store file path
+                        json_file = line.Substring(line.IndexOf(":") + 1).Trim();
+                    }
+                },
+                delegate (Process process, string error)
                 {
-                    video.RequiresAuthentication = true;
-                }
-                else if (error.StartsWith("ERROR:"))
-                {
-                    video.Failure = true;
-                    video.FailureReason = error.Substring("ERROR: ".Length);
-                }
-            });
+                    error = error.Trim();
 
-            logger.Process.WaitForExit();
+                    if (error.Contains("YouTube said: Please sign in to view this video."))
+                    {
+                        video.RequiresAuthentication = true;
+                    }
+                    else if (error.StartsWith("ERROR:"))
+                    {
+                        video.Failure = true;
+                        video.FailureReason = error.Substring("ERROR: ".Length);
+                    }
+                })
+                .WaitForExit();
 
             if (!video.Failure && !video.RequiresAuthentication)
                 video.DeserializeJson(json_file);
@@ -213,38 +234,20 @@ namespace YouTube_Downloader_DLL.Helpers
         }
 
         /// <summary>
-        /// Gets video information, then calls the given result method with the result.
-        /// </summary>
-        /// <param name="url">The url to the video.</param>
-        /// <param name="resultMethod">The method to call when result is ready.</param>
-        public static async void GetVideoInfoAsync(string url, Action<VideoInfo> resultMethod)
-        {
-            VideoInfo videoInfo = null;
-            await Task.Run(delegate
-            {
-                videoInfo = YoutubeDlHelper.GetVideoInfo(url);
-            });
-            resultMethod.Invoke(videoInfo);
-        }
-
-        /// <summary>
         /// Gets current youtube-dl version.
         /// </summary>
         public static string GetVersion()
         {
-            var process = CreateProcess(Commands.Version);
-            string line, version = string.Empty;
+            string version = string.Empty;
 
-            process.Start();
-
-            while ((line = process.StandardOutput.ReadLine()) != null)
-            {
-                // Only one line gets printed, so assume any non-empty line is the version
-                if (!string.IsNullOrEmpty(line))
-                    version = line.Trim();
-            }
-
-            process.WaitForExit();
+            StartProcess(null, Commands.Version, string.Empty,
+                delegate (Process process, string line)
+                {
+                    // Only one line gets printed, so assume any non-empty line is the version
+                    if (!string.IsNullOrEmpty(line))
+                        version = line.Trim();
+                },
+                null).WaitForExit();
 
             return version;
         }

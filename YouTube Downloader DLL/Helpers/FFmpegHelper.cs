@@ -32,7 +32,6 @@ namespace YouTube_Downloader_DLL.Helpers
             public const string Version = " -version";
         }
 
-        private const string LogFilename = "ffmpeg-{0}.log";
         private const string RegexFindReportFile = "Report written to \"(.*)\"";
         private const string ReportFile = "ffreport-%t.log";
 
@@ -42,225 +41,15 @@ namespace YouTube_Downloader_DLL.Helpers
         public static string FFmpegPath = Path.Combine(Application.StartupPath, "Externals", "ffmpeg.exe");
 
         /// <summary>
-        /// Returns true if given file can be converted to a MP3 file, false otherwise.
-        /// </summary>
-        /// <param name="file">The file to check.</param>
-        public static FFmpegResult<bool> CanConvertToMP3(string file)
-        {
-            bool hasAudioStream = false;
-            StringBuilder lines = new StringBuilder();
-            var logger = CreateLogger(string.Format(Commands.GetFileInfo, file));
-
-            logger.StartProcess(null, delegate (string line)
-            {
-                lines.AppendLine(line = line.Trim());
-
-                if (line.StartsWith("Stream #") && line.Contains("Audio"))
-                {
-                    // File has audio stream
-                    hasAudioStream = true;
-                }
-            });
-
-            logger.Process.WaitForExit();
-
-            if (logger.Process.ExitCode != 0)
-            {
-                string reportFile = FindReportFile(lines.ToString());
-                var errors = (List<string>)CheckForErrors(reportFile);
-
-                if (errors[0] != "At least one output file must be specified")
-                    return new FFmpegResult<bool>(logger.Process.ExitCode, CheckForErrors(reportFile));
-            }
-
-            return new FFmpegResult<bool>(hasAudioStream);
-        }
-
-        /// <summary>
-        /// Combines separate audio &amp; video to a single MP4 file.
-        /// </summary>
-        /// <param name="video">The input video file.</param>
-        /// <param name="audio">The input audio file.</param>
-        /// <param name="output">Where to save the output file.</param>
-        public static FFmpegResult<bool> Combine(string video, string audio, string output, Action<int> reportProgress)
-        {
-            string[] argsInfo = new string[] { video, audio, output };
-            string processArgs = string.Format(Commands.Combine, argsInfo);
-            StringBuilder lines = new StringBuilder();
-            var logger = FFmpegHelper.CreateLogger(processArgs);
-
-            bool started = false;
-            double milliseconds = 0;
-
-            logger.StartProcess(null, delegate (string line)
-            {
-                lines.AppendLine(line = line.Trim());
-
-                // If reportProgress is null it can't be invoked. So skip code below
-                if (reportProgress == null)
-                    return;
-
-                if (line.StartsWith("Duration: "))
-                {
-                    int lineStart = "Duration: ".Length;
-                    int length = "00:00:00.00".Length;
-
-                    string time = line.Substring(lineStart, length);
-
-                    milliseconds = TimeSpan.Parse(time).TotalMilliseconds;
-                }
-                else if (line == "Press [q] to stop, [?] for help")
-                {
-                    started = true;
-
-                    reportProgress.Invoke(0);
-                }
-                else if (started && line.StartsWith("frame="))
-                {
-                    int lineStart = line.IndexOf("time=") + 5;
-                    int length = "00:00:00.00".Length;
-
-                    string time = line.Substring(lineStart, length);
-
-                    double currentMilli = TimeSpan.Parse(time).TotalMilliseconds;
-                    double percentage = (currentMilli / milliseconds) * 100;
-
-                    reportProgress.Invoke(System.Convert.ToInt32(percentage));
-                }
-                else if (started && line == string.Empty)
-                {
-                    started = false;
-
-                    reportProgress.Invoke(100);
-                }
-            });
-
-            logger.Process.WaitForExit();
-
-            if (logger.Process.ExitCode != 0)
-            {
-                string reportFile = FindReportFile(lines.ToString());
-
-                return new FFmpegResult<bool>(false, logger.Process.ExitCode, CheckForErrors(reportFile));
-            }
-
-            return new FFmpegResult<bool>(true);
-        }
-
-        /// <summary>
-        /// Converts file to MP3.
-        /// Possibly more formats in the future.
-        /// </summary>
-        /// <param name="reportProgress">The method to call when there is progress. Can be null.</param>
-        /// <param name="input">The input file.</param>
-        /// <param name="output">Where to save the output file.</param>
-        public static FFmpegResult<bool> Convert(Action<int, object> reportProgress, string input, string output, CancellationToken ct)
-        {
-            if (input == output)
-            {
-                throw new Exception("Input & output can't be the same.");
-            }
-
-            string[] argsInfo = new string[] { input, GetBitRate(input).Value.ToString(), output };
-            string processArgs = string.Format(Commands.Convert, argsInfo);
-
-            var logger = FFmpegHelper.CreateLogger(processArgs);
-
-            if (reportProgress != null)
-                reportProgress.Invoke(0, logger);
-
-            bool canceled = false;
-            bool started = false;
-            double milliseconds = 0;
-            StringBuilder lines = new StringBuilder();
-
-            logger.StartProcess(null, delegate (string line)
-            {
-                // Queued lines might still fire even after canceling process, don't actually know
-                if (canceled)
-                    return;
-
-                lines.AppendLine(line = line.Trim());
-
-                if (ct != null && ct.IsCancellationRequested)
-                {
-                    logger.Process.StandardInput.WriteLine("q");
-                    canceled = true;
-                    return;
-                }
-
-                // If reportProgress is null it can't be invoked. So skip code below
-                if (reportProgress == null)
-                    return;
-
-                if (line.StartsWith("Duration: "))
-                {
-                    int start = "Duration: ".Length;
-                    int length = "00:00:00.00".Length;
-
-                    string time = line.Substring(start, length);
-
-                    milliseconds = TimeSpan.Parse(time).TotalMilliseconds;
-                }
-                else if (line == "Press [q] to stop, [?] for help")
-                {
-                    started = true;
-
-                    reportProgress.Invoke(0, null);
-                }
-                else if (started && line.StartsWith("size="))
-                {
-                    int start = line.IndexOf("time=") + 5;
-                    int length = "00:00:00.00".Length;
-
-                    string time = line.Substring(start, length);
-
-                    double currentMilli = TimeSpan.Parse(time).TotalMilliseconds;
-                    double percentage = (currentMilli / milliseconds) * 100;
-
-                    reportProgress.Invoke(System.Convert.ToInt32(percentage), null);
-                }
-                else if (started && line == string.Empty)
-                {
-                    started = false;
-
-                    reportProgress.Invoke(100, null);
-                }
-            });
-
-            logger.Process.WaitForExit();
-
-            if (canceled)
-            {
-                return new FFmpegResult<bool>(false);
-            }
-            else if (logger.Process.ExitCode != 0)
-            {
-                string reportFile = FindReportFile(lines.ToString());
-
-                return new FFmpegResult<bool>(false, logger.Process.ExitCode, CheckForErrors(reportFile));
-            }
-
-            return new FFmpegResult<bool>(true);
-        }
-
-        public static ProcessLogger CreateLogger(string arguments, [CallerMemberName] string caller = "")
-        {
-            string filename = string.Format(LogFilename, DateTime.Now.ToString("yyyyMMdd-HHmmss-ff"));
-            string fullpath = Path.Combine(Common.GetLogsDirectory(), "ffmpeg", filename);
-
-            return new ProcessLogger(CreateProcess(arguments), fullpath)
-            {
-                Header = BuildLogHeader(arguments, caller),
-                Footer = BuildLogFooter()
-            };
-        }
-
-        /// <summary>
         /// Creates a Process with the given arguments, then returns it after it has started.
         /// </summary>
         /// <param name="arguments">The process arguments.</param>
-        public static Process CreateProcess(string arguments)
+        public static Process StartProcess(OperationLogger logger,
+                                           string arguments,
+                                           string caller,
+                                           Action<Process, string> output,
+                                           Action<Process, string> error,
+                                           [CallerMemberName]string function = "")
         {
             var psi = new ProcessStartInfo(FFmpegHelper.FFmpegPath, arguments)
             {
@@ -275,172 +64,196 @@ namespace YouTube_Downloader_DLL.Helpers
 
             psi.EnvironmentVariables.Add("FFREPORT", string.Format("file={0}:level=8", ReportFile));
 
-            return new Process()
+            var process = new Process()
             {
                 EnableRaisingEvents = true,
                 StartInfo = psi
             };
+
+            process.OutputDataReceived += delegate (object sender, DataReceivedEventArgs e)
+            {
+                if (string.IsNullOrEmpty(e.Data))
+                    return;
+
+                logger?.Log(e.Data);
+                output?.Invoke(process, e.Data);
+            };
+            process.ErrorDataReceived += delegate (object sender, DataReceivedEventArgs e)
+            {
+                if (string.IsNullOrEmpty(e.Data))
+                    return;
+
+                logger?.Log(e.Data);
+                error?.Invoke(process, e.Data);
+            };
+
+            logger?.Log(BuildLogHeader(arguments, caller, function));
+
+            process.Exited += delegate
+            {
+                logger?.Log(BuildLogFooter());
+            };
+
+            process.Start();
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
+
+            return process;
         }
 
         /// <summary>
-        /// Crops file from given start position to end.
+        /// Returns true if given file can be converted to a MP3 file, false otherwise.
         /// </summary>
-        /// <param name="reportProgress">The method to call when there is progress. Can be null.</param>
-        /// <param name="input">The input file.</param>
-        /// <param name="output">Where to save the output file.</param>
-        /// <param name="start">The <see cref="System.TimeSpan"/> start position.</param>
-        public static FFmpegResult<bool> Crop(Action<int, object> reportProgress, string input, string output, TimeSpan start, CancellationToken ct)
+        /// <param name="file">The file to check.</param>
+        public static FFmpegResult<bool> CanConvertToMP3(OperationLogger logger,
+                                                         string file,
+                                                         [CallerMemberName]string caller = "")
         {
-            if (input == output)
+            bool hasAudioStream = false;
+            string arguments = string.Format(Commands.GetFileInfo, file);
+            var lines = new StringBuilder();
+
+            var p = StartProcess(logger, arguments, caller,
+                null,
+                delegate (Process process, string line)
+                {
+                    lines.AppendLine(line = line.Trim());
+
+                    if (line.StartsWith("Stream #") && line.Contains("Audio"))
+                    {
+                        // File has audio stream
+                        hasAudioStream = true;
+                    }
+                });
+
+            p.WaitForExit();
+
+            if (p.ExitCode != 0)
             {
-                throw new Exception("Input & output can't be the same.");
+                string reportFile = FindReportFile(lines.ToString());
+                var errors = (List<string>)CheckForErrors(reportFile);
+
+                if (errors[0] != "At least one output file must be specified")
+                    return new FFmpegResult<bool>(p.ExitCode, CheckForErrors(reportFile));
             }
 
-            string[] argsInfo = new string[]
-            {
-                string.Format("{0:00}:{1:00}:{2:00}.{3:000}", start.Hours, start.Minutes, start.Seconds, start.Milliseconds),
-                input,
-                GetFileType(input).Value == FFmpegFileType.Video ? " -vcodec copy" : "",
-                output
-            };
-            string processArgs = string.Format(Commands.CropFrom, argsInfo);
+            return new FFmpegResult<bool>(hasAudioStream);
+        }
 
-            var logger = FFmpegHelper.CreateLogger(processArgs);
+        /// <summary>
+        /// Combines separate audio &amp; video to a single MP4 file.
+        /// </summary>
+        /// <param name="video">The input video file.</param>
+        /// <param name="audio">The input audio file.</param>
+        /// <param name="output">Where to save the output file.</param>
+        public static FFmpegResult<bool> Combine(OperationLogger logger,
+                                                 string video,
+                                                 string audio,
+                                                 string output,
+                                                 Action<int> reportProgress,
+                                                 [CallerMemberName]string caller = "")
+        {
+            string arguments = string.Format(Commands.Combine, video, audio, output);
+            var lines = new StringBuilder();
 
-            if (reportProgress != null)
-                reportProgress.Invoke(0, logger);
-
-            bool canceled = false;
             bool started = false;
             double milliseconds = 0;
-            StringBuilder lines = new StringBuilder();
 
-            logger.StartProcess(null, delegate (string line)
-            {
-                // Queued lines might still fire even after canceling process, don't actually know
-                if (canceled)
-                    return;
-
-                lines.AppendLine(line = line.Trim());
-
-                if (ct != null && ct.IsCancellationRequested)
+            var p = StartProcess(logger, arguments, caller,
+                null,
+                delegate (Process process, string line)
                 {
-                    logger.Process.StandardInput.WriteLine("q");
-                    canceled = true;
-                    return;
-                }
+                    lines.AppendLine(line = line.Trim());
 
-                // If reportProgress is null it can't be invoked. So skip code below
-                if (reportProgress == null)
-                    return;
+                    // If reportProgress is null it can't be invoked. So skip code below
+                    if (reportProgress == null)
+                        return;
 
-                if (line.StartsWith("Duration: "))
-                {
-                    int lineStart = "Duration: ".Length;
-                    int length = "00:00:00.00".Length;
+                    if (line.StartsWith("Duration: "))
+                    {
+                        int lineStart = "Duration: ".Length;
+                        int length = "00:00:00.00".Length;
 
-                    string time = line.Substring(lineStart, length);
+                        string time = line.Substring(lineStart, length);
 
-                    milliseconds = TimeSpan.Parse(time).TotalMilliseconds;
-                }
-                else if (line == "Press [q] to stop, [?] for help")
-                {
-                    started = true;
+                        milliseconds = TimeSpan.Parse(time).TotalMilliseconds;
+                    }
+                    else if (line == "Press [q] to stop, [?] for help")
+                    {
+                        started = true;
 
-                    reportProgress.Invoke(0, null);
-                }
-                else if (started && line.StartsWith("size="))
-                {
-                    int lineStart = line.IndexOf("time=") + 5;
-                    int length = "00:00:00.00".Length;
+                        reportProgress.Invoke(0);
+                    }
+                    else if (started && line.StartsWith("frame="))
+                    {
+                        int lineStart = line.IndexOf("time=") + 5;
+                        int length = "00:00:00.00".Length;
 
-                    string time = line.Substring(lineStart, length);
+                        string time = line.Substring(lineStart, length);
 
-                    double currentMilli = TimeSpan.Parse(time).TotalMilliseconds;
-                    double percentage = (currentMilli / milliseconds) * 100;
+                        double currentMilli = TimeSpan.Parse(time).TotalMilliseconds;
+                        double percentage = (currentMilli / milliseconds) * 100;
 
-                    reportProgress.Invoke(System.Convert.ToInt32(percentage), null);
-                }
-                else if (started && line == string.Empty)
-                {
-                    started = false;
+                        reportProgress.Invoke(System.Convert.ToInt32(percentage));
+                    }
+                    else if (started && line == string.Empty)
+                    {
+                        started = false;
 
-                    reportProgress.Invoke(100, null);
-                }
-            });
+                        reportProgress.Invoke(100);
+                    }
+                });
 
-            logger.Process.WaitForExit();
+            p.WaitForExit();
 
-            if (canceled)
-            {
-                return new FFmpegResult<bool>(false);
-            }
-            else if (logger.Process.ExitCode != 0)
+            if (p.ExitCode != 0)
             {
                 string reportFile = FindReportFile(lines.ToString());
 
-                return new FFmpegResult<bool>(false, logger.Process.ExitCode, CheckForErrors(reportFile));
+                return new FFmpegResult<bool>(false, p.ExitCode, CheckForErrors(reportFile));
             }
 
             return new FFmpegResult<bool>(true);
         }
 
         /// <summary>
-        /// Crops file from given start position to given end position.
+        /// Converts file to MP3.
+        /// Possibly more formats in the future.
         /// </summary>
         /// <param name="reportProgress">The method to call when there is progress. Can be null.</param>
         /// <param name="input">The input file.</param>
         /// <param name="output">Where to save the output file.</param>
-        /// <param name="start">The <see cref="System.TimeSpan"/> start position.</param>
-        /// <param name="end">The <see cref="System.TimeSpan"/> end position.</param>
-        public static FFmpegResult<bool> Crop(Action<int, object> reportProgress, string input, string output, TimeSpan start, TimeSpan end, CancellationToken ct)
+        public static FFmpegResult<bool> Convert(OperationLogger logger,
+                                                 Action<int, object> reportProgress,
+                                                 string input,
+                                                 string output,
+                                                 CancellationToken ct,
+                                                 [CallerMemberName]string caller = "")
         {
             if (input == output)
             {
                 throw new Exception("Input & output can't be the same.");
             }
 
-            TimeSpan length = new TimeSpan((long)Math.Abs(start.Ticks - end.Ticks));
-
-            string[] argsInfo = new string[]
+            var args = new string[]
             {
-                string.Format("{0:00}:{1:00}:{2:00}.{3:000}", start.Hours, start.Minutes, start.Seconds, start.Milliseconds),
                 input,
-                string.Format("{0:00}:{1:00}:{2:00}.{3:000}", length.Hours, length.Minutes, length.Seconds, length.Milliseconds),
-                GetFileType(input).Value == FFmpegFileType.Video ? " -vcodec copy" : "",
+                GetBitRate(input).Value.ToString(),
                 output
             };
-            string processArgs = string.Format(Commands.CropFromTo, argsInfo);
-
-            var logger = FFmpegHelper.CreateLogger(processArgs);
+            var arguments = string.Format(Commands.Convert, args);
 
             if (reportProgress != null)
-                reportProgress.Invoke(0, logger);
+                reportProgress.Invoke(0, null);
 
             bool canceled = false;
             bool started = false;
             double milliseconds = 0;
             StringBuilder lines = new StringBuilder();
 
-            if (reportProgress == null)
-            {
-                logger.StartProcess(null, delegate (string line)
-                {
-                    // Queued lines might still fire even after canceling process, don't actually know
-                    if (canceled)
-                        return;
-
-                    if (ct != null && ct.IsCancellationRequested)
-                    {
-                        logger.Process.StandardInput.WriteLine("q");
-                        canceled = true;
-                        return;
-                    }
-                });
-            }
-            else
-            {
-                logger.StartProcess(null, delegate (string line)
+            var p = StartProcess(logger, arguments, caller,
+                null,
+                delegate (Process process, string line)
                 {
                     // Queued lines might still fire even after canceling process, don't actually know
                     if (canceled)
@@ -450,7 +263,7 @@ namespace YouTube_Downloader_DLL.Helpers
 
                     if (ct != null && ct.IsCancellationRequested)
                     {
-                        logger.Process.StandardInput.WriteLine("q");
+                        process.StandardInput.WriteLine("q");
                         canceled = true;
                         return;
                     }
@@ -459,9 +272,16 @@ namespace YouTube_Downloader_DLL.Helpers
                     if (reportProgress == null)
                         return;
 
-                    milliseconds = end.TotalMilliseconds;
+                    if (line.StartsWith("Duration: "))
+                    {
+                        int start = "Duration: ".Length;
+                        int length = "00:00:00.00".Length;
 
-                    if (line == "Press [q] to stop, [?] for help")
+                        string time = line.Substring(start, length);
+
+                        milliseconds = TimeSpan.Parse(time).TotalMilliseconds;
+                    }
+                    else if (line == "Press [q] to stop, [?] for help")
                     {
                         started = true;
 
@@ -469,10 +289,10 @@ namespace YouTube_Downloader_DLL.Helpers
                     }
                     else if (started && line.StartsWith("size="))
                     {
-                        int lineStart = line.IndexOf("time=") + 5;
-                        int lineLength = "00:00:00.00".Length;
+                        int start = line.IndexOf("time=") + 5;
+                        int length = "00:00:00.00".Length;
 
-                        string time = line.Substring(lineStart, lineLength);
+                        string time = line.Substring(start, length);
 
                         double currentMilli = TimeSpan.Parse(time).TotalMilliseconds;
                         double percentage = (currentMilli / milliseconds) * 100;
@@ -486,19 +306,256 @@ namespace YouTube_Downloader_DLL.Helpers
                         reportProgress.Invoke(100, null);
                     }
                 });
-            }
 
-            logger.Process.WaitForExit();
+            p.WaitForExit();
 
             if (canceled)
             {
                 return new FFmpegResult<bool>(false);
             }
-            else if (logger.Process.ExitCode != 0)
+            else if (p.ExitCode != 0)
             {
                 string reportFile = FindReportFile(lines.ToString());
 
-                return new FFmpegResult<bool>(false, logger.Process.ExitCode, CheckForErrors(reportFile));
+                return new FFmpegResult<bool>(false, p.ExitCode, CheckForErrors(reportFile));
+            }
+
+            return new FFmpegResult<bool>(true);
+        }
+
+        /// <summary>
+        /// Crops file from given start position to end.
+        /// </summary>
+        /// <param name="reportProgress">The method to call when there is progress. Can be null.</param>
+        /// <param name="input">The input file.</param>
+        /// <param name="output">Where to save the output file.</param>
+        /// <param name="start">The <see cref="System.TimeSpan"/> start position.</param>
+        public static FFmpegResult<bool> Crop(OperationLogger logger,
+                                              Action<int, object> reportProgress,
+                                              string input,
+                                              string output,
+                                              TimeSpan start,
+                                              CancellationToken ct,
+                                              [CallerMemberName]string caller = "")
+        {
+            if (input == output)
+            {
+                throw new Exception("Input & output can't be the same.");
+            }
+
+            var args = new string[]
+            {
+                string.Format("{0:00}:{1:00}:{2:00}.{3:000}", start.Hours, start.Minutes, start.Seconds, start.Milliseconds),
+                input,
+                GetFileType(input).Value == FFmpegFileType.Video ? " -vcodec copy" : "",
+                output
+            };
+            var arguments = string.Format(Commands.CropFrom, args);
+
+            if (reportProgress != null)
+                reportProgress.Invoke(0, null);
+
+            bool canceled = false;
+            bool started = false;
+            double milliseconds = 0;
+            StringBuilder lines = new StringBuilder();
+
+            var p = StartProcess(logger, arguments, caller,
+                null,
+                delegate (Process process, string line)
+                {
+                    // Queued lines might still fire even after canceling process, don't actually know
+                    if (canceled)
+                        return;
+
+                    lines.AppendLine(line = line.Trim());
+
+                    if (ct != null && ct.IsCancellationRequested)
+                    {
+                        process.StandardInput.WriteLine("q");
+                        canceled = true;
+                        return;
+                    }
+
+                    // If reportProgress is null it can't be invoked. So skip code below
+                    if (reportProgress == null)
+                        return;
+
+                    if (line.StartsWith("Duration: "))
+                    {
+                        int lineStart = "Duration: ".Length;
+                        int length = "00:00:00.00".Length;
+
+                        string time = line.Substring(lineStart, length);
+
+                        milliseconds = TimeSpan.Parse(time).TotalMilliseconds;
+                    }
+                    else if (line == "Press [q] to stop, [?] for help")
+                    {
+                        started = true;
+
+                        reportProgress.Invoke(0, null);
+                    }
+                    else if (started && line.StartsWith("size="))
+                    {
+                        int lineStart = line.IndexOf("time=") + 5;
+                        int length = "00:00:00.00".Length;
+
+                        string time = line.Substring(lineStart, length);
+
+                        double currentMilli = TimeSpan.Parse(time).TotalMilliseconds;
+                        double percentage = (currentMilli / milliseconds) * 100;
+
+                        reportProgress.Invoke(System.Convert.ToInt32(percentage), null);
+                    }
+                    else if (started && line == string.Empty)
+                    {
+                        started = false;
+
+                        reportProgress.Invoke(100, null);
+                    }
+                });
+
+            p.WaitForExit();
+
+            if (canceled)
+            {
+                return new FFmpegResult<bool>(false);
+            }
+            else if (p.ExitCode != 0)
+            {
+                string reportFile = FindReportFile(lines.ToString());
+
+                return new FFmpegResult<bool>(false, p.ExitCode, CheckForErrors(reportFile));
+            }
+
+            return new FFmpegResult<bool>(true);
+        }
+
+        /// <summary>
+        /// Crops file from given start position to given end position.
+        /// </summary>
+        /// <param name="reportProgress">The method to call when there is progress. Can be null.</param>
+        /// <param name="input">The input file.</param>
+        /// <param name="output">Where to save the output file.</param>
+        /// <param name="start">The <see cref="System.TimeSpan"/> start position.</param>
+        /// <param name="end">The <see cref="System.TimeSpan"/> end position.</param>
+        public static FFmpegResult<bool> Crop(OperationLogger logger,
+                                              Action<int, object> reportProgress,
+                                              string input,
+                                              string output,
+                                              TimeSpan start,
+                                              TimeSpan end,
+                                              CancellationToken ct,
+                                              [CallerMemberName]string caller = "")
+        {
+            if (input == output)
+            {
+                throw new Exception("Input & output can't be the same.");
+            }
+
+            TimeSpan length = new TimeSpan((long)Math.Abs(start.Ticks - end.Ticks));
+
+            string[] args = new string[]
+            {
+                string.Format("{0:00}:{1:00}:{2:00}.{3:000}", start.Hours, start.Minutes, start.Seconds, start.Milliseconds),
+                input,
+                string.Format("{0:00}:{1:00}:{2:00}.{3:000}", length.Hours, length.Minutes, length.Seconds, length.Milliseconds),
+                GetFileType(input).Value == FFmpegFileType.Video ? " -vcodec copy" : "",
+                output
+            };
+            string arguments = string.Format(Commands.CropFromTo, args);
+
+            if (reportProgress != null)
+                reportProgress.Invoke(0, null);
+
+            bool canceled = false;
+            bool started = false;
+            double milliseconds = 0;
+            StringBuilder lines = new StringBuilder();
+            Process p = null;
+
+            if (reportProgress == null)
+            {
+                p = StartProcess(logger, arguments, caller,
+                    null,
+                    delegate (Process process, string line)
+                    {
+                        // Queued lines might still fire even after canceling process, don't actually know
+                        if (canceled)
+                            return;
+
+                        if (ct != null && ct.IsCancellationRequested)
+                        {
+                            process.StandardInput.WriteLine("q");
+                            canceled = true;
+                            return;
+                        }
+                    });
+            }
+            else
+            {
+                p = StartProcess(logger, arguments, caller,
+                    null,
+                    delegate (Process process, string line)
+                    {
+                        // Queued lines might still fire even after canceling process, don't actually know
+                        if (canceled)
+                            return;
+
+                        lines.AppendLine(line = line.Trim());
+
+                        if (ct != null && ct.IsCancellationRequested)
+                        {
+                            process.StandardInput.WriteLine("q");
+                            canceled = true;
+                            return;
+                        }
+
+                        // If reportProgress is null it can't be invoked. So skip code below
+                        if (reportProgress == null)
+                            return;
+
+                        milliseconds = end.TotalMilliseconds;
+
+                        if (line == "Press [q] to stop, [?] for help")
+                        {
+                            started = true;
+
+                            reportProgress.Invoke(0, null);
+                        }
+                        else if (started && line.StartsWith("size="))
+                        {
+                            int lineStart = line.IndexOf("time=") + 5;
+                            int lineLength = "00:00:00.00".Length;
+
+                            string time = line.Substring(lineStart, lineLength);
+
+                            double currentMilli = TimeSpan.Parse(time).TotalMilliseconds;
+                            double percentage = (currentMilli / milliseconds) * 100;
+
+                            reportProgress.Invoke(System.Convert.ToInt32(percentage), null);
+                        }
+                        else if (started && line == string.Empty)
+                        {
+                            started = false;
+
+                            reportProgress.Invoke(100, null);
+                        }
+                    });
+            }
+
+            p.WaitForExit();
+
+            if (canceled)
+            {
+                return new FFmpegResult<bool>(false);
+            }
+            else if (p.ExitCode != 0)
+            {
+                string reportFile = FindReportFile(lines.ToString());
+
+                return new FFmpegResult<bool>(false, p.ExitCode, CheckForErrors(reportFile));
             }
 
             return new FFmpegResult<bool>(true);
@@ -512,30 +569,32 @@ namespace YouTube_Downloader_DLL.Helpers
             int result = 128; // Default to 128k bitrate
             Regex regex = new Regex(@"^Stream\s#\d:\d.*\s(\d+)\skb\/s.*$", RegexOptions.Compiled);
             StringBuilder lines = new StringBuilder();
-            var logger = CreateLogger(string.Format(Commands.GetFileInfo, file));
+            var arguments = string.Format(Commands.GetFileInfo, file);
 
-            logger.StartProcess(null, delegate (string line)
-            {
-                lines.AppendLine(line = line.Trim());
-
-                if (line.StartsWith("Stream"))
+            var p = StartProcess(null, arguments, string.Empty,
+                null,
+                delegate (Process process, string line)
                 {
-                    Match m = regex.Match(line);
+                    lines.AppendLine(line = line.Trim());
 
-                    if (m.Success)
-                        result = int.Parse(m.Groups[1].Value);
-                }
-            });
+                    if (line.StartsWith("Stream"))
+                    {
+                        Match m = regex.Match(line);
 
-            logger.Process.WaitForExit();
+                        if (m.Success)
+                            result = int.Parse(m.Groups[1].Value);
+                    }
+                });
 
-            if (logger.Process.ExitCode != 0)
+            p.WaitForExit();
+
+            if (p.ExitCode != 0)
             {
                 string reportFile = FindReportFile(lines.ToString());
                 var errors = (List<string>)CheckForErrors(reportFile);
 
                 if (errors[0] != "At least one output file must be specified")
-                    return new FFmpegResult<int>(logger.Process.ExitCode, CheckForErrors(reportFile));
+                    return new FFmpegResult<int>(p.ExitCode, CheckForErrors(reportFile));
             }
 
             return new FFmpegResult<int>(result);
@@ -549,31 +608,33 @@ namespace YouTube_Downloader_DLL.Helpers
         {
             TimeSpan result = TimeSpan.Zero;
             StringBuilder lines = new StringBuilder();
-            var logger = CreateLogger(string.Format(Commands.GetFileInfo, file));
+            var arguments = string.Format(Commands.GetFileInfo, file);
 
-            logger.StartProcess(null, delegate (string line)
-            {
-                lines.AppendLine(line = line.Trim());
-
-                // Example line, including whitespace:
-                //  Duration: 00:00:00.00, start: 0.000000, bitrate: *** kb/s
-                if (line.StartsWith("Duration"))
+            var p = StartProcess(null, arguments, string.Empty,
+                null,
+                delegate (Process process, string line)
                 {
-                    string[] split = line.Split(' ', ',');
+                    lines.AppendLine(line = line.Trim());
 
-                    result = TimeSpan.Parse(split[1]);
-                }
-            });
+                    // Example line, including whitespace:
+                    //  Duration: 00:00:00.00, start: 0.000000, bitrate: *** kb/s
+                    if (line.StartsWith("Duration"))
+                    {
+                        string[] split = line.Split(' ', ',');
 
-            logger.Process.WaitForExit();
+                        result = TimeSpan.Parse(split[1]);
+                    }
+                });
 
-            if (logger.Process.ExitCode != 0)
+            p.WaitForExit();
+
+            if (p.ExitCode != 0)
             {
                 string reportFile = FindReportFile(lines.ToString());
                 var errors = (List<string>)CheckForErrors(reportFile);
 
                 if (errors[0] != "At least one output file must be specified")
-                    return new FFmpegResult<TimeSpan>(logger.Process.ExitCode, CheckForErrors(reportFile));
+                    return new FFmpegResult<TimeSpan>(p.ExitCode, CheckForErrors(reportFile));
             }
 
             return new FFmpegResult<TimeSpan>(result);
@@ -587,40 +648,42 @@ namespace YouTube_Downloader_DLL.Helpers
         {
             FFmpegFileType result = FFmpegFileType.Error;
             StringBuilder lines = new StringBuilder();
-            var logger = CreateLogger(string.Format(Commands.GetFileInfo, file));
+            var arguments = string.Format(Commands.GetFileInfo, file);
 
-            logger.StartProcess(null, delegate (string line)
-            {
-                lines.AppendLine(line = line.Trim());
-
-                // Example lines, including whitespace:
-                //    Stream #0:0(und): Video: h264 ([33][0][0][0] / 0x0021), yuv420p, 320x240 [SAR 717:716 DAR 239:179], q=2-31, 242 kb/s, 29.01 fps, 90k tbn, 90k tbc (default)
-                //    Stream #0:1(eng): Audio: vorbis ([221][0][0][0] / 0x00DD), 44100 Hz, stereo (default)
-                if (line.StartsWith("Stream #"))
+            var p = StartProcess(null, arguments, string.Empty,
+                null,
+                delegate (Process process, string line)
                 {
-                    if (line.Contains("Video: "))
-                    {
-                        // File contains video stream, so it's a video file, possibly without audio.
-                        result = FFmpegFileType.Video;
-                    }
-                    else if (line.Contains("Audio: "))
-                    {
-                        // File contains audio stream. Keep looking for a video stream,
-                        // and if found it's probably a video file, or an audio file if not.
-                        result = FFmpegFileType.Audio;
-                    }
-                }
-            });
+                    lines.AppendLine(line = line.Trim());
 
-            logger.Process.WaitForExit();
+                    // Example lines, including whitespace:
+                    //    Stream #0:0(und): Video: h264 ([33][0][0][0] / 0x0021), yuv420p, 320x240 [SAR 717:716 DAR 239:179], q=2-31, 242 kb/s, 29.01 fps, 90k tbn, 90k tbc (default)
+                    //    Stream #0:1(eng): Audio: vorbis ([221][0][0][0] / 0x00DD), 44100 Hz, stereo (default)
+                    if (line.StartsWith("Stream #"))
+                    {
+                        if (line.Contains("Video: "))
+                        {
+                            // File contains video stream, so it's a video file, possibly without audio.
+                            result = FFmpegFileType.Video;
+                        }
+                        else if (line.Contains("Audio: "))
+                        {
+                            // File contains audio stream. Keep looking for a video stream,
+                            // and if found it's probably a video file, or an audio file if not.
+                            result = FFmpegFileType.Audio;
+                        }
+                    }
+                });
 
-            if (logger.Process.ExitCode != 0)
+            p.WaitForExit();
+
+            if (p.ExitCode != 0)
             {
                 string reportFile = FindReportFile(lines.ToString());
                 var errors = (List<string>)CheckForErrors(reportFile);
 
                 if (errors[0] != "At least one output file must be specified")
-                    return new FFmpegResult<FFmpegFileType>(FFmpegFileType.Error, logger.Process.ExitCode, CheckForErrors(reportFile));
+                    return new FFmpegResult<FFmpegFileType>(FFmpegFileType.Error, p.ExitCode, CheckForErrors(reportFile));
             }
 
             return new FFmpegResult<FFmpegFileType>(result);
@@ -668,32 +731,31 @@ namespace YouTube_Downloader_DLL.Helpers
         /// </summary>
         private static FFmpegResult<string> GetVersion()
         {
-            string line, version = string.Empty;
+            string version = string.Empty;
             Regex regex = new Regex("^ffmpeg version (.*) Copyright.*$", RegexOptions.Compiled);
             StringBuilder lines = new StringBuilder();
-            var process = CreateProcess(Commands.Version);
 
-            process.Start();
-
-            while ((line = process.StandardError.ReadLine()) != null)
-            {
-                lines.AppendLine(line);
-
-                Match match = regex.Match(line);
-
-                if (match.Success)
+            var p = StartProcess(null, Commands.Version, string.Empty,
+                null,
+                delegate (Process process, string line)
                 {
-                    version = match.Groups[1].Value.Trim();
-                }
-            }
+                    lines.AppendLine(line);
 
-            process.WaitForExit();
+                    Match match = regex.Match(line);
 
-            if (process.ExitCode != 0)
+                    if (match.Success)
+                    {
+                        version = match.Groups[1].Value.Trim();
+                    }
+                });
+
+            p.WaitForExit();
+
+            if (p.ExitCode != 0)
             {
                 string reportFile = FindReportFile(lines.ToString());
 
-                return new FFmpegResult<string>(process.ExitCode, CheckForErrors(reportFile));
+                return new FFmpegResult<string>(p.ExitCode, CheckForErrors(reportFile));
             }
 
             return new FFmpegResult<string>(version);
@@ -713,13 +775,13 @@ namespace YouTube_Downloader_DLL.Helpers
         /// Writes log header to log.
         /// </summary>
         /// <param name="arguments">The arguments to log in header.</param>
-        private static string BuildLogHeader(string arguments, string caller)
+        private static string BuildLogHeader(string arguments, string caller, string function)
         {
             var sb = new StringBuilder();
 
-            sb.AppendLine("[" + DateTime.Now + "]");
-            sb.AppendLine("caller: " + caller);
-            sb.AppendLine("cmd: " + arguments);
+            sb.AppendLine($"[{DateTime.Now}]");
+            sb.AppendLine($"function: {function} - function caller: {caller}");
+            sb.AppendLine($"cmd: {arguments}");
             sb.AppendLine();
             sb.AppendLine("OUTPUT");
 

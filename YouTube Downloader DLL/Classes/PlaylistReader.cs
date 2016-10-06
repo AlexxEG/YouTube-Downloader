@@ -26,7 +26,8 @@ namespace YouTube_Downloader_DLL.Classes
 
         Regex _regexPlaylistInfo = new Regex(@"^\[youtube:playlist\] playlist (.*):.*Downloading\s+(\d+)\s+.*$", RegexOptions.Compiled);
         Regex _regexVideoJson = new Regex(@"^\[info\].*JSON.*:\s(.*)$", RegexOptions.Compiled);
-        ProcessLogger _youtubeDl;
+        Process _youtubeDl;
+        OperationLogger _logger;
         CancellationTokenSource _cts = new CancellationTokenSource();
 
         public bool Canceled { get; set; } = false;
@@ -53,14 +54,17 @@ namespace YouTube_Downloader_DLL.Classes
             _arguments = string.Format(CmdPlaylistInfo, json_dir, _playlist_id, range, url);
             _url = url;
 
-            _youtubeDl = YoutubeDlHelper.CreateLogger(_arguments);
-            _youtubeDl.Header = YoutubeDlHelper.BuildLogHeader(_arguments, "PlaylistReader(string url)");
-            _youtubeDl.Footer = YoutubeDlHelper.BuildLogFooter();
-            _youtubeDl.Process.Exited += delegate { _processFinished = true; };
-            _youtubeDl.StartProcess(OutputReadLine, ErrorReadLine);
+            _logger = OperationLogger.Create(OperationLogger.YTDLogFile);
+
+            _youtubeDl = YoutubeDlHelper.StartProcess(_logger,
+                _arguments,
+                "PlaylistReader(string url, int[] videos)",
+                OutputReadLine,
+                ErrorReadLine);
+            _youtubeDl.Exited += delegate { _processFinished = true; };
         }
 
-        public void OutputReadLine(string line)
+        public void OutputReadLine(Process process, string line)
         {
             Match m;
 
@@ -79,14 +83,14 @@ namespace YouTube_Downloader_DLL.Classes
             }
         }
 
-        public void ErrorReadLine(string line)
+        public void ErrorReadLine(Process process, string line)
         {
 
         }
 
         public void Stop()
         {
-            _youtubeDl.Process.Kill();
+            _youtubeDl.Kill();
             _cts.Cancel();
 
             this.Canceled = true;
@@ -111,8 +115,8 @@ namespace YouTube_Downloader_DLL.Classes
             // If it's the end of the stream finish up the process.
             if (jsonPath == null)
             {
-                if (!_youtubeDl.Process.HasExited)
-                    _youtubeDl.Process.WaitForExit();
+                if (!_youtubeDl.HasExited)
+                    _youtubeDl.WaitForExit();
 
                 return null;
             }

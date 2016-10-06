@@ -6,6 +6,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
 using YouTube_Downloader_DLL.Classes;
+using YouTube_Downloader_DLL.FFmpeg;
 using YouTube_Downloader_DLL.FileDownloading;
 using YouTube_Downloader_DLL.Helpers;
 
@@ -28,7 +29,7 @@ namespace YouTube_Downloader_DLL.Operations
             Combining
         }
 
-        bool _combining, _combine, _processing, _downloadSuccessful;
+        bool _combine, _processing, _downloadSuccessful;
         FileDownloader downloader;
 
         public event EventHandler Combining;
@@ -205,8 +206,6 @@ namespace YouTube_Downloader_DLL.Operations
 
             if (_combine && _downloadSuccessful)
             {
-                _combining = true;
-
                 string audio = downloader.Files[0].Path;
                 string video = downloader.Files[1].Path;
 
@@ -220,13 +219,18 @@ namespace YouTube_Downloader_DLL.Operations
 
                 try
                 {
+                    FFmpegResult<bool> result;
+
                     this.ReportProgress(-1, Events.Combining);
 
-                    var result = FFmpegHelper.Combine(video, audio, this.Output, delegate (int percentage)
+                    using (var logger = OperationLogger.Create(OperationLogger.FFmpegDLogFile))
                     {
-                        // Combine progress
-                        this.ReportProgress(percentage, null);
-                    });
+                        result = FFmpegHelper.Combine(logger, video, audio, this.Output, delegate (int percentage)
+                        {
+                            // Combine progress
+                            this.ReportProgress(percentage, null);
+                        });
+                    }
 
                     if (result.Value)
                         e.Result = OperationStatus.Success;

@@ -64,7 +64,7 @@
     <Compile Include="Classes\LogCleanup.cs" />
     <Compile Include="Classes\Playlist.cs" />
     <Compile Include="Classes\PlaylistReader.cs" />
-    <Compile Include="Classes\ProcessLogger.cs" />
+    <Compile Include="Classes\OperationLogger.cs" />
     <Compile Include="Classes\TwitchOperationProgress.cs" />
     <Compile Include="Classes\VideoFormat.cs" />
     <Compile Include="Classes\VideoInfo.cs" />

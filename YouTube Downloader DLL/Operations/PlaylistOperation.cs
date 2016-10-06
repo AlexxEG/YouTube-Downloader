@@ -43,6 +43,7 @@ namespace YouTube_Downloader_DLL.Operations
 
         Exception _operationException;
         FileDownloader downloader;
+        OperationLogger _ffmpegLogger;
 
         public string PlaylistName { get; private set; }
         public List<string> DownloadedFiles { get; set; } = new List<string>();
@@ -355,6 +356,11 @@ namespace YouTube_Downloader_DLL.Operations
                 e.Result = OperationStatus.Failed;
                 _operationException = ex;
             }
+            finally
+            {
+                if (_ffmpegLogger != null)
+                    _ffmpegLogger.Close();
+            }
         }
 
         protected override void WorkerProgressChanged(ProgressChangedEventArgs e)
@@ -443,7 +449,10 @@ namespace YouTube_Downloader_DLL.Operations
                 // Raise events on main thread
                 this.ReportProgress(EventCombining, null);
 
-                result = FFmpegHelper.Combine(video, audio, output, delegate (int percentage)
+                if (_ffmpegLogger == null)
+                    _ffmpegLogger = OperationLogger.Create(OperationLogger.FFmpegDLogFile);
+
+                result = FFmpegHelper.Combine(_ffmpegLogger, video, audio, output, delegate (int percentage)
                 {
                     // Combine progress
                     this.ReportProgress(percentage, null);

@@ -335,7 +335,7 @@ namespace YouTube_Downloader
 
         private void bwGetVideo_DoWork(object sender, DoWorkEventArgs e)
         {
-            e.Result = YoutubeDlHelper.GetVideoInfo((string)e.Argument, _auth);
+            e.Result = YoutubeDlHelper.GetVideoInfo(null, (string)e.Argument, _auth);
         }
 
         private void bwGetVideo_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -736,7 +736,7 @@ namespace YouTube_Downloader
         {
             if (rbConvertFile.Checked)
             {
-                if (!FFmpegHelper.CanConvertToMP3(txtInputFile.Text).Value)
+                if (!FFmpegHelper.CanConvertToMP3(null, txtInputFile.Text).Value)
                 {
                     string text = "Can't convert input file to MP3. File doesn't appear to have audio.";
 
@@ -1043,9 +1043,7 @@ namespace YouTube_Downloader
         private async void CancelOperations()
         {
             this.Hide();
-
-            ProcessLogger.KillAll();
-
+            
             foreach (Operation operation in Operation.Running)
             {
                 // Stop & delete unfinished files
