@@ -505,7 +505,7 @@ namespace YouTube_Downloader_DLL.Operations
                 while ((video = reader.Next()) != null)
                 {
                     // We're done! (I think)
-                    if (this.Videos.Count == _videos.Count)
+                    if (_videos.Count > 0 && this.Videos.Count == _videos.Count)
                         break;
 
                     if (this.CancellationPending)
