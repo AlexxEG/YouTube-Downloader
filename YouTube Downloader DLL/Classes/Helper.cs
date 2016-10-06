@@ -173,6 +173,9 @@ namespace YouTube_Downloader_DLL.Classes
         /// <param name="file">The file to get file size from.</param>
         public static long GetFileSize(string file)
         {
+            if (!File.Exists(file))
+                return 0;
+
             return new FileInfo(file).Length;
         }
 
