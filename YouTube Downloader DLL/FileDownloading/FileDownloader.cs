@@ -279,6 +279,7 @@ namespace YouTube_Downloader_DLL.FileDownloading
                 this.TotalProgress += existLen;
 
                 long prevSize = 0;
+                int speedInterval = 100;
 
                 while (this.CurrentFile.Progress < totalSize && !_downloader.CancellationPending)
                 {
@@ -297,12 +298,15 @@ namespace YouTube_Downloader_DLL.FileDownloading
 
                     writer.Write(readBytes, 0, currentPackageSize);
 
-                    if (speedTimer.Elapsed.TotalSeconds >= 1)
+                    if (speedTimer.Elapsed.TotalMilliseconds >= speedInterval)
                     {
                         long downloadedBytes = writer.Length - prevSize;
                         prevSize = writer.Length;
 
-                        this.Speed = (int)downloadedBytes;
+                        this.Speed = (int)downloadedBytes * (speedInterval == 100 ? 10 : 1);
+
+                        // Only update speed once a second after initial update
+                        speedInterval = 1000;
 
                         speedTimer.Reset();
                     }
