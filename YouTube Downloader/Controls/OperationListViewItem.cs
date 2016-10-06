@@ -14,7 +14,9 @@ namespace YouTube_Downloader.Controls
     /// </summary>
     public class OperationListViewItem : ListViewItem
     {
-        public const int ProgressUpdateDelay = 250;
+        private const int ColumnProgressBar = 1;
+        private const int ColumnInputLabel = 5;
+        private const int ProgressUpdateDelay = 250;
 
         LinkLabel _inputLabel;
         ProgressBar _progressBar;
@@ -57,6 +59,16 @@ namespace YouTube_Downloader.Controls
 
         public string WorkingText { get; set; }
 
+        public ListViewEx ListViewEx
+        {
+            get
+            {
+                if (this.ListView == null)
+                    return null;
+
+                return this.ListView as ListViewEx;
+            }
+        }
         public Operation Operation { get; private set; }
 
         public event OperationEventHandler OperationComplete;
@@ -197,9 +209,6 @@ namespace YouTube_Downloader.Controls
         {
             sw = new Stopwatch();
             sw.Start();
-
-            this.GetListViewEx().AddEmbeddedControl(_progressBar, 1, this.Index);
-            this.GetListViewEx().AddEmbeddedControl(_inputLabel, 5, this.Index);
         }
 
         private void Operation_StatusChanged(object sender, EventArgs e)
@@ -229,7 +238,7 @@ namespace YouTube_Downloader.Controls
         {
             try
             {
-                Process.Start((string)_inputLabel.Text);
+                Process.Start(_inputLabel.Text);
             }
             catch
             {
@@ -237,17 +246,15 @@ namespace YouTube_Downloader.Controls
             }
         }
 
-        private ListViewEx GetListViewEx()
+        public void SetupEmbeddedControls()
         {
-            if (this.ListView == null)
-                return null;
-
-            return this.ListView as ListViewEx;
+            this.ListViewEx.AddEmbeddedControl(_progressBar, ColumnProgressBar, this.Index);
+            this.ListViewEx.AddEmbeddedControl(_inputLabel, ColumnInputLabel, this.Index);
         }
 
         private bool Wait()
         {
-            // Limit the progress update to once a second to avoid flickering.
+            // Limit the progress update to avoid flickering.
             if (sw == null || !sw.IsRunning)
                 return false;
 

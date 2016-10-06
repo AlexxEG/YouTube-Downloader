@@ -237,6 +237,7 @@ namespace YouTube_Downloader
                 item.OperationComplete += downloadItem_OperationComplete;
 
                 lvQueue.Items.Add(item);
+                item.SetupEmbeddedControls();
 
                 this.SelectOneItem(item);
 
@@ -593,6 +594,7 @@ namespace YouTube_Downloader
                 var item = new OperationListViewItem("Getting playlist info...", txtPlaylistLink.Text, operation);
 
                 lvQueue.Items.Add(item);
+                item.SetupEmbeddedControls();
 
                 this.SelectOneItem(item);
 
@@ -1094,6 +1096,7 @@ namespace YouTube_Downloader
             item.FileSize = Helper.GetFileSizeFormatted(input);
 
             lvQueue.Items.Add(item);
+            item.SetupEmbeddedControls();
 
             this.SelectOneItem(item);
 
@@ -1116,6 +1119,7 @@ namespace YouTube_Downloader
             item.WorkingText = "Converting...";
 
             lvQueue.Items.Add(item);
+            item.SetupEmbeddedControls();
 
             this.SelectOneItem(item);
 
@@ -1147,6 +1151,7 @@ namespace YouTube_Downloader
             item.FileSize = Helper.GetFileSizeFormatted(input);
 
             lvQueue.Items.Add(item);
+            item.SetupEmbeddedControls();
 
             this.SelectOneItem(item);
 
