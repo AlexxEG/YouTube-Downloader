@@ -304,6 +304,11 @@ namespace YouTube_Downloader_DLL.Operations
 
                     downloader.Files.Add(new FileDownload(regex.Replace(this.Output, "$1_audio$2"), (string)args[ArgKeys.Audio]));
                     downloader.Files.Add(new FileDownload(regex.Replace(this.Output, "$1_video$2"), (string)args[ArgKeys.Video]));
+
+                    // Delete _audio and _video files in case they exists from a previous attempt
+                    Helper.DeleteFiles(downloader.Files[0].Path,
+                                       downloader.Files[1].Path);
+
                     break;
                 default:
                     throw new ArgumentException();

@@ -277,6 +277,9 @@ namespace YouTube_Downloader_DLL.Operations
                     string finalFile = Path.Combine(this.Output,
                                                     $"{Helper.FormatTitle(format.VideoInfo.Title)}.{format.Extension}");
 
+                    // Overwrite if finalFile already exists
+                    Helper.DeleteFiles(finalFile);
+
                     this.DownloadedFiles.Add(finalFile);
 
                     if (format.AudioOnly)
@@ -293,6 +296,10 @@ namespace YouTube_Downloader_DLL.Operations
                         // Download audio and video
                         downloader.Files.Add(new FileDownload(audioFile, audioFormat.DownloadUrl));
                         downloader.Files.Add(new FileDownload(videoFile, format.DownloadUrl));
+
+                        // Delete _audio and _video files in case they exists from a previous attempt
+                        Helper.DeleteFiles(downloader.Files[0].Path,
+                                           downloader.Files[1].Path);
                     }
 
                     downloader.Start();
