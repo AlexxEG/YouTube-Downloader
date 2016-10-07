@@ -13,7 +13,7 @@ using YouTube_Downloader.Properties;
 using YouTube_Downloader_DLL;
 using YouTube_Downloader_DLL.Classes;
 using YouTube_Downloader_DLL.Dialogs;
-using YouTube_Downloader_DLL.Helpers;
+using YouTube_Downloader_DLL.FFmpeg;
 using YouTube_Downloader_DLL.Operations;
 using YouTube_Downloader_DLL.YoutubeDl;
 
@@ -1043,7 +1043,7 @@ namespace YouTube_Downloader
         private async void CancelOperations()
         {
             this.Hide();
-            
+
             foreach (Operation operation in Operation.Running)
             {
                 // Stop & delete unfinished files

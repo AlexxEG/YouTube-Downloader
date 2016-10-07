@@ -5,7 +5,7 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using YouTube_Downloader_DLL.Helpers;
+using YouTube_Downloader_DLL.YoutubeDl;
 
 namespace YouTube_Downloader_DLL.Classes
 {

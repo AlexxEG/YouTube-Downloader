@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using YouTube_Downloader_DLL.Classes;
 using YouTube_Downloader_DLL.FFmpeg;
 using YouTube_Downloader_DLL.FileDownloading;
-using YouTube_Downloader_DLL.Helpers;
 
 namespace YouTube_Downloader_DLL.Operations
 {
