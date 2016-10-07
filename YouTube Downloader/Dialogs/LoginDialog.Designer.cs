@@ -37,10 +37,13 @@
             this.btnCancel = new System.Windows.Forms.Button();
             this.txtPassword = new System.Windows.Forms.MaskedTextBox();
             this.label4 = new System.Windows.Forms.Label();
+            this.lWarning = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // txtEmailUsername
             // 
+            this.txtEmailUsername.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtEmailUsername.Location = new System.Drawing.Point(12, 25);
             this.txtEmailUsername.Name = "txtEmailUsername";
             this.txtEmailUsername.Size = new System.Drawing.Size(360, 20);
@@ -85,13 +88,13 @@
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.btnOK.Location = new System.Drawing.Point(216, 156);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 6;
             this.btnOK.Text = "OK";
             this.btnOK.UseVisualStyleBackColor = true;
+            this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
             // 
             // btnCancel
             // 
@@ -106,6 +109,8 @@
             // 
             // txtPassword
             // 
+            this.txtPassword.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtPassword.Location = new System.Drawing.Point(12, 67);
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.Size = new System.Drawing.Size(360, 20);
@@ -121,6 +126,17 @@
             this.label4.TabIndex = 9;
             this.label4.Text = "Leave empty if not required";
             // 
+            // lWarning
+            // 
+            this.lWarning.AutoSize = true;
+            this.lWarning.ForeColor = System.Drawing.Color.Red;
+            this.lWarning.Location = new System.Drawing.Point(219, 133);
+            this.lWarning.Name = "lWarning";
+            this.lWarning.Size = new System.Drawing.Size(153, 13);
+            this.lWarning.TabIndex = 10;
+            this.lWarning.Text = "Username && password required";
+            this.lWarning.Visible = false;
+            // 
             // LoginDialog
             // 
             this.AcceptButton = this.btnOK;
@@ -129,6 +145,7 @@
             this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(384, 191);
             this.ControlBox = false;
+            this.Controls.Add(this.lWarning);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.txtPassword);
             this.Controls.Add(this.btnCancel);
@@ -158,5 +175,6 @@
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.MaskedTextBox txtPassword;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label lWarning;
     }
 }

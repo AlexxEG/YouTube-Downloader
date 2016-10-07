@@ -1,4 +1,5 @@
-﻿using YouTube_Downloader_DLL.Helpers;
+﻿using System;
+using YouTube_Downloader_DLL.Helpers;
 
 namespace YouTube_Downloader_DLL.YoutubeDl
 {
@@ -10,6 +11,9 @@ namespace YouTube_Downloader_DLL.YoutubeDl
 
         public YTDAuthentication(string username, string password, string twoFactor)
         {
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+                throw new Exception($"{this.GetType().Name}: {nameof(username)} and {nameof(password)} can't be empty or null.");
+
             this.Username = username;
             this.Password = password;
             this.TwoFactor = twoFactor;
