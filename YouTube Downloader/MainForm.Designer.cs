@@ -168,7 +168,7 @@
             this.btnPaste.Location = new System.Drawing.Point(562, 18);
             this.btnPaste.Name = "btnPaste";
             this.btnPaste.Size = new System.Drawing.Size(22, 22);
-            this.btnPaste.TabIndex = 2;
+            this.btnPaste.TabIndex = 1;
             this.toolTip1.SetToolTip(this.btnPaste, "Paste");
             this.btnPaste.UseVisualStyleBackColor = true;
             this.btnPaste.Click += new System.EventHandler(this.btnPaste_Click);
@@ -197,7 +197,7 @@
             this.txtYoutubeLink.Location = new System.Drawing.Point(39, 19);
             this.txtYoutubeLink.Name = "txtYoutubeLink";
             this.txtYoutubeLink.Size = new System.Drawing.Size(517, 20);
-            this.txtYoutubeLink.TabIndex = 1;
+            this.txtYoutubeLink.TabIndex = 0;
             // 
             // btnBrowse
             // 
@@ -205,7 +205,7 @@
             this.btnBrowse.Location = new System.Drawing.Point(553, 73);
             this.btnBrowse.Name = "btnBrowse";
             this.btnBrowse.Size = new System.Drawing.Size(31, 23);
-            this.btnBrowse.TabIndex = 7;
+            this.btnBrowse.TabIndex = 3;
             this.btnBrowse.Text = "...";
             this.btnBrowse.UseVisualStyleBackColor = true;
             this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
@@ -227,7 +227,7 @@
             this.cbSaveTo.Location = new System.Drawing.Point(182, 74);
             this.cbSaveTo.Name = "cbSaveTo";
             this.cbSaveTo.Size = new System.Drawing.Size(365, 21);
-            this.cbSaveTo.TabIndex = 5;
+            this.cbSaveTo.TabIndex = 2;
             // 
             // label4
             // 
@@ -245,7 +245,7 @@
             this.btnDownload.Location = new System.Drawing.Point(494, 102);
             this.btnDownload.Name = "btnDownload";
             this.btnDownload.Size = new System.Drawing.Size(90, 23);
-            this.btnDownload.TabIndex = 3;
+            this.btnDownload.TabIndex = 4;
             this.btnDownload.Text = "Download";
             this.btnDownload.UseVisualStyleBackColor = true;
             this.btnDownload.Click += new System.EventHandler(this.btnDownload_Click);
@@ -364,7 +364,7 @@
             this.txtTitle.Location = new System.Drawing.Point(182, 20);
             this.txtTitle.Name = "txtTitle";
             this.txtTitle.Size = new System.Drawing.Size(365, 20);
-            this.txtTitle.TabIndex = 12;
+            this.txtTitle.TabIndex = 0;
             // 
             // lFileSize
             // 
@@ -410,7 +410,7 @@
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(610, 387);
-            this.tabControl1.TabIndex = 9;
+            this.tabControl1.TabIndex = 0;
             // 
             // downloadTabPage
             // 
@@ -445,7 +445,7 @@
             this.btnPlaylistDownloadSelected.Location = new System.Drawing.Point(385, 332);
             this.btnPlaylistDownloadSelected.Name = "btnPlaylistDownloadSelected";
             this.btnPlaylistDownloadSelected.Size = new System.Drawing.Size(115, 23);
-            this.btnPlaylistDownloadSelected.TabIndex = 16;
+            this.btnPlaylistDownloadSelected.TabIndex = 1;
             this.btnPlaylistDownloadSelected.Text = "Download Selected";
             this.btnPlaylistDownloadSelected.UseVisualStyleBackColor = true;
             this.btnPlaylistDownloadSelected.Click += new System.EventHandler(this.btnPlaylistDownloadSelected_Click);
@@ -463,7 +463,7 @@
             this.lvPlaylistVideos.Location = new System.Drawing.Point(6, 143);
             this.lvPlaylistVideos.Name = "lvPlaylistVideos";
             this.lvPlaylistVideos.Size = new System.Drawing.Size(590, 183);
-            this.lvPlaylistVideos.TabIndex = 1;
+            this.lvPlaylistVideos.TabIndex = 0;
             this.lvPlaylistVideos.UseCompatibleStateImageBehavior = false;
             this.lvPlaylistVideos.View = System.Windows.Forms.View.Details;
             // 
@@ -505,7 +505,7 @@
             this.btnPlaylistPaste.Location = new System.Drawing.Point(562, 18);
             this.btnPlaylistPaste.Name = "btnPlaylistPaste";
             this.btnPlaylistPaste.Size = new System.Drawing.Size(22, 22);
-            this.btnPlaylistPaste.TabIndex = 16;
+            this.btnPlaylistPaste.TabIndex = 1;
             this.toolTip1.SetToolTip(this.btnPlaylistPaste, "Paste");
             this.btnPlaylistPaste.UseVisualStyleBackColor = true;
             this.btnPlaylistPaste.Click += new System.EventHandler(this.btnPlaylistPaste_Click);
@@ -516,7 +516,7 @@
             this.btnGetPlaylist.Location = new System.Drawing.Point(494, 102);
             this.btnGetPlaylist.Name = "btnGetPlaylist";
             this.btnGetPlaylist.Size = new System.Drawing.Size(90, 23);
-            this.btnGetPlaylist.TabIndex = 15;
+            this.btnGetPlaylist.TabIndex = 5;
             this.btnGetPlaylist.Text = "Get";
             this.btnGetPlaylist.UseVisualStyleBackColor = true;
             this.btnGetPlaylist.Click += new System.EventHandler(this.btnGetPlaylist_Click);
@@ -541,7 +541,7 @@
             this.cbPlaylistQuality.Location = new System.Drawing.Point(60, 45);
             this.cbPlaylistQuality.Name = "cbPlaylistQuality";
             this.cbPlaylistQuality.Size = new System.Drawing.Size(456, 21);
-            this.cbPlaylistQuality.TabIndex = 12;
+            this.cbPlaylistQuality.TabIndex = 2;
             this.cbPlaylistQuality.SelectedIndexChanged += new System.EventHandler(this.cbPlaylistQuality_SelectedIndexChanged);
             // 
             // btnPlaylistBrowse
@@ -550,7 +550,7 @@
             this.btnPlaylistBrowse.Location = new System.Drawing.Point(553, 71);
             this.btnPlaylistBrowse.Name = "btnPlaylistBrowse";
             this.btnPlaylistBrowse.Size = new System.Drawing.Size(31, 23);
-            this.btnPlaylistBrowse.TabIndex = 11;
+            this.btnPlaylistBrowse.TabIndex = 4;
             this.btnPlaylistBrowse.Text = "...";
             this.btnPlaylistBrowse.UseVisualStyleBackColor = true;
             this.btnPlaylistBrowse.Click += new System.EventHandler(this.btnPlaylistBrowse_Click);
@@ -572,7 +572,7 @@
             this.cbPlaylistSaveTo.Location = new System.Drawing.Point(60, 72);
             this.cbPlaylistSaveTo.Name = "cbPlaylistSaveTo";
             this.cbPlaylistSaveTo.Size = new System.Drawing.Size(487, 21);
-            this.cbPlaylistSaveTo.TabIndex = 9;
+            this.cbPlaylistSaveTo.TabIndex = 3;
             this.cbPlaylistSaveTo.SelectedIndexChanged += new System.EventHandler(this.cbPlaylistSaveTo_SelectedIndexChanged);
             // 
             // label12
@@ -591,7 +591,7 @@
             this.txtPlaylistLink.Location = new System.Drawing.Point(60, 19);
             this.txtPlaylistLink.Name = "txtPlaylistLink";
             this.txtPlaylistLink.Size = new System.Drawing.Size(496, 20);
-            this.txtPlaylistLink.TabIndex = 4;
+            this.txtPlaylistLink.TabIndex = 0;
             this.txtPlaylistLink.TextChanged += new System.EventHandler(this.txtPlaylistLink_TextChanged);
             // 
             // btnPlaylistDownloadAll
@@ -601,7 +601,7 @@
             this.btnPlaylistDownloadAll.Location = new System.Drawing.Point(506, 332);
             this.btnPlaylistDownloadAll.Name = "btnPlaylistDownloadAll";
             this.btnPlaylistDownloadAll.Size = new System.Drawing.Size(90, 23);
-            this.btnPlaylistDownloadAll.TabIndex = 8;
+            this.btnPlaylistDownloadAll.TabIndex = 2;
             this.btnPlaylistDownloadAll.Text = "Download All";
             this.btnPlaylistDownloadAll.UseVisualStyleBackColor = true;
             this.btnPlaylistDownloadAll.Click += new System.EventHandler(this.btnPlaylistDownloadAll_Click);
@@ -625,7 +625,7 @@
             this.btnCheckAgain.Location = new System.Drawing.Point(490, 286);
             this.btnCheckAgain.Name = "btnCheckAgain";
             this.btnCheckAgain.Size = new System.Drawing.Size(106, 23);
-            this.btnCheckAgain.TabIndex = 11;
+            this.btnCheckAgain.TabIndex = 0;
             this.btnCheckAgain.Text = "Check Again";
             this.btnCheckAgain.UseVisualStyleBackColor = true;
             this.btnCheckAgain.Visible = false;
@@ -731,7 +731,7 @@
             this.txtExtension.Location = new System.Drawing.Point(87, 64);
             this.txtExtension.Name = "txtExtension";
             this.txtExtension.Size = new System.Drawing.Size(100, 20);
-            this.txtExtension.TabIndex = 14;
+            this.txtExtension.TabIndex = 4;
             this.txtExtension.Text = "mp4";
             // 
             // label7
@@ -749,7 +749,7 @@
             this.btnBrowseOutputFolder.Location = new System.Drawing.Point(542, 31);
             this.btnBrowseOutputFolder.Name = "btnBrowseOutputFolder";
             this.btnBrowseOutputFolder.Size = new System.Drawing.Size(24, 22);
-            this.btnBrowseOutputFolder.TabIndex = 13;
+            this.btnBrowseOutputFolder.TabIndex = 3;
             this.btnBrowseOutputFolder.Text = "...";
             this.btnBrowseOutputFolder.UseVisualStyleBackColor = true;
             this.btnBrowseOutputFolder.Click += new System.EventHandler(this.btnBrowseOutputFolder_Click);
@@ -763,7 +763,7 @@
             this.txtInputFolder.Name = "txtInputFolder";
             this.txtInputFolder.ReadOnly = true;
             this.txtInputFolder.Size = new System.Drawing.Size(485, 20);
-            this.txtInputFolder.TabIndex = 10;
+            this.txtInputFolder.TabIndex = 0;
             // 
             // btnBrowseInputFolder
             // 
@@ -771,7 +771,7 @@
             this.btnBrowseInputFolder.Location = new System.Drawing.Point(542, 5);
             this.btnBrowseInputFolder.Name = "btnBrowseInputFolder";
             this.btnBrowseInputFolder.Size = new System.Drawing.Size(24, 22);
-            this.btnBrowseInputFolder.TabIndex = 12;
+            this.btnBrowseInputFolder.TabIndex = 1;
             this.btnBrowseInputFolder.Text = "...";
             this.btnBrowseInputFolder.UseVisualStyleBackColor = true;
             this.btnBrowseInputFolder.Click += new System.EventHandler(this.btnBrowseInputFolder_Click);
@@ -794,7 +794,7 @@
             this.txtOutputFolder.Name = "txtOutputFolder";
             this.txtOutputFolder.ReadOnly = true;
             this.txtOutputFolder.Size = new System.Drawing.Size(485, 20);
-            this.txtOutputFolder.TabIndex = 11;
+            this.txtOutputFolder.TabIndex = 2;
             // 
             // pConvertFile
             // 
@@ -883,7 +883,7 @@
             this.gCropping.Location = new System.Drawing.Point(6, 204);
             this.gCropping.Name = "gCropping";
             this.gCropping.Size = new System.Drawing.Size(372, 64);
-            this.gCropping.TabIndex = 5;
+            this.gCropping.TabIndex = 0;
             this.gCropping.TabStop = false;
             this.gCropping.Text = "Crop";
             // 
@@ -938,7 +938,7 @@
             this.btnConvert.Location = new System.Drawing.Point(509, 245);
             this.btnConvert.Name = "btnConvert";
             this.btnConvert.Size = new System.Drawing.Size(75, 23);
-            this.btnConvert.TabIndex = 4;
+            this.btnConvert.TabIndex = 1;
             this.btnConvert.Text = "Convert";
             this.btnConvert.UseVisualStyleBackColor = true;
             this.btnConvert.Click += new System.EventHandler(this.btnConvert_Click);
@@ -962,7 +962,7 @@
             this.chbAutoConvert.Location = new System.Drawing.Point(6, 338);
             this.chbAutoConvert.Name = "chbAutoConvert";
             this.chbAutoConvert.Size = new System.Drawing.Size(164, 17);
-            this.chbAutoConvert.TabIndex = 3;
+            this.chbAutoConvert.TabIndex = 1;
             this.chbAutoConvert.Text = "Convert to MP3 automatically";
             this.chbAutoConvert.UseVisualStyleBackColor = true;
             // 
@@ -982,7 +982,7 @@
             this.lvQueue.Location = new System.Drawing.Point(6, 6);
             this.lvQueue.Name = "lvQueue";
             this.lvQueue.Size = new System.Drawing.Size(590, 326);
-            this.lvQueue.TabIndex = 2;
+            this.lvQueue.TabIndex = 0;
             this.lvQueue.UseCompatibleStateImageBehavior = false;
             this.lvQueue.View = System.Windows.Forms.View.Details;
             // 
