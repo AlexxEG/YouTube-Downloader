@@ -210,6 +210,10 @@ namespace YouTube_Downloader_DLL.YoutubeDl
                         // Store file path
                         json_file = line.Substring(line.IndexOf(":") + 1).Trim();
                     }
+                    else if (line.Contains("Refetching age-gated info webpage"))
+                    {
+                        video.RequiresAuthentication = true;
+                    }
                 },
                 delegate (Process process, string error)
                 {
