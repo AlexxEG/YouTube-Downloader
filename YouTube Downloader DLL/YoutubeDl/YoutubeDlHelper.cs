@@ -10,7 +10,7 @@ using System.Windows.Forms;
 using YouTube_Downloader_DLL.Classes;
 using YouTube_Downloader_DLL.YoutubeDl;
 
-namespace YouTube_Downloader_DLL.Helpers
+namespace YouTube_Downloader_DLL.YoutubeDl
 {
     public class YoutubeDlHelper
     {
