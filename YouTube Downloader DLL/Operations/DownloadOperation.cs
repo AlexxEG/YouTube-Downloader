@@ -64,7 +64,7 @@ namespace YouTube_Downloader_DLL.Operations
             // If one or more files fail, whole operation failed. Might handle it more
             // elegantly in the future.
             this.Status = OperationStatus.Failed;
-            downloader.Stop(false);
+            downloader.Stop();
         }
 
         private void downloader_CalculatedTotalFileSize(object sender, EventArgs e)
@@ -156,11 +156,11 @@ namespace YouTube_Downloader_DLL.Operations
             this.Status = OperationStatus.Working;
         }
 
-        public override bool Stop(bool cleanup)
+        public override bool Stop()
         {
             // Stop downloader if still running.
             if (downloader != null && downloader.CanStop)
-                downloader.Stop(cleanup);
+                downloader.Stop();
 
             // Don't set status to canceled if already successful.
             if (this.Status != OperationStatus.Success)
@@ -301,8 +301,12 @@ namespace YouTube_Downloader_DLL.Operations
 
                     Regex regex = new Regex(@"^(\w:.*\\.*)(\..*)$");
 
-                    downloader.Files.Add(new FileDownload(regex.Replace(this.Output, "$1_audio$2"), (string)args[ArgKeys.Audio]));
-                    downloader.Files.Add(new FileDownload(regex.Replace(this.Output, "$1_video$2"), (string)args[ArgKeys.Video]));
+                    downloader.Files.Add(new FileDownload(regex.Replace(this.Output, "$1_audio$2"),
+                                                          (string)args[ArgKeys.Audio],
+                                                          true));
+                    downloader.Files.Add(new FileDownload(regex.Replace(this.Output, "$1_video$2"),
+                                                          (string)args[ArgKeys.Video],
+                                                          true));
 
                     // Delete _audio and _video files in case they exists from a previous attempt
                     Helper.DeleteFiles(downloader.Files[0].Path,

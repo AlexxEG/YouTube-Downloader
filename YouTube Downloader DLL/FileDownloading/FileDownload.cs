@@ -4,6 +4,7 @@ namespace YouTube_Downloader_DLL.FileDownloading
 {
     public class FileDownload
     {
+        public bool AlwaysCleanupOnCancel { get; set; }
         public bool IsFinished { get; set; }
 
         public long Progress { get; set; }
@@ -24,6 +25,12 @@ namespace YouTube_Downloader_DLL.FileDownloading
         {
             this.Path = path;
             this.Url = url;
+        }
+
+        public FileDownload(string path, string url, bool alwaysCleanupOnCancel)
+            : this(path, url)
+        {
+            this.AlwaysCleanupOnCancel = alwaysCleanupOnCancel;
         }
     }
 }

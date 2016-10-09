@@ -175,7 +175,7 @@ namespace YouTube_Downloader_DLL.Operations
             }
         }
 
-        public override bool Stop(bool cleanup)
+        public override bool Stop()
         {
             if (this.IsBusy)
                 this.CancelAsync();
@@ -308,7 +308,7 @@ namespace YouTube_Downloader_DLL.Operations
                     {
                         if (this.CancellationPending)
                         {
-                            downloader.Stop(false);
+                            downloader.Stop();
                             break;
                         }
 

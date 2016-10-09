@@ -1008,7 +1008,7 @@ namespace YouTube_Downloader
             {
                 Operation operation = item.Operation;
 
-                if (operation.CanStop()) operation.Stop(true);
+                if (operation.CanStop()) operation.Stop();
             }
         }
 
@@ -1019,7 +1019,7 @@ namespace YouTube_Downloader
                 var item = (OperationListViewItem)lvQueue.SelectedItems[i];
                 var operation = item.Operation;
 
-                operation.Stop(true);
+                operation.Stop();
 
                 lvQueue.Items.RemoveAt(item.Index);
             }
@@ -1048,7 +1048,7 @@ namespace YouTube_Downloader
             {
                 // Stop & delete unfinished files
                 if (operation.CanStop())
-                    operation.Stop(true);
+                    operation.Stop();
             }
 
             if (bwGetVideo.IsBusy)

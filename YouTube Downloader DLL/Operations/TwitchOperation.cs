@@ -68,7 +68,7 @@ namespace YouTube_Downloader_DLL.Operations
             return true;
         }
 
-        public override bool Stop(bool cleanup)
+        public override bool Stop()
         {
             _cts.Cancel();
             return true;

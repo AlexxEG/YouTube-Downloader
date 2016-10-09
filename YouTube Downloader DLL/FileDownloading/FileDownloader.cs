@@ -143,7 +143,7 @@ namespace YouTube_Downloader_DLL.FileDownloading
             this.OnStarted();
         }
 
-        public void Stop(bool deleteUnfinishedFiles)
+        public void Stop()
         {
             this.IsBusy = false;
             this.IsPaused = false;
@@ -154,9 +154,9 @@ namespace YouTube_Downloader_DLL.FileDownloading
             this.OnCanceled();
         }
 
-        public Double TotalPercentage()
+        public double TotalPercentage()
         {
-            return Math.Round((Double)this.TotalProgress / this.TotalSize * 100, 2);
+            return Math.Round((double)this.TotalProgress / this.TotalSize * 100, 2);
         }
 
         private void CalculateTotalFileSize()
@@ -189,7 +189,7 @@ namespace YouTube_Downloader_DLL.FileDownloading
 
                 foreach (var file in this.Files)
                 {
-                    if (!file.IsFinished)
+                    if (file.AlwaysCleanupOnCancel || !file.IsFinished)
                     {
                         dict.Add(file.Path, 0);
                         keys.Add(file.Path);

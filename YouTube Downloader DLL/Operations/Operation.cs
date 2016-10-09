@@ -529,7 +529,7 @@ namespace YouTube_Downloader_DLL.Operations
         /// </summary>
         /// <param name="remove">Remove operation from it's ListView if set to true.</param>
         /// <param name="cleanup">Delete unfinished files if set to true.</param>
-        public virtual bool Stop(bool cleanup)
+        public virtual bool Stop()
         {
             throw new NotSupportedException();
         }
