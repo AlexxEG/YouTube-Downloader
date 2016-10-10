@@ -98,20 +98,6 @@ namespace YouTube_Downloader
         {
             this.LoadSettings();
 
-#if DEBUG
-            this.AddDummyDownloadOperation(60000);
-            this.AddDummyDownloadOperation(60000);
-            this.AddDummyDownloadOperation(60000);
-            this.AddDummyDownloadOperation(60000);
-            this.AddDummyDownloadOperation(60000);
-            this.AddDummyDownloadOperation(60000);
-            this.AddDummyDownloadOperation(60000);
-            this.AddDummyDownloadOperation(60000);
-            this.AddDummyDownloadOperation(60000);
-            this.AddDummyDownloadOperation(60000);
-            this.AddDummyDownloadOperation(60000);
-#endif
-
             tabControl1.SelectedIndex = 3;
         }
 
