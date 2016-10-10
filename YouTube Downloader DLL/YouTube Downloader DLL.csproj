@@ -54,6 +54,7 @@
     <Compile Include="Classes\QuickPlaylist.cs" />
     <Compile Include="Classes\QuickVideoInfo.cs" />
     <Compile Include="FFmpeg\FFmpegHelper.cs" />
+    <Compile Include="DummyOperations\DummyDownloadOperation.cs" />
     <Compile Include="FileDownloading\FileDownload.cs" />
     <Compile Include="FileDownloading\FileDownloader.cs" />
     <Compile Include="FileDownloading\FileDownloadEventArgs.cs" />
@@ -70,6 +71,7 @@
     <Compile Include="Classes\VideoInfo.cs" />
     <Compile Include="Classes\VideoSource.cs" />
     <Compile Include="YoutubeDl\YoutubeDlHelper.cs" />
+    <Compile Include="Helpers\DownloadQueueHandler.cs" />
     <Compile Include="Dialogs\OpenFolderDialog.cs" />
     <Compile Include="Enums\ConvertingMode.cs" />
     <Compile Include="FFmpeg\FFmpegFileType.cs" />
@@ -82,6 +84,8 @@
     <Compile Include="Operations\OperationEventHandler.cs" />
     <Compile Include="Operations\OperationStatus.cs" />
     <Compile Include="Operations\PlaylistOperation.cs" />
+    <Compile Include="Operations\StatusChangedEventArgs.cs" />
+    <Compile Include="Operations\StatusChangedEventHandler.cs" />
     <Compile Include="Operations\TwitchOperation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

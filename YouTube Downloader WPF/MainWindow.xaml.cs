@@ -324,24 +324,26 @@ namespace YouTube_Downloader_WPF
 
                 if (VideoInformation.VideoSource == VideoSource.Twitch)
                 {
-                    operation.Start(TwitchOperation.Args(Path.Combine(path, filename), this.SelectedFormat));
+                    operation.Prepare(TwitchOperation.Args(Path.Combine(path, filename), this.SelectedFormat));
                 }
                 else
                 {
                     if (this.SelectedFormat.AudioOnly || this.SelectedFormat.FormatType == FormatType.Normal)
-                        operation.Start(DownloadOperation.Args(this.SelectedFormat.DownloadUrl,
-                            Path.Combine(path, filename)));
+                        operation.Prepare(DownloadOperation.Args(this.SelectedFormat.DownloadUrl,
+                                                                 Path.Combine(path, filename)));
                     else
                     {
                         VideoFormat audio = Helper.GetAudioFormat(this.SelectedFormat);
 
-                        operation.Start(DownloadOperation.Args(audio.DownloadUrl,
-                            this.SelectedFormat.DownloadUrl,
-                            Path.Combine(path, filename)));
+                        operation.Prepare(DownloadOperation.Args(audio.DownloadUrl,
+                                                                 this.SelectedFormat.DownloadUrl,
+                                                                 Path.Combine(path, filename)));
                     }
                 }
 
                 TabControl.SelectedIndex = 3;
+
+                DownloadQueueHandler.Add(operation);
             }
             catch (Exception ex)
             {
@@ -630,7 +632,7 @@ namespace YouTube_Downloader_WPF
                 this.SelectOneItem(operation);
 
                 operation.FileDownloadComplete += playlistOperation_FileDownloadComplete;
-                operation.Start(operation.Args(this.PlaylistLink.Text,
+                operation.Prepare(operation.Args(this.PlaylistLink.Text,
                                     path,
                                     settings.UseDashPlaylist,
                                     Settings.Default.PreferredQualityPlaylist,
@@ -639,6 +641,8 @@ namespace YouTube_Downloader_WPF
                                 );
 
                 TabControl.SelectedIndex = 3;
+
+                DownloadQueueHandler.Add(operation);
             }
             catch (Exception ex)
             {
@@ -907,7 +911,9 @@ namespace YouTube_Downloader_WPF
             this.Queue.Add(operation);
             this.SelectOneItem(operation);
 
-            operation.Start(operation.Args(input, output, start, end));
+            operation.Prepare(operation.Args(input, output, start, end));
+
+            DownloadQueueHandler.Add(operation);
 
             return operation;
         }
@@ -925,7 +931,9 @@ namespace YouTube_Downloader_WPF
             this.Queue.Add(operation);
             this.SelectOneItem(operation);
 
-            operation.Start(operation.Args(input, output, extension));
+            operation.Prepare(operation.Args(input, output, extension));
+
+            DownloadQueueHandler.Add(operation);
         }
 
         /// <summary>
@@ -947,7 +955,9 @@ namespace YouTube_Downloader_WPF
             this.Queue.Add(operation);
             this.SelectOneItem(operation);
 
-            operation.Start(operation.Args(input, output, start, end));
+            operation.Prepare(operation.Args(input, output, start, end));
+
+            DownloadQueueHandler.Add(operation);
         }
 
         /// <summary>

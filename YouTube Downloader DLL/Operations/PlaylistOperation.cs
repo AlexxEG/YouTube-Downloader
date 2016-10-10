@@ -165,7 +165,7 @@ namespace YouTube_Downloader_DLL.Operations
             }
         }
 
-        public override void Resume()
+        protected override void ResumeInternal()
         {
             // Only the downloader can be resumed.
             if (downloader.CanResume)

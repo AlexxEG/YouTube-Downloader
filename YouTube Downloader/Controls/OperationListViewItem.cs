@@ -104,6 +104,9 @@ namespace YouTube_Downloader.Controls
             this.Operation.ReportsProgressChanged += Operation_ReportsProgressChanged;
             this.Operation.Started += Operation_Started;
             this.Operation.StatusChanged += Operation_StatusChanged;
+
+            // Set Status text, so it's not empty until a StatusChanged event is fired
+            this.Operation_StatusChanged(this, EventArgs.Empty);
         }
 
         private void OnOperationComplete(OperationEventArgs e)
@@ -215,17 +218,14 @@ namespace YouTube_Downloader.Controls
         {
             switch (this.Operation.Status)
             {
-                case OperationStatus.Canceled:
-                    this.Status = "Canceled";
-                    break;
-                case OperationStatus.Failed:
-                    this.Status = "Failed";
-                    break;
                 case OperationStatus.Success:
                     this.Status = "Completed";
                     break;
+                case OperationStatus.Canceled:
+                case OperationStatus.Failed:
                 case OperationStatus.Paused:
-                    this.Status = "Paused";
+                case OperationStatus.Queued:
+                    this.Status = this.Operation.Status.ToString();
                     break;
                 case OperationStatus.Working:
                     if (!string.IsNullOrEmpty(this.WorkingText))

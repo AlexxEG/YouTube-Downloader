@@ -68,6 +68,24 @@ namespace YouTube_Downloader_DLL.Operations
             return true;
         }
 
+        public override void Pause()
+        {
+            // ToDo
+            base.Pause();
+        }
+
+        public override void Queue()
+        {
+            // ToDo
+            base.Queue();
+        }
+
+        protected override void ResumeInternal()
+        {
+            // ToDo
+            base.ResumeInternal();
+        }
+
         public override bool Stop()
         {
             _cts.Cancel();
@@ -77,6 +95,18 @@ namespace YouTube_Downloader_DLL.Operations
         public override bool CanOpen()
         {
             return this.Status == OperationStatus.Success;
+        }
+
+        public override bool CanPause()
+        {
+            // ToDo
+            return base.CanPause();
+        }
+
+        public override bool CanResume()
+        {
+            // ToDo
+            return base.CanResume();
         }
 
         public override bool CanStop()

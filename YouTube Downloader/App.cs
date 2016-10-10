@@ -1,4 +1,6 @@
 ﻿using Microsoft.VisualBasic.ApplicationServices;
+using YouTube_Downloader.Properties;
+using YouTube_Downloader_DLL.Helpers;
 
 namespace YouTube_Downloader
 {
@@ -16,6 +18,9 @@ namespace YouTube_Downloader
             string[] args = new string[this.CommandLineArgs.Count];
 
             this.CommandLineArgs.CopyTo(args, 0);
+            
+            DownloadQueueHandler.LimitDownloads = Settings.Default.ShowMaxSimDownloads;
+            DownloadQueueHandler.StartWatching(Settings.Default.MaxSimDownloads);
 
             if (this.CommandLineArgs.Count > 0)
                 this.MainForm = new MainForm(args);
@@ -32,6 +37,12 @@ namespace YouTube_Downloader
                 MainForm mainForm = (MainForm)this.MainForm;
                 mainForm.InsertVideo(eventArgs.CommandLine[0]);
             }
+        }
+
+        protected override void OnShutdown()
+        {
+            DownloadQueueHandler.Stop();
+            base.OnShutdown();
         }
     }
 }

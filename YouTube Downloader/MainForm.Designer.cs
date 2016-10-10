@@ -106,6 +106,9 @@
             this.mtxtFrom = new System.Windows.Forms.MaskedTextBox();
             this.btnConvert = new System.Windows.Forms.Button();
             this.queueTabPage = new System.Windows.Forms.TabPage();
+            this.btnMaxSimDownloadsApply = new System.Windows.Forms.Button();
+            this.nudMaxSimDownloads = new System.Windows.Forms.NumericUpDown();
+            this.lMaxSimDownloads = new System.Windows.Forms.Label();
             this.chbAutoConvert = new System.Windows.Forms.CheckBox();
             this.lvQueue = new ListViewEmbeddedControls.ListViewEx();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -134,6 +137,7 @@
             this.pConvertFile.SuspendLayout();
             this.gCropping.SuspendLayout();
             this.queueTabPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMaxSimDownloads)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -945,6 +949,9 @@
             // 
             // queueTabPage
             // 
+            this.queueTabPage.Controls.Add(this.btnMaxSimDownloadsApply);
+            this.queueTabPage.Controls.Add(this.nudMaxSimDownloads);
+            this.queueTabPage.Controls.Add(this.lMaxSimDownloads);
             this.queueTabPage.Controls.Add(this.chbAutoConvert);
             this.queueTabPage.Controls.Add(this.lvQueue);
             this.queueTabPage.Location = new System.Drawing.Point(4, 22);
@@ -954,6 +961,52 @@
             this.queueTabPage.TabIndex = 1;
             this.queueTabPage.Text = "Queue";
             this.queueTabPage.UseVisualStyleBackColor = true;
+            // 
+            // btnMaxSimDownloadsApply
+            // 
+            this.btnMaxSimDownloadsApply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnMaxSimDownloadsApply.Enabled = false;
+            this.btnMaxSimDownloadsApply.Location = new System.Drawing.Point(521, 336);
+            this.btnMaxSimDownloadsApply.Name = "btnMaxSimDownloadsApply";
+            this.btnMaxSimDownloadsApply.Size = new System.Drawing.Size(75, 22);
+            this.btnMaxSimDownloadsApply.TabIndex = 6;
+            this.btnMaxSimDownloadsApply.Text = "Apply";
+            this.btnMaxSimDownloadsApply.UseVisualStyleBackColor = true;
+            this.btnMaxSimDownloadsApply.Click += new System.EventHandler(this.btnMaxSimDownloadsApply_Click);
+            // 
+            // nudMaxSimDownloads
+            // 
+            this.nudMaxSimDownloads.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.nudMaxSimDownloads.Location = new System.Drawing.Point(475, 337);
+            this.nudMaxSimDownloads.Maximum = new decimal(new int[] {
+            999,
+            0,
+            0,
+            0});
+            this.nudMaxSimDownloads.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudMaxSimDownloads.Name = "nudMaxSimDownloads";
+            this.nudMaxSimDownloads.Size = new System.Drawing.Size(43, 20);
+            this.nudMaxSimDownloads.TabIndex = 5;
+            this.nudMaxSimDownloads.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.nudMaxSimDownloads.ValueChanged += new System.EventHandler(this.nudMaxSimDownloads_ValueChanged);
+            // 
+            // lMaxSimDownloads
+            // 
+            this.lMaxSimDownloads.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.lMaxSimDownloads.AutoSize = true;
+            this.lMaxSimDownloads.Location = new System.Drawing.Point(329, 339);
+            this.lMaxSimDownloads.Name = "lMaxSimDownloads";
+            this.lMaxSimDownloads.Size = new System.Drawing.Size(148, 13);
+            this.lMaxSimDownloads.TabIndex = 4;
+            this.lMaxSimDownloads.Text = "Max simultaneous downloads:";
             // 
             // chbAutoConvert
             // 
@@ -1072,6 +1125,7 @@
             this.gCropping.PerformLayout();
             this.queueTabPage.ResumeLayout(false);
             this.queueTabPage.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMaxSimDownloads)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1168,6 +1222,9 @@
         private System.Windows.Forms.ImageList imageList1;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.Button btnPlaylistPaste;
+        private System.Windows.Forms.Button btnMaxSimDownloadsApply;
+        private System.Windows.Forms.NumericUpDown nudMaxSimDownloads;
+        private System.Windows.Forms.Label lMaxSimDownloads;
     }
 }
 

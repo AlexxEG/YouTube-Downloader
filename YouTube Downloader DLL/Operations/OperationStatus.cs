@@ -7,6 +7,7 @@
         None,
         Paused,
         Success,
+        Queued,
         Working
     }
 }

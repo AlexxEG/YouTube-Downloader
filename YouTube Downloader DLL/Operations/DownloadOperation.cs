@@ -149,7 +149,14 @@ namespace YouTube_Downloader_DLL.Operations
             this.Status = OperationStatus.Paused;
         }
 
-        public override void Resume()
+        public override void Queue()
+        {
+            downloader.Pause();
+
+            this.Status = OperationStatus.Queued;
+        }
+
+        protected override void ResumeInternal()
         {
             downloader.Resume();
 
@@ -183,7 +190,7 @@ namespace YouTube_Downloader_DLL.Operations
         public override bool CanResume()
         {
             // Only downloader can resume.
-            return downloader.CanResume && this.Status == OperationStatus.Paused;
+            return downloader.CanResume && (this.IsPaused || this.IsQueued);
         }
 
         public override bool CanStop()

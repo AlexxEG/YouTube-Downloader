@@ -31,37 +31,33 @@ namespace YouTube_Downloader_DLL.Operations
         public event OperationEventHandler Completed;
         public event ProgressChangedEventHandler ProgressChanged;
         public event EventHandler ReportsProgressChanged;
+        public event EventHandler Resumed;
         public event EventHandler Started;
-        public event EventHandler StatusChanged;
+        public event StatusChangedEventHandler StatusChanged;
 
         protected virtual void OnCompleted(OperationEventArgs e)
         {
-            if (this.Completed != null)
-                this.Completed(this, e);
+            this.Completed?.Invoke(this, e);
         }
 
         protected virtual void OnProgressChanged(ProgressChangedEventArgs e)
         {
-            if (this.ProgressChanged != null)
-                this.ProgressChanged(this, e);
+            this.ProgressChanged?.Invoke(this, e);
         }
 
         protected virtual void OnReportsProgressChanged(EventArgs e)
         {
-            if (this.ReportsProgressChanged != null)
-                this.ReportsProgressChanged(this, e);
+            this.ReportsProgressChanged?.Invoke(this, e);
         }
 
         protected virtual void OnStarted(EventArgs e)
         {
-            if (this.Started != null)
-                this.Started(this, e);
+            this.Started?.Invoke(this, e);
         }
 
-        protected virtual void OnStatusChanged(EventArgs e)
+        protected virtual void OnStatusChanged(StatusChangedEventArgs e)
         {
-            if (this.StatusChanged != null)
-                this.StatusChanged(this, e);
+            this.StatusChanged?.Invoke(this, e);
         }
 
         #endregion
@@ -70,6 +66,7 @@ namespace YouTube_Downloader_DLL.Operations
 
         int _progressPercentage = 0;
 
+        bool _prepared = false;
         bool _reportsProgress = false;
 
         long _duration;
@@ -86,7 +83,7 @@ namespace YouTube_Downloader_DLL.Operations
         string _title;
 
         List<string> _errors = new List<string>();
-        OperationStatus _status = OperationStatus.None;
+        OperationStatus _status = OperationStatus.Queued;
 
         Stopwatch sw;
         BackgroundWorker _worker;
@@ -105,6 +102,8 @@ namespace YouTube_Downloader_DLL.Operations
                 return _worker.CancellationPending;
             }
         }
+
+        public bool HasStarted { get; set; }
 
         public bool IsBusy
         {
@@ -151,6 +150,14 @@ namespace YouTube_Downloader_DLL.Operations
             get
             {
                 return this.Status == OperationStatus.Success;
+            }
+        }
+
+        public bool IsQueued
+        {
+            get
+            {
+                return this.Status == OperationStatus.Queued;
             }
         }
 
@@ -359,18 +366,20 @@ namespace YouTube_Downloader_DLL.Operations
             get { return _status; }
             set
             {
+                var oldStatus = _status;
+
                 _status = value;
 
-                this.OnStatusChanged(EventArgs.Empty);
+                this.OnStatusChanged(new StatusChangedEventArgs(this, value, oldStatus));
                 this.OnPropertyChanged();
 
                 // Send Changed notification to following properties
                 foreach (string property in new string[] {
-                    "IsCanceled",
-                    "IsDone",
-                    "IsPaused",
-                    "IsSuccessful",
-                    "IsWorking" })
+                    nameof(IsCanceled),
+                    nameof(IsDone),
+                    nameof(IsPaused),
+                    nameof(IsSuccessful),
+                    nameof(IsWorking) })
                 {
                     this.OnPropertyChangedExplicit(property);
                 }
@@ -385,6 +394,11 @@ namespace YouTube_Downloader_DLL.Operations
             get { return _errors; }
             set { _errors = value; }
         }
+
+        /// <summary>
+        /// Gets or sets the Operation's arguments.
+        /// </summary>
+        protected Dictionary<string, object> Arguments { get; set; }
 
         #endregion
 
@@ -436,12 +450,13 @@ namespace YouTube_Downloader_DLL.Operations
 
         #endregion
 
-        public void Start(Dictionary<string, object> args)
+        /// <summary>
+        /// Prepares the operation before starting, giving it all the data it requires.
+        /// </summary>
+        /// <param name="args"></param>
+        public void Prepare(Dictionary<string, object> args)
         {
-            WorkerStart(args);
-
-            sw = new Stopwatch();
-            sw.Start();
+            this.Arguments = args;
 
             _worker = new BackgroundWorker()
             {
@@ -451,12 +466,52 @@ namespace YouTube_Downloader_DLL.Operations
             _worker.DoWork += Worker_DoWork;
             _worker.ProgressChanged += Worker_ProgressChanged;
             _worker.RunWorkerCompleted += Worker_Completed;
-            _worker.RunWorkerAsync(args);
+
+            _prepared = true;
+        }
+
+        /// <summary>
+        /// Resumes the operation if supported &amp; available.
+        /// </summary>
+        public void Resume()
+        {
+            if (!this.HasStarted)
+                this.Start();
+            else
+                this.ResumeInternal();
+
+            this.Resumed?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// Resumes the operation if supported &amp; available, but does not fire the Resumed event.
+        /// </summary>
+        public void ResumeQuiet()
+        {
+            this.ResumeInternal();
+        }
+
+        /// <summary>
+        /// Starts the operation.
+        /// </summary>
+        public void Start()
+        {
+            if (!_prepared)
+                throw new Exception("Operation can't be started before being prepared.");
+
+            WorkerStart(this.Arguments);
+
+            sw = new Stopwatch();
+            sw.Start();
+
+            _worker.RunWorkerAsync(this.Arguments);
 
             Operation.Running.Add(this);
 
             this.Status = OperationStatus.Working;
             this.OnStarted(EventArgs.Empty);
+
+            this.HasStarted = true;
         }
 
         /// <summary>
@@ -517,9 +572,17 @@ namespace YouTube_Downloader_DLL.Operations
         }
 
         /// <summary>
+        /// Queues the operation. Used to pause and put the operation back to being queued.
+        /// </summary>
+        public virtual void Queue()
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
         /// Resumes the operation if supported &amp; available.
         /// </summary>
-        public virtual void Resume()
+        protected virtual void ResumeInternal()
         {
             throw new NotSupportedException();
         }

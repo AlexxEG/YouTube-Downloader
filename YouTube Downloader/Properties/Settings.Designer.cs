@@ -128,5 +128,29 @@ namespace YouTube_Downloader.Properties {
                 this["LastPlaylistUrl"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ShowMaxSimDownloads {
+            get {
+                return ((bool)(this["ShowMaxSimDownloads"]));
+            }
+            set {
+                this["ShowMaxSimDownloads"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public int MaxSimDownloads {
+            get {
+                return ((int)(this["MaxSimDownloads"]));
+            }
+            set {
+                this["MaxSimDownloads"] = value;
+            }
+        }
     }
 }

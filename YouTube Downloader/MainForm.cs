@@ -13,7 +13,9 @@ using YouTube_Downloader.Properties;
 using YouTube_Downloader_DLL;
 using YouTube_Downloader_DLL.Classes;
 using YouTube_Downloader_DLL.Dialogs;
+using YouTube_Downloader_DLL.DummyOperations;
 using YouTube_Downloader_DLL.FFmpeg;
+using YouTube_Downloader_DLL.Helpers;
 using YouTube_Downloader_DLL.Operations;
 using YouTube_Downloader_DLL.YoutubeDl;
 
@@ -85,6 +87,7 @@ namespace YouTube_Downloader
             _settings.SaveToDirectories.AddRange(paths);
             _settings.SelectedDirectory = cbSaveTo.SelectedIndex;
             _settings.AutoConvert = chbAutoConvert.Checked;
+            _settings.MaxSimDownloads = (int)nudMaxSimDownloads.Value;
 
             _settings.Save();
 
@@ -93,7 +96,23 @@ namespace YouTube_Downloader
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            LoadSettings();
+            this.LoadSettings();
+
+#if DEBUG
+            this.AddDummyDownloadOperation(60000);
+            this.AddDummyDownloadOperation(60000);
+            this.AddDummyDownloadOperation(60000);
+            this.AddDummyDownloadOperation(60000);
+            this.AddDummyDownloadOperation(60000);
+            this.AddDummyDownloadOperation(60000);
+            this.AddDummyDownloadOperation(60000);
+            this.AddDummyDownloadOperation(60000);
+            this.AddDummyDownloadOperation(60000);
+            this.AddDummyDownloadOperation(60000);
+            this.AddDummyDownloadOperation(60000);
+#endif
+
+            tabControl1.SelectedIndex = 3;
         }
 
         private void MainForm_Shown(object sender, EventArgs e)
@@ -128,6 +147,20 @@ namespace YouTube_Downloader
             }
         }
 
+        private void nudMaxSimDownloads_ValueChanged(object sender, EventArgs e)
+        {
+            btnMaxSimDownloadsApply.Enabled = nudMaxSimDownloads.Value != Settings.Default.MaxSimDownloads;
+        }
+
+        private void btnMaxSimDownloadsApply_Click(object sender, EventArgs e)
+        {
+            Settings.Default.MaxSimDownloads = (int)nudMaxSimDownloads.Value;
+
+            DownloadQueueHandler.MaxDownloads = (int)nudMaxSimDownloads.Value;
+
+            nudMaxSimDownloads_ValueChanged(sender, e);
+        }
+
         #region Download Tab
 
         private void btnPaste_Click(object sender, EventArgs e)
@@ -142,6 +175,13 @@ namespace YouTube_Downloader
 
         private void btnGetVideo_Click(object sender, EventArgs e)
         {
+            // ToDo: Remove this when Twitch support is fixed
+            if (Helper.IsValidTwitchUrl(txtYoutubeLink.Text))
+            {
+                MessageBox.Show(this, "Twitch support is currently broken.");
+                return;
+            }
+
             if (!Helper.IsValidUrl(txtYoutubeLink.Text))
             {
                 MessageBox.Show(this, "Input link is not a valid Twitch/YouTube link.", "Invalid URL", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -243,25 +283,27 @@ namespace YouTube_Downloader
 
                 if (_selectedVideo.VideoSource == VideoSource.Twitch)
                 {
-                    operation.Start(TwitchOperation.Args(Path.Combine(path, filename),
-                        tempFormat));
+                    operation.Prepare(TwitchOperation.Args(Path.Combine(path, filename),
+                                                           tempFormat));
                 }
                 else
                 {
                     if (tempFormat.AudioOnly || tempFormat.HasAudioAndVideo)
-                        operation.Start(DownloadOperation.Args(tempFormat.DownloadUrl,
-                            Path.Combine(path, filename)));
+                        operation.Prepare(DownloadOperation.Args(tempFormat.DownloadUrl,
+                                                                 Path.Combine(path, filename)));
                     else
                     {
                         VideoFormat audio = Helper.GetAudioFormat(tempFormat);
 
-                        operation.Start(DownloadOperation.Args(audio.DownloadUrl,
-                            tempFormat.DownloadUrl,
-                            Path.Combine(path, filename)));
+                        operation.Prepare(DownloadOperation.Args(audio.DownloadUrl,
+                                                                 tempFormat.DownloadUrl,
+                                                                 Path.Combine(path, filename)));
                     }
                 }
 
                 tabControl1.SelectedTab = queueTabPage;
+
+                DownloadQueueHandler.Add(operation);
             }
             catch (Exception ex)
             {
@@ -601,13 +643,15 @@ namespace YouTube_Downloader
                 operation.Combined += PlaylistOperation_Combined;
                 operation.Combining += PlaylistOperation_Combining;
                 operation.FileDownloadComplete += playlistOperation_FileDownloadComplete;
-                operation.Start(operation.Args(txtPlaylistLink.Text,
+                operation.Prepare(operation.Args(txtPlaylistLink.Text,
                                     path,
                                     Settings.Default.PreferredQualityPlaylist,
                                     videos)
                                 );
 
                 tabControl1.SelectedTab = queueTabPage;
+
+                DownloadQueueHandler.Add(operation);
             }
             catch (Exception ex)
             {
@@ -855,6 +899,11 @@ namespace YouTube_Downloader
             {
                 if (of.ShowDialog(this) == DialogResult.OK)
                 {
+                    this.ShowMaxSimDownloads();
+
+                    DownloadQueueHandler.LimitDownloads = Settings.Default.ShowMaxSimDownloads;
+
+                    // Refresh video formats, in case included formats has changed
                     if (_selectedVideo != null)
                     {
                         cbQuality.Items.Clear();
@@ -1037,6 +1086,23 @@ namespace YouTube_Downloader
             btnGetVideo.PerformClick();
         }
 
+        private void AddDummyDownloadOperation(long workTimeMS)
+        {
+            Operation operation = new DummyDownloadOperation(workTimeMS);
+
+            var item = new OperationListViewItem(operation.Title, operation.Link, operation);
+
+            item.Duration = Helper.FormatVideoLength(operation.Duration);
+            item.FileSize = Helper.FormatFileSize(operation.FileSize);
+
+            lvQueue.Items.Add(item);
+            item.SetupEmbeddedControls();
+
+            operation.Prepare(null);
+
+            DownloadQueueHandler.Add(operation);
+        }
+
         /// <summary>
         /// Cancels all active IOperations.
         /// </summary>
@@ -1098,7 +1164,9 @@ namespace YouTube_Downloader
 
             this.SelectOneItem(item);
 
-            operation.Start(operation.Args(input, output, start, end));
+            operation.Prepare(operation.Args(input, output, start, end));
+
+            DownloadQueueHandler.Add(operation);
 
             return item;
         }
@@ -1121,7 +1189,9 @@ namespace YouTube_Downloader
 
             this.SelectOneItem(item);
 
-            operation.Start(operation.Args(input, output, extension));
+            operation.Prepare(operation.Args(input, output, extension));
+
+            DownloadQueueHandler.Add(operation);
         }
 
         /// <summary>
@@ -1153,7 +1223,9 @@ namespace YouTube_Downloader
 
             this.SelectOneItem(item);
 
-            operation.Start(operation.Args(input, output, start, end));
+            operation.Prepare(operation.Args(input, output, start, end));
+
+            DownloadQueueHandler.Add(operation);
         }
 
         /// <summary>
@@ -1232,6 +1304,8 @@ namespace YouTube_Downloader
             // Restore last used links
             if (_settings.LastYouTubeUrl != null) txtYoutubeLink.Text = _settings.LastYouTubeUrl;
             if (_settings.LastPlaylistUrl != null) txtPlaylistLink.Text = _settings.LastPlaylistUrl;
+
+            this.ShowMaxSimDownloads();
         }
 
         /// <summary>
@@ -1244,6 +1318,18 @@ namespace YouTube_Downloader
                 lvi.Selected = false;
 
             item.Selected = true;
+        }
+
+        /// <summary>
+        /// Shows or hides the "Max simultaneous downloads" option under queue depending on Settings.
+        /// </summary>
+        private void ShowMaxSimDownloads()
+        {
+            nudMaxSimDownloads.Value = Settings.Default.MaxSimDownloads;
+
+            lMaxSimDownloads.Visible =
+                nudMaxSimDownloads.Visible =
+                btnMaxSimDownloadsApply.Visible = Settings.Default.ShowMaxSimDownloads;
         }
 
         /// <summary>
