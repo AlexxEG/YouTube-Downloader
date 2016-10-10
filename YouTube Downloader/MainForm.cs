@@ -97,8 +97,6 @@ namespace YouTube_Downloader
         private void MainForm_Load(object sender, EventArgs e)
         {
             this.LoadSettings();
-
-            tabControl1.SelectedIndex = 3;
         }
 
         private void MainForm_Shown(object sender, EventArgs e)
