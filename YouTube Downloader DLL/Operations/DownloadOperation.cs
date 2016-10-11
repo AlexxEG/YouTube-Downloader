@@ -184,7 +184,7 @@ namespace YouTube_Downloader_DLL.Operations
         public override bool CanPause()
         {
             // Only downloader can pause.
-            return downloader.CanPause && this.Status == OperationStatus.Working;
+            return downloader != null && downloader.CanPause && this.Status == OperationStatus.Working;
         }
 
         public override bool CanResume()
