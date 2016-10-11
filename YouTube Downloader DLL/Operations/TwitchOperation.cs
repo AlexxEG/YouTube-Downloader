@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
 using System.Threading;
 using YouTube_Downloader_DLL.Classes;
+using YouTube_Downloader_DLL.FFmpeg;
 using YouTube_Downloader_DLL.YoutubeDl;
 
 namespace YouTube_Downloader_DLL.Operations
@@ -18,9 +20,11 @@ namespace YouTube_Downloader_DLL.Operations
             public const string Format = "format";
         }
 
+        bool _cancel = false;
+        bool _combining = false;
         bool _processing = false;
+        bool _pause = false;
         VideoFormat _format;
-        CancellationTokenSource _cts;
 
         public TwitchOperation(VideoFormat format)
         {
@@ -37,9 +41,6 @@ namespace YouTube_Downloader_DLL.Operations
         public override void Dispose()
         {
             base.Dispose();
-
-            _cts.Cancel();
-            _cts.Dispose();
         }
 
         public override bool Open()
@@ -70,25 +71,33 @@ namespace YouTube_Downloader_DLL.Operations
 
         public override void Pause()
         {
-            // ToDo
-            base.Pause();
+            _pause = true;
+
+            this.Status = OperationStatus.Paused;
         }
 
         public override void Queue()
         {
-            // ToDo
-            base.Queue();
+            _pause = true;
+
+            this.Status = OperationStatus.Queued;
         }
 
         protected override void ResumeInternal()
         {
-            // ToDo
-            base.ResumeInternal();
+            _pause = false;
+
+            this.Status = OperationStatus.Working;
         }
 
         public override bool Stop()
         {
-            _cts.Cancel();
+            _cancel = true;
+
+            // Don't set status to canceled if already successful.
+            if (this.Status != OperationStatus.Success)
+                this.Status = OperationStatus.Canceled;
+
             return true;
         }
 
@@ -99,19 +108,17 @@ namespace YouTube_Downloader_DLL.Operations
 
         public override bool CanPause()
         {
-            // ToDo
-            return base.CanPause();
+            return !_combining && this.IsWorking;
         }
 
         public override bool CanResume()
         {
-            // ToDo
-            return base.CanResume();
+            return _pause || this.IsQueued;
         }
 
         public override bool CanStop()
         {
-            return this.Status == OperationStatus.Working;
+            return !_combining && this.IsWorking;
         }
 
         #endregion
@@ -120,18 +127,12 @@ namespace YouTube_Downloader_DLL.Operations
 
         protected override void WorkerDoWork(DoWorkEventArgs e)
         {
-            _cts = new CancellationTokenSource();
-
             try
             {
-                using (var logger = OperationLogger.Create(OperationLogger.YTDLogFile))
+                using (var logger = OperationLogger.Create(OperationLogger.FFmpegDLogFile))
                 {
-                    YoutubeDlHelper.DownloadTwitchVOD(logger, this.Output, _format,
-                        delegate (TwitchOperationProgress progressUpdate)
-                        {
-                            this.ReportProgress((int)progressUpdate.ProgressPercentage, progressUpdate);
-                        },
-                        _cts.Token);
+                    this.Download();
+                    this.Optimize(logger, this.Output.Substring(0, this.Output.LastIndexOf('.') + 1) + "ts");
                 }
 
                 // Make sure progress reaches 100%
@@ -140,10 +141,6 @@ namespace YouTube_Downloader_DLL.Operations
 
                 e.Result = OperationStatus.Success;
             }
-            catch (OperationCanceledException)
-            {
-                e.Result = OperationStatus.Canceled;
-            }
             catch (Exception ex)
             {
                 Common.SaveException(ex);
@@ -151,24 +148,112 @@ namespace YouTube_Downloader_DLL.Operations
             }
         }
 
+        private void Download()
+        {
+            var wc = new WebClient();
+            var m3u8 = wc.DownloadString(_format.DownloadUrl);
+            var sr = new StringReader(m3u8);
+            var line = string.Empty;
+            int partsDone = 0;
+            List<string> parts = new List<string>();
+
+            long partMaxSize = 0;
+            long estimatedTotalSize = 0;
+
+            using (var writer = new FileStream(this.Output.Substring(0, this.Output.LastIndexOf('.') + 1) + "ts",
+                                               FileMode.Create,
+                                               FileAccess.Write))
+            {
+                long totalDownloaded = 0;
+                long prevFileSize = 0;
+                var sw = new Stopwatch();
+
+                while ((line = sr.ReadLine()) != null)
+                {
+                    if (string.IsNullOrEmpty(line) || line.StartsWith("#"))
+                        continue;
+
+                    parts.Add(line);
+                }
+
+                foreach (string part in parts)
+                {
+                    while (_pause)
+                        Thread.Sleep(100);
+
+                    partsDone++;
+                    sw.Start();
+
+                    string url = _format.DownloadUrl.Substring(0, _format.DownloadUrl.LastIndexOf('/') + 1) + part;
+                    byte[] data = wc.DownloadData(url);
+
+                    writer.Write(data, 0, data.Length);
+                    totalDownloaded += data.Length;
+
+                    if (data.Length > partMaxSize)
+                    {
+                        partMaxSize = data.Length;
+                        estimatedTotalSize = partMaxSize * parts.Count;
+
+                        this.ReportProgress(-1, new Dictionary<string, object>()
+                        {
+                            { nameof(FileSize), estimatedTotalSize }
+                        });
+                    }
+
+                    if (sw.ElapsedMilliseconds >= 1000)
+                    {
+                        long downloadedBytes = writer.Length - prevFileSize;
+                        prevFileSize = writer.Length;
+
+                        string speed = string.Format(new FileSizeFormatProvider(), "{0:s}", downloadedBytes);
+                        double percentage = Math.Round((double)totalDownloaded / estimatedTotalSize * 100, 2);
+
+                        this.ReportProgress((int)percentage, new ProgressReport(downloadedBytes, totalDownloaded, estimatedTotalSize, speed));
+
+                        sw.Reset();
+                    }
+                }
+            }
+        }
+
+        private void Optimize(OperationLogger logger, string tsFile)
+        {
+            FFmpegHelper.FixM3U8(logger, tsFile, this.Output);
+        }
+
         protected override void WorkerProgressChanged(ProgressChangedEventArgs e)
         {
-            if (e.ProgressPercentage >= 0)
-                this.Progress = e.ProgressPercentage;
-
-            if (e.UserState == null || _processing)
-                return;
-
-            if (e.UserState is TwitchOperationProgress)
+            if (e.ProgressPercentage == -1)
             {
-                _processing = true;
+                // Used to set multiple properties
+                if (e.UserState is Dictionary<string, object>)
+                {
+                    foreach (var pair in (e.UserState as Dictionary<string, object>))
+                    {
+                        this.GetType().GetProperty(pair.Key).SetValue(this, pair.Value);
+                    }
+                }
+            }
+            else
+            {
+                if (_processing)
+                    return;
 
-                var progressUpdate = e.UserState as TwitchOperationProgress;
+                if (e.UserState is ProgressReport)
+                {
+                    _processing = true;
 
-                this.ETA = progressUpdate.ETA;
-                this.Speed = $"{progressUpdate.Speed} {progressUpdate.SpeedSuffix}/s";
+                    var progressReport = e.UserState as ProgressReport;
+                    long longETA = Helper.GetETA((int)progressReport.SpeedInBytes, progressReport.TotalEstimated, progressReport.TotalDownloaded);
+                    string ETA = longETA == 0 ? "" : "  [ " + FormatLeftTime.Format(longETA * 1000) + " ]";
 
-                _processing = false;
+                    this.ETA = ETA;
+                    this.Speed = $"{progressReport.Speed}";
+                    this.Progress = progressReport.TotalDownloaded;
+
+                    _processing = false;
+                }
             }
         }
 
@@ -180,6 +265,22 @@ namespace YouTube_Downloader_DLL.Operations
             this.Output = (string)args[ArgKeys.Output];
 
             _format = (VideoFormat)args[ArgKeys.Format];
+        }
+
+        private class ProgressReport
+        {
+            public long SpeedInBytes { get; private set; }
+            public long TotalDownloaded { get; private set; }
+            public long TotalEstimated { get; private set; }
+            public string Speed { get; private set; }
+
+            public ProgressReport(long speedInBytes, long totalDownloaded, long totalEstimated, string speed)
+            {
+                this.SpeedInBytes = speedInBytes;
+                this.TotalDownloaded = totalDownloaded;
+                this.TotalEstimated = totalEstimated;
+                this.Speed = speed;
+            }
         }
 
         public static Dictionary<string, object> Args(string output,
