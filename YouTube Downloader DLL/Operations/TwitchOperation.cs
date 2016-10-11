@@ -20,6 +20,22 @@ namespace YouTube_Downloader_DLL.Operations
             public const string Format = "format";
         }
 
+        private class ProgressReport
+        {
+            public long SpeedInBytes { get; private set; }
+            public long TotalDownloaded { get; private set; }
+            public long TotalEstimated { get; private set; }
+            public string Speed { get; private set; }
+
+            public ProgressReport(long speedInBytes, long totalDownloaded, long totalEstimated, string speed)
+            {
+                this.SpeedInBytes = speedInBytes;
+                this.TotalDownloaded = totalDownloaded;
+                this.TotalEstimated = totalEstimated;
+                this.Speed = speed;
+            }
+        }
+
         bool _cancel = false;
         bool _combining = false;
         bool _processing = false;
@@ -265,22 +281,6 @@ namespace YouTube_Downloader_DLL.Operations
             this.Output = (string)args[ArgKeys.Output];
 
             _format = (VideoFormat)args[ArgKeys.Format];
-        }
-
-        private class ProgressReport
-        {
-            public long SpeedInBytes { get; private set; }
-            public long TotalDownloaded { get; private set; }
-            public long TotalEstimated { get; private set; }
-            public string Speed { get; private set; }
-
-            public ProgressReport(long speedInBytes, long totalDownloaded, long totalEstimated, string speed)
-            {
-                this.SpeedInBytes = speedInBytes;
-                this.TotalDownloaded = totalDownloaded;
-                this.TotalEstimated = totalEstimated;
-                this.Speed = speed;
-            }
         }
 
         public static Dictionary<string, object> Args(string output,
