@@ -164,13 +164,17 @@ namespace YouTube_Downloader_DLL.Classes
 
         private void DeserializeJson(JToken token)
         {
-            this.ACodec = token["acodec"].ToString();
-            this.VCodec = token["vcodec"].ToString();
+            this.ACodec = token["acodec"]?.ToString();
+            this.VCodec = token["vcodec"]?.ToString();
 
             this.DownloadUrl = token["url"].ToString();
-            this.DASH = token["format_note"].ToString().ToLower().Contains("dash");
+
+            JToken formatnote = token.SelectToken("format_note");
+            if (formatnote != null)
+                this.DASH = token["format_note"].ToString().ToLower().Contains("dash");
+
             this.Extension = token["ext"].ToString();
-            this.Format = Regex.Match(token["format"].ToString(), @".*-\s(.*)\s\(.*").Groups[1].Value;
+            this.Format = Regex.Match(token["format"].ToString(), @".*-\s([^\(\n]*)").Groups[1].Value.Trim();
             this.FormatID = token["format_id"].ToString();
 
             // Check if format is audio only or video only
@@ -179,20 +183,18 @@ namespace YouTube_Downloader_DLL.Classes
 
             // Check for abr token (audio bit rate?)
             JToken abr = token.SelectToken("abr");
-
             if (abr != null)
                 this.AudioBitRate = int.Parse(abr.ToString());
 
             // Check for filesize token
             JToken filesize = token.SelectToken("filesize");
-
             if (filesize != null && !string.IsNullOrEmpty(filesize.ToString()))
                 this.FileSize = long.Parse(filesize.ToString());
 
             // Check for 60fps videos. If there is no 'fps' token, default to 30fps.
             JToken fps = token.SelectToken("fps", false);
 
-            this.FPS = fps == null || fps.ToString() == "null" ? "30" : fps.ToString();
+            this.FPS = fps == null || fps.ToString() == "null" ? string.Empty : fps.ToString();
             this.UpdateFileSizeAsync();
         }
 
@@ -202,11 +204,14 @@ namespace YouTube_Downloader_DLL.Classes
 
             if (this.AudioOnly)
             {
-                text = string.Format("Audio Only - {0} kbps (.{1})", this.AudioBitRate, this.Extension);
+                if (this.AudioBitRate > -1)
+                    text = string.Format("Audio Only - {0} kbps (.{1})", this.AudioBitRate, this.Extension);
+                else
+                    text = string.Format("Audio Only (.{0}", this.Extension);
             }
             else
             {
-                string fps = this.FPS != "30" && this.FPS != "24" ? $" {this.FPS}fps" : string.Empty;
+                string fps = !string.IsNullOrEmpty(this.FPS) ? $" {this.FPS}fps" : string.Empty;
 
                 text = string.Format("{0}{1} (.{2})", this.Format, fps, this.Extension);
             }
