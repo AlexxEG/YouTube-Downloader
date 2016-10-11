@@ -28,6 +28,7 @@ namespace YouTube_Downloader_DLL.FFmpeg
             public const string Convert = " -report -y -i \"{0}\" -vn -f mp3 -b:a {1}k \"{2}\"";
             public const string CropFrom = " -report -y -ss {0} -i \"{1}\" -acodec copy{2} \"{3}\"";
             public const string CropFromTo = " -report -y -ss {0} -i \"{1}\" -to {2} -acodec copy{3} \"{4}\"";
+            public const string FixM3U8 = " -report -y -i \"{0}\" -c copy -f mp4 -bsf:a aac_adtstoasc \"{1}\"";
             public const string GetFileInfo = " -report -i \"{0}\"";
             public const string Version = " -version";
         }
@@ -552,6 +553,37 @@ namespace YouTube_Downloader_DLL.FFmpeg
                 return new FFmpegResult<bool>(false);
             }
             else if (p.ExitCode != 0)
+            {
+                string reportFile = FindReportFile(lines.ToString());
+
+                return new FFmpegResult<bool>(false, p.ExitCode, CheckForErrors(reportFile));
+            }
+
+            return new FFmpegResult<bool>(true);
+        }
+
+        /// <summary>
+        /// Fixes and optimizes final .ts file from .m3u8 playlist.
+        /// </summary>
+        public static FFmpegResult<bool> FixM3U8(OperationLogger logger,
+                                                 string input,
+                                                 string output,
+                                                 [CallerMemberName]string caller = "")
+        {
+            var lines = new StringBuilder();
+
+            var p = StartProcess(logger,
+                        string.Format(Commands.FixM3U8, input, output),
+                        caller,
+                null,
+                delegate (Process process, string line)
+                {
+                    lines.Append(line);
+                });
+
+            p.WaitForExit();
+
+            if (p.ExitCode != 0)
             {
                 string reportFile = FindReportFile(lines.ToString());
 
