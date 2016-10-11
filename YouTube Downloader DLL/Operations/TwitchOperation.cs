@@ -147,8 +147,15 @@ namespace YouTube_Downloader_DLL.Operations
             {
                 using (var logger = OperationLogger.Create(OperationLogger.FFmpegDLogFile))
                 {
-                    this.Download();
-                    this.Optimize(logger, this.Output.Substring(0, this.Output.LastIndexOf('.') + 1) + "ts");
+                    string tempFilename = this.Output.Substring(0, this.Output.LastIndexOf('.') + 1) + "ts");
+
+                    if (this.Download(tempFilename))
+                        this.Optimize(logger, tempFilename);
+                    else
+                    {
+                        // Download was canceled
+                        this.Cleanup(tempFilename);
+                    }
                 }
 
                 // Make sure progress reaches 100%
@@ -164,7 +171,12 @@ namespace YouTube_Downloader_DLL.Operations
             }
         }
 
-        private void Download()
+        private void Cleanup(string tempFilename)
+        {
+            Helper.DeleteFiles(tempFilename);
+        }
+
+        private bool Download(string outputFilename)
         {
             var wc = new WebClient();
             var m3u8 = wc.DownloadString(_format.DownloadUrl);
@@ -176,7 +188,7 @@ namespace YouTube_Downloader_DLL.Operations
             long partMaxSize = 0;
             long estimatedTotalSize = 0;
 
-            using (var writer = new FileStream(this.Output.Substring(0, this.Output.LastIndexOf('.') + 1) + "ts",
+            using (var writer = new FileStream(outputFilename,
                                                FileMode.Create,
                                                FileAccess.Write))
             {
@@ -194,6 +206,9 @@ namespace YouTube_Downloader_DLL.Operations
 
                 foreach (string part in parts)
                 {
+                    if (_cancel)
+                        break;
+
                     while (_pause)
                         Thread.Sleep(100);
 
@@ -231,6 +246,8 @@ namespace YouTube_Downloader_DLL.Operations
                     }
                 }
             }
+
+            return _cancel;
         }
 
         private void Optimize(OperationLogger logger, string tsFile)
