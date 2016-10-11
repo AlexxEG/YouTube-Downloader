@@ -159,12 +159,14 @@ namespace YouTube_Downloader
 
         private void btnGetVideo_Click(object sender, EventArgs e)
         {
+#if RELEASE
             // ToDo: Remove this when Twitch support is fixed
             if (Helper.IsValidTwitchUrl(txtYoutubeLink.Text))
             {
                 MessageBox.Show(this, "Twitch support is currently broken.");
                 return;
             }
+#endif
 
             if (!Helper.IsValidUrl(txtYoutubeLink.Text))
             {
@@ -1432,9 +1434,13 @@ namespace YouTube_Downloader
             {
                 VideoFormat f = formats[i];
 
-                // Remove .webm and formats with audio and video in one
-                if (f.Extension.Contains("webm") || f.HasAudioAndVideo)
+                // Remove .webm and youtube formats with audio and video in one
+                if (f.Extension.Contains("webm") ||
+                    (f.VideoInfo.VideoSource == VideoSource.YouTube && f.HasAudioAndVideo) ||
+                    f.FormatID == "meta")
+                {
                     formats.RemoveAt(i);
+                }
             }
 
             return formats.ToArray();
