@@ -1151,8 +1151,7 @@ namespace YouTube_Downloader
             this.SelectOneItem(item);
 
             operation.Prepare(operation.Args(input, output, start, end));
-
-            DownloadQueueHandler.Add(operation);
+            operation.Start();
 
             return item;
         }
@@ -1176,8 +1175,7 @@ namespace YouTube_Downloader
             this.SelectOneItem(item);
 
             operation.Prepare(operation.Args(input, output, extension));
-
-            DownloadQueueHandler.Add(operation);
+            operation.Start();
         }
 
         /// <summary>
@@ -1210,8 +1208,7 @@ namespace YouTube_Downloader
             this.SelectOneItem(item);
 
             operation.Prepare(operation.Args(input, output, start, end));
-
-            DownloadQueueHandler.Add(operation);
+            operation.Start();
         }
 
         /// <summary>
