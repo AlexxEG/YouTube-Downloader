@@ -147,7 +147,7 @@ namespace YouTube_Downloader_DLL.Operations
             {
                 using (var logger = OperationLogger.Create(OperationLogger.FFmpegDLogFile))
                 {
-                    string tempFilename = this.Output.Substring(0, this.Output.LastIndexOf('.') + 1) + "ts");
+                    string tempFilename = this.Output.Substring(0, this.Output.LastIndexOf('.') + 1) + "ts";
 
                     if (this.Download(tempFilename))
                         this.Optimize(logger, tempFilename);
