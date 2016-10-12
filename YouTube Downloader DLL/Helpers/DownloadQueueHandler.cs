@@ -83,6 +83,7 @@ namespace YouTube_Downloader_DLL.Helpers
         private static bool IsDownloaderType(Operation operation)
         {
             return operation is DownloadOperation ||
+                   operation is PlaylistOperation ||
                    operation is TwitchOperation ||
                    operation is DummyOperations.DummyDownloadOperation;
         }
