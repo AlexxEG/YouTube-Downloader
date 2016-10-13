@@ -76,8 +76,6 @@ namespace YouTube_Downloader_DLL.Operations
             // elegantly in the future.
             _downloaderSuccessful = false;
 
-            e.Exception.Data.Add("FileDownload", e.FileDownload);
-
             Common.SaveException(e.Exception);
         }
 
