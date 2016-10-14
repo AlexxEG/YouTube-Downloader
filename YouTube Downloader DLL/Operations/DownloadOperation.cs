@@ -97,11 +97,6 @@ namespace YouTube_Downloader_DLL.Operations
             }
         }
 
-        private void OnCombining()
-        {
-            this.Combining?.Invoke(this, EventArgs.Empty);
-        }
-
         #region Operation members
 
         public override bool CanOpen()
@@ -328,6 +323,11 @@ namespace YouTube_Downloader_DLL.Operations
             downloader.ProgressChanged += downloader_ProgressChanged;
 
             downloader.Start();
+        }
+
+        private void OnCombining()
+        {
+            this.Combining?.Invoke(this, EventArgs.Empty);
         }
 
         public static Dictionary<string, object> Args(string url,

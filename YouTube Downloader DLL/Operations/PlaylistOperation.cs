@@ -423,21 +423,6 @@ namespace YouTube_Downloader_DLL.Operations
             _downloader.ProgressChanged += downloader_ProgressChanged;
         }
 
-        private void OnCombined()
-        {
-            this.Combined?.Invoke(this, EventArgs.Empty);
-        }
-
-        private void OnCombining()
-        {
-            this.Combining?.Invoke(this, EventArgs.Empty);
-        }
-
-        private void OnFileDownloadComplete(string file)
-        {
-            this.FileDownloadComplete?.Invoke(this, file);
-        }
-
         private bool Combine()
         {
             string audio = _downloader.Files[0].Path;
@@ -490,6 +475,21 @@ namespace YouTube_Downloader_DLL.Operations
             return result.Value;
         }
 
+        private void OnCombined()
+        {
+            this.Combined?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void OnCombining()
+        {
+            this.Combining?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void OnFileDownloadComplete(string file)
+        {
+            this.FileDownloadComplete?.Invoke(this, file);
+        }
+        
         private async void GetPlaylistInfoAsync()
         {
             _queryingVideos = true;
