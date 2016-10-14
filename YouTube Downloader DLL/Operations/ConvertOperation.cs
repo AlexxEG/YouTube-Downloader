@@ -35,22 +35,16 @@ namespace YouTube_Downloader_DLL.Operations
 
         public List<string> ProcessedFiles { get; set; } = new List<string>();
 
-        public ConvertOperation()
-        {
-            this.ReportsProgress = true;
-        }
-
         #region Operation members
 
         public override bool CanOpen()
         {
-            return this.Status == OperationStatus.Success;
+            return this.IsSuccessful;
         }
 
         public override bool CanStop()
         {
-            // Can stop if working.
-            return this.Status == OperationStatus.Working;
+            return this.IsWorking;
         }
 
         public override bool Open()
@@ -81,7 +75,7 @@ namespace YouTube_Downloader_DLL.Operations
 
         public override bool Stop()
         {
-            if (this.Status == OperationStatus.Paused || this.Status == OperationStatus.Working)
+            if (this.IsPaused || this.IsWorking)
             {
                 try
                 {
@@ -96,7 +90,7 @@ namespace YouTube_Downloader_DLL.Operations
                 }
             }
 
-            if (this.Status != OperationStatus.Success)
+            if (!this.IsSuccessful)
             {
                 if (File.Exists(this.Output))
                     Helper.DeleteFiles(this.Output);
@@ -197,7 +191,7 @@ namespace YouTube_Downloader_DLL.Operations
         {
             if (_mode == ConvertingMode.File)
             {
-                if (this.Status == OperationStatus.Success)
+                if (this.IsSuccessful)
                     this.FileSize = Helper.GetFileSize(this.Output);
             }
             else
@@ -236,6 +230,11 @@ namespace YouTube_Downloader_DLL.Operations
             }
 
             this.Text = "Converting...";
+        }
+
+        public ConvertOperation()
+        {
+            this.ReportsProgress = true;
         }
 
         public Dictionary<string, object> Args(string input,

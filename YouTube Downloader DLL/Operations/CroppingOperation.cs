@@ -36,22 +36,18 @@ namespace YouTube_Downloader_DLL.Operations
         {
             base.Dispose();
 
-            // Free managed resources
-            if (_process != null)
-            {
-                _process.Dispose();
-                _process = null;
-            }
+            _process?.Dispose();
+            _process = null;
         }
 
         public override bool CanOpen()
         {
-            return this.Status == OperationStatus.Success;
+            return this.IsSuccessful;
         }
 
         public override bool CanStop()
         {
-            return this.Status == OperationStatus.Working;
+            return this.IsWorking;
         }
 
         public override bool Open()
@@ -82,7 +78,7 @@ namespace YouTube_Downloader_DLL.Operations
 
         public override bool Stop()
         {
-            if (this.Status == OperationStatus.Paused || this.Status == OperationStatus.Working)
+            if (this.IsPaused || this.IsWorking)
             {
                 try
                 {
@@ -142,7 +138,7 @@ namespace YouTube_Downloader_DLL.Operations
 
         protected override void WorkerCompleted(RunWorkerCompletedEventArgs e)
         {
-            if (this.Status == OperationStatus.Success)
+            if (this.IsSuccessful)
             {
                 this.Duration = (long)FFmpegHelper.GetDuration(this.Input).Value.TotalSeconds;
                 this.FileSize = Helper.GetFileSize(this.Output);
