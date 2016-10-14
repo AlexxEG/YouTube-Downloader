@@ -66,6 +66,7 @@
             this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.chbPlaylistIgnoreExisting = new System.Windows.Forms.CheckBox();
             this.btnPlaylistPaste = new System.Windows.Forms.Button();
             this.btnGetPlaylist = new System.Windows.Forms.Button();
             this.label14 = new System.Windows.Forms.Label();
@@ -485,6 +486,7 @@
             // 
             this.groupBox7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox7.Controls.Add(this.chbPlaylistIgnoreExisting);
             this.groupBox7.Controls.Add(this.btnPlaylistPaste);
             this.groupBox7.Controls.Add(this.btnGetPlaylist);
             this.groupBox7.Controls.Add(this.label14);
@@ -500,6 +502,20 @@
             this.groupBox7.TabIndex = 0;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Playlist Link";
+            // 
+            // chbPlaylistIgnoreExisting
+            // 
+            this.chbPlaylistIgnoreExisting.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.chbPlaylistIgnoreExisting.AutoSize = true;
+            this.chbPlaylistIgnoreExisting.Checked = global::YouTube_Downloader.Properties.Settings.Default.PlaylistIgnoreExisting;
+            this.chbPlaylistIgnoreExisting.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::YouTube_Downloader.Properties.Settings.Default, "PlaylistIgnoreExisting", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.chbPlaylistIgnoreExisting.Location = new System.Drawing.Point(360, 106);
+            this.chbPlaylistIgnoreExisting.Name = "chbPlaylistIgnoreExisting";
+            this.chbPlaylistIgnoreExisting.Size = new System.Drawing.Size(128, 17);
+            this.chbPlaylistIgnoreExisting.TabIndex = 14;
+            this.chbPlaylistIgnoreExisting.Text = "Ignore existing videos";
+            this.chbPlaylistIgnoreExisting.UseVisualStyleBackColor = true;
+            this.chbPlaylistIgnoreExisting.CheckedChanged += new System.EventHandler(this.chbPlaylistIgnoreExisting_CheckedChanged);
             // 
             // btnPlaylistPaste
             // 
@@ -1225,6 +1241,7 @@
         private System.Windows.Forms.Button btnMaxSimDownloadsApply;
         private System.Windows.Forms.NumericUpDown nudMaxSimDownloads;
         private System.Windows.Forms.Label lMaxSimDownloads;
+        private System.Windows.Forms.CheckBox chbPlaylistIgnoreExisting;
     }
 }
 

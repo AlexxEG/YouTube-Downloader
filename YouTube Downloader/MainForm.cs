@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using YouTube_Downloader.Classes;
@@ -14,6 +16,7 @@ using YouTube_Downloader_DLL;
 using YouTube_Downloader_DLL.Classes;
 using YouTube_Downloader_DLL.Dialogs;
 using YouTube_Downloader_DLL.DummyOperations;
+using YouTube_Downloader_DLL.Enums;
 using YouTube_Downloader_DLL.FFmpeg;
 using YouTube_Downloader_DLL.Helpers;
 using YouTube_Downloader_DLL.Operations;
@@ -442,6 +445,7 @@ namespace YouTube_Downloader
 
         private bool _playlistCancel;
         private BackgroundWorker _backgroundWorkerPlaylist;
+        private OrderedDictionary _playlistIgnored = new OrderedDictionary();
 
         private void btnPlaylistPaste_Click(object sender, EventArgs e)
         {
@@ -476,6 +480,7 @@ namespace YouTube_Downloader
             else
             {
                 // Reset playlist variables
+                _playlistIgnored.Clear();
                 lvPlaylistVideos.Items.Clear();
 
                 _playlistCancel = true;
@@ -543,10 +548,17 @@ namespace YouTube_Downloader
             btnPlaylistDownloadSelected.Enabled = result;
             lvPlaylistVideos.UseWaitCursor = false;
 
+            this.FilterPlaylist();
+
             if (!result)
             {
                 lvPlaylistVideos.Items.Clear();
             }
+        }
+
+        private void chbPlaylistIgnoreExisting_CheckedChanged(object sender, EventArgs e)
+        {
+            this.FilterPlaylist();
         }
 
         private void btnPlaylistDownloadSelected_Click(object sender, EventArgs e)
@@ -680,6 +692,35 @@ namespace YouTube_Downloader
 
                 // Automatically remove convert operation from queue when done
                 item.OperationComplete += delegate { item.Remove(); };
+            }
+        }
+
+        private void FilterPlaylist()
+        {
+            // Reset if necessary
+            if (!chbPlaylistIgnoreExisting.Checked && _playlistIgnored.Count > 0)
+            {
+                for (int i = _playlistIgnored.Count - 1; i >= 0; i--)
+                {
+                    lvPlaylistVideos.Items.Insert(
+                        _playlistIgnored.Keys.Cast<int>().ElementAt(i),
+                        _playlistIgnored.Values.Cast<ListViewItem>().ElementAt(i));
+                }
+                _playlistIgnored.Clear();
+            }
+            else if (chbPlaylistIgnoreExisting.Checked)
+            {
+                string[] files = Directory.GetFiles(cbPlaylistSaveTo.Text)
+                    .Select(x => Path.GetFileNameWithoutExtension(x)).ToArray();
+
+                for (int i = lvPlaylistVideos.Items.Count - 1; i >= 0; i--)
+                {
+                    if (files.Contains(lvPlaylistVideos.Items[i].Text))
+                    {
+                        _playlistIgnored.Insert(0, i, lvPlaylistVideos.Items[i]);
+                        lvPlaylistVideos.Items.RemoveAt(i);
+                    }
+                }
             }
         }
 

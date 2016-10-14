@@ -152,5 +152,17 @@ namespace YouTube_Downloader.Properties {
                 this["MaxSimDownloads"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool PlaylistIgnoreExisting {
+            get {
+                return ((bool)(this["PlaylistIgnoreExisting"]));
+            }
+            set {
+                this["PlaylistIgnoreExisting"] = value;
+            }
+        }
     }
 }
