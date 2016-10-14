@@ -104,6 +104,28 @@ namespace YouTube_Downloader_DLL.Operations
 
         #region Operation members
 
+        public override bool CanOpen()
+        {
+            return this.IsSuccessful;
+        }
+
+        public override bool CanPause()
+        {
+            // Only downloader can pause.
+            return downloader?.CanPause == true && this.IsWorking;
+        }
+
+        public override bool CanResume()
+        {
+            // Only downloader can resume.
+            return downloader.CanResume && (this.IsPaused || this.IsQueued);
+        }
+
+        public override bool CanStop()
+        {
+            return this.IsPaused || this.IsWorking;
+        }
+
         public override void Dispose()
         {
             base.Dispose();
@@ -170,28 +192,6 @@ namespace YouTube_Downloader_DLL.Operations
                 this.Status = OperationStatus.Canceled;
 
             return true;
-        }
-
-        public override bool CanOpen()
-        {
-            return this.IsSuccessful;
-        }
-
-        public override bool CanPause()
-        {
-            // Only downloader can pause.
-            return downloader?.CanPause == true && this.IsWorking;
-        }
-
-        public override bool CanResume()
-        {
-            // Only downloader can resume.
-            return downloader.CanResume && (this.IsPaused || this.IsQueued);
-        }
-
-        public override bool CanStop()
-        {
-            return this.IsPaused || this.IsWorking;
         }
 
         #endregion
