@@ -5,6 +5,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using Newtonsoft.Json.Linq;
+using YouTube_Downloader_DLL.Enums;
 
 namespace YouTube_Downloader_DLL.Classes
 {

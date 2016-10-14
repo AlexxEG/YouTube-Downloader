@@ -68,7 +68,7 @@
     <Compile Include="Classes\OperationLogger.cs" />
     <Compile Include="Classes\VideoFormat.cs" />
     <Compile Include="Classes\VideoInfo.cs" />
-    <Compile Include="Classes\VideoSource.cs" />
+    <Compile Include="Enums\VideoSource.cs" />
     <Compile Include="YoutubeDl\YoutubeDlHelper.cs" />
     <Compile Include="Helpers\DownloadQueueHandler.cs" />
     <Compile Include="Dialogs\OpenFolderDialog.cs" />

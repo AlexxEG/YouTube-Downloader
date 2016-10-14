@@ -1,4 +1,4 @@
-﻿namespace YouTube_Downloader_DLL.Classes
+﻿namespace YouTube_Downloader_DLL.Enums
 {
     public enum VideoSource
     {
