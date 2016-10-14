@@ -511,7 +511,7 @@ namespace YouTube_Downloader
                     break;
                 }
 
-                ListViewItem item = new ListViewItem(video.Title);
+                ListViewItem item = new ListViewItem(WebUtility.HtmlDecode(video.Title));
                 item.SubItems.Add(video.Duration);
                 item.Checked = true;
                 item.Tag = video;
