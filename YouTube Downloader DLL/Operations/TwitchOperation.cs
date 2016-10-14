@@ -255,7 +255,7 @@ namespace YouTube_Downloader_DLL.Operations
                         break;
 
                     while (_pause)
-                        Thread.Sleep(100);
+                        Thread.Sleep(500);
 
                     partsDone++;
                     sw.Start();
