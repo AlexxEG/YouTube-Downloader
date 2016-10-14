@@ -54,6 +54,26 @@ namespace YouTube_Downloader_DLL.Operations
 
         #region Operation members
 
+        public override bool CanOpen()
+        {
+            return this.IsSuccessful;
+        }
+
+        public override bool CanPause()
+        {
+            return !_combining && this.IsWorking;
+        }
+
+        public override bool CanResume()
+        {
+            return _pause || this.IsQueued;
+        }
+
+        public override bool CanStop()
+        {
+            return !_combining && this.IsWorking;
+        }
+
         public override void Dispose()
         {
             base.Dispose();
@@ -117,26 +137,6 @@ namespace YouTube_Downloader_DLL.Operations
             return true;
         }
 
-        public override bool CanOpen()
-        {
-            return this.Status == OperationStatus.Success;
-        }
-
-        public override bool CanPause()
-        {
-            return !_combining && this.IsWorking;
-        }
-
-        public override bool CanResume()
-        {
-            return _pause || this.IsQueued;
-        }
-
-        public override bool CanStop()
-        {
-            return !_combining && this.IsWorking;
-        }
-
         #endregion
 
         protected override void WorkerCompleted(RunWorkerCompletedEventArgs e) { }
@@ -169,6 +169,51 @@ namespace YouTube_Downloader_DLL.Operations
                 Common.SaveException(ex);
                 e.Result = OperationStatus.Failed;
             }
+        }
+
+        protected override void WorkerProgressChanged(ProgressChangedEventArgs e)
+        {
+            if (e.ProgressPercentage == -1)
+            {
+                // Used to set multiple properties
+                if (e.UserState is Dictionary<string, object>)
+                {
+                    foreach (var pair in (e.UserState as Dictionary<string, object>))
+                    {
+                        this.GetType().GetProperty(pair.Key).SetValue(this, pair.Value);
+                    }
+                }
+            }
+            else
+            {
+                if (_processing)
+                    return;
+
+                if (e.UserState is ProgressReport)
+                {
+                    _processing = true;
+
+                    var progressReport = e.UserState as ProgressReport;
+                    long longETA = Helper.GetETA((int)progressReport.SpeedInBytes, progressReport.TotalEstimated, progressReport.TotalDownloaded);
+                    string ETA = longETA == 0 ? "" : "  [ " + FormatLeftTime.Format(longETA * 1000) + " ]";
+
+                    this.ETA = ETA;
+                    this.Speed = $"{progressReport.Speed}";
+                    this.Progress = progressReport.TotalDownloaded;
+
+                    _processing = false;
+                }
+            }
+        }
+
+        protected override void WorkerStart(Dictionary<string, object> args)
+        {
+            if (args.Count != ArgKeys.Count)
+                throw new ArgumentException();
+
+            this.Output = (string)args[ArgKeys.Output];
+
+            _format = (VideoFormat)args[ArgKeys.Format];
         }
 
         private void Cleanup(string tempFilename)
@@ -253,51 +298,6 @@ namespace YouTube_Downloader_DLL.Operations
         private void Optimize(OperationLogger logger, string tsFile)
         {
             FFmpegHelper.FixM3U8(logger, tsFile, this.Output);
-        }
-
-        protected override void WorkerProgressChanged(ProgressChangedEventArgs e)
-        {
-            if (e.ProgressPercentage == -1)
-            {
-                // Used to set multiple properties
-                if (e.UserState is Dictionary<string, object>)
-                {
-                    foreach (var pair in (e.UserState as Dictionary<string, object>))
-                    {
-                        this.GetType().GetProperty(pair.Key).SetValue(this, pair.Value);
-                    }
-                }
-            }
-            else
-            {
-                if (_processing)
-                    return;
-
-                if (e.UserState is ProgressReport)
-                {
-                    _processing = true;
-
-                    var progressReport = e.UserState as ProgressReport;
-                    long longETA = Helper.GetETA((int)progressReport.SpeedInBytes, progressReport.TotalEstimated, progressReport.TotalDownloaded);
-                    string ETA = longETA == 0 ? "" : "  [ " + FormatLeftTime.Format(longETA * 1000) + " ]";
-
-                    this.ETA = ETA;
-                    this.Speed = $"{progressReport.Speed}";
-                    this.Progress = progressReport.TotalDownloaded;
-
-                    _processing = false;
-                }
-            }
-        }
-
-        protected override void WorkerStart(Dictionary<string, object> args)
-        {
-            if (args.Count != ArgKeys.Count)
-                throw new ArgumentException();
-
-            this.Output = (string)args[ArgKeys.Output];
-
-            _format = (VideoFormat)args[ArgKeys.Format];
         }
 
         public static Dictionary<string, object> Args(string output,
