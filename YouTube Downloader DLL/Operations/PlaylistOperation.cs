@@ -489,7 +489,7 @@ namespace YouTube_Downloader_DLL.Operations
         {
             this.FileDownloadComplete?.Invoke(this, file);
         }
-        
+
         private async void GetPlaylistInfoAsync()
         {
             _queryingVideos = true;
@@ -498,6 +498,7 @@ namespace YouTube_Downloader_DLL.Operations
             {
                 var items = new List<int>();
 
+                // Get the youtube playlist indexes
                 foreach (var v in _videos)
                     items.Add(v.Index);
 
@@ -515,6 +516,8 @@ namespace YouTube_Downloader_DLL.Operations
                     return;
                 }
 
+                // If '_videos' is empty get all the videos in the playlist. Otherwise
+                // only get those listed in '_videos'
                 if (_videos.Count == 0)
                     _selectedVideosCount = reader.Playlist.OnlineCount;
                 else
