@@ -1,4 +1,5 @@
-﻿using IO = System.IO;
+﻿using System;
+using IO = System.IO;
 
 namespace YouTube_Downloader_DLL.FileDownloading
 {
@@ -20,6 +21,8 @@ namespace YouTube_Downloader_DLL.FileDownloading
         }
         public string Path { get; set; }
         public string Url { get; set; }
+
+        public Exception Exception { get; internal set; }
 
         public FileDownload(string path, string url)
         {

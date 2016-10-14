@@ -377,6 +377,8 @@ namespace YouTube_Downloader_DLL.FileDownloading
         {
             if (e.UserState is Exception)
             {
+                this.CurrentFile.Exception = e.UserState as Exception;
+
                 this.OnFileDownloadFailed(e.UserState as Exception, this.CurrentFile);
             }
             else if (e.UserState is object[])
