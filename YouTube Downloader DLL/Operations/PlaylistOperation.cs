@@ -35,13 +35,13 @@ namespace YouTube_Downloader_DLL.Operations
         int _preferredQuality;
         int _selectedVideosCount = 0;
         bool _queryingVideos = false;
-        bool _combining, _processing;
+        bool _processing;
         bool? _downloaderSuccessful;
 
         List<QuickVideoInfo> _videos = new List<QuickVideoInfo>();
 
         Exception _operationException;
-        FileDownloader downloader;
+        FileDownloader _downloader;
         OperationLogger _ffmpegLogger;
 
         public string PlaylistName { get; private set; }
@@ -81,7 +81,7 @@ namespace YouTube_Downloader_DLL.Operations
 
         private void downloader_CalculatedTotalFileSize(object sender, EventArgs e)
         {
-            this.FileSize = downloader.TotalSize;
+            this.FileSize = _downloader.TotalSize;
         }
 
         private void downloader_ProgressChanged(object sender, EventArgs e)
@@ -93,14 +93,14 @@ namespace YouTube_Downloader_DLL.Operations
             {
                 _processing = true;
 
-                string speed = string.Format(new FileSizeFormatProvider(), "{0:s}", downloader.Speed);
-                long longETA = Helper.GetETA(downloader.Speed, downloader.TotalSize, downloader.TotalProgress);
+                string speed = string.Format(new FileSizeFormatProvider(), "{0:s}", _downloader.Speed);
+                long longETA = Helper.GetETA(_downloader.Speed, _downloader.TotalSize, _downloader.TotalProgress);
                 string eta = longETA == 0 ? "" : "  [ " + FormatLeftTime.Format((longETA) * 1000) + " ]";
 
                 this.ETA = eta;
                 this.Speed = speed;
-                this.Progress = downloader.TotalProgress;
-                this.ReportProgress((int)downloader.TotalPercentage(), null);
+                this.Progress = _downloader.TotalProgress;
+                this.ReportProgress((int)_downloader.TotalPercentage(), null);
             }
             catch { }
             finally
@@ -116,28 +116,25 @@ namespace YouTube_Downloader_DLL.Operations
             base.Dispose();
 
             // Free managed resources
-            if (downloader != null)
-            {
-                downloader.Dispose();
-                downloader = null;
-            }
+            _downloader?.Dispose();
+            _downloader = null;
         }
 
         public override bool CanPause()
         {
             // Can only pause if currently downloading
-            return !_combining && downloader != null && downloader.CanPause;
+            return _downloader?.CanPause == true;
         }
 
         public override bool CanResume()
         {
             // Can only resume downloader
-            return !_combining && downloader != null && downloader.CanResume;
+            return _downloader?.CanResume == true;
         }
 
         public override bool CanStop()
         {
-            return this.Status == OperationStatus.Working;
+            return this.IsPaused || this.IsWorking;
         }
 
         public override bool OpenContainingFolder()
@@ -145,32 +142,36 @@ namespace YouTube_Downloader_DLL.Operations
             try
             {
                 Process.Start(Path.GetDirectoryName(this.Output));
+                return true;
             }
             catch
             {
                 return false;
             }
-            return true;
         }
 
         public override void Pause()
         {
-            // Only the downloader can be paused.
-            if (downloader.CanPause)
-            {
-                downloader.Pause();
-                this.Status = OperationStatus.Paused;
-            }
+            if (_downloader.CanPause)
+                _downloader.Pause();
+
+            this.Status = OperationStatus.Paused;
+        }
+
+        public override void Queue()
+        {
+            if (_downloader.CanPause)
+                _downloader.Pause();
+
+            this.Status = OperationStatus.Queued;
         }
 
         protected override void ResumeInternal()
         {
-            // Only the downloader can be resumed.
-            if (downloader.CanResume)
-            {
-                downloader.Resume();
-                this.Status = OperationStatus.Working;
-            }
+            if (_downloader.CanResume)
+                _downloader.Resume();
+
+            this.Status = OperationStatus.Working;
         }
 
         public override bool Stop()
@@ -179,7 +180,6 @@ namespace YouTube_Downloader_DLL.Operations
                 this.CancelAsync();
 
             this.Status = OperationStatus.Canceled;
-
             return true;
         }
 
@@ -228,15 +228,11 @@ namespace YouTube_Downloader_DLL.Operations
         protected override void WorkerDoWork(DoWorkEventArgs e)
         {
             /* ToDo:
-             * [x] 'this.Videos' will always be empty now. Instead '_videoIds' is to be used to only download selected videos
              * 
-             * [x] Get video information in background while downloading available videos. 
-             *     That means it will query video information while it's downloading
-             *   
-             * [ ] Handle TimeoutException from PlaylistReader in 'GetPlaylistInfoAsync' somehow
+             * [ ] Handle TimeoutException from PlaylistReader in 'GetPlaylistInfoAsync' somehow.
+             *     Can't catch it here, needs to catch it inside 'GetPlaylistInfoAsync'.
              */
 
-            // Start querying for video information
             this.GetPlaylistInfoAsync();
 
             try
@@ -248,6 +244,7 @@ namespace YouTube_Downloader_DLL.Operations
                     if (this.CancellationPending)
                         break;
 
+                    // Wait for more videos?
                     while (count == this.Videos.Count)
                     {
                         Thread.Sleep(200);
@@ -256,7 +253,7 @@ namespace YouTube_Downloader_DLL.Operations
 
                     // Reset variable(s)
                     _downloaderSuccessful = null;
-                    downloader.Files.Clear();
+                    _downloader.Files.Clear();
 
                     count++;
 
@@ -272,7 +269,7 @@ namespace YouTube_Downloader_DLL.Operations
                     });
 
                     string finalFile = Path.Combine(this.Output,
-                                                    $"{Helper.FormatTitle(format.VideoInfo.Title)}.{format.Extension}");
+                        $"{Helper.FormatTitle(format.VideoInfo.Title)}.{format.Extension}");
 
                     // Overwrite if finalFile already exists
                     Helper.DeleteFiles(finalFile);
@@ -281,7 +278,7 @@ namespace YouTube_Downloader_DLL.Operations
 
                     if (format.AudioOnly)
                     {
-                        downloader.Files.Add(new FileDownload(finalFile, format.DownloadUrl));
+                        _downloader.Files.Add(new FileDownload(finalFile, format.DownloadUrl));
                     }
                     else
                     {
@@ -291,31 +288,31 @@ namespace YouTube_Downloader_DLL.Operations
                         string videoFile = Regex.Replace(finalFile, @"^(.*)(\..*)$", "$1_video$2");
 
                         // Download audio and video
-                        downloader.Files.Add(new FileDownload(audioFile, audioFormat.DownloadUrl));
-                        downloader.Files.Add(new FileDownload(videoFile, format.DownloadUrl));
+                        _downloader.Files.Add(new FileDownload(audioFile, audioFormat.DownloadUrl));
+                        _downloader.Files.Add(new FileDownload(videoFile, format.DownloadUrl));
 
                         // Delete _audio and _video files in case they exists from a previous attempt
-                        Helper.DeleteFiles(downloader.Files[0].Path,
-                                           downloader.Files[1].Path);
+                        Helper.DeleteFiles(_downloader.Files[0].Path,
+                                           _downloader.Files[1].Path);
                     }
 
-                    downloader.Start();
+                    _downloader.Start();
 
                     // Wait for downloader to finish
-                    while (downloader.IsBusy || downloader.IsPaused)
+                    while (_downloader.IsBusy || _downloader.IsPaused)
                     {
                         if (this.CancellationPending)
                         {
-                            downloader.Stop();
+                            _downloader.Stop();
                             break;
                         }
 
                         Thread.Sleep(200);
                     }
 
-                    // Download successful. Combine video & audio if necessary
                     if (_downloaderSuccessful == true)
                     {
+                        // Combine video and audio if necessary
                         if (!format.AudioOnly)
                         {
                             this.ReportProgress(-1, new Dictionary<string, object>()
@@ -340,17 +337,21 @@ namespace YouTube_Downloader_DLL.Operations
                         _downloads++;
                         this.ReportProgress(EventFileDownloadComplete, finalFile);
                     }
-                    // Download failed, cleanup and continue
                     else if (_downloaderSuccessful == false)
                     {
+                        // Download failed, cleanup and continue
                         _failures++;
                         // Delete all related files. Helper method will check if it exists, throwing no errors
-                        Helper.DeleteFiles(downloader.Files.Select(x => x.Path).ToArray());
+                        Helper.DeleteFiles(_downloader.Files.Select(x => x.Path).ToArray());
                     }
 
                     // Reset before starting new download.
                     this.ReportProgress(ProgressMin, null);
                 }
+
+                // Throw stored exception if it exists. For example TimeoutException from 'GetPlaylistInfoAsync'
+                if (_operationException != null)
+                    throw _operationException;
 
                 e.Result = this.CancellationPending ? OperationStatus.Canceled : OperationStatus.Success;
             }
@@ -362,8 +363,7 @@ namespace YouTube_Downloader_DLL.Operations
             }
             finally
             {
-                if (_ffmpegLogger != null)
-                    _ffmpegLogger.Close();
+                _ffmpegLogger?.Close();
             }
         }
 
@@ -413,14 +413,14 @@ namespace YouTube_Downloader_DLL.Operations
                     _videos.AddRange((IEnumerable<QuickVideoInfo>)args[ArgKeys.Videos]);
             }
 
-            downloader = new FileDownloader();
+            _downloader = new FileDownloader();
 
             // Attach events
-            downloader.Canceled += downloader_Canceled;
-            downloader.Completed += downloader_Completed;
-            downloader.FileDownloadFailed += downloader_FileDownloadFailed;
-            downloader.CalculatedTotalFileSize += downloader_CalculatedTotalFileSize;
-            downloader.ProgressChanged += downloader_ProgressChanged;
+            _downloader.Canceled += downloader_Canceled;
+            _downloader.Completed += downloader_Completed;
+            _downloader.FileDownloadFailed += downloader_FileDownloadFailed;
+            _downloader.CalculatedTotalFileSize += downloader_CalculatedTotalFileSize;
+            _downloader.ProgressChanged += downloader_ProgressChanged;
         }
 
         private void OnCombined()
@@ -440,13 +440,11 @@ namespace YouTube_Downloader_DLL.Operations
 
         private bool Combine()
         {
-            string audio = downloader.Files[0].Path;
-            string video = downloader.Files[1].Path;
+            string audio = _downloader.Files[0].Path;
+            string video = _downloader.Files[1].Path;
             // Remove '_video' from video file to get a final filename.
             string output = video.Replace("_video", string.Empty);
             FFmpegResult<bool> result = null;
-
-            _combining = true;
 
             try
             {
@@ -485,8 +483,6 @@ namespace YouTube_Downloader_DLL.Operations
             }
             finally
             {
-                _combining = false;
-
                 // Raise events on main thread
                 this.ReportProgress(EventCombined, null);
             }
@@ -508,7 +504,16 @@ namespace YouTube_Downloader_DLL.Operations
                 var reader = new PlaylistReader(this.Input, items.ToArray());
                 VideoInfo video;
 
-                this.PlaylistName = reader.WaitForPlaylist().Name;
+                try
+                {
+                    this.PlaylistName = reader.WaitForPlaylist().Name;
+                }
+                catch (TimeoutException ex)
+                {
+                    _operationException = ex;
+                    _queryingVideos = false;
+                    return;
+                }
 
                 if (_videos.Count == 0)
                     _selectedVideosCount = reader.Playlist.OnlineCount;

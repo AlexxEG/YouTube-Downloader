@@ -108,12 +108,8 @@ namespace YouTube_Downloader_DLL.Operations
         {
             base.Dispose();
 
-            // Free managed resources
-            if (downloader != null)
-            {
-                downloader.Dispose();
-                downloader = null;
-            }
+            downloader?.Dispose();
+            downloader = null;
         }
 
         public override bool Open()
@@ -178,13 +174,13 @@ namespace YouTube_Downloader_DLL.Operations
 
         public override bool CanOpen()
         {
-            return this.Status == OperationStatus.Success;
+            return this.IsSuccessful;
         }
 
         public override bool CanPause()
         {
             // Only downloader can pause.
-            return downloader != null && downloader.CanPause && this.Status == OperationStatus.Working;
+            return downloader?.CanPause == true && this.IsWorking;
         }
 
         public override bool CanResume()
