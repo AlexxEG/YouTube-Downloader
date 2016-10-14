@@ -203,7 +203,7 @@ namespace YouTube_Downloader_DLL.Operations
 
         protected override void WorkerDoWork(DoWorkEventArgs e)
         {
-            while (downloader != null && downloader.IsBusy)
+            while (downloader?.IsBusy == true)
                 Thread.Sleep(200);
 
             if (_combine && _downloadSuccessful)
