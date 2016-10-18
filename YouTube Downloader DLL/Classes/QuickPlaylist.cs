@@ -14,15 +14,24 @@ namespace YouTube_Downloader_DLL.Classes
         {
             var wc = new WebClient();
             var videos = new List<QuickVideoInfo>();
-
+            int videoIndex = 0;
             string source = wc.DownloadString(playlistUrl);
-
             Match m = null;
 
-            var loadmore = new Regex(@"data-uix-load-more-href=""([^ ""]*)", RegexOptions.Compiled);
-            var id = new Regex(@"<tr.*data-video-id=""([^""]*)""", RegexOptions.Compiled);
-            var title = new Regex(@"<tr.*data-title=""([^""]*)""", RegexOptions.Compiled);
-            var duration = new Regex(@"<div class=""timestamp""><[^>]*>([^<]*)", RegexOptions.Compiled);
+            // Find the load more button
+            var loadmore = new Regex(
+                @"data-uix-load-more-href=""([^ ""]*)",
+                RegexOptions.Compiled);
+
+            // Find video id and title in any order
+            var titleId = new Regex(
+                @"<tr(?=.*?data-video-id=""(.*?)"")(?=.*?data-title=""(.*?)"").*?pl-video-edit-options",
+                RegexOptions.Compiled | RegexOptions.Singleline);
+
+            // Find duration. Private/deleted e.g. videos does not have duration
+            var duration = new Regex(
+                @"timestamp"">.*?>(.*?)<",
+                RegexOptions.Compiled | RegexOptions.Singleline);
 
             do
             {
@@ -34,25 +43,23 @@ namespace YouTube_Downloader_DLL.Classes
                     source = HttpUtility.HtmlDecode(source);
                 }
 
-                var mId = id.Matches(source);
-                var mTitle = title.Matches(source);
-                var mDuration = duration.Matches(source);
-
-                for (int i = 0; i < mId.Count; i++)
+                foreach (Match match in titleId.Matches(source))
                 {
-                    string resultId = mId[i].Groups[1].Value;
-                    string resultTitle = mTitle[i].Groups[1].Value;
+                    string fullMatch = match.Groups[0].Value;
+                    string resultId = match.Groups[1].Value;
+                    string resultTitle = match.Groups[2].Value;
                     string resultDuration = string.Empty;
 
-                    if (mDuration.Count - 1 >= i)
-                        resultDuration = mDuration[i].Groups[1].Value;
-                    else
-                        continue;
+                    Match mDuration;
+                    if ((mDuration = duration.Match(fullMatch)).Success)
+                        resultDuration = mDuration.Groups[1].Value;
 
-                    videos.Add(new QuickVideoInfo(i + 1, // Not zero-based
+                    videos.Add(new QuickVideoInfo(videoIndex + 1, // Not zero-based
                                                   resultId,
                                                   resultTitle,
                                                   resultDuration));
+
+                    videoIndex++;
                 }
             }
             while ((m = loadmore.Match(source)).Success);
