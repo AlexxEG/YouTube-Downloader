@@ -119,7 +119,7 @@ namespace YouTube_Downloader
 
             try
             {
-                Process.Start((e.Model as OperationListViewItem).Input);
+                Process.Start((e.Model as OperationModel).Input);
             }
             catch (Exception)
             {
@@ -173,7 +173,7 @@ namespace YouTube_Downloader
             nudMaxSimDownloads_ValueChanged(sender, e);
         }
 
-        private void OperationListViewItem_AspectChanged(object sender, EventArgs e)
+        private void OperationModel_AspectChanged(object sender, EventArgs e)
         {
             olvQueue.RefreshObject(sender);
         }
@@ -283,7 +283,7 @@ namespace YouTube_Downloader
                     (operation as DownloadOperation).Combining += DownloadOperation_Combining;
                 }
 
-                var item = new OperationListViewItem(Path.GetFileName(filename), tempFormat.VideoInfo.Url, operation);
+                var item = new OperationModel(Path.GetFileName(filename), tempFormat.VideoInfo.Url, operation);
 
                 item.Duration = Helper.FormatVideoLength(tempFormat.VideoInfo.Duration);
 
@@ -293,7 +293,7 @@ namespace YouTube_Downloader
                 else
                     item.FileSize = Helper.FormatFileSize(tempFormat.FileSize);
 
-                item.AspectChanged += OperationListViewItem_AspectChanged;
+                item.AspectChanged += OperationModel_AspectChanged;
                 item.OperationComplete += downloadItem_OperationComplete;
 
                 olvQueue.AddObject(item);
@@ -445,7 +445,7 @@ namespace YouTube_Downloader
 
         private void DownloadOperation_Combining(object sender, EventArgs e)
         {
-            foreach (OperationListViewItem item in olvQueue.Objects)
+            foreach (OperationModel item in olvQueue.Objects)
             {
                 if (item.Operation == sender)
                 {
@@ -457,7 +457,7 @@ namespace YouTube_Downloader
 
         private void downloadItem_OperationComplete(object sender, OperationEventArgs e)
         {
-            var operation = (sender as OperationListViewItem).Operation;
+            var operation = (sender as OperationModel).Operation;
 
             if (chbAutoConvert.Enabled && chbAutoConvert.Checked && operation.Status == OperationStatus.Success)
             {
@@ -660,9 +660,9 @@ namespace YouTube_Downloader
             try
             {
                 var operation = new PlaylistOperation();
-                var item = new OperationListViewItem("Getting playlist info...", txtPlaylistLink.Text, operation);
+                var item = new OperationModel("Getting playlist info...", txtPlaylistLink.Text, operation);
 
-                item.AspectChanged += OperationListViewItem_AspectChanged;
+                item.AspectChanged += OperationModel_AspectChanged;
 
                 olvQueue.AddObject(item);
                 olvQueue.SelectedObject = item;
@@ -688,7 +688,7 @@ namespace YouTube_Downloader
 
         private void PlaylistOperation_Combined(object sender, EventArgs e)
         {
-            foreach (OperationListViewItem item in olvQueue.Objects)
+            foreach (OperationModel item in olvQueue.Objects)
             {
                 if (item.Operation == sender)
                 {
@@ -700,7 +700,7 @@ namespace YouTube_Downloader
 
         private void PlaylistOperation_Combining(object sender, EventArgs e)
         {
-            foreach (OperationListViewItem item in olvQueue.Objects)
+            foreach (OperationModel item in olvQueue.Objects)
             {
                 if (item.Operation == sender)
                 {
@@ -999,7 +999,7 @@ namespace YouTube_Downloader
 
             bool canOpen = false, canPause = false, canResume = false, canStop = false, canConvert = false;
 
-            foreach (OperationListViewItem item in olvQueue.SelectedObjects)
+            foreach (OperationModel item in olvQueue.SelectedObjects)
             {
                 var operation = item.Operation;
 
@@ -1039,7 +1039,7 @@ namespace YouTube_Downloader
         {
             int fails = 0;
 
-            foreach (OperationListViewItem item in olvQueue.SelectedObjects)
+            foreach (OperationModel item in olvQueue.SelectedObjects)
             {
                 var operation = item.Operation;
 
@@ -1057,7 +1057,7 @@ namespace YouTube_Downloader
         {
             int fails = 0;
 
-            foreach (OperationListViewItem item in olvQueue.SelectedObjects)
+            foreach (OperationModel item in olvQueue.SelectedObjects)
             {
                 var operation = item.Operation;
 
@@ -1073,7 +1073,7 @@ namespace YouTube_Downloader
 
         private void convertToMP3MenuItem_Click(object sender, EventArgs e)
         {
-            foreach (OperationListViewItem item in olvQueue.SelectedObjects)
+            foreach (OperationModel item in olvQueue.SelectedObjects)
             {
                 var operation = item.Operation;
 
@@ -1092,7 +1092,7 @@ namespace YouTube_Downloader
 
         private void resumeMenuItem_Click(object sender, EventArgs e)
         {
-            foreach (OperationListViewItem item in olvQueue.SelectedObjects)
+            foreach (OperationModel item in olvQueue.SelectedObjects)
             {
                 var operation = item.Operation;
 
@@ -1103,7 +1103,7 @@ namespace YouTube_Downloader
 
         private void pauseMenuItem_Click(object sender, EventArgs e)
         {
-            foreach (OperationListViewItem item in olvQueue.SelectedObjects)
+            foreach (OperationModel item in olvQueue.SelectedObjects)
             {
                 var operation = item.Operation;
 
@@ -1114,7 +1114,7 @@ namespace YouTube_Downloader
 
         private void stopMenuItem_Click(object sender, EventArgs e)
         {
-            foreach (OperationListViewItem item in olvQueue.SelectedObjects)
+            foreach (OperationModel item in olvQueue.SelectedObjects)
             {
                 var operation = item.Operation;
 
@@ -1127,7 +1127,7 @@ namespace YouTube_Downloader
         {
             for (int i = olvQueue.SelectedObjects.Count - 1; i >= 0; i--)
             {
-                var item = (OperationListViewItem)olvQueue.SelectedObjects[i];
+                var item = (OperationModel)olvQueue.SelectedObjects[i];
                 var operation = item.Operation;
 
                 operation.Stop();
@@ -1152,11 +1152,11 @@ namespace YouTube_Downloader
         {
             Operation operation = new DummyDownloadOperation(workTimeMS);
 
-            var item = new OperationListViewItem(operation.Title, operation.Link, operation);
+            var item = new OperationModel(operation.Title, operation.Link, operation);
 
             item.Duration = Helper.FormatVideoLength(operation.Duration);
             item.FileSize = Helper.FormatFileSize(operation.FileSize);
-            item.AspectChanged += OperationListViewItem_AspectChanged;
+            item.AspectChanged += OperationModel_AspectChanged;
 
             olvQueue.AddObject(item);
 
@@ -1199,7 +1199,7 @@ namespace YouTube_Downloader
         /// <param name="input">The file to convert.</param>
         /// <param name="output">The path to save converted file.</param>
         /// <param name="crop">True if converted file should be cropped.</param>
-        private OperationListViewItem Convert(string input, string output, bool crop)
+        private OperationModel Convert(string input, string output, bool crop)
         {
             TimeSpan start, end;
             start = end = TimeSpan.MinValue;
@@ -1215,12 +1215,12 @@ namespace YouTube_Downloader
             }
 
             var operation = new ConvertOperation();
-            var item = new OperationListViewItem(Path.GetFileName(output), input, Path.GetFileName(input), operation);
+            var item = new OperationModel(Path.GetFileName(output), input, Path.GetFileName(input), operation);
 
             item.WorkingText = "Converting...";
             item.Duration = Helper.FormatVideoLength(FFmpegHelper.GetDuration(input).Value);
             item.FileSize = Helper.GetFileSizeFormatted(input);
-            item.AspectChanged += OperationListViewItem_AspectChanged;
+            item.AspectChanged += OperationModel_AspectChanged;
 
             olvQueue.AddObject(item);
             olvQueue.SelectedObject = item;
@@ -1240,10 +1240,10 @@ namespace YouTube_Downloader
         private void ConvertFolder(string input, string output, string extension)
         {
             var operation = new ConvertOperation();
-            var item = new OperationListViewItem(Path.GetFileName(output), input, Path.GetFileName(input), operation);
+            var item = new OperationModel(Path.GetFileName(output), input, Path.GetFileName(input), operation);
 
             item.WorkingText = "Converting...";
-            item.AspectChanged += OperationListViewItem_AspectChanged;
+            item.AspectChanged += OperationModel_AspectChanged;
 
             olvQueue.AddObject(item);
             olvQueue.SelectedObject = item;
@@ -1270,12 +1270,12 @@ namespace YouTube_Downloader
                 end = TimeSpan.MinValue;
 
             var operation = new CroppingOperation();
-            var item = new OperationListViewItem(Path.GetFileName(output), input, Path.GetFileName(input), operation);
+            var item = new OperationModel(Path.GetFileName(output), input, Path.GetFileName(input), operation);
 
             item.WorkingText = "Cropping...";
             item.Duration = Helper.FormatVideoLength(FFmpegHelper.GetDuration(input).Value);
             item.FileSize = Helper.GetFileSizeFormatted(input);
-            item.AspectChanged += OperationListViewItem_AspectChanged;
+            item.AspectChanged += OperationModel_AspectChanged;
 
             olvQueue.AddObject(item);
             olvQueue.SelectedObject = item;
@@ -1289,7 +1289,7 @@ namespace YouTube_Downloader
         /// </summary>
         private bool GetIsWorking()
         {
-            foreach (OperationListViewItem item in olvQueue.Objects)
+            foreach (OperationModel item in olvQueue.Objects)
             {
                 var operation = item.Operation;
 

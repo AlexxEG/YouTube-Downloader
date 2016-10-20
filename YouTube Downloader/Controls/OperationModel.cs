@@ -10,7 +10,7 @@ namespace YouTube_Downloader.Controls
     /// <summary>
     /// Model for <see cref="YouTube_Downloader_DLL.Operations.Operation"/> to display in ObjectListView.
     /// </summary>
-    public class OperationListViewItem
+    public class OperationModel
     {
         private const int ProgressMaximum = 100;
         private const int ProgressMinimum = 0;
@@ -130,12 +130,12 @@ namespace YouTube_Downloader.Controls
         public event EventHandler AspectChanged;
         public event OperationEventHandler OperationComplete;
 
-        public OperationListViewItem(string text, string input, Operation operation)
+        public OperationModel(string text, string input, Operation operation)
             : this(text, input, input, operation)
         {
         }
 
-        public OperationListViewItem(string text, string input, string inputText, Operation operation)
+        public OperationModel(string text, string input, string inputText, Operation operation)
         {
             this.Title = text;
             this.Input = input;
