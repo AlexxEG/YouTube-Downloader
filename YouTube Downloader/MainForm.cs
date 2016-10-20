@@ -128,10 +128,18 @@ namespace YouTube_Downloader
 #endif
         }
 
-        private void ObjectListView1_HyperlinkClicked(object sender, HyperlinkClickedEventArgs e)
+        private void olvQueue_HyperlinkClicked(object sender, HyperlinkClickedEventArgs e)
         {
             e.Handled = true;
-            MessageBox.Show(this, e.Url);
+
+            try
+            {
+                Process.Start((e.Model as OperationListViewItem).Input);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show(this, "An error occured attemping to open input.");
+            }
         }
 
         private void MainForm_Shown(object sender, EventArgs e)

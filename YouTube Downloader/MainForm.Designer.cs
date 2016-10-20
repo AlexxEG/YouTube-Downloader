@@ -1007,7 +1007,7 @@
             this.olvQueue.UseCompatibleStateImageBehavior = false;
             this.olvQueue.UseHyperlinks = true;
             this.olvQueue.View = System.Windows.Forms.View.Details;
-            this.olvQueue.HyperlinkClicked += new System.EventHandler<BrightIdeasSoftware.HyperlinkClickedEventArgs>(this.ObjectListView1_HyperlinkClicked);
+            this.olvQueue.HyperlinkClicked += new System.EventHandler<BrightIdeasSoftware.HyperlinkClickedEventArgs>(this.olvQueue_HyperlinkClicked);
             // 
             // olvColumn1
             // 
