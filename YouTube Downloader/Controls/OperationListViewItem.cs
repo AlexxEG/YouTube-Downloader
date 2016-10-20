@@ -10,7 +10,7 @@ using YouTube_Downloader_DLL.Operations;
 namespace YouTube_Downloader.Controls
 {
     /// <summary>
-    /// Wrapper for <see cref="YouTube_Downloader.Operations.Operation"/> to display in ListView.
+    /// Wrapper for <see cref="YouTube_Downloader_DLL.Operations.Operation"/> to display in ListView.
     /// </summary>
     public class OperationListViewItem : ListViewItem
     {
