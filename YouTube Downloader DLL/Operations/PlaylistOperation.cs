@@ -34,6 +34,7 @@ namespace YouTube_Downloader_DLL.Operations
         int _failures = 0;
         int _preferredQuality;
         int _selectedVideosCount = 0;
+        bool _cancel;
         bool _queryingVideos = false;
         bool _processing;
         bool? _downloaderSuccessful;
@@ -180,6 +181,7 @@ namespace YouTube_Downloader_DLL.Operations
                 this.CancelAsync();
 
             this.Status = OperationStatus.Canceled;
+            _cancel = true;
             return true;
         }
 
@@ -529,7 +531,7 @@ namespace YouTube_Downloader_DLL.Operations
                     if (_videos.Count > 0 && this.Videos.Count == _videos.Count)
                         break;
 
-                    if (this.CancellationPending)
+                    if (_cancel)
                     {
                         reader.Stop();
                         break;
