@@ -107,17 +107,17 @@
             this.mtxtFrom = new System.Windows.Forms.MaskedTextBox();
             this.btnConvert = new System.Windows.Forms.Button();
             this.queueTabPage = new System.Windows.Forms.TabPage();
+            this.olvQueue = new BrightIdeasSoftware.ObjectListView();
+            this.olvColumn1 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvColumn2 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvColumn3 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvColumn4 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvColumn5 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvColumn6 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.btnMaxSimDownloadsApply = new System.Windows.Forms.Button();
             this.nudMaxSimDownloads = new System.Windows.Forms.NumericUpDown();
             this.lMaxSimDownloads = new System.Windows.Forms.Label();
             this.chbAutoConvert = new System.Windows.Forms.CheckBox();
-            this.lvQueue = new ListViewEmbeddedControls.ListViewEx();
-            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.cmPlaylistList = new System.Windows.Forms.ContextMenu();
@@ -138,6 +138,7 @@
             this.pConvertFile.SuspendLayout();
             this.gCropping.SuspendLayout();
             this.queueTabPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.olvQueue)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMaxSimDownloads)).BeginInit();
             this.SuspendLayout();
             // 
@@ -965,11 +966,11 @@
             // 
             // queueTabPage
             // 
+            this.queueTabPage.Controls.Add(this.olvQueue);
             this.queueTabPage.Controls.Add(this.btnMaxSimDownloadsApply);
             this.queueTabPage.Controls.Add(this.nudMaxSimDownloads);
             this.queueTabPage.Controls.Add(this.lMaxSimDownloads);
             this.queueTabPage.Controls.Add(this.chbAutoConvert);
-            this.queueTabPage.Controls.Add(this.lvQueue);
             this.queueTabPage.Location = new System.Drawing.Point(4, 22);
             this.queueTabPage.Name = "queueTabPage";
             this.queueTabPage.Padding = new System.Windows.Forms.Padding(3);
@@ -977,6 +978,67 @@
             this.queueTabPage.TabIndex = 1;
             this.queueTabPage.Text = "Queue";
             this.queueTabPage.UseVisualStyleBackColor = true;
+            // 
+            // olvQueue
+            // 
+            this.olvQueue.AllColumns.Add(this.olvColumn1);
+            this.olvQueue.AllColumns.Add(this.olvColumn2);
+            this.olvQueue.AllColumns.Add(this.olvColumn3);
+            this.olvQueue.AllColumns.Add(this.olvColumn4);
+            this.olvQueue.AllColumns.Add(this.olvColumn5);
+            this.olvQueue.AllColumns.Add(this.olvColumn6);
+            this.olvQueue.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.olvQueue.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.olvColumn1,
+            this.olvColumn2,
+            this.olvColumn3,
+            this.olvColumn4,
+            this.olvColumn5,
+            this.olvColumn6});
+            this.olvQueue.Cursor = System.Windows.Forms.Cursors.Default;
+            this.olvQueue.FullRowSelect = true;
+            this.olvQueue.Location = new System.Drawing.Point(6, 6);
+            this.olvQueue.Name = "olvQueue";
+            this.olvQueue.ShowGroups = false;
+            this.olvQueue.Size = new System.Drawing.Size(590, 324);
+            this.olvQueue.TabIndex = 7;
+            this.olvQueue.UseCompatibleStateImageBehavior = false;
+            this.olvQueue.UseHyperlinks = true;
+            this.olvQueue.View = System.Windows.Forms.View.Details;
+            this.olvQueue.HyperlinkClicked += new System.EventHandler<BrightIdeasSoftware.HyperlinkClickedEventArgs>(this.ObjectListView1_HyperlinkClicked);
+            // 
+            // olvColumn1
+            // 
+            this.olvColumn1.AspectName = "Title";
+            this.olvColumn1.Text = "Video";
+            // 
+            // olvColumn2
+            // 
+            this.olvColumn2.AspectName = "Progress";
+            this.olvColumn2.Text = "Progress";
+            // 
+            // olvColumn3
+            // 
+            this.olvColumn3.AspectName = "Status";
+            this.olvColumn3.Text = "Status";
+            // 
+            // olvColumn4
+            // 
+            this.olvColumn4.AspectName = "Length";
+            this.olvColumn4.Text = "Length";
+            // 
+            // olvColumn5
+            // 
+            this.olvColumn5.AspectName = "Size";
+            this.olvColumn5.Text = "Size";
+            // 
+            // olvColumn6
+            // 
+            this.olvColumn6.AspectName = "Input";
+            this.olvColumn6.Hyperlink = true;
+            this.olvColumn6.Text = "Input";
             // 
             // btnMaxSimDownloadsApply
             // 
@@ -1034,50 +1096,6 @@
             this.chbAutoConvert.TabIndex = 1;
             this.chbAutoConvert.Text = "Convert to MP3 automatically";
             this.chbAutoConvert.UseVisualStyleBackColor = true;
-            // 
-            // lvQueue
-            // 
-            this.lvQueue.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lvQueue.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader2,
-            this.columnHeader3,
-            this.columnHeader4,
-            this.columnHeader5,
-            this.columnHeader6});
-            this.lvQueue.FullRowSelect = true;
-            this.lvQueue.Location = new System.Drawing.Point(6, 6);
-            this.lvQueue.Name = "lvQueue";
-            this.lvQueue.Size = new System.Drawing.Size(590, 326);
-            this.lvQueue.TabIndex = 0;
-            this.lvQueue.UseCompatibleStateImageBehavior = false;
-            this.lvQueue.View = System.Windows.Forms.View.Details;
-            // 
-            // columnHeader1
-            // 
-            this.columnHeader1.Text = "Video";
-            // 
-            // columnHeader2
-            // 
-            this.columnHeader2.Text = "Progress";
-            // 
-            // columnHeader3
-            // 
-            this.columnHeader3.Text = "Status";
-            // 
-            // columnHeader4
-            // 
-            this.columnHeader4.Text = "Length";
-            // 
-            // columnHeader5
-            // 
-            this.columnHeader5.Text = "Size";
-            // 
-            // columnHeader6
-            // 
-            this.columnHeader6.Text = "Input";
             // 
             // openFileDialog1
             // 
@@ -1141,6 +1159,7 @@
             this.gCropping.PerformLayout();
             this.queueTabPage.ResumeLayout(false);
             this.queueTabPage.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.olvQueue)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMaxSimDownloads)).EndInit();
             this.ResumeLayout(false);
 
@@ -1153,15 +1172,8 @@
         private System.Windows.Forms.ComboBox cbQuality;
         private System.Windows.Forms.TextBox txtYoutubeLink;
         private System.Windows.Forms.Button btnPaste;
-        private ListViewEmbeddedControls.ListViewEx lvQueue;
-        private System.Windows.Forms.ColumnHeader columnHeader1;
-        private System.Windows.Forms.ColumnHeader columnHeader2;
-        private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.ComponentModel.BackgroundWorker bwGetVideo;
-        private System.Windows.Forms.ColumnHeader columnHeader4;
-        private System.Windows.Forms.ColumnHeader columnHeader5;
         private System.Windows.Forms.Button btnDownload;
-        private System.Windows.Forms.ColumnHeader columnHeader6;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ComboBox cbSaveTo;
@@ -1242,6 +1254,13 @@
         private System.Windows.Forms.NumericUpDown nudMaxSimDownloads;
         private System.Windows.Forms.Label lMaxSimDownloads;
         private System.Windows.Forms.CheckBox chbPlaylistIgnoreExisting;
+        private BrightIdeasSoftware.ObjectListView olvQueue;
+        private BrightIdeasSoftware.OLVColumn olvColumn1;
+        private BrightIdeasSoftware.OLVColumn olvColumn2;
+        private BrightIdeasSoftware.OLVColumn olvColumn3;
+        private BrightIdeasSoftware.OLVColumn olvColumn4;
+        private BrightIdeasSoftware.OLVColumn olvColumn5;
+        private BrightIdeasSoftware.OLVColumn olvColumn6;
     }
 }
 
