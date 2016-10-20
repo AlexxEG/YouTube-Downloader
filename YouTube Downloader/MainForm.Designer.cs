@@ -1026,17 +1026,17 @@
             // 
             // olvColumn4
             // 
-            this.olvColumn4.AspectName = "Length";
+            this.olvColumn4.AspectName = "Duration";
             this.olvColumn4.Text = "Length";
             // 
             // olvColumn5
             // 
-            this.olvColumn5.AspectName = "Size";
+            this.olvColumn5.AspectName = "FileSize";
             this.olvColumn5.Text = "Size";
             // 
             // olvColumn6
             // 
-            this.olvColumn6.AspectName = "Input";
+            this.olvColumn6.AspectName = "InputText";
             this.olvColumn6.Hyperlink = true;
             this.olvColumn6.Text = "Input";
             // 

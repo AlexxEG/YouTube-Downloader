@@ -20,6 +20,7 @@ namespace YouTube_Downloader.Controls
         string _duration;
         string _filesize;
         string _input;
+        string _inputText;
         string _status;
         string _title;
         string _workingText;
@@ -75,6 +76,18 @@ namespace YouTube_Downloader.Controls
                 this.OnAspectChanged();
             }
         }
+        public string InputText
+        {
+            get { return _inputText; }
+            set
+            {
+                if (_inputText == value)
+                    return;
+
+                _inputText = value;
+                this.OnAspectChanged();
+            }
+        }
         public string Status
         {
             get { return _status; }
@@ -125,7 +138,8 @@ namespace YouTube_Downloader.Controls
         public OperationListViewItem(string text, string input, string inputText, Operation operation)
         {
             this.Title = text;
-            this.Input = inputText;
+            this.Input = input;
+            this.InputText = inputText;
 
             this.Operation = operation;
             this.Operation.Completed += Operation_Completed;
