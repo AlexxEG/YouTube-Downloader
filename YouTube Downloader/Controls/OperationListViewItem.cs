@@ -2,8 +2,6 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Windows.Forms;
-using ListViewEmbeddedControls;
 using YouTube_Downloader_DLL.Classes;
 using YouTube_Downloader_DLL.Operations;
 
@@ -33,6 +31,9 @@ namespace YouTube_Downloader.Controls
             get { return _progress; }
             set
             {
+                if (_progress == value)
+                    return;
+
                 _progress = value;
                 this.OnAspectChanged();
             }
@@ -43,6 +44,9 @@ namespace YouTube_Downloader.Controls
             get { return _duration; }
             set
             {
+                if (_duration == value)
+                    return;
+
                 _duration = value;
                 this.OnAspectChanged();
             }
@@ -52,6 +56,9 @@ namespace YouTube_Downloader.Controls
             get { return _filesize; }
             set
             {
+                if (_filesize == value)
+                    return;
+
                 _filesize = value;
                 this.OnAspectChanged();
             }
@@ -61,6 +68,9 @@ namespace YouTube_Downloader.Controls
             get { return _input; }
             set
             {
+                if (_input == value)
+                    return;
+
                 _input = value;
                 this.OnAspectChanged();
             }
@@ -70,6 +80,9 @@ namespace YouTube_Downloader.Controls
             get { return _status; }
             set
             {
+                if (_status == value)
+                    return;
+
                 _status = value;
                 this.OnAspectChanged();
             }
@@ -79,6 +92,9 @@ namespace YouTube_Downloader.Controls
             get { return _title; }
             set
             {
+                if (_title == value)
+                    return;
+
                 _title = value;
                 this.OnAspectChanged();
             }
@@ -88,6 +104,9 @@ namespace YouTube_Downloader.Controls
             get { return _workingText; }
             set
             {
+                if (_workingText == value)
+                    return;
+
                 _workingText = value;
                 this.OnAspectChanged();
             }
@@ -169,7 +188,8 @@ namespace YouTube_Downloader.Controls
 
         private void Operation_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            this.Progress = Math.Min(ProgressMaximum, Math.Max(ProgressMinimum, e.ProgressPercentage));
+            this.Progress = Math.Min(ProgressMaximum,
+                                     Math.Max(ProgressMinimum, e.ProgressPercentage));
 
             if (!string.IsNullOrEmpty(this.WorkingText))
                 this.Status = this.WorkingText;
