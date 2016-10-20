@@ -300,6 +300,7 @@ namespace YouTube_Downloader
                 else
                     item.FileSize = Helper.FormatFileSize(tempFormat.FileSize);
 
+                item.AspectChanged += OperationListViewItem_AspectChanged;
                 item.OperationComplete += downloadItem_OperationComplete;
 
                 olvQueue.AddObject(item);
@@ -667,6 +668,8 @@ namespace YouTube_Downloader
             {
                 var operation = new PlaylistOperation();
                 var item = new OperationListViewItem("Getting playlist info...", txtPlaylistLink.Text, operation);
+
+                item.AspectChanged += OperationListViewItem_AspectChanged;
 
                 olvQueue.AddObject(item);
                 olvQueue.SelectedObject = item;
@@ -1160,6 +1163,7 @@ namespace YouTube_Downloader
 
             item.Duration = Helper.FormatVideoLength(operation.Duration);
             item.FileSize = Helper.FormatFileSize(operation.FileSize);
+            item.AspectChanged += OperationListViewItem_AspectChanged;
 
             olvQueue.AddObject(item);
 
@@ -1246,6 +1250,7 @@ namespace YouTube_Downloader
             var item = new OperationListViewItem(Path.GetFileName(output), input, Path.GetFileName(input), operation);
 
             item.WorkingText = "Converting...";
+            item.AspectChanged += OperationListViewItem_AspectChanged;
 
             olvQueue.AddObject(item);
             olvQueue.SelectedObject = item;
@@ -1277,6 +1282,7 @@ namespace YouTube_Downloader
             item.WorkingText = "Cropping...";
             item.Duration = Helper.FormatVideoLength(FFmpegHelper.GetDuration(input).Value);
             item.FileSize = Helper.GetFileSizeFormatted(input);
+            item.AspectChanged += OperationListViewItem_AspectChanged;
 
             olvQueue.AddObject(item);
             olvQueue.SelectedObject = item;
