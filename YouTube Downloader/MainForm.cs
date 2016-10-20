@@ -101,25 +101,10 @@ namespace YouTube_Downloader
             Application.Exit();
         }
 
-        class TestItem
-        {
-            public string Title { get; set; }
-            public int Progress { get; set; }
-            public string Status { get; set; }
-            public string Length { get; set; }
-            public string Size { get; set; }
-            public string Input { get; set; }
-
-            public TestItem()
-            {
-
-            }
-        }
-
         private void MainForm_Load(object sender, EventArgs e)
         {
             this.LoadSettings();
-            
+
 #if DEBUG
             tabControl1.SelectedIndex = 3;
 
@@ -1388,27 +1373,6 @@ namespace YouTube_Downloader
                 TextBrush = Brushes.Black
             };
 
-
-            //this.olvQueue.SetObjects(new TestItem[] {
-            //    new TestItem()
-            //    {
-            //        Title = "Method Man - Method Man",
-            //        Progress = 50,
-            //        Status = "10 MB/s",
-            //        Length = "5:00",
-            //        Size = "11 MB",
-            //        Input = "https://www.google.com"
-            //    },
-            //    new TestItem()
-            //    {
-            //        Title = "Redman - Redman",
-            //        Progress = 75,
-            //        Status = "10 MB/s",
-            //        Length = "3:12",
-            //        Size = "16 MB",
-            //        Input = "https://www.google.no"
-            //    },
-            //});
             this.olvQueue.SetObjects(new object[0]);
         }
 
