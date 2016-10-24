@@ -1008,11 +1008,11 @@ namespace YouTube_Downloader
                     canConvert = true;
             }
 
-            openMenuItem.Enabled = canOpen;
-            pauseMenuItem.Enabled = canPause;
-            resumeMenuItem.Enabled = canResume;
-            stopMenuItem.Enabled = canStop;
-            convertToMP3MenuItem.Enabled = canConvert;
+            openMenuItem.Visible = canOpen;
+            pauseMenuItem.Visible = canPause;
+            resumeMenuItem.Visible = canResume;
+            stopMenuItem.Visible = canStop;
+            menuItem5.Visible = convertToMP3MenuItem.Visible = canConvert; // menuItem5 = splitter under
         }
 
         private void contextMenu1_Collapse(object sender, EventArgs e)
