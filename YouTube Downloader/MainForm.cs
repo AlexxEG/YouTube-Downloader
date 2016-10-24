@@ -632,6 +632,62 @@ namespace YouTube_Downloader
                 item.Checked = false;
         }
 
+        private ListViewItem[] GetFilteredItems()
+        {
+            var items = new List<ListViewItem>();
+            var filters = txtPlaylistFilter.Text.Split(';');
+
+            foreach (string filter in filters)
+                foreach (ListViewItem item in lvPlaylistVideos.Items
+                                                .Cast<ListViewItem>()
+                                                .Where(i => i.Text.ToLower().Contains(filter.ToLower())))
+                    items.Add(item);
+
+            return items.ToArray();
+        }
+
+        private void btnPlaylistRemove_Click(object sender, EventArgs e)
+        {
+            lvPlaylistVideos.BeginUpdate();
+
+            foreach (ListViewItem item in this.GetFilteredItems())
+            {
+                lvPlaylistVideos.Items.Remove(item);
+            }
+
+            lvPlaylistVideos.EndUpdate();
+        }
+
+        private void btnPlaylistToggle_Click(object sender, EventArgs e)
+        {
+            lvPlaylistVideos.BeginUpdate();
+
+            foreach (ListViewItem item in this.GetFilteredItems())
+            {
+                item.Checked = !item.Checked;
+            }
+
+            lvPlaylistVideos.EndUpdate();
+        }
+
+        private void btnPlaylistSearch_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in lvPlaylistVideos.Items)
+                item.BackColor = SystemColors.Window;
+
+            if (string.IsNullOrEmpty(txtPlaylistFilter.Text))
+                return;
+
+            lvPlaylistVideos.BeginUpdate();
+
+            foreach (ListViewItem item in this.GetFilteredItems())
+            {
+                item.BackColor = Color.LightGray;
+            }
+
+            lvPlaylistVideos.EndUpdate();
+        }
+
         private void StartPlaylistOperation(ICollection<QuickVideoInfo> videos)
         {
             string path = cbPlaylistSaveTo.Text;
