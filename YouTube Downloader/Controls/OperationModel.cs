@@ -29,7 +29,11 @@ namespace YouTube_Downloader.Controls
 
         public int Progress
         {
-            get { return _progress; }
+            get
+            {
+                // Show full progress bar if ReportsProgress is false
+                return this.Operation.ReportsProgress ? _progress : 100;
+            }
             set
             {
                 if (_progress == value)
@@ -246,7 +250,7 @@ namespace YouTube_Downloader.Controls
             }
             else
             {
-                // ToDo: Show looping progres bar
+                // ToDo: Show looping progress bar
             }
         }
 
