@@ -2,100 +2,148 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Windows.Forms;
-using ListViewEmbeddedControls;
 using YouTube_Downloader_DLL.Classes;
 using YouTube_Downloader_DLL.Operations;
 
 namespace YouTube_Downloader.Controls
 {
     /// <summary>
-    /// Wrapper for <see cref="YouTube_Downloader_DLL.Operations.Operation"/> to display in ListView.
+    /// Model for <see cref="YouTube_Downloader_DLL.Operations.Operation"/> to display in ObjectListView.
     /// </summary>
-    public class OperationListViewItem : ListViewItem
+    public class OperationModel
     {
-        private const int ColumnProgressBar = 1;
-        private const int ColumnInputLabel = 5;
+        private const int ProgressMaximum = 100;
+        private const int ProgressMinimum = 0;
         private const int ProgressUpdateDelay = 250;
 
-        LinkLabel _inputLabel;
-        ProgressBar _progressBar;
+        int _progress;
+        string _duration;
+        string _filesize;
+        string _input;
+        string _inputText;
+        string _status;
+        string _title;
+        string _workingText;
+
         Stopwatch sw;
 
-        public string Duration
-        {
-            get { return this.SubItems[3].Text; }
-            set { this.SubItems[3].Text = value; }
-        }
-
-        public string FileSize
-        {
-            get { return this.SubItems[4].Text; }
-            set { this.SubItems[4].Text = value; }
-        }
-
-        public string Input
-        {
-            get { return this.SubItems[5].Text; }
-            set
-            {
-                _inputLabel.Text = this.Input;
-
-                this.SubItems[5].Text = value;
-            }
-        }
-
-        public string Progress
-        {
-            get { return this.SubItems[1].Text; }
-            set { this.SubItems[1].Text = value; }
-        }
-
-        public string Status
-        {
-            get { return this.SubItems[2].Text; }
-            set { this.SubItems[2].Text = value; }
-        }
-
-        public string WorkingText { get; set; }
-
-        public ListViewEx ListViewEx
+        public int Progress
         {
             get
             {
-                if (this.ListView == null)
-                    return null;
+                // Show full progress bar if ReportsProgress is false
+                return this.Operation.ReportsProgress ? _progress : 100;
+            }
+            set
+            {
+                if (_progress == value)
+                    return;
 
-                return this.ListView as ListViewEx;
+                _progress = value;
+                this.OnAspectChanged();
             }
         }
+
+        public string Duration
+        {
+            get { return _duration; }
+            set
+            {
+                if (_duration == value)
+                    return;
+
+                _duration = value;
+                this.OnAspectChanged();
+            }
+        }
+        public string FileSize
+        {
+            get { return _filesize; }
+            set
+            {
+                if (_filesize == value)
+                    return;
+
+                _filesize = value;
+                this.OnAspectChanged();
+            }
+        }
+        public string Input
+        {
+            get { return _input; }
+            set
+            {
+                if (_input == value)
+                    return;
+
+                _input = value;
+                this.OnAspectChanged();
+            }
+        }
+        public string InputText
+        {
+            get { return _inputText; }
+            set
+            {
+                if (_inputText == value)
+                    return;
+
+                _inputText = value;
+                this.OnAspectChanged();
+            }
+        }
+        public string Status
+        {
+            get { return _status; }
+            set
+            {
+                if (_status == value)
+                    return;
+
+                _status = value;
+                this.OnAspectChanged();
+            }
+        }
+        public string Title
+        {
+            get { return _title; }
+            set
+            {
+                if (_title == value)
+                    return;
+
+                _title = value;
+                this.OnAspectChanged();
+            }
+        }
+        public string WorkingText
+        {
+            get { return _workingText; }
+            set
+            {
+                if (_workingText == value)
+                    return;
+
+                _workingText = value;
+                this.OnAspectChanged();
+            }
+        }
+
         public Operation Operation { get; private set; }
 
+        public event EventHandler AspectChanged;
         public event OperationEventHandler OperationComplete;
 
-        public OperationListViewItem(string text, string input, Operation operation)
+        public OperationModel(string text, string input, Operation operation)
             : this(text, input, input, operation)
         {
         }
 
-        public OperationListViewItem(string text, string input, string inputText, Operation operation)
-            : base()
+        public OperationModel(string text, string input, string inputText, Operation operation)
         {
-            this.Text = text;
-            // Fill SubItems
-            this.SubItems.AddRange(new string[] { "", "", "", "", "" });
-
-            _progressBar = new ProgressBar()
-            {
-                Maximum = 100,
-                Minimum = 0,
-                Value = 0
-            };
-            _inputLabel = new LinkLabel()
-            {
-                Text = inputText
-            };
-            _inputLabel.LinkClicked += _inputLabel_LinkClicked;
+            this.Title = text;
+            this.Input = input;
+            this.InputText = inputText;
 
             this.Operation = operation;
             this.Operation.Completed += Operation_Completed;
@@ -109,10 +157,14 @@ namespace YouTube_Downloader.Controls
             this.Operation_StatusChanged(this, EventArgs.Empty);
         }
 
+        private void OnAspectChanged()
+        {
+            this.AspectChanged?.Invoke(this, EventArgs.Empty);
+        }
+
         private void OnOperationComplete(OperationEventArgs e)
         {
-            if (this.OperationComplete != null)
-                this.OperationComplete(this, e);
+            this.OperationComplete?.Invoke(this, e);
         }
 
         private void Operation_Completed(object sender, OperationEventArgs e)
@@ -129,7 +181,8 @@ namespace YouTube_Downloader.Controls
                 /* Get total file size of all affected files
                  *
                  * Directory can contain unrelated files, so use make use of List properties
-                 * from Operation that contains the affected files only. */
+                 * from Operation that contains the affected files only.
+                 */
                 string[] fileList = null;
 
                 if (this.Operation is ConvertOperation)
@@ -147,16 +200,14 @@ namespace YouTube_Downloader.Controls
                 this.FileSize = Helper.FormatFileSize(fileSize);
             }
 
-            if (_progressBar != null)
-                _progressBar.Value = _progressBar.Maximum;
-
+            this.Progress = ProgressMaximum;
             this.OnOperationComplete(e);
         }
 
         private void Operation_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            if (_progressBar != null)
-                _progressBar.Value = Math.Min(_progressBar.Maximum, Math.Max(_progressBar.Minimum, e.ProgressPercentage));
+            this.Progress = Math.Min(ProgressMaximum,
+                                     Math.Max(ProgressMinimum, e.ProgressPercentage));
 
             if (!string.IsNullOrEmpty(this.WorkingText))
                 this.Status = this.WorkingText;
@@ -176,35 +227,30 @@ namespace YouTube_Downloader.Controls
         {
             switch (e.PropertyName)
             {
-                case "Duration":
+                case nameof(Operation.Duration):
                     this.Duration = Helper.FormatVideoLength(this.Operation.Duration);
                     break;
-                case "FileSize":
+                case nameof(Operation.FileSize):
                     this.FileSize = Helper.FormatFileSize(this.Operation.FileSize);
                     break;
-                case "Input":
+                case nameof(Operation.Input):
                     this.Input = this.Operation.Input;
                     break;
-                case "Title":
-                    this.Text = this.Operation.Title;
+                case nameof(Operation.Title):
+                    this.Title = this.Operation.Title;
                     break;
             }
         }
 
         private void Operation_ReportsProgressChanged(object sender, EventArgs e)
         {
-            if (_progressBar == null)
-                return;
-
             if (this.Operation.ReportsProgress)
             {
-                _progressBar.Style = ProgressBarStyle.Continuous;
-                _progressBar.MarqueeAnimationSpeed = 0;
+                // ToDo: Show normal progress bar
             }
             else
             {
-                _progressBar.Style = ProgressBarStyle.Marquee;
-                _progressBar.MarqueeAnimationSpeed = 30;
+                // ToDo: Show looping progress bar
             }
         }
 
@@ -232,24 +278,6 @@ namespace YouTube_Downloader.Controls
                         this.Status = this.WorkingText;
                     break;
             }
-        }
-
-        private void _inputLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            try
-            {
-                Process.Start(_inputLabel.Text);
-            }
-            catch
-            {
-                MessageBox.Show(this.ListView.FindForm(), "Couldn't open link.");
-            }
-        }
-
-        public void SetupEmbeddedControls()
-        {
-            this.ListViewEx.AddEmbeddedControl(_progressBar, ColumnProgressBar, this.Index);
-            this.ListViewEx.AddEmbeddedControl(_inputLabel, ColumnInputLabel, this.Index);
         }
 
         private bool Wait()

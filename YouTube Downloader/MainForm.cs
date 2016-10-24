@@ -9,9 +9,11 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using BrightIdeasSoftware;
 using YouTube_Downloader.Classes;
 using YouTube_Downloader.Controls;
 using YouTube_Downloader.Properties;
+using YouTube_Downloader.Renderers;
 using YouTube_Downloader_DLL;
 using YouTube_Downloader_DLL.Classes;
 using YouTube_Downloader_DLL.Dialogs;
@@ -38,7 +40,9 @@ namespace YouTube_Downloader
             InitializeComponent();
             InitializeMainMenu();
 
-            lvQueue.ContextMenu = contextMenu1;
+            this.SetupQueue();
+
+            olvQueue.ContextMenu = contextMenu1;
             lvPlaylistVideos.ContextMenu = cmPlaylistList;
 
             mtxtTo.ValidatingType = typeof(TimeSpan);
@@ -100,6 +104,13 @@ namespace YouTube_Downloader
         private void MainForm_Load(object sender, EventArgs e)
         {
             this.LoadSettings();
+
+#if DEBUG
+            tabControl1.SelectedIndex = 3;
+
+            //for (int i = 0; i < 100; i++)
+            //    this.AddDummyDownloadOperation(60000);
+#endif
         }
 
         private void MainForm_Shown(object sender, EventArgs e)
@@ -117,23 +128,25 @@ namespace YouTube_Downloader
             lFFmpegMissing.Visible = btnCheckAgain.Visible = !Program.FFmpegAvailable;
         }
 
-        private void linkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private void olvQueue_HyperlinkClicked(object sender, HyperlinkClickedEventArgs e)
         {
+            e.Handled = true;
+
             try
             {
-                object tag = (sender as LinkLabel).Tag;
+                var model = e.Model as OperationModel;
 
-                if (tag == null)
+                if (string.IsNullOrEmpty(model.Input))
                     return;
 
-                Process.Start((string)tag);
+                Process.Start(model.Input);
             }
-            catch
+            catch (Exception)
             {
-                MessageBox.Show(this, "Couldn't open link.");
+                MessageBox.Show(this, "An error occured attemping to open input.");
             }
         }
-
+        
         private void nudMaxSimDownloads_ValueChanged(object sender, EventArgs e)
         {
             btnMaxSimDownloadsApply.Enabled = nudMaxSimDownloads.Value != Settings.Default.MaxSimDownloads;
@@ -146,6 +159,11 @@ namespace YouTube_Downloader
             DownloadQueueHandler.MaxDownloads = (int)nudMaxSimDownloads.Value;
 
             nudMaxSimDownloads_ValueChanged(sender, e);
+        }
+
+        private void OperationModel_AspectChanged(object sender, EventArgs e)
+        {
+            olvQueue.RefreshObject(sender);
         }
 
         #region Download Tab
@@ -253,7 +271,7 @@ namespace YouTube_Downloader
                     (operation as DownloadOperation).Combining += DownloadOperation_Combining;
                 }
 
-                var item = new OperationListViewItem(Path.GetFileName(filename), tempFormat.VideoInfo.Url, operation);
+                var item = new OperationModel(Path.GetFileName(filename), tempFormat.VideoInfo.Url, operation);
 
                 item.Duration = Helper.FormatVideoLength(tempFormat.VideoInfo.Duration);
 
@@ -263,12 +281,11 @@ namespace YouTube_Downloader
                 else
                     item.FileSize = Helper.FormatFileSize(tempFormat.FileSize);
 
+                item.AspectChanged += OperationModel_AspectChanged;
                 item.OperationComplete += downloadItem_OperationComplete;
 
-                lvQueue.Items.Add(item);
-                item.SetupEmbeddedControls();
-
-                this.SelectOneItem(item);
+                olvQueue.AddObject(item);
+                olvQueue.SelectedObject = item;
 
                 if (_selectedVideo.VideoSource == VideoSource.Twitch)
                 {
@@ -416,7 +433,7 @@ namespace YouTube_Downloader
 
         private void DownloadOperation_Combining(object sender, EventArgs e)
         {
-            foreach (OperationListViewItem item in lvQueue.Items)
+            foreach (OperationModel item in olvQueue.Objects)
             {
                 if (item.Operation == sender)
                 {
@@ -428,7 +445,7 @@ namespace YouTube_Downloader
 
         private void downloadItem_OperationComplete(object sender, OperationEventArgs e)
         {
-            var operation = (sender as OperationListViewItem).Operation;
+            var operation = (sender as OperationModel).Operation;
 
             if (chbAutoConvert.Enabled && chbAutoConvert.Checked && operation.Status == OperationStatus.Success)
             {
@@ -631,12 +648,12 @@ namespace YouTube_Downloader
             try
             {
                 var operation = new PlaylistOperation();
-                var item = new OperationListViewItem("Getting playlist info...", txtPlaylistLink.Text, operation);
+                var item = new OperationModel("Getting playlist info...", txtPlaylistLink.Text, operation);
 
-                lvQueue.Items.Add(item);
-                item.SetupEmbeddedControls();
+                item.AspectChanged += OperationModel_AspectChanged;
 
-                this.SelectOneItem(item);
+                olvQueue.AddObject(item);
+                olvQueue.SelectedObject = item;
 
                 operation.Combined += PlaylistOperation_Combined;
                 operation.Combining += PlaylistOperation_Combining;
@@ -659,7 +676,7 @@ namespace YouTube_Downloader
 
         private void PlaylistOperation_Combined(object sender, EventArgs e)
         {
-            foreach (OperationListViewItem item in lvQueue.Items)
+            foreach (OperationModel item in olvQueue.Objects)
             {
                 if (item.Operation == sender)
                 {
@@ -671,7 +688,7 @@ namespace YouTube_Downloader
 
         private void PlaylistOperation_Combining(object sender, EventArgs e)
         {
-            foreach (OperationListViewItem item in lvQueue.Items)
+            foreach (OperationModel item in olvQueue.Objects)
             {
                 if (item.Operation == sender)
                 {
@@ -691,7 +708,10 @@ namespace YouTube_Downloader
                 var item = this.Convert(file, output, false);
 
                 // Automatically remove convert operation from queue when done
-                item.OperationComplete += delegate { item.Remove(); };
+                item.OperationComplete += delegate
+                {
+                    olvQueue.RemoveObject(item);
+                };
             }
         }
 
@@ -957,21 +977,19 @@ namespace YouTube_Downloader
 
         private void contextMenu1_Popup(object sender, EventArgs e)
         {
-            if (lvQueue.SelectedItems.Count == 0)
+            if (olvQueue.SelectedObjects.Count == 0)
             {
                 foreach (MenuItem menuItem in contextMenu1.MenuItems)
-                {
                     menuItem.Visible = false;
-                }
 
                 return;
             }
 
             bool canOpen = false, canPause = false, canResume = false, canStop = false, canConvert = false;
 
-            foreach (OperationListViewItem item in lvQueue.SelectedItems)
+            foreach (OperationModel item in olvQueue.SelectedObjects)
             {
-                Operation operation = item.Operation;
+                var operation = item.Operation;
 
                 if (operation.CanOpen())
                     canOpen = true;
@@ -1009,11 +1027,12 @@ namespace YouTube_Downloader
         {
             int fails = 0;
 
-            foreach (OperationListViewItem item in lvQueue.SelectedItems)
+            foreach (OperationModel item in olvQueue.SelectedObjects)
             {
-                Operation operation = item.Operation;
+                var operation = item.Operation;
 
-                if (operation.CanOpen() && !operation.Open()) fails++;
+                if (operation.CanOpen() && !operation.Open())
+                    fails++;
             }
 
             if (fails > 0)
@@ -1026,11 +1045,12 @@ namespace YouTube_Downloader
         {
             int fails = 0;
 
-            foreach (OperationListViewItem item in lvQueue.SelectedItems)
+            foreach (OperationModel item in olvQueue.SelectedObjects)
             {
-                Operation operation = item.Operation;
+                var operation = item.Operation;
 
-                if (!operation.OpenContainingFolder()) fails++;
+                if (!operation.OpenContainingFolder())
+                    fails++;
             }
 
             if (fails > 0)
@@ -1041,9 +1061,9 @@ namespace YouTube_Downloader
 
         private void convertToMP3MenuItem_Click(object sender, EventArgs e)
         {
-            foreach (OperationListViewItem item in lvQueue.SelectedItems)
+            foreach (OperationModel item in olvQueue.SelectedObjects)
             {
-                Operation operation = item.Operation;
+                var operation = item.Operation;
 
                 if (operation is DownloadOperation && operation.Status == OperationStatus.Success)
                 {
@@ -1060,44 +1080,47 @@ namespace YouTube_Downloader
 
         private void resumeMenuItem_Click(object sender, EventArgs e)
         {
-            foreach (OperationListViewItem item in lvQueue.SelectedItems)
+            foreach (OperationModel item in olvQueue.SelectedObjects)
             {
-                Operation operation = item.Operation;
+                var operation = item.Operation;
 
-                if (operation.CanResume()) operation.Resume();
+                if (operation.CanResume())
+                    operation.Resume();
             }
         }
 
         private void pauseMenuItem_Click(object sender, EventArgs e)
         {
-            foreach (OperationListViewItem item in lvQueue.SelectedItems)
+            foreach (OperationModel item in olvQueue.SelectedObjects)
             {
-                Operation operation = item.Operation;
+                var operation = item.Operation;
 
-                if (operation.CanPause()) operation.Pause();
+                if (operation.CanPause())
+                    operation.Pause();
             }
         }
 
         private void stopMenuItem_Click(object sender, EventArgs e)
         {
-            foreach (OperationListViewItem item in lvQueue.SelectedItems)
+            foreach (OperationModel item in olvQueue.SelectedObjects)
             {
-                Operation operation = item.Operation;
+                var operation = item.Operation;
 
-                if (operation.CanStop()) operation.Stop();
+                if (operation.CanStop())
+                    operation.Stop();
             }
         }
 
         private void removeMenuItem_Click(object sender, EventArgs e)
         {
-            for (int i = lvQueue.SelectedItems.Count - 1; i >= 0; i--)
+            for (int i = olvQueue.SelectedObjects.Count - 1; i >= 0; i--)
             {
-                var item = (OperationListViewItem)lvQueue.SelectedItems[i];
+                var item = (OperationModel)olvQueue.SelectedObjects[i];
                 var operation = item.Operation;
 
                 operation.Stop();
 
-                lvQueue.Items.RemoveAt(item.Index);
+                olvQueue.RemoveObject(item);
             }
         }
 
@@ -1117,13 +1140,13 @@ namespace YouTube_Downloader
         {
             Operation operation = new DummyDownloadOperation(workTimeMS);
 
-            var item = new OperationListViewItem(operation.Title, operation.Link, operation);
+            var item = new OperationModel(operation.Title, operation.Link, operation);
 
             item.Duration = Helper.FormatVideoLength(operation.Duration);
             item.FileSize = Helper.FormatFileSize(operation.FileSize);
+            item.AspectChanged += OperationModel_AspectChanged;
 
-            lvQueue.Items.Add(item);
-            item.SetupEmbeddedControls();
+            olvQueue.AddObject(item);
 
             operation.Prepare(null);
 
@@ -1164,7 +1187,7 @@ namespace YouTube_Downloader
         /// <param name="input">The file to convert.</param>
         /// <param name="output">The path to save converted file.</param>
         /// <param name="crop">True if converted file should be cropped.</param>
-        private OperationListViewItem Convert(string input, string output, bool crop)
+        private OperationModel Convert(string input, string output, bool crop)
         {
             TimeSpan start, end;
             start = end = TimeSpan.MinValue;
@@ -1180,16 +1203,15 @@ namespace YouTube_Downloader
             }
 
             var operation = new ConvertOperation();
-            var item = new OperationListViewItem(Path.GetFileName(output), input, Path.GetFileName(input), operation);
+            var item = new OperationModel(Path.GetFileName(output), input, Path.GetFileName(input), operation);
 
             item.WorkingText = "Converting...";
             item.Duration = Helper.FormatVideoLength(FFmpegHelper.GetDuration(input).Value);
             item.FileSize = Helper.GetFileSizeFormatted(input);
+            item.AspectChanged += OperationModel_AspectChanged;
 
-            lvQueue.Items.Add(item);
-            item.SetupEmbeddedControls();
-
-            this.SelectOneItem(item);
+            olvQueue.AddObject(item);
+            olvQueue.SelectedObject = item;
 
             operation.Prepare(operation.Args(input, output, start, end));
             operation.Start();
@@ -1206,14 +1228,13 @@ namespace YouTube_Downloader
         private void ConvertFolder(string input, string output, string extension)
         {
             var operation = new ConvertOperation();
-            var item = new OperationListViewItem(Path.GetFileName(output), input, Path.GetFileName(input), operation);
+            var item = new OperationModel(Path.GetFileName(output), input, Path.GetFileName(input), operation);
 
             item.WorkingText = "Converting...";
+            item.AspectChanged += OperationModel_AspectChanged;
 
-            lvQueue.Items.Add(item);
-            item.SetupEmbeddedControls();
-
-            this.SelectOneItem(item);
+            olvQueue.AddObject(item);
+            olvQueue.SelectedObject = item;
 
             operation.Prepare(operation.Args(input, output, extension));
             operation.Start();
@@ -1237,16 +1258,15 @@ namespace YouTube_Downloader
                 end = TimeSpan.MinValue;
 
             var operation = new CroppingOperation();
-            var item = new OperationListViewItem(Path.GetFileName(output), input, Path.GetFileName(input), operation);
+            var item = new OperationModel(Path.GetFileName(output), input, Path.GetFileName(input), operation);
 
             item.WorkingText = "Cropping...";
             item.Duration = Helper.FormatVideoLength(FFmpegHelper.GetDuration(input).Value);
             item.FileSize = Helper.GetFileSizeFormatted(input);
+            item.AspectChanged += OperationModel_AspectChanged;
 
-            lvQueue.Items.Add(item);
-            item.SetupEmbeddedControls();
-
-            this.SelectOneItem(item);
+            olvQueue.AddObject(item);
+            olvQueue.SelectedObject = item;
 
             operation.Prepare(operation.Args(input, output, start, end));
             operation.Start();
@@ -1257,14 +1277,12 @@ namespace YouTube_Downloader
         /// </summary>
         private bool GetIsWorking()
         {
-            foreach (OperationListViewItem item in lvQueue.Items)
+            foreach (OperationModel item in olvQueue.Objects)
             {
-                Operation operation = item.Operation;
+                var operation = item.Operation;
 
-                if (operation.Status == OperationStatus.Working)
-                {
+                if (operation.IsWorking)
                     return true;
-                }
             }
             return false;
         }
@@ -1333,15 +1351,17 @@ namespace YouTube_Downloader
         }
 
         /// <summary>
-        /// Deselects all other items in given ListViewItem's ListView except the given item.
+        /// Setups Queue ObjectListView with renderers etc...
         /// </summary>
-        /// <param name="item">The ListViewItem to select.</param>
-        private void SelectOneItem(ListViewItem item)
+        private void SetupQueue()
         {
-            foreach (ListViewItem lvi in item.ListView.Items)
-                lvi.Selected = false;
+            OLVColumn col = this.olvQueue.Columns[1] as OLVColumn;
+            col.Renderer = new BarTextRenderer(0, 100)
+            {
+                TextBrush = Brushes.Black
+            };
 
-            item.Selected = true;
+            this.olvQueue.SetObjects(new object[0]);
         }
 
         /// <summary>
