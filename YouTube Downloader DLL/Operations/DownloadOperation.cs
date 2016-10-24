@@ -113,7 +113,7 @@ namespace YouTube_Downloader_DLL.Operations
         public override bool CanResume()
         {
             // Only downloader can resume.
-            return downloader.CanResume && (this.IsPaused || this.IsQueued);
+            return downloader?.CanResume == true && (this.IsPaused || this.IsQueued);
         }
 
         public override bool CanStop()
