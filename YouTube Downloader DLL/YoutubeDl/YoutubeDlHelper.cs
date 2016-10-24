@@ -27,7 +27,7 @@ namespace YouTube_Downloader_DLL.YoutubeDl
         {
             // Write log footer to stream.
             // Possibly write elapsed time and/or error in future.
-            logger?.Log("-" + Environment.NewLine);
+            logger?.LogLine("-" + Environment.NewLine);
         }
 
         /// <summary>
@@ -39,12 +39,12 @@ namespace YouTube_Downloader_DLL.YoutubeDl
                                      string arguments,
                                      [CallerMemberName]string caller = "")
         {
-            logger?.Log("[" + DateTime.Now + "]");
-            logger?.Log("version: " + GetVersion());
-            logger?.Log("caller: " + caller);
-            logger?.Log("cmd: " + arguments.Trim());
-            logger?.Log();
-            logger?.Log("OUTPUT");
+            logger?.LogLine("[" + DateTime.Now + "]");
+            logger?.LogLine("version: " + GetVersion());
+            logger?.LogLine("caller: " + caller);
+            logger?.LogLine("cmd: " + arguments.Trim());
+            logger?.LogLine();
+            logger?.LogLine("OUTPUT");
         }
 
         /// <summary>

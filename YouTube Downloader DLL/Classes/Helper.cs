@@ -356,7 +356,7 @@ namespace YouTube_Downloader_DLL.Classes
                 if (string.IsNullOrEmpty(e.Data))
                     return;
 
-                logger?.Log(e.Data);
+                logger?.LogLine(e.Data);
                 output?.Invoke(process, e.Data);
             };
             process.ErrorDataReceived += delegate (object sender, DataReceivedEventArgs e)
@@ -364,7 +364,7 @@ namespace YouTube_Downloader_DLL.Classes
                 if (string.IsNullOrEmpty(e.Data))
                     return;
 
-                logger?.Log(e.Data);
+                logger?.LogLine(e.Data);
                 error?.Invoke(process, e.Data);
             };
             

@@ -46,17 +46,17 @@ namespace YouTube_Downloader_DLL.Classes
             ((IDisposable)this._log).Dispose();
         }
 
-        public void Log()
+        public void LogLine()
         {
             _log.WriteLine();
         }
 
-        public void Log(string line)
+        public void LogLine(string line)
         {
-            this.Log(line, string.Empty);
+            this.LogLine(line, string.Empty);
         }
 
-        public void Log(string format, params string[] args)
+        public void LogLine(string format, params string[] args)
         {
             if (string.IsNullOrEmpty(format))
                 return;

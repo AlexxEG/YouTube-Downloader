@@ -47,7 +47,7 @@ namespace YouTube_Downloader_DLL.FFmpeg
         {
             // Write log footer to stream.
             // Possibly write elapsed time and/or error in future.
-            logger?.Log(Environment.NewLine);
+            logger?.LogLine(Environment.NewLine);
         }
 
         /// <summary>
@@ -57,11 +57,11 @@ namespace YouTube_Downloader_DLL.FFmpeg
                                       string arguments,
                                       [CallerMemberName]string caller = "")
         {
-            logger?.Log($"[{DateTime.Now}]");
-            logger?.Log($"function: {caller}");
-            logger?.Log($"cmd: {arguments}");
-            logger?.Log();
-            logger?.Log("OUTPUT");
+            logger?.LogLine($"[{DateTime.Now}]");
+            logger?.LogLine($"function: {caller}");
+            logger?.LogLine($"cmd: {arguments}");
+            logger?.LogLine();
+            logger?.LogLine("OUTPUT");
         }
 
         /// <summary>
