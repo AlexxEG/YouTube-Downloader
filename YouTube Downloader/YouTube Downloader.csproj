@@ -52,9 +52,6 @@
     <Compile Include="Classes\WindowStates.cs" />
     <Compile Include="Controls\OperationModel.cs" />
     <Compile Include="Classes\WindowState.cs" />
-    <Compile Include="Controls\ListViewEx.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Delegates\SetItemTextDelegate.cs" />
     <Compile Include="Delegates\SetTextDelegate.cs" />
     <Compile Include="Dialogs\LoginDialog.cs">
