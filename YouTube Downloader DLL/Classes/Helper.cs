@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -324,6 +325,54 @@ namespace YouTube_Downloader_DLL.Classes
             string pattern = @"^(https?:\/\/)?(www.)?twitch\.tv\/(?!_)[a-zA-Z0-9_]{4,25}\/(v|c)\/\d+$";
 
             return Regex.IsMatch(url, pattern, RegexOptions.IgnoreCase);
+        }
+
+        /// <summary>
+        /// Creates a Process with the given arguments, then returns it.
+        /// </summary>
+        public static Process StartProcess(string fileName,
+                                           string arguments,
+                                           Action<Process, string> output,
+                                           Action<Process, string> error,
+                                           OperationLogger logger)
+        {
+            var psi = new ProcessStartInfo(fileName, arguments)
+            {
+                UseShellExecute = false,
+                RedirectStandardInput = true,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden
+            };
+            var process = new Process()
+            {
+                EnableRaisingEvents = true,
+                StartInfo = psi
+            };
+
+            process.OutputDataReceived += delegate (object sender, DataReceivedEventArgs e)
+            {
+                if (string.IsNullOrEmpty(e.Data))
+                    return;
+
+                logger?.Log(e.Data);
+                output?.Invoke(process, e.Data);
+            };
+            process.ErrorDataReceived += delegate (object sender, DataReceivedEventArgs e)
+            {
+                if (string.IsNullOrEmpty(e.Data))
+                    return;
+
+                logger?.Log(e.Data);
+                error?.Invoke(process, e.Data);
+            };
+            
+            process.Start();
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
+
+            return process;
         }
     }
 

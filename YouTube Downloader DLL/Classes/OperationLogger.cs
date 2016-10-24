@@ -46,6 +46,11 @@ namespace YouTube_Downloader_DLL.Classes
             ((IDisposable)this._log).Dispose();
         }
 
+        public void Log()
+        {
+            _log.WriteLine();
+        }
+
         public void Log(string line)
         {
             this.Log(line, string.Empty);

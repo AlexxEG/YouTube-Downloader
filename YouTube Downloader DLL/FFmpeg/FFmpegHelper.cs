@@ -8,7 +8,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using YouTube_Downloader_DLL.Classes;
-using YouTube_Downloader_DLL.FFmpeg;
 
 namespace YouTube_Downloader_DLL.FFmpeg
 {
@@ -42,64 +41,27 @@ namespace YouTube_Downloader_DLL.FFmpeg
         public static string FFmpegPath = Path.Combine(Application.StartupPath, "Externals", "ffmpeg.exe");
 
         /// <summary>
-        /// Creates a Process with the given arguments, then returns it after it has started.
+        /// Writes log footer to log.
         /// </summary>
-        /// <param name="arguments">The process arguments.</param>
-        public static Process StartProcess(OperationLogger logger,
-                                           string arguments,
-                                           string caller,
-                                           Action<Process, string> output,
-                                           Action<Process, string> error,
-                                           [CallerMemberName]string function = "")
+        private static void LogFooter(OperationLogger logger)
         {
-            var psi = new ProcessStartInfo(FFmpegHelper.FFmpegPath, arguments)
-            {
-                UseShellExecute = false,
-                RedirectStandardInput = true,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                CreateNoWindow = true,
-                WindowStyle = ProcessWindowStyle.Hidden,
-                WorkingDirectory = Common.GetLogsDirectory()
-            };
+            // Write log footer to stream.
+            // Possibly write elapsed time and/or error in future.
+            logger?.Log(Environment.NewLine);
+        }
 
-            psi.EnvironmentVariables.Add("FFREPORT", string.Format("file={0}:level=8", ReportFile));
-
-            var process = new Process()
-            {
-                EnableRaisingEvents = true,
-                StartInfo = psi
-            };
-
-            process.OutputDataReceived += delegate (object sender, DataReceivedEventArgs e)
-            {
-                if (string.IsNullOrEmpty(e.Data))
-                    return;
-
-                logger?.Log(e.Data);
-                output?.Invoke(process, e.Data);
-            };
-            process.ErrorDataReceived += delegate (object sender, DataReceivedEventArgs e)
-            {
-                if (string.IsNullOrEmpty(e.Data))
-                    return;
-
-                logger?.Log(e.Data);
-                error?.Invoke(process, e.Data);
-            };
-
-            logger?.Log(BuildLogHeader(arguments, caller, function));
-
-            process.Exited += delegate
-            {
-                logger?.Log(BuildLogFooter());
-            };
-
-            process.Start();
-            process.BeginOutputReadLine();
-            process.BeginErrorReadLine();
-
-            return process;
+        /// <summary>
+        /// Writes log header to log.
+        /// </summary>
+        private static void LogHeader(OperationLogger logger,
+                                      string arguments,
+                                      [CallerMemberName]string caller = "")
+        {
+            logger?.Log($"[{DateTime.Now}]");
+            logger?.Log($"function: {caller}");
+            logger?.Log($"cmd: {arguments}");
+            logger?.Log();
+            logger?.Log("OUTPUT");
         }
 
         /// <summary>
@@ -107,14 +69,15 @@ namespace YouTube_Downloader_DLL.FFmpeg
         /// </summary>
         /// <param name="file">The file to check.</param>
         public static FFmpegResult<bool> CanConvertToMP3(OperationLogger logger,
-                                                         string file,
-                                                         [CallerMemberName]string caller = "")
+                                                         string file)
         {
             bool hasAudioStream = false;
             string arguments = string.Format(Commands.GetFileInfo, file);
             var lines = new StringBuilder();
 
-            var p = StartProcess(logger, arguments, caller,
+            LogHeader(logger, arguments);
+
+            var p = Helper.StartProcess(FFmpegPath, arguments,
                 null,
                 delegate (Process process, string line)
                 {
@@ -125,9 +88,10 @@ namespace YouTube_Downloader_DLL.FFmpeg
                         // File has audio stream
                         hasAudioStream = true;
                     }
-                });
+                }, logger);
 
             p.WaitForExit();
+            LogFooter(logger);
 
             if (p.ExitCode != 0)
             {
@@ -151,8 +115,7 @@ namespace YouTube_Downloader_DLL.FFmpeg
                                                  string video,
                                                  string audio,
                                                  string output,
-                                                 Action<int> reportProgress,
-                                                 [CallerMemberName]string caller = "")
+                                                 Action<int> reportProgress)
         {
             string arguments = string.Format(Commands.Combine, video, audio, output);
             var lines = new StringBuilder();
@@ -160,7 +123,9 @@ namespace YouTube_Downloader_DLL.FFmpeg
             bool started = false;
             double milliseconds = 0;
 
-            var p = StartProcess(logger, arguments, caller,
+            LogHeader(logger, arguments);
+
+            var p = Helper.StartProcess(FFmpegPath, arguments,
                 null,
                 delegate (Process process, string line)
                 {
@@ -203,9 +168,10 @@ namespace YouTube_Downloader_DLL.FFmpeg
 
                         reportProgress.Invoke(100);
                     }
-                });
+                }, logger);
 
             p.WaitForExit();
+            LogFooter(logger);
 
             if (p.ExitCode != 0)
             {
@@ -228,8 +194,7 @@ namespace YouTube_Downloader_DLL.FFmpeg
                                                  Action<int, object> reportProgress,
                                                  string input,
                                                  string output,
-                                                 CancellationToken ct,
-                                                 [CallerMemberName]string caller = "")
+                                                 CancellationToken ct)
         {
             if (input == output)
             {
@@ -252,7 +217,9 @@ namespace YouTube_Downloader_DLL.FFmpeg
             double milliseconds = 0;
             StringBuilder lines = new StringBuilder();
 
-            var p = StartProcess(logger, arguments, caller,
+            LogHeader(logger, arguments);
+
+            var p = Helper.StartProcess(FFmpegPath, arguments,
                 null,
                 delegate (Process process, string line)
                 {
@@ -306,9 +273,10 @@ namespace YouTube_Downloader_DLL.FFmpeg
 
                         reportProgress.Invoke(100, null);
                     }
-                });
+                }, logger);
 
             p.WaitForExit();
+            LogFooter(logger);
 
             if (canceled)
             {
@@ -336,8 +304,7 @@ namespace YouTube_Downloader_DLL.FFmpeg
                                               string input,
                                               string output,
                                               TimeSpan start,
-                                              CancellationToken ct,
-                                              [CallerMemberName]string caller = "")
+                                              CancellationToken ct)
         {
             if (input == output)
             {
@@ -361,7 +328,9 @@ namespace YouTube_Downloader_DLL.FFmpeg
             double milliseconds = 0;
             StringBuilder lines = new StringBuilder();
 
-            var p = StartProcess(logger, arguments, caller,
+            LogHeader(logger, arguments);
+
+            var p = Helper.StartProcess(FFmpegPath, arguments,
                 null,
                 delegate (Process process, string line)
                 {
@@ -415,9 +384,10 @@ namespace YouTube_Downloader_DLL.FFmpeg
 
                         reportProgress.Invoke(100, null);
                     }
-                });
+                }, logger);
 
             p.WaitForExit();
+            LogFooter(logger);
 
             if (canceled)
             {
@@ -447,8 +417,7 @@ namespace YouTube_Downloader_DLL.FFmpeg
                                               string output,
                                               TimeSpan start,
                                               TimeSpan end,
-                                              CancellationToken ct,
-                                              [CallerMemberName]string caller = "")
+                                              CancellationToken ct)
         {
             if (input == output)
             {
@@ -476,9 +445,11 @@ namespace YouTube_Downloader_DLL.FFmpeg
             StringBuilder lines = new StringBuilder();
             Process p = null;
 
+            LogHeader(logger, arguments);
+
             if (reportProgress == null)
             {
-                p = StartProcess(logger, arguments, caller,
+                p = Helper.StartProcess(FFmpegPath, arguments,
                     null,
                     delegate (Process process, string line)
                     {
@@ -492,11 +463,11 @@ namespace YouTube_Downloader_DLL.FFmpeg
                             canceled = true;
                             return;
                         }
-                    });
+                    }, logger);
             }
             else
             {
-                p = StartProcess(logger, arguments, caller,
+                p = Helper.StartProcess(FFmpegPath, arguments,
                     null,
                     delegate (Process process, string line)
                     {
@@ -543,10 +514,11 @@ namespace YouTube_Downloader_DLL.FFmpeg
 
                             reportProgress.Invoke(100, null);
                         }
-                    });
+                    }, logger);
             }
 
             p.WaitForExit();
+            LogFooter(logger);
 
             if (canceled)
             {
@@ -567,21 +539,22 @@ namespace YouTube_Downloader_DLL.FFmpeg
         /// </summary>
         public static FFmpegResult<bool> FixM3U8(OperationLogger logger,
                                                  string input,
-                                                 string output,
-                                                 [CallerMemberName]string caller = "")
+                                                 string output)
         {
             var lines = new StringBuilder();
+            string arguments = string.Format(Commands.FixM3U8, input, output);
 
-            var p = StartProcess(logger,
-                        string.Format(Commands.FixM3U8, input, output),
-                        caller,
+            LogHeader(logger, arguments);
+
+            var p = Helper.StartProcess(FFmpegPath, arguments,
                 null,
                 delegate (Process process, string line)
                 {
                     lines.Append(line);
-                });
+                }, logger);
 
             p.WaitForExit();
+            LogFooter(logger);
 
             if (p.ExitCode != 0)
             {
@@ -603,7 +576,7 @@ namespace YouTube_Downloader_DLL.FFmpeg
             StringBuilder lines = new StringBuilder();
             var arguments = string.Format(Commands.GetFileInfo, file);
 
-            var p = StartProcess(null, arguments, string.Empty,
+            var p = Helper.StartProcess(FFmpegPath, arguments,
                 null,
                 delegate (Process process, string line)
                 {
@@ -616,7 +589,7 @@ namespace YouTube_Downloader_DLL.FFmpeg
                         if (m.Success)
                             result = int.Parse(m.Groups[1].Value);
                     }
-                });
+                }, null);
 
             p.WaitForExit();
 
@@ -642,7 +615,7 @@ namespace YouTube_Downloader_DLL.FFmpeg
             StringBuilder lines = new StringBuilder();
             var arguments = string.Format(Commands.GetFileInfo, file);
 
-            var p = StartProcess(null, arguments, string.Empty,
+            var p = Helper.StartProcess(FFmpegPath, arguments,
                 null,
                 delegate (Process process, string line)
                 {
@@ -656,7 +629,7 @@ namespace YouTube_Downloader_DLL.FFmpeg
 
                         result = TimeSpan.Parse(split[1]);
                     }
-                });
+                }, null);
 
             p.WaitForExit();
 
@@ -682,7 +655,7 @@ namespace YouTube_Downloader_DLL.FFmpeg
             StringBuilder lines = new StringBuilder();
             var arguments = string.Format(Commands.GetFileInfo, file);
 
-            var p = StartProcess(null, arguments, string.Empty,
+            var p = Helper.StartProcess(FFmpegPath, arguments,
                 null,
                 delegate (Process process, string line)
                 {
@@ -705,7 +678,7 @@ namespace YouTube_Downloader_DLL.FFmpeg
                             result = FFmpegFileType.Audio;
                         }
                     }
-                });
+                }, null);
 
             p.WaitForExit();
 
@@ -767,7 +740,7 @@ namespace YouTube_Downloader_DLL.FFmpeg
             Regex regex = new Regex("^ffmpeg version (.*) Copyright.*$", RegexOptions.Compiled);
             StringBuilder lines = new StringBuilder();
 
-            var p = StartProcess(null, Commands.Version, string.Empty,
+            var p = Helper.StartProcess(FFmpegPath, Commands.Version,
                 null,
                 delegate (Process process, string line)
                 {
@@ -779,7 +752,7 @@ namespace YouTube_Downloader_DLL.FFmpeg
                     {
                         version = match.Groups[1].Value.Trim();
                     }
-                });
+                }, null);
 
             p.WaitForExit();
 
@@ -791,33 +764,6 @@ namespace YouTube_Downloader_DLL.FFmpeg
             }
 
             return new FFmpegResult<string>(version);
-        }
-
-        /// <summary>
-        /// Writes log footer to log.
-        /// </summary>
-        private static string BuildLogFooter()
-        {
-            // Write log footer to stream.
-            // Possibly write elapsed time and/or error in future.
-            return Environment.NewLine;
-        }
-
-        /// <summary>
-        /// Writes log header to log.
-        /// </summary>
-        /// <param name="arguments">The arguments to log in header.</param>
-        private static string BuildLogHeader(string arguments, string caller, string function)
-        {
-            var sb = new StringBuilder();
-
-            sb.AppendLine($"[{DateTime.Now}]");
-            sb.AppendLine($"function: {function} - function caller: {caller}");
-            sb.AppendLine($"cmd: {arguments}");
-            sb.AppendLine();
-            sb.AppendLine("OUTPUT");
-
-            return sb.ToString();
         }
     }
 }
