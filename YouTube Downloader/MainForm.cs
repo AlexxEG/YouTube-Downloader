@@ -134,7 +134,12 @@ namespace YouTube_Downloader
 
             try
             {
-                Process.Start((e.Model as OperationModel).Input);
+                var model = e.Model as OperationModel;
+
+                if (string.IsNullOrEmpty(model.Input))
+                    return;
+
+                Process.Start(model.Input);
             }
             catch (Exception)
             {
@@ -142,23 +147,6 @@ namespace YouTube_Downloader
             }
         }
         
-        private void linkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            try
-            {
-                object tag = (sender as LinkLabel).Tag;
-
-                if (tag == null)
-                    return;
-
-                Process.Start((string)tag);
-            }
-            catch
-            {
-                MessageBox.Show(this, "Couldn't open link.");
-            }
-        }
-
         private void nudMaxSimDownloads_ValueChanged(object sender, EventArgs e)
         {
             btnMaxSimDownloadsApply.Enabled = nudMaxSimDownloads.Value != Settings.Default.MaxSimDownloads;
