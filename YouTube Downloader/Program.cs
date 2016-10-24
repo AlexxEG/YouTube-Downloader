@@ -21,7 +21,7 @@ namespace YouTube_Downloader
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             Application.SetCompatibleTextRenderingDefault(false);
 
-            Program.FFmpegAvailable = File.Exists(FFmpegHelper.FFmpegPath);
+            Program.FFmpegAvailable = File.Exists(FFmpegProcess.FFmpegPath);
 
             // Up the connection limit for getting the file sizes of video formats
             System.Net.ServicePointManager.DefaultConnectionLimit = 20;

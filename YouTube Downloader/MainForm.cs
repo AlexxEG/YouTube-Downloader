@@ -383,7 +383,7 @@ namespace YouTube_Downloader
 
         private void bwGetVideo_DoWork(object sender, DoWorkEventArgs e)
         {
-            e.Result = YoutubeDlHelper.GetVideoInfo(null, (string)e.Argument, _auth);
+            e.Result = new YoutubeDlProcess(null, _auth).GetVideoInfo((string)e.Argument);
         }
 
         private void bwGetVideo_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -883,7 +883,7 @@ namespace YouTube_Downloader
         {
             if (rbConvertFile.Checked)
             {
-                if (!FFmpegHelper.CanConvertToMP3(null, txtInputFile.Text).Value)
+                if (!new FFmpegProcess(null).CanConvertToMP3(txtInputFile.Text).Value)
                 {
                     string text = "Can't convert input file to MP3. File doesn't appear to have audio.";
 
@@ -936,7 +936,7 @@ namespace YouTube_Downloader
 
         private void btnCheckAgain_Click(object sender, EventArgs e)
         {
-            Program.FFmpegAvailable = File.Exists(FFmpegHelper.FFmpegPath);
+            Program.FFmpegAvailable = File.Exists(FFmpegProcess.FFmpegPath);
 
             groupBox2.Enabled = chbAutoConvert.Enabled = Program.FFmpegAvailable;
             lFFmpegMissing.Visible = btnCheckAgain.Visible = !Program.FFmpegAvailable;
@@ -1275,7 +1275,7 @@ namespace YouTube_Downloader
             var item = new OperationModel(Path.GetFileName(output), input, Path.GetFileName(input), operation);
 
             item.WorkingText = "Converting...";
-            item.Duration = Helper.FormatVideoLength(FFmpegHelper.GetDuration(input).Value);
+            item.Duration = Helper.FormatVideoLength(FFmpegProcess.GetDuration(input).Value);
             item.FileSize = Helper.GetFileSizeFormatted(input);
             item.AspectChanged += OperationModel_AspectChanged;
 
@@ -1330,7 +1330,7 @@ namespace YouTube_Downloader
             var item = new OperationModel(Path.GetFileName(output), input, Path.GetFileName(input), operation);
 
             item.WorkingText = "Cropping...";
-            item.Duration = Helper.FormatVideoLength(FFmpegHelper.GetDuration(input).Value);
+            item.Duration = Helper.FormatVideoLength(FFmpegProcess.GetDuration(input).Value);
             item.FileSize = Helper.GetFileSizeFormatted(input);
             item.AspectChanged += OperationModel_AspectChanged;
 

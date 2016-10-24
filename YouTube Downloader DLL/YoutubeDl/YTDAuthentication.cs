@@ -23,9 +23,9 @@ namespace YouTube_Downloader_DLL.YoutubeDl
             string twoFactor = this.TwoFactor;
 
             if (!string.IsNullOrEmpty(twoFactor))
-                twoFactor = string.Format(YoutubeDlHelper.Commands.TwoFactor, twoFactor);
+                twoFactor = string.Format(YoutubeDlProcess.Commands.TwoFactor, twoFactor);
 
-            return string.Format(YoutubeDlHelper.Commands.Authentication,
+            return string.Format(YoutubeDlProcess.Commands.Authentication,
                 this.Username,
                 this.Password) + twoFactor;
         }

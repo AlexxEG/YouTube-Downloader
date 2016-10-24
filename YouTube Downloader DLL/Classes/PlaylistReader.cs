@@ -56,16 +56,20 @@ namespace YouTube_Downloader_DLL.Classes
 
             _logger = OperationLogger.Create(OperationLogger.YTDLogFile);
 
-            YoutubeDlHelper.LogHeader(_logger, _arguments);
+            var ytd = new YoutubeDlProcess(_logger, null);
 
-            _youtubeDl = Helper.StartProcess(YoutubeDlHelper.YouTubeDlPath,
+            ytd.LogHeader(_arguments);
+
+            _youtubeDl = Helper.StartProcess(YoutubeDlProcess.YouTubeDlPath,
                 _arguments,
                 OutputReadLine,
                 ErrorReadLine,
                 _logger);
-            _youtubeDl.Exited += delegate { _processFinished = true; };
-
-            YoutubeDlHelper.LogFooter(_logger);
+            _youtubeDl.Exited += delegate
+            {
+                _processFinished = true;
+                ytd.LogFooter();
+            };
         }
 
         public void OutputReadLine(Process process, string line)

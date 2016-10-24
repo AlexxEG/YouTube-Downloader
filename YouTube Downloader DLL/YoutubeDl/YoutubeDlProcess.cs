@@ -7,7 +7,7 @@ using YouTube_Downloader_DLL.Classes;
 
 namespace YouTube_Downloader_DLL.YoutubeDl
 {
-    public class YoutubeDlHelper
+    public class YoutubeDlProcess
     {
         public static class Commands
         {
@@ -20,14 +20,23 @@ namespace YouTube_Downloader_DLL.YoutubeDl
 
         public static string YouTubeDlPath = Path.Combine(Application.StartupPath, "Externals", "youtube-dl.exe");
 
+        OperationLogger _logger;
+        YTDAuthentication _authentication;
+
+        public YoutubeDlProcess(OperationLogger logger, YTDAuthentication authentication)
+        {
+            _logger = logger;
+            _authentication = authentication;
+        }
+
         /// <summary>
         /// Writes log footer to log.
         /// </summary>
-        public static void LogFooter(OperationLogger logger)
+        public void LogFooter()
         {
             // Write log footer to stream.
             // Possibly write elapsed time and/or error in future.
-            logger?.LogLine("-" + Environment.NewLine);
+            _logger?.LogLine("-" + Environment.NewLine);
         }
 
         /// <summary>
@@ -35,35 +44,31 @@ namespace YouTube_Downloader_DLL.YoutubeDl
         /// </summary>
         /// <param name="arguments">The arguments to log in header.</param>
         /// <param name="url">The URL to log in header.</param>
-        public static void LogHeader(OperationLogger logger,
-                                     string arguments,
-                                     [CallerMemberName]string caller = "")
+        public void LogHeader(string arguments, [CallerMemberName]string caller = "")
         {
-            logger?.LogLine("[" + DateTime.Now + "]");
-            logger?.LogLine("version: " + GetVersion());
-            logger?.LogLine("caller: " + caller);
-            logger?.LogLine("cmd: " + arguments.Trim());
-            logger?.LogLine();
-            logger?.LogLine("OUTPUT");
+            _logger?.LogLine("[" + DateTime.Now + "]");
+            _logger?.LogLine("version: " + GetVersion());
+            _logger?.LogLine("caller: " + caller);
+            _logger?.LogLine("cmd: " + arguments.Trim());
+            _logger?.LogLine();
+            _logger?.LogLine("OUTPUT");
         }
 
         /// <summary>
         /// Returns a <see cref="VideoInfo"/> of the given video.
         /// </summary>
         /// <param name="url">The url to the video.</param>
-        public static VideoInfo GetVideoInfo(OperationLogger logger,
-                                             string url,
-                                             YTDAuthentication authentication = null)
+        public VideoInfo GetVideoInfo(string url)
         {
             string json_dir = Common.GetJsonDirectory();
             string json_file = string.Empty;
             string arguments = string.Format(Commands.GetJsonInfo,
                 json_dir,
                 url,
-                authentication == null ? string.Empty : authentication.ToCmdArgument());
+                _authentication == null ? string.Empty : _authentication.ToCmdArgument());
             VideoInfo video = new VideoInfo();
 
-            LogHeader(logger, arguments);
+            LogHeader(arguments);
 
             Helper.StartProcess(YouTubeDlPath, arguments,
                 delegate (Process process, string line)
@@ -93,7 +98,7 @@ namespace YouTube_Downloader_DLL.YoutubeDl
                         video.Failure = true;
                         video.FailureReason = error.Substring("ERROR: ".Length);
                     }
-                }, logger)
+                }, _logger)
                 .WaitForExit();
 
             if (!video.Failure && !video.RequiresAuthentication)

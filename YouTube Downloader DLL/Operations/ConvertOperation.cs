@@ -109,16 +109,18 @@ namespace YouTube_Downloader_DLL.Operations
                 {
                     using (var logger = OperationLogger.Create(OperationLogger.FFmpegDLogFile))
                     {
-                        FFmpegHelper.Convert(logger, this.ReportProgress, this.Input, this.Output, _cts.Token);
+                        var ffmpeg = new FFmpegProcess(logger);
+
+                        ffmpeg.Convert(this.Input, this.Output, this.ReportProgress, _cts.Token);
 
                         // Crop if not operation wasn't canceled and _start has a valid value
                         if (!this.CancellationPending && _start != TimeSpan.MinValue)
                         {
                             // Crop to end of file, unless _end has a valid value
                             if (_end == TimeSpan.MinValue)
-                                FFmpegHelper.Crop(logger, this.ReportProgress, this.Output, this.Output, _start, _cts.Token);
+                                ffmpeg.Crop(this.Output, this.Output, _start, this.ReportProgress, _cts.Token);
                             else
-                                FFmpegHelper.Crop(logger, this.ReportProgress, this.Output, this.Output, _start, _end, _cts.Token);
+                                ffmpeg.Crop(this.Output, this.Output, _start, _end, this.ReportProgress, _cts.Token);
                         }
                     }
 
@@ -133,37 +135,39 @@ namespace YouTube_Downloader_DLL.Operations
             }
             else
             {
-                foreach (string input in Directory.GetFiles(this.Input, _searchPattern))
+                using (var logger = OperationLogger.Create(OperationLogger.FFmpegDLogFile))
                 {
-                    if (this.CancellationPending)
-                        break;
+                    var ffmpeg = new FFmpegProcess(logger);
 
-                    _count++;
-                    try
+                    foreach (string input in Directory.GetFiles(this.Input, _searchPattern))
                     {
-                        string output = string.Format("{0}\\{1}.mp3",
-                                                        this.Output,
-                                                        Path.GetFileNameWithoutExtension(input));
+                        if (this.CancellationPending)
+                            break;
 
-                        this.ReportProgress(UpdateProperties, new Dictionary<string, object>()
+                        _count++;
+                        try
                         {
-                            { nameof(Title), Path.GetFileName(input) },
-                            { nameof(Duration), (int)FFmpegHelper.GetDuration(input).Value.TotalSeconds },
-                            { nameof(FileSize), Helper.GetFileSize(input) }
-                        });
+                            string output = string.Format("{0}\\{1}.mp3",
+                                                            this.Output,
+                                                            Path.GetFileNameWithoutExtension(input));
 
-                        using (var logger = OperationLogger.Create(OperationLogger.FFmpegDLogFile))
-                        {
-                            FFmpegHelper.Convert(logger, this.ReportProgress, input, output, _cts.Token);
+                            this.ReportProgress(UpdateProperties, new Dictionary<string, object>()
+                            {
+                                { nameof(Title), Path.GetFileName(input) },
+                                { nameof(Duration), (int)FFmpegProcess.GetDuration(input).Value.TotalSeconds },
+                                { nameof(FileSize), Helper.GetFileSize(input) }
+                            });
+
+                            ffmpeg.Convert(input, output, this.ReportProgress, _cts.Token);
+
+                            this.ProcessedFiles.Add(output);
                         }
-
-                        this.ProcessedFiles.Add(output);
-                    }
-                    catch (Exception ex)
-                    {
-                        _failures++;
-                        Common.SaveException(ex);
-                        continue;
+                        catch (Exception ex)
+                        {
+                            _failures++;
+                            Common.SaveException(ex);
+                            continue;
+                        }
                     }
                 }
             }
@@ -225,7 +229,7 @@ namespace YouTube_Downloader_DLL.Operations
                 _end = (TimeSpan)args[ArgKeys.End];
                 _mode = ConvertingMode.File;
 
-                this.Duration = (long)FFmpegHelper.GetDuration(this.Input).Value.TotalSeconds;
+                this.Duration = (long)FFmpegProcess.GetDuration(this.Input).Value.TotalSeconds;
                 this.Title = Path.GetFileName(this.Output);
             }
 
