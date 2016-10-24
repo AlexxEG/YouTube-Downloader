@@ -903,15 +903,16 @@ namespace YouTube_Downloader
 
                 }
 
-                if (txtInputFile.Text == txtOutputFile.Text ||
+                if (chbCropFrom.Checked &&
+                    (txtInputFile.Text == txtOutputFile.Text ||
                     // If they match, the user probably wants to crop. Right?
-                    Path.GetExtension(txtInputFile.Text) == Path.GetExtension(txtOutputFile.Text))
+                    Path.GetExtension(txtInputFile.Text) == Path.GetExtension(txtOutputFile.Text)))
                 {
                     this.Crop(txtInputFile.Text, txtOutputFile.Text);
                 }
                 else
                 {
-                    this.Convert(txtInputFile.Text, txtOutputFile.Text, true);
+                    this.Convert(txtInputFile.Text, txtOutputFile.Text, chbCropFrom.Checked);
                 }
 
                 txtInputFile.Clear();
@@ -1266,8 +1267,8 @@ namespace YouTube_Downloader
                 if (!this.ValidateCropping())
                     return null;
 
-                start = TimeSpan.Parse(mtxtFrom.Text.Replace('.', ':'));
-                end = TimeSpan.Parse(mtxtTo.Text.Replace('.', ':'));
+                start = TimeSpan.Parse(mtxtFrom.Text);
+                end = TimeSpan.Parse(mtxtTo.Text);
             }
 
             var operation = new ConvertOperation();
