@@ -113,20 +113,6 @@ namespace YouTube_Downloader
 #endif
         }
 
-        private void olvQueue_HyperlinkClicked(object sender, HyperlinkClickedEventArgs e)
-        {
-            e.Handled = true;
-
-            try
-            {
-                Process.Start((e.Model as OperationModel).Input);
-            }
-            catch (Exception)
-            {
-                MessageBox.Show(this, "An error occured attemping to open input.");
-            }
-        }
-
         private void MainForm_Shown(object sender, EventArgs e)
         {
             if (_args != null)
@@ -142,6 +128,20 @@ namespace YouTube_Downloader
             lFFmpegMissing.Visible = btnCheckAgain.Visible = !Program.FFmpegAvailable;
         }
 
+        private void olvQueue_HyperlinkClicked(object sender, HyperlinkClickedEventArgs e)
+        {
+            e.Handled = true;
+
+            try
+            {
+                Process.Start((e.Model as OperationModel).Input);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show(this, "An error occured attemping to open input.");
+            }
+        }
+        
         private void linkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             try
