@@ -1319,8 +1319,8 @@ namespace YouTube_Downloader
             if (!this.ValidateCropping())
                 return;
 
-            TimeSpan start = TimeSpan.Parse(mtxtFrom.Text.Replace('.', ':'));
-            TimeSpan end = TimeSpan.Parse(mtxtTo.Text.Replace('.', ':'));
+            TimeSpan start = TimeSpan.Parse(mtxtFrom.Text);
+            TimeSpan end = TimeSpan.Parse(mtxtTo.Text);
 
             if (start > end)
                 end = TimeSpan.MinValue;

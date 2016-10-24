@@ -1000,12 +1000,11 @@
             // 
             this.mtxtTo.Enabled = false;
             this.mtxtTo.Location = new System.Drawing.Point(237, 19);
-            this.mtxtTo.Mask = "00:00:00.000";
+            this.mtxtTo.Mask = "00\\:00\\:00.000";
             this.mtxtTo.Name = "mtxtTo";
             this.mtxtTo.Size = new System.Drawing.Size(100, 20);
             this.mtxtTo.TabIndex = 3;
             this.mtxtTo.Text = "000000000";
-            this.mtxtTo.ValidatingType = typeof(System.TimeSpan);
             // 
             // chbCropTo
             // 
@@ -1023,12 +1022,11 @@
             // 
             this.mtxtFrom.Enabled = false;
             this.mtxtFrom.Location = new System.Drawing.Point(86, 19);
-            this.mtxtFrom.Mask = "00:00:00.000";
+            this.mtxtFrom.Mask = "00\\:00\\:00.000";
             this.mtxtFrom.Name = "mtxtFrom";
             this.mtxtFrom.Size = new System.Drawing.Size(100, 20);
             this.mtxtFrom.TabIndex = 1;
             this.mtxtFrom.Text = "000000000";
-            this.mtxtFrom.ValidatingType = typeof(System.TimeSpan);
             // 
             // btnConvert
             // 
