@@ -124,6 +124,8 @@
             this.playlistSelectAllMenuItem = new System.Windows.Forms.MenuItem();
             this.playlistSelectNoneMenuItem = new System.Windows.Forms.MenuItem();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.menuItem1 = new System.Windows.Forms.MenuItem();
+            this.clearCompletedMenuItem = new System.Windows.Forms.MenuItem();
             this.groupBox1.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.videoThumbnail)).BeginInit();
@@ -286,7 +288,9 @@
             this.resumeMenuItem,
             this.pauseMenuItem,
             this.stopMenuItem,
-            this.removeMenuItem});
+            this.removeMenuItem,
+            this.menuItem1,
+            this.clearCompletedMenuItem});
             this.contextMenu1.Popup += new System.EventHandler(this.contextMenu1_Popup);
             this.contextMenu1.Collapse += new System.EventHandler(this.contextMenu1_Collapse);
             // 
@@ -1123,6 +1127,17 @@
             this.playlistSelectNoneMenuItem.Text = "Select none";
             this.playlistSelectNoneMenuItem.Click += new System.EventHandler(this.playlistSelectNoneMenuItem_Click);
             // 
+            // menuItem1
+            // 
+            this.menuItem1.Index = 9;
+            this.menuItem1.Text = "-";
+            // 
+            // clearCompletedMenuItem
+            // 
+            this.clearCompletedMenuItem.Index = 10;
+            this.clearCompletedMenuItem.Text = "Clear Completed";
+            this.clearCompletedMenuItem.Click += new System.EventHandler(this.clearCompletedMenuItem_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1261,6 +1276,8 @@
         private BrightIdeasSoftware.OLVColumn olvColumn4;
         private BrightIdeasSoftware.OLVColumn olvColumn5;
         private BrightIdeasSoftware.OLVColumn olvColumn6;
+        private System.Windows.Forms.MenuItem menuItem1;
+        private System.Windows.Forms.MenuItem clearCompletedMenuItem;
     }
 }
 

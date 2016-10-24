@@ -146,7 +146,7 @@ namespace YouTube_Downloader
                 MessageBox.Show(this, "An error occured attemping to open input.");
             }
         }
-        
+
         private void nudMaxSimDownloads_ValueChanged(object sender, EventArgs e)
         {
             btnMaxSimDownloadsApply.Enabled = nudMaxSimDownloads.Value != Settings.Default.MaxSimDownloads;
@@ -980,7 +980,8 @@ namespace YouTube_Downloader
             if (olvQueue.SelectedObjects.Count == 0)
             {
                 foreach (MenuItem menuItem in contextMenu1.MenuItems)
-                    menuItem.Visible = false;
+                    if (menuItem != clearCompletedMenuItem)
+                        menuItem.Visible = false;
 
                 return;
             }
@@ -1122,6 +1123,17 @@ namespace YouTube_Downloader
 
                 olvQueue.RemoveObject(item);
             }
+        }
+
+        private void clearCompletedMenuItem_Click(object sender, EventArgs e)
+        {
+            var models = new List<OperationModel>();
+
+            foreach (OperationModel model in olvQueue.Objects)
+                if (model.Operation.IsDone)
+                    models.Add(model);
+
+            olvQueue.RemoveObjects(models);
         }
 
         #endregion
