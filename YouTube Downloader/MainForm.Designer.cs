@@ -1091,7 +1091,7 @@
             // 
             // olvColumn2
             // 
-            this.olvColumn2.AspectName = "Progress";
+            this.olvColumn2.AspectName = "BarTextProgress";
             this.olvColumn2.Text = "Progress";
             // 
             // olvColumn3

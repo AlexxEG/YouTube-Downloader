@@ -74,6 +74,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Renderers\BarTextProgress.cs" />
     <Compile Include="Renderers\BarTextRenderer.cs">
       <SubType>Component</SubType>
     </Compile>

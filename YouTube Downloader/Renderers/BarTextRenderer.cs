@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Globalization;
 using BrightIdeasSoftware;
 
 namespace YouTube_Downloader.Renderers
@@ -41,20 +42,53 @@ namespace YouTube_Downloader.Renderers
 
         public override void Render(Graphics g, Rectangle r)
         {
+            this.MaximumWidth = r.Width;
+            this.Padding = 1;
+
             base.Render(g, r);
 
             r = this.GetProgressBarRect(r);
 
-            string text = $"{this.Aspect}%";
+            IConvertible convertable = this.Aspect as IConvertible;
+            if (convertable == null)
+                return;
 
-            StringFormat stringFormat = new StringFormat();
-            stringFormat.Alignment = StringAlignment.Center;
-            stringFormat.LineAlignment = StringAlignment.Center;
+            var text = $"{Convert.ToDouble(convertable)}%";
 
-            g.DrawString(text, this.Font, this.TextBrush, r, stringFormat);
+            Size textSize = g.MeasureString(text, this.Font).ToSize();
+            // Text position, center of the progress bar rect
+            Point textPoint = new Point(
+                r.X + ((r.Width / 2) - (textSize.Width / 2)),
+                r.Y + ((r.Height / 2) - (textSize.Height / 2)));
+            // The area which is filled in progress bar
+            Rectangle fill = this.GetFillRect(r);
+
+            // Get the area of the text that is covered over by progress bar fill. This area will be white text
+            int leftWidth = fill.Right - textPoint.X;
+
+            var textBrush = new TextureBrush(GetTexureBrush(leftWidth, textSize.Width, textSize.Height));
+            textBrush.TranslateTransform(textPoint.X, textPoint.Y);
+
+            g.DrawString(text, this.Font, textBrush, textPoint);
         }
 
-        public Rectangle GetProgressBarRect(Rectangle r)
+        private Rectangle GetFillRect(Rectangle r)
+        {
+            IConvertible convertable = this.Aspect as IConvertible;
+            if (convertable == null)
+                return Rectangle.Empty;
+            double aspectValue = convertable.ToDouble(NumberFormatInfo.InvariantInfo);
+
+            Rectangle fillRect = Rectangle.Inflate(r, -1, -1);
+            if (aspectValue <= this.MinimumValue)
+                fillRect.Width = 0;
+            else if (aspectValue < this.MaximumValue)
+                fillRect.Width = (int)(fillRect.Width * (aspectValue - this.MinimumValue) / this.MaximumValue);
+
+            return fillRect;
+        }
+
+        private Rectangle GetProgressBarRect(Rectangle r)
         {
             r = this.ApplyCellPadding(r);
 
@@ -64,6 +98,23 @@ namespace YouTube_Downloader.Renderers
             frameRect = this.AlignRectangle(r, frameRect);
 
             return frameRect;
+        }
+
+        private Image GetTexureBrush(int leftWidth, int width, int height)
+        {
+            Bitmap bmp = new Bitmap(width, height);
+            Graphics g = Graphics.FromImage(bmp);
+
+            var left = new Rectangle(0, 0, leftWidth, height);
+            var right = new Rectangle(leftWidth, 0, width - leftWidth, height);
+
+            g.FillRectangle(Brushes.White, left);
+            g.FillRectangle(Brushes.Black, right);
+
+            g.Dispose();
+
+            return bmp;
+
         }
     }
 }

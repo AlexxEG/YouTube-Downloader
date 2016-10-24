@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using YouTube_Downloader.Renderers;
 using YouTube_Downloader_DLL.Classes;
 using YouTube_Downloader_DLL.Operations;
 
@@ -126,6 +127,14 @@ namespace YouTube_Downloader.Controls
 
                 _workingText = value;
                 this.OnAspectChanged();
+            }
+        }
+
+        public BarTextProgress BarTextProgress
+        {
+            get
+            {
+                return new BarTextProgress(this.Progress, this.Status);
             }
         }
 
