@@ -221,7 +221,7 @@ namespace YouTube_Downloader_DLL.Operations
             var line = string.Empty;
             var parts = new List<string>();
             var sw = new Stopwatch();
-            
+
             long partMaxSize = 0;
             long estimatedTotalSize = 0;
             long totalDownloaded = 0;
@@ -244,7 +244,7 @@ namespace YouTube_Downloader_DLL.Operations
 
                     while (_pause)
                         Thread.Sleep(500);
-                    
+
                     sw.Start();
 
                     string url = _format.DownloadUrl.Substring(0, _format.DownloadUrl.LastIndexOf('/') + 1) + part;
