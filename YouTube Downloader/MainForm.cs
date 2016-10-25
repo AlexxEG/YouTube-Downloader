@@ -182,15 +182,6 @@ namespace YouTube_Downloader
 
         private void btnGetVideo_Click(object sender, EventArgs e)
         {
-#if RELEASE
-            // ToDo: Remove this when Twitch support is fixed
-            if (Helper.IsValidTwitchUrl(txtYoutubeLink.Text))
-            {
-                MessageBox.Show(this, "Twitch support is currently broken.");
-                return;
-            }
-#endif
-
             if (!Helper.IsValidUrl(txtYoutubeLink.Text))
             {
                 MessageBox.Show(this, "Input link is not a valid Twitch/YouTube link.", "Invalid URL", MessageBoxButtons.OK, MessageBoxIcon.Warning);
