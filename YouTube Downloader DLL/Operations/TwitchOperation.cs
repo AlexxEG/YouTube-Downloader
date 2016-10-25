@@ -218,30 +218,27 @@ namespace YouTube_Downloader_DLL.Operations
 
         private bool Download(string outputFilename)
         {
-            var wc = new WebClient();
-            var m3u8 = wc.DownloadString(_format.DownloadUrl);
-            var sr = new StringReader(m3u8);
             var line = string.Empty;
+            var parts = new List<string>();
+            var sw = new Stopwatch();
+
             int partsDone = 0;
-            List<string> parts = new List<string>();
 
             long partMaxSize = 0;
             long estimatedTotalSize = 0;
+            long totalDownloaded = 0;
+            long prevFileSize = 0;
 
+            using (var wc = new WebClient())
+            using (var sr = new StringReader(wc.DownloadString(_format.DownloadUrl)))
             using (var writer = new FileStream(outputFilename,
                                                FileMode.Create,
                                                FileAccess.Write))
             {
-                long totalDownloaded = 0;
-                long prevFileSize = 0;
-                var sw = new Stopwatch();
-
                 while ((line = sr.ReadLine()) != null)
                 {
-                    if (string.IsNullOrEmpty(line) || line.StartsWith("#"))
-                        continue;
-
-                    parts.Add(line);
+                    if (!(string.IsNullOrEmpty(line) && line.StartsWith("#")))
+                        parts.Add(line);
                 }
 
                 foreach (string part in parts)
