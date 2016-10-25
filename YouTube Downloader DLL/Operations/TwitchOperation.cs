@@ -231,9 +231,7 @@ namespace YouTube_Downloader_DLL.Operations
 
             using (var wc = new WebClient())
             using (var sr = new StringReader(wc.DownloadString(_format.DownloadUrl)))
-            using (var writer = new FileStream(outputFilename,
-                                               FileMode.Create,
-                                               FileAccess.Write))
+            using (var writer = new FileStream(outputFilename, FileMode.Create, FileAccess.Write))
             {
                 while ((line = sr.ReadLine()) != null)
                 {
