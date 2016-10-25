@@ -200,7 +200,7 @@ namespace YouTube_Downloader.Controls
             {
                 /* Get total file size of all affected files
                  *
-                 * Directory can contain unrelated files, so use make use of List properties
+                 * Directory can contain unrelated files, so make use of List properties
                  * from Operation that contains the affected files only.
                  */
                 string[] fileList = null;
