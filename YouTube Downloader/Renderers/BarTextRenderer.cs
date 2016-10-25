@@ -53,8 +53,8 @@ namespace YouTube_Downloader.Renderers
             if (convertable == null)
                 return;
 
-            var text = $"{Convert.ToDouble(convertable)}%";
-
+            var text = Convert.ToString(convertable);
+            
             Size textSize = g.MeasureString(text, this.Font).ToSize();
             // Text position, center of the progress bar rect
             Point textPoint = new Point(

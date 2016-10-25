@@ -134,7 +134,19 @@ namespace YouTube_Downloader.Controls
         {
             get
             {
-                return new BarTextProgress(this.Progress, this.Status);
+                string status = string.Empty;
+
+                switch (this.Operation.Status)
+                {
+                    case OperationStatus.Working:
+                        status = $"{Operation.ProgressPercentage}% ({this.Status})";
+                        break;
+                    default:
+                        status = this.Status;
+                        break;
+                }
+
+                return new BarTextProgress(Operation.ProgressPercentage, status);
             }
         }
 
