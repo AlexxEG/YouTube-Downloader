@@ -1103,11 +1103,13 @@
             // 
             this.olvColumn4.AspectName = "Duration";
             this.olvColumn4.Text = "Length";
+            this.olvColumn4.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // olvColumn5
             // 
             this.olvColumn5.AspectName = "FileSize";
             this.olvColumn5.Text = "Size";
+            this.olvColumn5.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // olvColumn6
             // 
