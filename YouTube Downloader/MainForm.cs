@@ -82,27 +82,7 @@ namespace YouTube_Downloader
             if (_selectedVideo != null)
                 _selectedVideo.AbortUpdateFileSizes();
 
-            _settings.WindowStates[this.Name].SaveForm(this, false);
-            _settings.SaveToDirectories.Clear();
-
-            string[] paths = new string[cbSaveTo.Items.Count];
-            cbSaveTo.Items.CopyTo(paths, 0);
-            string[] pathsPlaylist = new string[cbPlaylistSaveTo.Items.Count];
-            cbPlaylistSaveTo.Items.CopyTo(pathsPlaylist, 0);
-
-            // Merge paths, removing duplicates
-            paths = paths.Union(pathsPlaylist).ToArray();
-
-            _settings.SaveToDirectories.AddRange(paths);
-            _settings.SelectedDirectory = cbSaveTo.SelectedIndex;
-            _settings.AutoConvert = chbAutoConvert.Checked;
-            _settings.MaxSimDownloads = (int)nudMaxSimDownloads.Value;
-            _settings.VisibleColumns = this.GetVisibleColumns();
-
-            _settings.ColumnWidths.Clear();
-            _settings.ColumnWidths.AddRange(this.GetColumnWidths());
-
-            _settings.Save();
+            this.SaveSettings();
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -1454,6 +1434,34 @@ namespace YouTube_Downloader
                 olvQueue.GetColumn(i).Width = int.Parse(_settings.ColumnWidths[i]);
 
             olvQueue.RebuildColumns();
+        }
+
+        /// <summary>
+        /// Saves all application settings.
+        /// </summary>
+        private void SaveSettings()
+        {
+            _settings.WindowStates[this.Name].SaveForm(this, false);
+            _settings.SaveToDirectories.Clear();
+
+            string[] paths = new string[cbSaveTo.Items.Count];
+            cbSaveTo.Items.CopyTo(paths, 0);
+            string[] pathsPlaylist = new string[cbPlaylistSaveTo.Items.Count];
+            cbPlaylistSaveTo.Items.CopyTo(pathsPlaylist, 0);
+
+            // Merge paths, removing duplicates
+            paths = paths.Union(pathsPlaylist).ToArray();
+
+            _settings.SaveToDirectories.AddRange(paths);
+            _settings.SelectedDirectory = cbSaveTo.SelectedIndex;
+            _settings.AutoConvert = chbAutoConvert.Checked;
+            _settings.MaxSimDownloads = (int)nudMaxSimDownloads.Value;
+            _settings.VisibleColumns = this.GetVisibleColumns();
+
+            _settings.ColumnWidths.Clear();
+            _settings.ColumnWidths.AddRange(this.GetColumnWidths());
+
+            _settings.Save();
         }
 
         /// <summary>
