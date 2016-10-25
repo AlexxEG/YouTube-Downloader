@@ -22,6 +22,7 @@ using YouTube_Downloader_DLL.Enums;
 using YouTube_Downloader_DLL.FFmpeg;
 using YouTube_Downloader_DLL.Helpers;
 using YouTube_Downloader_DLL.Operations;
+using YouTube_Downloader_DLL.Updating;
 using YouTube_Downloader_DLL.YoutubeDl;
 
 namespace YouTube_Downloader
@@ -104,6 +105,7 @@ namespace YouTube_Downloader
         private void MainForm_Load(object sender, EventArgs e)
         {
             this.LoadSettings();
+            this.ShowUpdateNotification();
 
 #if DEBUG
             tabControl1.SelectedIndex = 3;
@@ -989,6 +991,12 @@ namespace YouTube_Downloader
             mainMenu1.MenuItems.Add(toolsMenuItem = new MenuItem("&Tools", toolsMenuItems));
             mainMenu1.MenuItems.Add(helpMenuItem = new MenuItem("&Help", helpMenuItems));
 
+            mainMenu1.Collapse += delegate (object sender, EventArgs e)
+            {
+                // Remove update notification from Help menu item
+                helpMenuItem.Text = "&Help";
+            };
+
             this.Menu = mainMenu1;
         }
 
@@ -1443,6 +1451,17 @@ namespace YouTube_Downloader
             lMaxSimDownloads.Visible =
                 nudMaxSimDownloads.Visible =
                 btnMaxSimDownloadsApply.Visible = Settings.Default.ShowMaxSimDownloads;
+        }
+
+        /// <summary>
+        /// Shows update notification if update is available.
+        /// </summary>
+        private async void ShowUpdateNotification()
+        {
+            if (!await UpdateHelper.IsUpdateAvailableAsync())
+            {
+                helpMenuItem.Text += " (Update available)";
+            }
         }
 
         /// <summary>
