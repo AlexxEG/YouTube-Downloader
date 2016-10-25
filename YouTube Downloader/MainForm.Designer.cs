@@ -571,7 +571,6 @@
             // 
             // chbPlaylistIgnoreExisting
             // 
-            this.chbPlaylistIgnoreExisting.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.chbPlaylistIgnoreExisting.AutoSize = true;
             this.chbPlaylistIgnoreExisting.Checked = global::YouTube_Downloader.Properties.Settings.Default.PlaylistIgnoreExisting;
             this.chbPlaylistIgnoreExisting.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::YouTube_Downloader.Properties.Settings.Default, "PlaylistIgnoreExisting", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
