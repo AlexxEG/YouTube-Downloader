@@ -7,6 +7,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
@@ -81,7 +82,7 @@ namespace YouTube_Downloader
             if (_selectedVideo != null)
                 _selectedVideo.AbortUpdateFileSizes();
 
-            _settings.WindowStates[this.Name].SaveForm(this);
+            _settings.WindowStates[this.Name].SaveForm(this, false);
             _settings.SaveToDirectories.Clear();
 
             string[] paths = new string[cbSaveTo.Items.Count];
@@ -96,10 +97,12 @@ namespace YouTube_Downloader
             _settings.SelectedDirectory = cbSaveTo.SelectedIndex;
             _settings.AutoConvert = chbAutoConvert.Checked;
             _settings.MaxSimDownloads = (int)nudMaxSimDownloads.Value;
+            _settings.VisibleColumns = this.GetVisibleColumns();
+
+            _settings.ColumnWidths.Clear();
+            _settings.ColumnWidths.AddRange(this.GetColumnWidths());
 
             _settings.Save();
-
-            Application.Exit();
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -110,8 +113,8 @@ namespace YouTube_Downloader
 #if DEBUG
             tabControl1.SelectedIndex = 3;
 
-            //for (int i = 0; i < 100; i++)
-            //    this.AddDummyDownloadOperation(60000);
+            //for (int i = 0; i < 1; i++)
+            //    this.AddDummyDownloadOperation(10000);
 #endif
         }
 
@@ -1341,6 +1344,17 @@ namespace YouTube_Downloader
         }
 
         /// <summary>
+        /// Returns string array of column widths, ordered by index.
+        /// </summary>
+        private string[] GetColumnWidths()
+        {
+            var widths = new List<string>();
+            foreach (OLVColumn column in olvQueue.AllColumns)
+                widths.Add(column.Width.ToString());
+            return widths.ToArray();
+        }
+
+        /// <summary>
         /// Returns true if there is a working IOperation.
         /// </summary>
         private bool GetIsWorking()
@@ -1353,6 +1367,17 @@ namespace YouTube_Downloader
                     return true;
             }
             return false;
+        }
+
+        /// <summary>
+        /// Returns string of Booleans as 1s and 0s for the visibility of each column, ordered by index.
+        /// </summary>
+        private string GetVisibleColumns()
+        {
+            var sb = new StringBuilder();
+            foreach (OLVColumn column in olvQueue.AllColumns)
+                sb.Append($"{System.Convert.ToInt32(column.IsVisible)},");
+            return sb.ToString().TrimEnd(',');
         }
 
         /// <summary>
@@ -1382,12 +1407,12 @@ namespace YouTube_Downloader
             }
 
             // Restore form location, size & window state, if not null
-            _settings.WindowStates[this.Name].RestoreForm(this);
+            _settings.WindowStates[this.Name].RestoreForm(this, false);
 
             // Initialize StringCollection if null
             if (_settings.SaveToDirectories == null)
             {
-                _settings.SaveToDirectories = new System.Collections.Specialized.StringCollection();
+                _settings.SaveToDirectories = new StringCollection();
             }
 
             // Copy StringCollection to string array
@@ -1416,6 +1441,19 @@ namespace YouTube_Downloader
             if (_settings.LastPlaylistUrl != null) txtPlaylistLink.Text = _settings.LastPlaylistUrl;
 
             this.ShowMaxSimDownloads();
+
+            // Restore visible columns
+            string[] cols = _settings.VisibleColumns.Split(',');
+            for (int i = 0; i < olvQueue.AllColumns.Count; i++)
+                olvQueue.GetColumn(i).IsVisible = System.Convert.ToBoolean(int.Parse(cols[i]));
+
+            // Restore column widths
+            if (_settings.ColumnWidths == null)
+                _settings.ColumnWidths = new StringCollection();
+            for (int i = 0; i < _settings.ColumnWidths.Count; i++)
+                olvQueue.GetColumn(i).Width = int.Parse(_settings.ColumnWidths[i]);
+
+            olvQueue.RebuildColumns();
         }
 
         /// <summary>

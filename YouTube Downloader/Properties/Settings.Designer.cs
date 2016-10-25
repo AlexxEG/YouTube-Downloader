@@ -164,5 +164,28 @@ namespace YouTube_Downloader.Properties {
                 this["PlaylistIgnoreExisting"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1,1,0,1,1,1")]
+        public string VisibleColumns {
+            get {
+                return ((string)(this["VisibleColumns"]));
+            }
+            set {
+                this["VisibleColumns"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringCollection ColumnWidths {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["ColumnWidths"]));
+            }
+            set {
+                this["ColumnWidths"] = value;
+            }
+        }
     }
 }

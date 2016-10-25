@@ -45,22 +45,15 @@ namespace YouTube_Downloader.Classes
         /// <param name="reader">The stream from which the object will be deserialized.</param>
         void IXmlSerializable.ReadXml(XmlReader reader)
         {
-            bool booIsEmpty = reader.IsEmptyElement;
-
-            reader.ReadStartElement();
-
-            if (booIsEmpty)
-                return;
-
-            while (reader.MoveToContent() == XmlNodeType.Element && reader.LocalName == "WindowState")
+            reader.ReadToFollowing("WindowState");
+            do
             {
                 string strWindowName = reader["name"];
 
                 XmlSerializer xsrWindowState = new XmlSerializer(typeof(WindowState));
                 windowStates.Add(strWindowName, (WindowState)xsrWindowState.Deserialize(reader));
-
-                windowStates.ToString();
             }
+            while (reader.ReadToNextSibling("WindowState"));
         }
 
         /// <summary>

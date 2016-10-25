@@ -1068,6 +1068,7 @@
             this.olvQueue.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvColumn1,
             this.olvColumn2,
+            this.olvColumn3,
             this.olvColumn4,
             this.olvColumn5,
             this.olvColumn6});
@@ -1098,8 +1099,6 @@
             // olvColumn3
             // 
             this.olvColumn3.AspectName = "Status";
-            this.olvColumn3.DisplayIndex = 2;
-            this.olvColumn3.IsVisible = false;
             this.olvColumn3.Text = "Status";
             // 
             // olvColumn4

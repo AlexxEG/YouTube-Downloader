@@ -66,7 +66,7 @@ namespace YouTube_Downloader.Classes
         /// width and <see cref="System.Windows.Forms.SplitContainer"/> splitter distance.
         /// </summary>
         /// <param name="form">The <see cref="System.Windows.Forms.Form"/> to restore.</param>
-        public void RestoreForm(Form form)
+        public void RestoreForm(Form form, bool restoreColumns = true)
         {
             if (!this.Location.IsEmpty)
             {
@@ -80,7 +80,9 @@ namespace YouTube_Downloader.Classes
 
             form.WindowState = this.FormWindowState;
 
-            RestoreColumns(form);
+            if (restoreColumns)
+                RestoreColumns(form);
+
             RestoreSplitContainers(form);
         }
 
@@ -90,7 +92,7 @@ namespace YouTube_Downloader.Classes
         /// width and <see cref="System.Windows.Forms.SplitContainer"/> splitter distance.
         /// </summary>
         /// <param name="form">The <see cref="System.Windows.Forms.Form"/> to save.</param>
-        public void SaveForm(Form form)
+        public void SaveForm(Form form, bool saveColumns = true)
         {
             if (!(form.WindowState == FormWindowState.Maximized))
             {
@@ -105,21 +107,24 @@ namespace YouTube_Downloader.Classes
 
             this.FormWindowState = form.WindowState;
 
-            foreach (ColumnHeader col in GetColumns(form.Controls))
+            if (saveColumns)
             {
-                // Skip column if Name is null or empty, since it can't be identified.
-                if (string.IsNullOrEmpty(col.ListView.Name))
-                    continue;
-
-                string key = string.Format("{0} - {1}", col.ListView.Name, col.DisplayIndex);
-
-                if (this.ColumnWidths.ContainsKey(key))
+                foreach (ColumnHeader col in GetColumns(form.Controls))
                 {
-                    this.ColumnWidths[key] = col.Width;
-                }
-                else
-                {
-                    this.ColumnWidths.Add(key, col.Width);
+                    // Skip column if Name is null or empty, since it can't be identified.
+                    if (string.IsNullOrEmpty(col.ListView.Name))
+                        continue;
+
+                    string key = string.Format("{0} - {1}", col.ListView.Name, col.DisplayIndex);
+
+                    if (this.ColumnWidths.ContainsKey(key))
+                    {
+                        this.ColumnWidths[key] = col.Width;
+                    }
+                    else
+                    {
+                        this.ColumnWidths.Add(key, col.Width);
+                    }
                 }
             }
 
@@ -158,17 +163,17 @@ namespace YouTube_Downloader.Classes
         /// <param name="reader">The stream from which the object will be deserialized.</param>
         void IXmlSerializable.ReadXml(XmlReader reader)
         {
-            bool booIsEmpty = reader.IsEmptyElement;
-
-            if (booIsEmpty)
-                return;
-
             this.FormName = reader.GetAttribute("name");
             this.Location = new Point(int.Parse(reader.GetAttribute("x")), int.Parse(reader.GetAttribute("y")));
             this.Size = new Size(int.Parse(reader.GetAttribute("width")), int.Parse(reader.GetAttribute("height")));
             this.FormWindowState = (FormWindowState)Enum.Parse(typeof(FormWindowState), reader.GetAttribute("windowState"), true);
 
-            while (reader.Read())
+            if (reader.IsEmptyElement)
+                return;
+
+            XmlReader subtree = reader.ReadSubtree();
+
+            while (subtree.Read())
             {
                 switch (reader.LocalName)
                 {

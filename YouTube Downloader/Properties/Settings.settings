@@ -38,5 +38,11 @@
     <Setting Name="PlaylistIgnoreExisting" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="VisibleColumns" Type="System.String" Scope="User">
+      <Value Profile="(Default)">1,1,0,1,1,1</Value>
+    </Setting>
+    <Setting Name="ColumnWidths" Type="System.Collections.Specialized.StringCollection" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>
