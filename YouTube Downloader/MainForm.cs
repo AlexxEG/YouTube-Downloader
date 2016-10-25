@@ -1335,7 +1335,7 @@ namespace YouTube_Downloader
         }
 
         /// <summary>
-        /// Returns true if there is a working IOperation.
+        /// Returns true if there is a working <see cref="Operation"/>.
         /// </summary>
         private bool GetIsWorking()
         {
