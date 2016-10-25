@@ -236,8 +236,7 @@ namespace YouTube_Downloader.Controls
                 if (this.Wait())
                     return;
 
-                if (sw != null)
-                    sw.Restart();
+                sw?.Restart();
 
                 this.Status = this.Operation.Speed + this.Operation.ETA;
             }
