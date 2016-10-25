@@ -292,7 +292,7 @@ namespace YouTube_Downloader_DLL.Operations
                 }
             }
 
-            return _cancel;
+            return !_cancel;
         }
 
         private void Optimize(OperationLogger logger, string tsFile)
