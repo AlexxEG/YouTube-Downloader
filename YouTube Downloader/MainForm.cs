@@ -1458,7 +1458,7 @@ namespace YouTube_Downloader
         /// </summary>
         private async void ShowUpdateNotification()
         {
-            if (!await UpdateHelper.IsUpdateAvailableAsync())
+            if (await UpdateHelper.IsUpdateAvailableAsync())
             {
                 helpMenuItem.Text += " (Update available)";
             }
