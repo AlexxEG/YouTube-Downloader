@@ -154,7 +154,7 @@ namespace YouTube_Downloader_DLL.Operations
                     else
                     {
                         // Download was canceled
-                        this.Cleanup(tempFilename);
+                        Helper.DeleteFiles(tempFilename);
                     }
                 }
 
@@ -215,12 +215,7 @@ namespace YouTube_Downloader_DLL.Operations
 
             _format = (VideoFormat)args[ArgKeys.Format];
         }
-
-        private void Cleanup(string tempFilename)
-        {
-            Helper.DeleteFiles(tempFilename);
-        }
-
+        
         private bool Download(string outputFilename)
         {
             var wc = new WebClient();
@@ -298,6 +293,7 @@ namespace YouTube_Downloader_DLL.Operations
         private void Optimize(OperationLogger logger, string tsFile)
         {
             new FFmpegProcess(logger).FixM3U8(tsFile, this.Output);
+            Helper.DeleteFiles(tsFile);
         }
 
         public static Dictionary<string, object> Args(string output,
