@@ -406,68 +406,57 @@ namespace YouTube_Downloader_DLL.FileDownloading
 
         protected void OnCalculatedTotalFileSize()
         {
-            if (this.CalculatedTotalFileSize != null)
-                this.CalculatedTotalFileSize(this, EventArgs.Empty);
+            this.CalculatedTotalFileSize?.Invoke(this, EventArgs.Empty);
         }
 
         protected void OnCanceled()
         {
-            if (this.Canceled != null)
-                this.Canceled(this, EventArgs.Empty);
+            this.Canceled?.Invoke(this, EventArgs.Empty);
         }
 
         protected void OnCompleted()
         {
-            if (this.Completed != null)
-                this.Completed(this, EventArgs.Empty);
+            this.Completed?.Invoke(this, EventArgs.Empty);
         }
 
         protected void OnFileDownloadComplete(FileDownloadEventArgs e)
         {
-            if (FileDownloadComplete != null)
-                FileDownloadComplete(this, e);
+            this.FileDownloadComplete?.Invoke(this, e);
         }
 
         protected void OnFileDownloadFailed(Exception exception, FileDownload fileDownload)
         {
-            if (this.FileDownloadFailed != null)
-                this.FileDownloadFailed(this, new FileDownloadFailedEventArgs(exception, fileDownload));
+            this.FileDownloadFailed?.Invoke(this, new FileDownloadFailedEventArgs(exception, fileDownload));
         }
 
         protected void OnFileDownloadSucceeded(FileDownloadEventArgs e)
         {
-            if (FileDownloadSucceeded != null)
-                FileDownloadSucceeded(this, e);
+            this.FileDownloadSucceeded?.Invoke(this, e);
         }
 
         protected void OnPaused()
         {
-            if (Paused != null)
-                Paused(this, EventArgs.Empty);
+            this.Paused?.Invoke(this, EventArgs.Empty);
         }
 
         protected void OnProgressChanged()
         {
-            if (ProgressChanged != null)
-                ProgressChanged(this, EventArgs.Empty);
+            this.ProgressChanged?.Invoke(this, EventArgs.Empty);
         }
 
         protected void OnResumed()
         {
-            if (Resumed != null)
-                Resumed(this, EventArgs.Empty);
+            this.Resumed?.Invoke(this, EventArgs.Empty);
         }
 
         protected void OnStarted()
         {
-            if (this.Started != null)
-                this.Started(this, EventArgs.Empty);
+            this.Started?.Invoke(this, EventArgs.Empty);
         }
 
         protected void OnStopped()
         {
-            if (this.Stopped != null)
-                this.Stopped(this, EventArgs.Empty);
+            this.Stopped?.Invoke(this, EventArgs.Empty);
         }
     }
 }

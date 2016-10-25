@@ -118,8 +118,7 @@ namespace YouTube_Downloader_DLL.Classes
 
         internal void OnFileSizeUpdated(VideoFormat videoFormat)
         {
-            if (this.FileSizeUpdated != null)
-                this.FileSizeUpdated(this, new FileSizeUpdateEventArgs(videoFormat));
+            this.FileSizeUpdated?.Invoke(this, new FileSizeUpdateEventArgs(videoFormat));
         }
 
         public void DeserializeJson(string json_file)
@@ -198,8 +197,7 @@ namespace YouTube_Downloader_DLL.Classes
 
         private void OnPropertyChangedExplicit(string propertyName)
         {
-            if (this.PropertyChanged != null)
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         #endregion

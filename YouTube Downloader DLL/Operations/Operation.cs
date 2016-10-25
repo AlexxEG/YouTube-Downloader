@@ -444,8 +444,7 @@ namespace YouTube_Downloader_DLL.Operations
 
         public void OnPropertyChangedExplicit(string propertyName)
         {
-            if (this.PropertyChanged != null)
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         #endregion
