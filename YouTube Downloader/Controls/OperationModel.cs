@@ -138,7 +138,10 @@ namespace YouTube_Downloader.Controls
                 switch (this.Operation.Status)
                 {
                     case OperationStatus.Working:
-                        status = $"{Operation.ProgressPercentage}% ({this.Status})";
+                        status = $"{Operation.ProgressPercentage}%";
+
+                        if (!string.IsNullOrEmpty(this.Status))
+                            status += $" ({this.Status})";
                         break;
                     default:
                         status = this.Status;
