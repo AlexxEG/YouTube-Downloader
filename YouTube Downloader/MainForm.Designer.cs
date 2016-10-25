@@ -1068,7 +1068,6 @@
             this.olvQueue.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvColumn1,
             this.olvColumn2,
-            this.olvColumn3,
             this.olvColumn4,
             this.olvColumn5,
             this.olvColumn6});
@@ -1088,15 +1087,19 @@
             // 
             this.olvColumn1.AspectName = "Title";
             this.olvColumn1.Text = "Video";
+            this.olvColumn1.Width = 172;
             // 
             // olvColumn2
             // 
             this.olvColumn2.AspectName = "BarTextProgress";
             this.olvColumn2.Text = "Progress";
+            this.olvColumn2.Width = 106;
             // 
             // olvColumn3
             // 
             this.olvColumn3.AspectName = "Status";
+            this.olvColumn3.DisplayIndex = 2;
+            this.olvColumn3.IsVisible = false;
             this.olvColumn3.Text = "Status";
             // 
             // olvColumn4
@@ -1110,12 +1113,14 @@
             this.olvColumn5.AspectName = "FileSize";
             this.olvColumn5.Text = "Size";
             this.olvColumn5.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.olvColumn5.Width = 62;
             // 
             // olvColumn6
             // 
             this.olvColumn6.AspectName = "InputText";
             this.olvColumn6.Hyperlink = true;
             this.olvColumn6.Text = "Input";
+            this.olvColumn6.Width = 178;
             // 
             // btnMaxSimDownloadsApply
             // 
