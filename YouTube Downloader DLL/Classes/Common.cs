@@ -6,6 +6,8 @@ namespace YouTube_Downloader_DLL.Classes
 {
     public class Common
     {
+        public const int ProgressUpdateDelay = 250;
+
         public const string Name = "YouTube Downloader";
         public const string VersionString = "2.0.0";
 

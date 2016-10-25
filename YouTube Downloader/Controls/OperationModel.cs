@@ -15,7 +15,6 @@ namespace YouTube_Downloader.Controls
     {
         private const int ProgressMaximum = 100;
         private const int ProgressMinimum = 0;
-        private const int ProgressUpdateDelay = 250;
 
         int _progress;
         string _duration;
@@ -307,7 +306,7 @@ namespace YouTube_Downloader.Controls
             if (sw == null || !sw.IsRunning)
                 return false;
 
-            return sw.ElapsedMilliseconds < ProgressUpdateDelay;
+            return sw.ElapsedMilliseconds < Common.ProgressUpdateDelay;
         }
     }
 }

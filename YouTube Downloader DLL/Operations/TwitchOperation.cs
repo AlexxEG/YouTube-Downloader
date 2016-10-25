@@ -215,7 +215,7 @@ namespace YouTube_Downloader_DLL.Operations
 
             _format = (VideoFormat)args[ArgKeys.Format];
         }
-        
+
         private bool Download(string outputFilename)
         {
             var wc = new WebClient();
@@ -272,7 +272,7 @@ namespace YouTube_Downloader_DLL.Operations
                         });
                     }
 
-                    if (sw.ElapsedMilliseconds >= 1000)
+                    if (sw.ElapsedMilliseconds >= Common.ProgressUpdateDelay)
                     {
                         long downloadedBytes = writer.Length - prevFileSize;
                         prevFileSize = writer.Length;
