@@ -64,6 +64,7 @@ namespace YouTube_Downloader_DLL.Classes
                 _arguments,
                 OutputReadLine,
                 ErrorReadLine,
+                null,
                 _logger);
             _youtubeDl.Exited += delegate
             {

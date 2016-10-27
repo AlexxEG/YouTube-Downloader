@@ -334,6 +334,7 @@ namespace YouTube_Downloader_DLL.Classes
                                            string arguments,
                                            Action<Process, string> output,
                                            Action<Process, string> error,
+                                           Dictionary<string, string> environmentVariables,
                                            OperationLogger logger)
         {
             var psi = new ProcessStartInfo(fileName, arguments)
@@ -343,8 +344,13 @@ namespace YouTube_Downloader_DLL.Classes
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 CreateNoWindow = true,
-                WindowStyle = ProcessWindowStyle.Hidden
+                WindowStyle = ProcessWindowStyle.Hidden,
+                WorkingDirectory = Common.GetLogsDirectory()
             };
+
+            foreach (KeyValuePair<string, string> pair in environmentVariables)
+                psi.EnvironmentVariables.Add(pair.Key, pair.Value);
+
             var process = new Process()
             {
                 EnableRaisingEvents = true,
@@ -367,7 +373,7 @@ namespace YouTube_Downloader_DLL.Classes
                 logger?.LogLine(e.Data);
                 error?.Invoke(process, e.Data);
             };
-            
+
             process.Start();
             process.BeginOutputReadLine();
             process.BeginErrorReadLine();

@@ -39,6 +39,10 @@ namespace YouTube_Downloader_DLL.FFmpeg
         /// Gets the path to FFmpeg executable.
         /// </summary>
         public static string FFmpegPath = Path.Combine(Application.StartupPath, "Externals", "ffmpeg.exe");
+        public static Dictionary<string, string> EnvironmentVariables = new Dictionary<string, string>()
+        {
+            { "FFREPORT", string.Format("file={0}:level=8", ReportFile) }
+        };
 
         OperationLogger _logger;
 
@@ -92,7 +96,7 @@ namespace YouTube_Downloader_DLL.FFmpeg
                         // File has audio stream
                         hasAudioStream = true;
                     }
-                }, _logger);
+                }, EnvironmentVariables, _logger);
 
             p.WaitForExit();
             LogFooter();
@@ -171,7 +175,7 @@ namespace YouTube_Downloader_DLL.FFmpeg
 
                         reportProgress.Invoke(100);
                     }
-                }, _logger);
+                }, EnvironmentVariables, _logger);
 
             p.WaitForExit();
             LogFooter();
@@ -275,7 +279,7 @@ namespace YouTube_Downloader_DLL.FFmpeg
 
                         reportProgress.Invoke(100, null);
                     }
-                }, _logger);
+                }, EnvironmentVariables, _logger);
 
             p.WaitForExit();
             LogFooter();
@@ -385,7 +389,7 @@ namespace YouTube_Downloader_DLL.FFmpeg
 
                         reportProgress.Invoke(100, null);
                     }
-                }, _logger);
+                }, EnvironmentVariables, _logger);
 
             p.WaitForExit();
             LogFooter();
@@ -463,7 +467,7 @@ namespace YouTube_Downloader_DLL.FFmpeg
                             canceled = true;
                             return;
                         }
-                    }, _logger);
+                    }, EnvironmentVariables, _logger);
             }
             else
             {
@@ -514,7 +518,7 @@ namespace YouTube_Downloader_DLL.FFmpeg
 
                             reportProgress.Invoke(100, null);
                         }
-                    }, _logger);
+                    }, EnvironmentVariables, _logger);
             }
 
             p.WaitForExit();
@@ -549,7 +553,7 @@ namespace YouTube_Downloader_DLL.FFmpeg
                 delegate (Process process, string line)
                 {
                     lines.Append(line);
-                }, _logger);
+                }, EnvironmentVariables, _logger);
 
             p.WaitForExit();
             LogFooter();
@@ -587,7 +591,7 @@ namespace YouTube_Downloader_DLL.FFmpeg
                         if (m.Success)
                             result = int.Parse(m.Groups[1].Value);
                     }
-                }, null);
+                }, EnvironmentVariables, null);
 
             p.WaitForExit();
 
@@ -627,7 +631,7 @@ namespace YouTube_Downloader_DLL.FFmpeg
 
                         result = TimeSpan.Parse(split[1]);
                     }
-                }, null);
+                }, EnvironmentVariables, null);
 
             p.WaitForExit();
 
@@ -676,7 +680,7 @@ namespace YouTube_Downloader_DLL.FFmpeg
                             result = FFmpegFileType.Audio;
                         }
                     }
-                }, null);
+                }, EnvironmentVariables, null);
 
             p.WaitForExit();
 
@@ -750,7 +754,7 @@ namespace YouTube_Downloader_DLL.FFmpeg
                     {
                         version = match.Groups[1].Value.Trim();
                     }
-                }, null);
+                }, EnvironmentVariables, null);
 
             p.WaitForExit();
 

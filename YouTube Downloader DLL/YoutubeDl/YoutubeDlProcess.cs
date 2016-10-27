@@ -98,7 +98,7 @@ namespace YouTube_Downloader_DLL.YoutubeDl
                         video.Failure = true;
                         video.FailureReason = error.Substring("ERROR: ".Length);
                     }
-                }, _logger)
+                }, null, _logger)
                 .WaitForExit();
 
             if (!video.Failure && !video.RequiresAuthentication)
@@ -121,7 +121,7 @@ namespace YouTube_Downloader_DLL.YoutubeDl
                     if (!string.IsNullOrEmpty(line))
                         version = line.Trim();
                 },
-                null, null).WaitForExit();
+                null, null, null).WaitForExit();
 
             return version;
         }
