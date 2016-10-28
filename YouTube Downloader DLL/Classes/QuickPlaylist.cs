@@ -11,6 +11,7 @@ namespace YouTube_Downloader_DLL.Classes
     /// </summary>
     public class QuickPlaylist
     {
+        public bool IgnoreDuplicates { get; set; } = true;
         public string Title { get; private set; }
         public string Url { get; private set; }
         public List<QuickVideoInfo> Videos { get; private set; }
@@ -51,6 +52,9 @@ namespace YouTube_Downloader_DLL.Classes
                 @"timestamp"">.*?>(.*?)<",
                 RegexOptions.Compiled | RegexOptions.Singleline);
 
+            // Leaving this as null allow duplicates
+            List<string> ids = this.IgnoreDuplicates ? new List<string>() : null;
+
             do
             {
                 if (m != null)
@@ -68,10 +72,14 @@ namespace YouTube_Downloader_DLL.Classes
                     string resultTitle = match.Groups[2].Value;
                     string resultDuration = string.Empty;
 
+                    if (ids?.Contains(resultId) == true)
+                        continue;
+
                     Match mDuration;
                     if ((mDuration = duration.Match(fullMatch)).Success)
                         resultDuration = mDuration.Groups[1].Value;
 
+                    ids?.Add(resultId);
                     this.Videos.Add(new QuickVideoInfo(videoIndex + 1, // Not zero-based
                                                        resultId,
                                                        resultTitle,
