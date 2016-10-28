@@ -513,7 +513,8 @@ namespace YouTube_Downloader
                     break;
                 }
 
-                ListViewItem item = new ListViewItem(WebUtility.HtmlDecode(video.Title));
+                string title = WebUtility.HtmlDecode(video.Title);
+                ListViewItem item = new ListViewItem(Helper.FormatTitle(title));
                 item.SubItems.Add(video.Duration);
                 item.Checked = true;
                 item.Tag = video;
@@ -768,17 +769,22 @@ namespace YouTube_Downloader
             // Reset if necessary
             if (!chbPlaylistIgnoreExisting.Checked && _playlistIgnored.Count > 0)
             {
-                for (int i = _playlistIgnored.Count - 1; i >= 0; i--)
-                {
-                    lvPlaylistVideos.Items.Insert(
-                        _playlistIgnored.Keys.Cast<int>().ElementAt(i),
-                        _playlistIgnored.Values.Cast<ListViewItem>().ElementAt(i));
-                }
+                int[] indexes = _playlistIgnored.Keys.Cast<int>().ToArray();
+                ListViewItem[] items = _playlistIgnored.Values.Cast<ListViewItem>().ToArray();
+
+                for (int i = 0; i < _playlistIgnored.Count; i++)
+                    lvPlaylistVideos.Items.Insert(indexes[i], items[i]);
+
                 _playlistIgnored.Clear();
             }
             else if (chbPlaylistIgnoreExisting.Checked)
             {
-                string[] files = Directory.GetFiles(cbPlaylistSaveTo.Text)
+                string path = cbPlaylistSaveTo.Text;
+
+                if (_playlist != null && chbPlaylistNamedFolder.Checked)
+                    path = Path.Combine(path, _playlist.Title);
+
+                string[] files = Directory.GetFiles(path)
                     .Select(x => Path.GetFileNameWithoutExtension(x)).ToArray();
 
                 for (int i = lvPlaylistVideos.Items.Count - 1; i >= 0; i--)
