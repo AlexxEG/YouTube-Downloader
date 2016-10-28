@@ -16,6 +16,11 @@ namespace YouTube_Downloader_DLL.Classes
         string _thumbnailUrl = string.Empty;
 
         /// <summary>
+        /// Gets or sets the playlist index. Default value is -1.
+        /// </summary>
+        public int PlaylistIndex { get; set; } = -1;
+
+        /// <summary>
         /// Gets the video duration in seconds.
         /// </summary>
         public long Duration
@@ -46,7 +51,7 @@ namespace YouTube_Downloader_DLL.Classes
         /// <summary>
         /// Gets the video ID.
         /// </summary>
-        public string ID { get; private set; }
+        public string ID { get; set; }
 
         /// <summary>
         /// Gets the video source (Twitch/YouTube).

@@ -14,6 +14,7 @@ namespace YouTube_Downloader_DLL.Classes
         public const string CmdPlaylistInfo = " -i -o \"{0}\\playlist-{1}\\%(playlist_index)s-%(title)s\" --restrict-filenames --skip-download --write-info-json{2} \"{3}\"";
         public const string CmdPlaylistRange = " --playlist-items {0}";
 
+        int _currentVideoPlaylistIndex = -1;
         int _index = 0;
 
         bool _processFinished = false;
@@ -21,11 +22,14 @@ namespace YouTube_Downloader_DLL.Classes
         string _arguments;
         string _playlist_id;
         string _url;
+        string _currentVideoID;
 
         List<string> _jsonPaths = new List<string>();
 
         Regex _regexPlaylistInfo = new Regex(@"^\[youtube:playlist\] playlist (.*):.*Downloading\s+(\d+)\s+.*$", RegexOptions.Compiled);
         Regex _regexVideoJson = new Regex(@"^\[info\].*JSON.*:\s(.*)$", RegexOptions.Compiled);
+        Regex _regexPlaylistIndex = new Regex(@"\[download\]\s\w*\s\w*\s(\d*)", RegexOptions.Compiled);
+        Regex _regexVideoID = new Regex(@"\[youtube\]\s(.*):", RegexOptions.Compiled);
         Process _youtubeDl;
         OperationLogger _logger;
         CancellationTokenSource _cts = new CancellationTokenSource();
@@ -77,24 +81,44 @@ namespace YouTube_Downloader_DLL.Classes
         {
             Match m;
 
-            if ((m = _regexPlaylistInfo.Match(line)).Success)
+            if (line.StartsWith("[youtube:playlist]"))
             {
-                // Get the playlist info
-                string name = m.Groups[1].Value;
-                int onlineCount = int.Parse(m.Groups[2].Value);
+                if ((m = _regexPlaylistInfo.Match(line)).Success)
+                {
+                    // Get the playlist info
+                    string name = m.Groups[1].Value;
+                    int onlineCount = int.Parse(m.Groups[2].Value);
 
-                this.Playlist = new Playlist(_playlist_id, name, onlineCount);
+                    this.Playlist = new Playlist(_playlist_id, name, onlineCount);
+                }
             }
-            // New json found, break & create a VideoInfo instance
-            else if ((m = _regexVideoJson.Match(line)).Success)
+            else if (line.StartsWith("[info]"))
             {
-                _jsonPaths.Add(m.Groups[1].Value.Trim());
+                // New json found, break & create a VideoInfo instance
+                if ((m = _regexVideoJson.Match(line)).Success)
+                {
+                    _jsonPaths.Add(m.Groups[1].Value.Trim());
+                }
+            }
+            else if (line.StartsWith("[download]"))
+            {
+                if ((m = _regexPlaylistIndex.Match(line)).Success)
+                {
+                    _currentVideoPlaylistIndex = int.Parse(m.Groups[1].Value);
+                }
+            }
+            else if (line.StartsWith("[youtube]"))
+            {
+                if ((m = _regexVideoID.Match(line)).Success)
+                {
+                    _currentVideoID = m.Groups[1].Value;
+                }
             }
         }
 
         public void ErrorReadLine(Process process, string line)
         {
-
+            _jsonPaths.Add($"[ERROR:{_currentVideoID}] {line}");
         }
 
         public void Stop()
@@ -136,15 +160,28 @@ namespace YouTube_Downloader_DLL.Classes
                 if (_cts.IsCancellationRequested)
                     return null;
 
-                try
+                if (jsonPath.StartsWith("[ERROR"))
                 {
-                    video = new VideoInfo(jsonPath);
+                    Match m = new Regex(@"\[ERROR:(.*)]\s(.*)").Match(jsonPath);
+                    video = new VideoInfo();
+                    video.ID = m.Groups[1].Value;
+                    video.Failure = true;
+                    video.FailureReason = m.Groups[2].Value;
                     break;
                 }
-                catch (IOException)
+                else
                 {
-                    attempts++;
-                    Thread.Sleep(100);
+                    try
+                    {
+                        video = new VideoInfo(jsonPath);
+                        video.PlaylistIndex = _currentVideoPlaylistIndex;
+                        break;
+                    }
+                    catch (IOException)
+                    {
+                        attempts++;
+                        Thread.Sleep(100);
+                    }
                 }
             }
 

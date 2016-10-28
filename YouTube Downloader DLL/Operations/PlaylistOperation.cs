@@ -261,6 +261,14 @@ namespace YouTube_Downloader_DLL.Operations
                     count++;
 
                     var video = this.Videos[count - 1];
+
+                    if (video.Failure)
+                    {
+                        // Something failed retrieving video info
+                        _failures++;
+                        continue;
+                    }
+
                     VideoFormat format = Helper.GetPreferredFormat(video, _preferredQuality);
 
                     // Update properties for new video
