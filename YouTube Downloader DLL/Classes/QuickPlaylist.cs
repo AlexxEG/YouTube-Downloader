@@ -29,7 +29,7 @@ namespace YouTube_Downloader_DLL.Classes
 
             // Find playlist title
             var playlistname = new Regex(
-                @"pl-header-title[\s|\""].*?> (.*?)(?=<)",
+                @"pl-header-title[\s|\""].*?>(.*?)(?=<)",
                 RegexOptions.Singleline);
 
             this.Title = playlistname.Match(source).Groups[1].Value.Trim();
