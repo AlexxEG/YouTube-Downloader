@@ -72,6 +72,7 @@
             this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.chbPlaylistNamedFolder = new System.Windows.Forms.CheckBox();
             this.chbPlaylistIgnoreExisting = new System.Windows.Forms.CheckBox();
             this.btnPlaylistPaste = new System.Windows.Forms.Button();
             this.btnGetPlaylist = new System.Windows.Forms.Button();
@@ -550,6 +551,7 @@
             // 
             this.groupBox7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox7.Controls.Add(this.chbPlaylistNamedFolder);
             this.groupBox7.Controls.Add(this.chbPlaylistIgnoreExisting);
             this.groupBox7.Controls.Add(this.btnPlaylistPaste);
             this.groupBox7.Controls.Add(this.btnGetPlaylist);
@@ -567,10 +569,24 @@
             this.groupBox7.Size = new System.Drawing.Size(590, 131);
             this.groupBox7.TabIndex = 0;
             this.groupBox7.TabStop = false;
-            this.groupBox7.Text = "Playlist Link";
+            this.groupBox7.Text = "Playlist";
+            // 
+            // chbPlaylistNamedFolder
+            // 
+            this.chbPlaylistNamedFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chbPlaylistNamedFolder.AutoSize = true;
+            this.chbPlaylistNamedFolder.Checked = global::YouTube_Downloader.Properties.Settings.Default.PlaylistNamedFolder;
+            this.chbPlaylistNamedFolder.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::YouTube_Downloader.Properties.Settings.Default, "PlaylistNamedFolder", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.chbPlaylistNamedFolder.Location = new System.Drawing.Point(9, 83);
+            this.chbPlaylistNamedFolder.Name = "chbPlaylistNamedFolder";
+            this.chbPlaylistNamedFolder.Size = new System.Drawing.Size(160, 17);
+            this.chbPlaylistNamedFolder.TabIndex = 15;
+            this.chbPlaylistNamedFolder.Text = "Save in playlist named folder";
+            this.chbPlaylistNamedFolder.UseVisualStyleBackColor = true;
             // 
             // chbPlaylistIgnoreExisting
             // 
+            this.chbPlaylistIgnoreExisting.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chbPlaylistIgnoreExisting.AutoSize = true;
             this.chbPlaylistIgnoreExisting.Checked = global::YouTube_Downloader.Properties.Settings.Default.PlaylistIgnoreExisting;
             this.chbPlaylistIgnoreExisting.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::YouTube_Downloader.Properties.Settings.Default, "PlaylistIgnoreExisting", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
@@ -625,7 +641,7 @@
             "Low"});
             this.cbPlaylistQuality.Location = new System.Drawing.Point(60, 45);
             this.cbPlaylistQuality.Name = "cbPlaylistQuality";
-            this.cbPlaylistQuality.Size = new System.Drawing.Size(456, 21);
+            this.cbPlaylistQuality.Size = new System.Drawing.Size(129, 21);
             this.cbPlaylistQuality.TabIndex = 2;
             this.cbPlaylistQuality.SelectedIndexChanged += new System.EventHandler(this.cbPlaylistQuality_SelectedIndexChanged);
             // 
@@ -644,9 +660,9 @@
             // btnPlaylistBrowse
             // 
             this.btnPlaylistBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPlaylistBrowse.Location = new System.Drawing.Point(553, 71);
+            this.btnPlaylistBrowse.Location = new System.Drawing.Point(562, 45);
             this.btnPlaylistBrowse.Name = "btnPlaylistBrowse";
-            this.btnPlaylistBrowse.Size = new System.Drawing.Size(31, 23);
+            this.btnPlaylistBrowse.Size = new System.Drawing.Size(22, 22);
             this.btnPlaylistBrowse.TabIndex = 4;
             this.btnPlaylistBrowse.Text = "...";
             this.btnPlaylistBrowse.UseVisualStyleBackColor = true;
@@ -655,7 +671,7 @@
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(6, 76);
+            this.label13.Location = new System.Drawing.Point(195, 48);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(44, 13);
             this.label13.TabIndex = 10;
@@ -666,9 +682,9 @@
             this.cbPlaylistSaveTo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cbPlaylistSaveTo.FormattingEnabled = true;
-            this.cbPlaylistSaveTo.Location = new System.Drawing.Point(60, 72);
+            this.cbPlaylistSaveTo.Location = new System.Drawing.Point(245, 45);
             this.cbPlaylistSaveTo.Name = "cbPlaylistSaveTo";
-            this.cbPlaylistSaveTo.Size = new System.Drawing.Size(487, 21);
+            this.cbPlaylistSaveTo.Size = new System.Drawing.Size(311, 21);
             this.cbPlaylistSaveTo.TabIndex = 3;
             this.cbPlaylistSaveTo.SelectedIndexChanged += new System.EventHandler(this.cbPlaylistSaveTo_SelectedIndexChanged);
             // 
@@ -1349,6 +1365,7 @@
         private System.Windows.Forms.Button btnPlaylistRemove;
         private System.Windows.Forms.TextBox txtPlaylistFilter;
         private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.CheckBox chbPlaylistNamedFolder;
     }
 }
 

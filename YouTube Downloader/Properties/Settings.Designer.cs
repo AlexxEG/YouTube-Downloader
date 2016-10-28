@@ -187,5 +187,17 @@ namespace YouTube_Downloader.Properties {
                 this["ColumnWidths"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool PlaylistNamedFolder {
+            get {
+                return ((bool)(this["PlaylistNamedFolder"]));
+            }
+            set {
+                this["PlaylistNamedFolder"] = value;
+            }
+        }
     }
 }

@@ -439,6 +439,7 @@ namespace YouTube_Downloader
         private bool _playlistCancel;
         private BackgroundWorker _backgroundWorkerPlaylist;
         private OrderedDictionary _playlistIgnored = new OrderedDictionary();
+        private QuickPlaylist _playlist;
 
         private void btnPlaylistPaste_Click(object sender, EventArgs e)
         {
@@ -499,9 +500,12 @@ namespace YouTube_Downloader
 
         private void _backgroundWorkerPlaylist_DoWork(object sender, DoWorkEventArgs e)
         {
-            string playlistUrl = e.Argument as string;
+            var playlistUrl = e.Argument as string;
+            var playlist = new QuickPlaylist(playlistUrl).Load();
 
-            foreach (var video in QuickPlaylist.GetAll(playlistUrl))
+            _backgroundWorkerPlaylist.ReportProgress(-1, playlist);
+
+            foreach (var video in playlist.Videos)
             {
                 if (_backgroundWorkerPlaylist.CancellationPending)
                 {
@@ -528,6 +532,10 @@ namespace YouTube_Downloader
 
                 lvPlaylistVideos.Items.Add(item);
                 lvPlaylistVideos.TopItem = item;
+            }
+            else if (e.UserState is QuickPlaylist)
+            {
+                _playlist = e.UserState as QuickPlaylist;
             }
         }
 
@@ -676,6 +684,12 @@ namespace YouTube_Downloader
                 cbPlaylistSaveTo.Items.Add(path);
 
             _settings.LastPlaylistUrl = txtPlaylistLink.Text;
+
+            if (chbPlaylistNamedFolder.Checked)
+                path = Path.Combine(path, Helper.FormatTitle(_playlist.Title));
+
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
 
             try
             {
