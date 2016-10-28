@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Net;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 
@@ -23,6 +24,7 @@ namespace YouTube_Downloader_DLL.Classes
         public QuickPlaylist Load()
         {
             var wc = new WebClient();
+            wc.Encoding = Encoding.UTF8;
             int videoIndex = 0;
             string source = wc.DownloadString(this.Url);
             Match m = null;

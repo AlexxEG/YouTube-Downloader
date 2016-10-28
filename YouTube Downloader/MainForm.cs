@@ -513,8 +513,7 @@ namespace YouTube_Downloader
                     break;
                 }
 
-                byte[] bytes = Encoding.Default.GetBytes(WebUtility.HtmlDecode(video.Title));
-                ListViewItem item = new ListViewItem(Encoding.UTF8.GetString(bytes));
+                ListViewItem item = new ListViewItem(WebUtility.HtmlDecode(video.Title));
                 item.SubItems.Add(video.Duration);
                 item.Checked = true;
                 item.Tag = video;
