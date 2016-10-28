@@ -10,13 +10,29 @@ namespace YouTube_Downloader_DLL.Classes
     /// </summary>
     public class QuickPlaylist
     {
-        public static QuickVideoInfo[] GetAll(string playlistUrl)
+        public string Title { get; private set; }
+        public string Url { get; private set; }
+        public List<QuickVideoInfo> Videos { get; private set; }
+
+        public QuickPlaylist(string playlistUrl)
+        {
+            this.Url = playlistUrl;
+            this.Videos = new List<QuickVideoInfo>();
+        }
+
+        public QuickPlaylist Load()
         {
             var wc = new WebClient();
-            var videos = new List<QuickVideoInfo>();
             int videoIndex = 0;
-            string source = wc.DownloadString(playlistUrl);
+            string source = wc.DownloadString(this.Url);
             Match m = null;
+
+            // Find playlist title
+            var playlistname = new Regex(
+                @"pl-header-title[\s|\""].*?> (.*?)(?=<)",
+                RegexOptions.Singleline);
+
+            this.Title = playlistname.Match(source).Groups[1].Value.Trim();
 
             // Find the load more button
             var loadmore = new Regex(
@@ -54,17 +70,22 @@ namespace YouTube_Downloader_DLL.Classes
                     if ((mDuration = duration.Match(fullMatch)).Success)
                         resultDuration = mDuration.Groups[1].Value;
 
-                    videos.Add(new QuickVideoInfo(videoIndex + 1, // Not zero-based
-                                                  resultId,
-                                                  resultTitle,
-                                                  resultDuration));
+                    this.Videos.Add(new QuickVideoInfo(videoIndex + 1, // Not zero-based
+                                                       resultId,
+                                                       resultTitle,
+                                                       resultDuration));
 
                     videoIndex++;
                 }
             }
             while ((m = loadmore.Match(source)).Success);
 
-            return videos.ToArray();
+            return this;
+        }
+
+        public static QuickVideoInfo[] GetAll(string playlistUrl)
+        {
+            return new QuickPlaylist(playlistUrl).Load().Videos.ToArray();
         }
     }
 }
