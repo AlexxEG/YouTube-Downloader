@@ -513,7 +513,8 @@ namespace YouTube_Downloader
                     break;
                 }
 
-                ListViewItem item = new ListViewItem(WebUtility.HtmlDecode(video.Title));
+                byte[] bytes = Encoding.Default.GetBytes(WebUtility.HtmlDecode(video.Title));
+                ListViewItem item = new ListViewItem(Encoding.UTF8.GetString(bytes));
                 item.SubItems.Add(video.Duration);
                 item.Checked = true;
                 item.Tag = video;
@@ -686,10 +687,12 @@ namespace YouTube_Downloader
             _settings.LastPlaylistUrl = txtPlaylistLink.Text;
 
             if (chbPlaylistNamedFolder.Checked)
+            {
                 path = Path.Combine(path, Helper.FormatTitle(_playlist.Title));
 
-            if (!Directory.Exists(path))
-                Directory.CreateDirectory(path);
+                if (!Directory.Exists(path))
+                    Directory.CreateDirectory(path);
+            }
 
             try
             {
