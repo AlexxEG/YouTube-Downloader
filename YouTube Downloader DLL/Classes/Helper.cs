@@ -348,8 +348,9 @@ namespace YouTube_Downloader_DLL.Classes
                 WorkingDirectory = Common.GetLogsDirectory()
             };
 
-            foreach (KeyValuePair<string, string> pair in environmentVariables)
-                psi.EnvironmentVariables.Add(pair.Key, pair.Value);
+            if (environmentVariables != null)
+                foreach (KeyValuePair<string, string> pair in environmentVariables)
+                    psi.EnvironmentVariables.Add(pair.Key, pair.Value);
 
             var process = new Process()
             {
