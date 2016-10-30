@@ -598,6 +598,8 @@ namespace YouTube_Downloader
         private void cbPlaylistSaveTo_SelectedIndexChanged(object sender, EventArgs e)
         {
             _settings.SelectedDirectoryPlaylist = cbPlaylistSaveTo.SelectedIndex;
+            this.FilterPlaylistReset();
+            this.FilterPlaylist();
         }
 
         private void cbPlaylistQuality_SelectedIndexChanged(object sender, EventArgs e)
@@ -769,13 +771,7 @@ namespace YouTube_Downloader
             // Reset if necessary
             if (!chbPlaylistIgnoreExisting.Checked && _playlistIgnored.Count > 0)
             {
-                int[] indexes = _playlistIgnored.Keys.Cast<int>().ToArray();
-                ListViewItem[] items = _playlistIgnored.Values.Cast<ListViewItem>().ToArray();
-
-                for (int i = 0; i < _playlistIgnored.Count; i++)
-                    lvPlaylistVideos.Items.Insert(indexes[i], items[i]);
-
-                _playlistIgnored.Clear();
+                this.FilterPlaylistReset();
             }
             else if (chbPlaylistIgnoreExisting.Checked)
             {
@@ -799,6 +795,17 @@ namespace YouTube_Downloader
                     }
                 }
             }
+        }
+
+        private void FilterPlaylistReset()
+        {
+            int[] indexes = _playlistIgnored.Keys.Cast<int>().ToArray();
+            ListViewItem[] items = _playlistIgnored.Values.Cast<ListViewItem>().ToArray();
+
+            for (int i = 0; i < _playlistIgnored.Count; i++)
+                lvPlaylistVideos.Items.Insert(indexes[i], items[i]);
+
+            _playlistIgnored.Clear();
         }
 
         #endregion
