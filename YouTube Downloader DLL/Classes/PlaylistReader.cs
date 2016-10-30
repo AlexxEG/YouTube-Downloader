@@ -106,7 +106,7 @@ namespace YouTube_Downloader_DLL.Classes
                 {
                     int i = -1;
                     if (int.TryParse(m.Groups[1].Value, out i))
-                        _currentVideoPlaylistIndex = int.Parse(m.Groups[1].Value);
+                        _currentVideoPlaylistIndex = i;
                     else
                         throw new Exception($"PlaylistReader: Couldn't parse '{m.Groups[1].Value}' to integer for '{nameof(_currentVideoPlaylistIndex)}'");
                 }
