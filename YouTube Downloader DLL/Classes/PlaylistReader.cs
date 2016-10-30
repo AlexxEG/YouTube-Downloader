@@ -28,7 +28,7 @@ namespace YouTube_Downloader_DLL.Classes
 
         Regex _regexPlaylistInfo = new Regex(@"^\[youtube:playlist\] playlist (.*):.*Downloading\s+(\d+)\s+.*$", RegexOptions.Compiled);
         Regex _regexVideoJson = new Regex(@"^\[info\].*JSON.*:\s(.*)$", RegexOptions.Compiled);
-        Regex _regexPlaylistIndex = new Regex(@"\[download\]\s\w*\s\w*\s(\d*)", RegexOptions.Compiled);
+        Regex _regexPlaylistIndex = new Regex(@"\[download\]\s\w*\s\w*\s(\d+)", RegexOptions.Compiled);
         Regex _regexVideoID = new Regex(@"\[youtube\]\s(.*):", RegexOptions.Compiled);
         Process _youtubeDl;
         OperationLogger _logger;
