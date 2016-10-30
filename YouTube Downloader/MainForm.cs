@@ -784,6 +784,9 @@ namespace YouTube_Downloader
                 if (_playlist != null && chbPlaylistNamedFolder.Checked)
                     path = Path.Combine(path, _playlist.Title);
 
+                if (!Directory.Exists(path))
+                    return;
+
                 string[] files = Directory.GetFiles(path)
                     .Select(x => Path.GetFileNameWithoutExtension(x)).ToArray();
 
