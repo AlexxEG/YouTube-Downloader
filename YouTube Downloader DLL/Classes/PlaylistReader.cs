@@ -104,7 +104,11 @@ namespace YouTube_Downloader_DLL.Classes
             {
                 if ((m = _regexPlaylistIndex.Match(line)).Success)
                 {
-                    _currentVideoPlaylistIndex = int.Parse(m.Groups[1].Value);
+                    int i = -1;
+                    if (int.TryParse(m.Groups[1].Value, out i))
+                        _currentVideoPlaylistIndex = int.Parse(m.Groups[1].Value);
+                    else
+                        throw new Exception($"PlaylistReader: Couldn't parse '{m.Groups[1].Value}' to integer for '{nameof(_currentVideoPlaylistIndex)}'");
                 }
             }
             else if (line.StartsWith("[youtube]"))
