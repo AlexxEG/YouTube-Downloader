@@ -505,10 +505,12 @@
             // 
             this.txtPlaylistFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtPlaylistFilter.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::YouTube_Downloader.Properties.Settings.Default, "PlaylistLastUsedFilter", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.txtPlaylistFilter.Location = new System.Drawing.Point(66, 333);
             this.txtPlaylistFilter.Name = "txtPlaylistFilter";
             this.txtPlaylistFilter.Size = new System.Drawing.Size(287, 20);
             this.txtPlaylistFilter.TabIndex = 4;
+            this.txtPlaylistFilter.Text = global::YouTube_Downloader.Properties.Settings.Default.PlaylistLastUsedFilter;
             // 
             // label10
             // 

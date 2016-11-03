@@ -199,5 +199,17 @@ namespace YouTube_Downloader.Properties {
                 this["PlaylistNamedFolder"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string PlaylistLastUsedFilter {
+            get {
+                return ((string)(this["PlaylistLastUsedFilter"]));
+            }
+            set {
+                this["PlaylistLastUsedFilter"] = value;
+            }
+        }
     }
 }
