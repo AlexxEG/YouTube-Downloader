@@ -581,9 +581,9 @@
             this.chbPlaylistNamedFolder.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::YouTube_Downloader.Properties.Settings.Default, "PlaylistNamedFolder", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.chbPlaylistNamedFolder.Location = new System.Drawing.Point(9, 83);
             this.chbPlaylistNamedFolder.Name = "chbPlaylistNamedFolder";
-            this.chbPlaylistNamedFolder.Size = new System.Drawing.Size(160, 17);
+            this.chbPlaylistNamedFolder.Size = new System.Drawing.Size(171, 17);
             this.chbPlaylistNamedFolder.TabIndex = 15;
-            this.chbPlaylistNamedFolder.Text = "Save in playlist named folder";
+            this.chbPlaylistNamedFolder.Text = "Create folder with playlist name";
             this.chbPlaylistNamedFolder.UseVisualStyleBackColor = true;
             // 
             // chbPlaylistIgnoreExisting
