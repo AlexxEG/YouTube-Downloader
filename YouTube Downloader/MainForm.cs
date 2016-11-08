@@ -722,7 +722,8 @@ namespace YouTube_Downloader
                                     path,
                                     Settings.Default.PreferredQualityPlaylist,
                                     videos,
-                                    chbPlaylistReverse.Checked)
+                                    chbPlaylistReverse.Checked,
+                                    chbPlaylistNumberPrefix.Checked)
                                 );
 
                 tabControl1.SelectedTab = queueTabPage;

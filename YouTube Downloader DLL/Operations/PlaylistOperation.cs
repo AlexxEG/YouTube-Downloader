@@ -18,13 +18,14 @@ namespace YouTube_Downloader_DLL.Operations
     {
         class ArgKeys
         {
-            public const int Max = 5;
-            public const int Min = 4;
+            public const int Max = 6;
+            public const int Min = 5;
             public const string Input = "input";
             public const string Output = "output";
             public const string PreferredQuality = "preferred_quality";
             public const string Videos = "videos";
             public const string Reverse = "reverse";
+            public const string IndexPrefix = "index_prefix";
         }
 
         public const int EventCombined = 1000;
@@ -36,6 +37,7 @@ namespace YouTube_Downloader_DLL.Operations
         int _preferredQuality;
         int _selectedVideosCount = 0;
         bool _cancel;
+        bool _indexPrefix;
         bool _queryingVideos = false;
         bool _processing;
         bool _reverse;
@@ -281,8 +283,9 @@ namespace YouTube_Downloader_DLL.Operations
                         { nameof(FileSize), format.FileSize }
                     });
 
+                    string prefix = _indexPrefix ? (_downloads + 1) + ". " : string.Empty;
                     string finalFile = Path.Combine(this.Output,
-                        $"{Helper.FormatTitle(format.VideoInfo.Title)}.{format.Extension}");
+                        $"{prefix}{Helper.FormatTitle(format.VideoInfo.Title)}.{format.Extension}");
 
                     // Overwrite if finalFile already exists
                     Helper.DeleteFiles(finalFile);
@@ -422,6 +425,7 @@ namespace YouTube_Downloader_DLL.Operations
 
             _preferredQuality = (int)args[ArgKeys.PreferredQuality];
             _reverse = (bool)args[ArgKeys.Reverse];
+            _indexPrefix = (bool)args[ArgKeys.IndexPrefix];
 
             if (args.Count == ArgKeys.Max)
             {
@@ -565,14 +569,16 @@ namespace YouTube_Downloader_DLL.Operations
         public Dictionary<string, object> Args(string url,
                                                string output,
                                                int preferredQuality,
-                                               bool reverse)
+                                               bool reverse,
+                                               bool indexPrefix)
         {
             return new Dictionary<string, object>()
             {
                 { ArgKeys.Input, url },
                 { ArgKeys.Output, output },
                 { ArgKeys.PreferredQuality, preferredQuality },
-                { ArgKeys.Reverse, reverse }
+                { ArgKeys.Reverse, reverse },
+                { ArgKeys.IndexPrefix, indexPrefix }
             };
         }
 
@@ -580,7 +586,8 @@ namespace YouTube_Downloader_DLL.Operations
                                                string output,
                                                int preferredQuality,
                                                ICollection<QuickVideoInfo> videos,
-                                               bool reverse)
+                                               bool reverse,
+                                               bool indexPrefix)
         {
             return new Dictionary<string, object>()
             {
@@ -588,7 +595,8 @@ namespace YouTube_Downloader_DLL.Operations
                 { ArgKeys.Output, output },
                 { ArgKeys.PreferredQuality, preferredQuality },
                 { ArgKeys.Videos, videos },
-                { ArgKeys.Reverse, reverse }
+                { ArgKeys.Reverse, reverse },
+                { ArgKeys.IndexPrefix, indexPrefix }
             };
         }
     }
