@@ -18,12 +18,13 @@ namespace YouTube_Downloader_DLL.Operations
     {
         class ArgKeys
         {
-            public const int Max = 4;
-            public const int Min = 3;
+            public const int Max = 5;
+            public const int Min = 4;
             public const string Input = "input";
             public const string Output = "output";
             public const string PreferredQuality = "preferred_quality";
             public const string Videos = "videos";
+            public const string Reverse = "reverse";
         }
 
         public const int EventCombined = 1000;
@@ -37,6 +38,7 @@ namespace YouTube_Downloader_DLL.Operations
         bool _cancel;
         bool _queryingVideos = false;
         bool _processing;
+        bool _reverse;
         bool? _downloaderSuccessful;
 
         List<QuickVideoInfo> _videos = new List<QuickVideoInfo>();
@@ -419,6 +421,7 @@ namespace YouTube_Downloader_DLL.Operations
             this.Link = this.Input;
 
             _preferredQuality = (int)args[ArgKeys.PreferredQuality];
+            _reverse = (bool)args[ArgKeys.Reverse];
 
             if (args.Count == ArgKeys.Max)
             {
@@ -518,7 +521,7 @@ namespace YouTube_Downloader_DLL.Operations
                 foreach (var v in _videos)
                     items.Add(v.Index);
 
-                var reader = new PlaylistReader(this.Input, items.ToArray());
+                var reader = new PlaylistReader(this.Input, items.ToArray(), _reverse);
                 VideoInfo video;
 
                 try
@@ -561,27 +564,31 @@ namespace YouTube_Downloader_DLL.Operations
 
         public Dictionary<string, object> Args(string url,
                                                string output,
-                                               int preferredQuality)
-        {
-            return new Dictionary<string, object>()
-            {
-                { ArgKeys.Input, url },
-                { ArgKeys.Output, output },
-                { ArgKeys.PreferredQuality, preferredQuality }
-            };
-        }
-
-        public Dictionary<string, object> Args(string url,
-                                               string output,
                                                int preferredQuality,
-                                               ICollection<QuickVideoInfo> videos)
+                                               bool reverse)
         {
             return new Dictionary<string, object>()
             {
                 { ArgKeys.Input, url },
                 { ArgKeys.Output, output },
                 { ArgKeys.PreferredQuality, preferredQuality },
-                { ArgKeys.Videos, videos }
+                { ArgKeys.Reverse, reverse }
+            };
+        }
+
+        public Dictionary<string, object> Args(string url,
+                                               string output,
+                                               int preferredQuality,
+                                               ICollection<QuickVideoInfo> videos,
+                                               bool reverse)
+        {
+            return new Dictionary<string, object>()
+            {
+                { ArgKeys.Input, url },
+                { ArgKeys.Output, output },
+                { ArgKeys.PreferredQuality, preferredQuality },
+                { ArgKeys.Videos, videos },
+                { ArgKeys.Reverse, reverse }
             };
         }
     }

@@ -436,7 +436,7 @@ namespace YouTube_Downloader
 
         #region Playlist Tab
 
-        private bool _playlistCancel;
+        private bool _playlistCancel, _playlistReversed;
         private BackgroundWorker _backgroundWorkerPlaylist;
         private OrderedDictionary _playlistIgnored = new OrderedDictionary();
         private QuickPlaylist _playlist;
@@ -502,10 +502,14 @@ namespace YouTube_Downloader
         {
             var playlistUrl = e.Argument as string;
             var playlist = new QuickPlaylist(playlistUrl).Load();
+            var videos = playlist.Videos.Cast<QuickVideoInfo>();
 
             _backgroundWorkerPlaylist.ReportProgress(-1, playlist);
 
-            foreach (var video in playlist.Videos)
+            if (chbPlaylistReverse.Checked)
+                videos = videos.Reverse();
+
+            foreach (var video in videos)
             {
                 if (_backgroundWorkerPlaylist.CancellationPending)
                 {
@@ -561,6 +565,11 @@ namespace YouTube_Downloader
         private void chbPlaylistIgnoreExisting_CheckedChanged(object sender, EventArgs e)
         {
             this.FilterPlaylist();
+        }
+
+        private void chbPlaylistReverse_CheckedChanged(object sender, EventArgs e)
+        {
+            this.PlaylistReverse();
         }
 
         private void btnPlaylistDownloadSelected_Click(object sender, EventArgs e)
@@ -712,7 +721,8 @@ namespace YouTube_Downloader
                 operation.Prepare(operation.Args(txtPlaylistLink.Text,
                                     path,
                                     Settings.Default.PreferredQualityPlaylist,
-                                    videos)
+                                    videos,
+                                    chbPlaylistReverse.Checked)
                                 );
 
                 tabControl1.SelectedTab = queueTabPage;
@@ -799,6 +809,9 @@ namespace YouTube_Downloader
 
         private void FilterPlaylistReset()
         {
+            if (_playlistIgnored.Count == 0)
+                return;
+
             int[] indexes = _playlistIgnored.Keys.Cast<int>().ToArray();
             ListViewItem[] items = _playlistIgnored.Values.Cast<ListViewItem>().ToArray();
 
@@ -806,6 +819,27 @@ namespace YouTube_Downloader
                 lvPlaylistVideos.Items.Insert(indexes[i], items[i]);
 
             _playlistIgnored.Clear();
+        }
+
+        private void PlaylistReverse()
+        {
+            lvPlaylistVideos.BeginUpdate();
+
+            // Re-add filtered items so they can be reversed
+            this.FilterPlaylistReset();
+
+            var existing = new List<ListViewItem>(lvPlaylistVideos.Items.Cast<ListViewItem>());
+            existing.Reverse();
+
+            lvPlaylistVideos.Items.Clear();
+            lvPlaylistVideos.Items.AddRange(existing.ToArray());
+
+            // Re-filter, now with reversed indexes
+            this.FilterPlaylist();
+
+            lvPlaylistVideos.EndUpdate();
+
+            _playlistReversed = !_playlistReversed;
         }
 
         #endregion

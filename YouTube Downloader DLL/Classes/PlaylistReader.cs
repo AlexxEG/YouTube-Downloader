@@ -11,8 +11,9 @@ namespace YouTube_Downloader_DLL.Classes
 {
     public class PlaylistReader
     {
-        public const string CmdPlaylistInfo = " -i -o \"{0}\\playlist-{1}\\%(playlist_index)s-%(title)s\" --restrict-filenames --skip-download --write-info-json{2} \"{3}\"";
+        public const string CmdPlaylistInfo = " -i -o \"{0}\\playlist-{1}\\%(playlist_index)s-%(title)s\" --restrict-filenames --skip-download --write-info-json{2}{3} \"{4}\"";
         public const string CmdPlaylistRange = " --playlist-items {0}";
+        public const string CmdPlaylistReverse = " --playlist-reverse";
 
         int _currentVideoPlaylistIndex = -1;
         int _index = 0;
@@ -37,7 +38,7 @@ namespace YouTube_Downloader_DLL.Classes
         public bool Canceled { get; set; } = false;
         public Playlist Playlist { get; set; } = null;
 
-        public PlaylistReader(string url, int[] videos)
+        public PlaylistReader(string url, int[] videos, bool reverse)
         {
             string json_dir = Common.GetJsonDirectory();
 
@@ -47,6 +48,8 @@ namespace YouTube_Downloader_DLL.Classes
 
             if (videos != null && videos.Length > 0)
             {
+                // Make sure the video indexes is sorted, otherwise reversing wont do anything
+                Array.Sort(videos);
                 var items = new StringBuilder(videos[0].ToString());
 
                 for (int i = 1; i < videos.Length; i++)
@@ -55,7 +58,9 @@ namespace YouTube_Downloader_DLL.Classes
                 range = string.Format(CmdPlaylistRange, items);
             }
 
-            _arguments = string.Format(CmdPlaylistInfo, json_dir, _playlist_id, range, url);
+            string reverseS = reverse ? CmdPlaylistReverse : string.Empty;
+
+            _arguments = string.Format(CmdPlaylistInfo, json_dir, _playlist_id, range, reverseS, url);
             _url = url;
 
             _logger = OperationLogger.Create(OperationLogger.YTDLogFile);
