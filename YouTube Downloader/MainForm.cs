@@ -480,6 +480,7 @@ namespace YouTube_Downloader
                 _playlistCancel = true;
                 btnGetPlaylist.Text = "Cancel";
                 btnPlaylistDownloadAll.Enabled = false;
+                btnPlaylistDownloadSelected.Enabled = false;
 
                 _backgroundWorkerPlaylist = new BackgroundWorker()
                 {
@@ -575,33 +576,21 @@ namespace YouTube_Downloader
         private void btnPlaylistDownloadSelected_Click(object sender, EventArgs e)
         {
             if (lvPlaylistVideos.CheckedItems.Count < 1)
-                return;
-
-            var videos = new List<QuickVideoInfo>();
-
-            foreach (ListViewItem item in lvPlaylistVideos.CheckedItems)
             {
-                videos.Add(item.Tag as QuickVideoInfo);
+                MessageBox.Show(this, "No videos selected.");
+                return;
             }
 
-            this.StartPlaylistOperation(videos);
+            this.StartPlaylistOperation(lvPlaylistVideos.CheckedItems
+                                            .Cast<ListViewItem>()
+                                            .Select(x => x.Tag as QuickVideoInfo));
         }
 
         private void btnPlaylistDownloadAll_Click(object sender, EventArgs e)
         {
-            this.StartPlaylistOperation(null);
-        }
-
-        private void txtPlaylistLink_TextChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                btnPlaylistDownloadAll.Enabled = Helper.IsPlaylist(txtPlaylistLink.Text);
-            }
-            catch (Exception)
-            {
-                btnPlaylistDownloadAll.Enabled = false;
-            }
+            this.StartPlaylistOperation(lvPlaylistVideos.Items
+                                            .Cast<ListViewItem>()
+                                            .Select(x => x.Tag as QuickVideoInfo););
         }
 
         private void cbPlaylistSaveTo_SelectedIndexChanged(object sender, EventArgs e)
@@ -684,7 +673,7 @@ namespace YouTube_Downloader
             lvPlaylistVideos.EndUpdate();
         }
 
-        private void StartPlaylistOperation(ICollection<QuickVideoInfo> videos)
+        private void StartPlaylistOperation(IEnumerable<QuickVideoInfo> videos)
         {
             string path = cbPlaylistSaveTo.Text;
 

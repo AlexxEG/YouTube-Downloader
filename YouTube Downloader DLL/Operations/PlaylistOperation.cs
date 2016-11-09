@@ -585,7 +585,7 @@ namespace YouTube_Downloader_DLL.Operations
         public Dictionary<string, object> Args(string url,
                                                string output,
                                                int preferredQuality,
-                                               ICollection<QuickVideoInfo> videos,
+                                               IEnumerable<QuickVideoInfo> videos,
                                                bool reverse,
                                                bool indexPrefix)
         {

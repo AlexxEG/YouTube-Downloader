@@ -72,6 +72,8 @@
             this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.chbPlaylistReverse = new System.Windows.Forms.CheckBox();
+            this.chbPlaylistNumberPrefix = new System.Windows.Forms.CheckBox();
             this.chbPlaylistNamedFolder = new System.Windows.Forms.CheckBox();
             this.chbPlaylistIgnoreExisting = new System.Windows.Forms.CheckBox();
             this.btnPlaylistPaste = new System.Windows.Forms.Button();
@@ -132,8 +134,6 @@
             this.playlistSelectAllMenuItem = new System.Windows.Forms.MenuItem();
             this.playlistSelectNoneMenuItem = new System.Windows.Forms.MenuItem();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.chbPlaylistNumberPrefix = new System.Windows.Forms.CheckBox();
-            this.chbPlaylistReverse = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.videoThumbnail)).BeginInit();
@@ -577,6 +577,29 @@
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Playlist";
             // 
+            // chbPlaylistReverse
+            // 
+            this.chbPlaylistReverse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chbPlaylistReverse.AutoSize = true;
+            this.chbPlaylistReverse.Location = new System.Drawing.Point(186, 83);
+            this.chbPlaylistReverse.Name = "chbPlaylistReverse";
+            this.chbPlaylistReverse.Size = new System.Drawing.Size(66, 17);
+            this.chbPlaylistReverse.TabIndex = 17;
+            this.chbPlaylistReverse.Text = "Reverse";
+            this.chbPlaylistReverse.UseVisualStyleBackColor = true;
+            this.chbPlaylistReverse.CheckedChanged += new System.EventHandler(this.chbPlaylistReverse_CheckedChanged);
+            // 
+            // chbPlaylistNumberPrefix
+            // 
+            this.chbPlaylistNumberPrefix.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chbPlaylistNumberPrefix.AutoSize = true;
+            this.chbPlaylistNumberPrefix.Location = new System.Drawing.Point(143, 106);
+            this.chbPlaylistNumberPrefix.Name = "chbPlaylistNumberPrefix";
+            this.chbPlaylistNumberPrefix.Size = new System.Drawing.Size(92, 17);
+            this.chbPlaylistNumberPrefix.TabIndex = 16;
+            this.chbPlaylistNumberPrefix.Text = "Number Prefix";
+            this.chbPlaylistNumberPrefix.UseVisualStyleBackColor = true;
+            // 
             // chbPlaylistNamedFolder
             // 
             this.chbPlaylistNamedFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -723,7 +746,6 @@
             this.txtPlaylistLink.Name = "txtPlaylistLink";
             this.txtPlaylistLink.Size = new System.Drawing.Size(496, 20);
             this.txtPlaylistLink.TabIndex = 0;
-            this.txtPlaylistLink.TextChanged += new System.EventHandler(this.txtPlaylistLink_TextChanged);
             // 
             // convertTabPage
             // 
@@ -1224,29 +1246,6 @@
             this.playlistSelectNoneMenuItem.Index = 1;
             this.playlistSelectNoneMenuItem.Text = "Select none";
             this.playlistSelectNoneMenuItem.Click += new System.EventHandler(this.playlistSelectNoneMenuItem_Click);
-            // 
-            // chbPlaylistNumberPrefix
-            // 
-            this.chbPlaylistNumberPrefix.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.chbPlaylistNumberPrefix.AutoSize = true;
-            this.chbPlaylistNumberPrefix.Location = new System.Drawing.Point(143, 106);
-            this.chbPlaylistNumberPrefix.Name = "chbPlaylistNumberPrefix";
-            this.chbPlaylistNumberPrefix.Size = new System.Drawing.Size(92, 17);
-            this.chbPlaylistNumberPrefix.TabIndex = 16;
-            this.chbPlaylistNumberPrefix.Text = "Number Prefix";
-            this.chbPlaylistNumberPrefix.UseVisualStyleBackColor = true;
-            // 
-            // chbPlaylistReverse
-            // 
-            this.chbPlaylistReverse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.chbPlaylistReverse.AutoSize = true;
-            this.chbPlaylistReverse.Location = new System.Drawing.Point(186, 83);
-            this.chbPlaylistReverse.Name = "chbPlaylistReverse";
-            this.chbPlaylistReverse.Size = new System.Drawing.Size(66, 17);
-            this.chbPlaylistReverse.TabIndex = 17;
-            this.chbPlaylistReverse.Text = "Reverse";
-            this.chbPlaylistReverse.UseVisualStyleBackColor = true;
-            this.chbPlaylistReverse.CheckedChanged += new System.EventHandler(this.chbPlaylistReverse_CheckedChanged);
             // 
             // MainForm
             // 
