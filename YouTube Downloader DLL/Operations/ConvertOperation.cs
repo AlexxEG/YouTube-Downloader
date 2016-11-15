@@ -27,6 +27,7 @@ namespace YouTube_Downloader_DLL.Operations
 
         int _count = 0;
         int _failures = 0;
+        string _currentOutput;
         string _searchPattern;
         TimeSpan _start = TimeSpan.MinValue;
         TimeSpan _end = TimeSpan.MinValue;
@@ -92,8 +93,14 @@ namespace YouTube_Downloader_DLL.Operations
 
             if (!this.IsSuccessful)
             {
-                if (File.Exists(this.Output))
+                if (_mode == ConvertingMode.File)
+                {
                     Helper.DeleteFiles(this.Output);
+                }
+                else
+                {
+                    Helper.DeleteFiles(_currentOutput);
+                }
             }
 
             return true;
@@ -158,7 +165,9 @@ namespace YouTube_Downloader_DLL.Operations
                                 { nameof(FileSize), Helper.GetFileSize(input) }
                             });
 
+                            _currentOutput = output;
                             ffmpeg.Convert(input, output, this.ReportProgress, _cts.Token);
+                            _currentOutput = null;
 
                             this.ProcessedFiles.Add(output);
                         }
@@ -166,6 +175,7 @@ namespace YouTube_Downloader_DLL.Operations
                         {
                             _failures++;
                             Common.SaveException(ex);
+                            Helper.DeleteFiles(_currentOutput);
                             continue;
                         }
                     }

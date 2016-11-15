@@ -93,7 +93,7 @@ namespace YouTube_Downloader_DLL.Operations
                 }
             }
 
-            if (this.Status != OperationStatus.Success)
+            if (!this.IsSuccessful)
             {
                 if (File.Exists(this.Output))
                     Helper.DeleteFiles(this.Output);
