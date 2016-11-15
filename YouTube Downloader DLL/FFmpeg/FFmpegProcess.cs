@@ -371,7 +371,7 @@ namespace YouTube_Downloader_DLL.FFmpeg
 
                         reportProgress.Invoke(0, null);
                     }
-                    else if (started && line.StartsWith("size="))
+                    else if (started && line.StartsWith("frame="))
                     {
                         int lineStart = line.IndexOf("time=") + 5;
                         int length = "00:00:00.00".Length;
@@ -500,7 +500,7 @@ namespace YouTube_Downloader_DLL.FFmpeg
 
                             reportProgress.Invoke(0, null);
                         }
-                        else if (started && line.StartsWith("size="))
+                        else if (started && line.StartsWith("frame="))
                         {
                             int lineStart = line.IndexOf("time=") + 5;
                             int lineLength = "00:00:00.00".Length;
