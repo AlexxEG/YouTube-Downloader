@@ -915,11 +915,20 @@ namespace YouTube_Downloader
         {
             if (rbConvertFile.Checked)
             {
+                if (!File.Exists(txtInputFile.Text))
+                {
+                    MessageBox.Show(this, "Input file not found.", "Missing File",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                    return;
+                }
+
                 if (!new FFmpegProcess(null).CanConvertToMP3(txtInputFile.Text).Value)
                 {
-                    string text = "Can't convert input file to MP3. File doesn't appear to have audio.";
-
-                    MessageBox.Show(this, text, "Missing Audio", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(this, "Can't convert input file to MP3. File doesn't appear to have audio.",
+                        "Missing Audio",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
                     return;
                 }
 

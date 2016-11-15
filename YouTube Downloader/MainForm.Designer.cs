@@ -902,7 +902,6 @@
             this.txtInputFolder.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.txtInputFolder.Location = new System.Drawing.Point(51, 6);
             this.txtInputFolder.Name = "txtInputFolder";
-            this.txtInputFolder.ReadOnly = true;
             this.txtInputFolder.Size = new System.Drawing.Size(485, 20);
             this.txtInputFolder.TabIndex = 0;
             // 
@@ -933,7 +932,6 @@
             this.txtOutputFolder.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.txtOutputFolder.Location = new System.Drawing.Point(51, 32);
             this.txtOutputFolder.Name = "txtOutputFolder";
-            this.txtOutputFolder.ReadOnly = true;
             this.txtOutputFolder.Size = new System.Drawing.Size(485, 20);
             this.txtOutputFolder.TabIndex = 2;
             // 
