@@ -25,8 +25,8 @@ namespace YouTube_Downloader_DLL.FFmpeg
              * -b:a - Sets the audio bitrate. Output bitrate will not match exact.
              */
             public const string Convert = " -report -y -i \"{0}\" -vn -f mp3 -b:a {1}k \"{2}\"";
-            public const string CropFrom = " -report -y -ss {0} -i \"{1}\" -acodec copy -vcodec copy \"{2}\"";
-            public const string CropFromTo = " -report -y -ss {0} -i \"{1}\" -to {2} -acodec copy -vcodec copy \"{3}\"";
+            public const string CropFrom = " -report -y -ss {0} -i \"{1}\" -map 0 -acodec copy -vcodec copy \"{2}\"";
+            public const string CropFromTo = " -report -y -ss {0} -i \"{1}\" -to {2} -map 0 -acodec copy -vcodec copy \"{3}\"";
             public const string FixM3U8 = " -report -y -i \"{0}\" -c copy -f mp4 -bsf:a aac_adtstoasc \"{1}\"";
             public const string GetFileInfo = " -report -i \"{0}\"";
             public const string Version = " -version";
