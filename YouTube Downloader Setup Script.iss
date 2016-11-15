@@ -48,6 +48,19 @@ Source: "YouTube Downloader\bin\Release\Externals\ffmpeg.exe"; DestDir: "{app}\e
 Source: "YouTube Downloader\bin\Release\Externals\youtube-dl.exe"; DestDir: "{app}\externals"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
+; Remove existing WPF files since it's been deprecated
+ [InstallDelete]
+ Type: files; Name: "{app}\YouTube Downloader WPF.exe"
+ Type: files; Name: "{app}\MahApps.Metro.dll"
+ Type: files; Name: "{app}\System.Windows.Interactivity.dll"
+ Type: files; Name: "{app}\Xceed.Wpf.Toolkit.dll"
+ Type: files; Name: "{app}\Licenses\MahApps.Metro_LICENSE.txt"
+ Type: files; Name: "{app}\Licenses\Xceed Extended WPF Toolkit_LICENSE.txt"
+ ; Shortcuts
+ Type: files; Name: "{group}\{#MyAppName} WPF.lnk"
+ Type: files; Name: "{commondesktop}\{#MyAppName} WPF.lnk"
+ Type: files; Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName} WPF.lnk"
+
 ; Uninstall folder for stack traces/logs/json in %localappdata%
 [UninstallDelete]
 Type: filesandordirs; Name: "{localappdata}\YouTube Downloader"
