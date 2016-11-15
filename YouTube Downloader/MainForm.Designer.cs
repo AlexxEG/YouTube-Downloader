@@ -977,7 +977,6 @@
             this.txtInputFile.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.txtInputFile.Location = new System.Drawing.Point(51, 6);
             this.txtInputFile.Name = "txtInputFile";
-            this.txtInputFile.ReadOnly = true;
             this.txtInputFile.Size = new System.Drawing.Size(485, 20);
             this.txtInputFile.TabIndex = 2;
             // 
@@ -1008,7 +1007,6 @@
             this.txtOutputFile.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.txtOutputFile.Location = new System.Drawing.Point(51, 32);
             this.txtOutputFile.Name = "txtOutputFile";
-            this.txtOutputFile.ReadOnly = true;
             this.txtOutputFile.Size = new System.Drawing.Size(485, 20);
             this.txtOutputFile.TabIndex = 3;
             // 
