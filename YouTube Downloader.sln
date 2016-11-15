@@ -1,11 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Express 2013 for Windows Desktop
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YouTube Downloader", "YouTube Downloader\YouTube Downloader.csproj", "{47DDFB4C-45F8-40A4-9562-F04D3B67F547}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YouTube Downloader WPF", "YouTube Downloader WPF\YouTube Downloader WPF.csproj", "{43CF4305-7DFB-47D5-895B-21C4A47AC9F8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YouTube Downloader DLL", "YouTube Downloader DLL\YouTube Downloader DLL.csproj", "{36524AD6-8987-4D78-812F-177972F4908F}"
 EndProject
@@ -26,10 +24,6 @@ Global
 		{47DDFB4C-45F8-40A4-9562-F04D3B67F547}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{47DDFB4C-45F8-40A4-9562-F04D3B67F547}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{47DDFB4C-45F8-40A4-9562-F04D3B67F547}.Release|Any CPU.Build.0 = Release|Any CPU
-		{43CF4305-7DFB-47D5-895B-21C4A47AC9F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{43CF4305-7DFB-47D5-895B-21C4A47AC9F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{43CF4305-7DFB-47D5-895B-21C4A47AC9F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{43CF4305-7DFB-47D5-895B-21C4A47AC9F8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{36524AD6-8987-4D78-812F-177972F4908F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{36524AD6-8987-4D78-812F-177972F4908F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{36524AD6-8987-4D78-812F-177972F4908F}.Release|Any CPU.ActiveCfg = Release|Any CPU
