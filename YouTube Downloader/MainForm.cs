@@ -590,7 +590,7 @@ namespace YouTube_Downloader
         {
             this.StartPlaylistOperation(lvPlaylistVideos.Items
                                             .Cast<ListViewItem>()
-                                            .Select(x => x.Tag as QuickVideoInfo););
+                                            .Select(x => x.Tag as QuickVideoInfo));
         }
 
         private void cbPlaylistSaveTo_SelectedIndexChanged(object sender, EventArgs e)
