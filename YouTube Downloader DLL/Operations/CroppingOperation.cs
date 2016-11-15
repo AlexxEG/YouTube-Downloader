@@ -125,6 +125,7 @@ namespace YouTube_Downloader_DLL.Operations
             catch (Exception ex)
             {
                 Common.SaveException(ex);
+                Helper.DeleteFiles(this.Output);
                 e.Result = OperationStatus.Failed;
             }
         }
