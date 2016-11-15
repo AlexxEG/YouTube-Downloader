@@ -237,7 +237,7 @@ namespace YouTube_Downloader_DLL.FFmpeg
 
                     if (ct != null && ct.IsCancellationRequested)
                     {
-                        process.StandardInput.WriteLine("q");
+                        process.Kill();
                         canceled = true;
                         return;
                     }
@@ -346,7 +346,7 @@ namespace YouTube_Downloader_DLL.FFmpeg
 
                     if (ct != null && ct.IsCancellationRequested)
                     {
-                        process.StandardInput.WriteLine("q");
+                        process.Kill();
                         canceled = true;
                         return;
                     }
@@ -461,7 +461,7 @@ namespace YouTube_Downloader_DLL.FFmpeg
 
                         if (ct != null && ct.IsCancellationRequested)
                         {
-                            process.StandardInput.WriteLine("q");
+                            process.Kill();
                             canceled = true;
                             return;
                         }
@@ -481,7 +481,7 @@ namespace YouTube_Downloader_DLL.FFmpeg
 
                         if (ct != null && ct.IsCancellationRequested)
                         {
-                            process.StandardInput.WriteLine("q");
+                            process.Kill();
                             canceled = true;
                             return;
                         }
