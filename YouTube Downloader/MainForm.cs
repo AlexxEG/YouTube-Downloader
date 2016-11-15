@@ -943,6 +943,27 @@ namespace YouTube_Downloader
                     }
 
                 }
+                else
+                {
+                    try
+                    {
+                        string folder = Path.GetDirectoryName(txtOutputFile.Text);
+
+                        if (!Directory.Exists(folder))
+                            Directory.CreateDirectory(folder);
+
+                        File.WriteAllText(txtOutputFile.Text, string.Empty);
+                        File.Delete(txtOutputFile.Text);
+                    }
+                    catch
+                    {
+                        MessageBox.Show(this, "Output path was invalid, check if it contains invalid characters.",
+                            "Output Error",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error);
+                        return;
+                    }
+                }
 
                 if (chbCropFrom.Checked &&
                     (txtInputFile.Text == txtOutputFile.Text ||
