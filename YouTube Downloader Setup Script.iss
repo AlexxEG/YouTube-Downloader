@@ -34,7 +34,6 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked; OnlyBelowVersion: 0,6.1
-Name: "wpf"; Description: "Also install WPF version, a visually pleasing version with no additional features"; Flags: unchecked
 
 [Files]
 Source: "Licenses\ffmpeg_LICENSE.txt"; DestDir: "{app}\Licenses"; Flags: ignoreversion
@@ -45,29 +44,9 @@ Source: "YouTube Downloader\bin\Release\Newtonsoft.Json.dll"; DestDir: "{app}"; 
 Source: "YouTube Downloader\bin\Release\YouTube Downloader.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "YouTube Downloader\bin\Release\YouTube Downloader.exe.config"; DestDir: "{app}"; Flags: ignoreversion
 Source: "YouTube Downloader\bin\Release\YouTube Downloader Library.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "YouTube Downloader\bin\Release\externals\ffmpeg.exe"; DestDir: "{app}\externals"; Flags: ignoreversion
-Source: "YouTube Downloader\bin\Release\externals\youtube-dl.exe"; DestDir: "{app}\externals"; Flags: ignoreversion
-; WPF
-Source: "Licenses\MahApps.Metro_LICENSE.txt"; DestDir: "{app}\Licenses"; Flags: ignoreversion; Tasks: wpf
-Source: "Licenses\Xceed Extended WPF Toolkit_LICENSE.txt"; DestDir: "{app}\Licenses"; Flags: ignoreversion; Tasks: wpf
-Source: "YouTube Downloader WPF\bin\Release\YouTube Downloader.exe"; DestDir: "{app}"; DestName: "YouTube Downloader WPF.exe"; Flags: ignoreversion; Tasks: wpf
-Source: "YouTube Downloader WPF\bin\Release\MahApps.Metro.dll"; DestDir: "{app}"; Flags: ignoreversion; Tasks: wpf
-Source: "YouTube Downloader WPF\bin\Release\System.Windows.Interactivity.dll"; DestDir: "{app}"; Flags: ignoreversion; Tasks: wpf
-Source: "YouTube Downloader WPF\bin\Release\Xceed.Wpf.Toolkit.dll"; DestDir: "{app}"; Flags: ignoreversion; Tasks: wpf
+Source: "YouTube Downloader\bin\Release\Externals\ffmpeg.exe"; DestDir: "{app}\externals"; Flags: ignoreversion
+Source: "YouTube Downloader\bin\Release\Externals\youtube-dl.exe"; DestDir: "{app}\externals"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
-
-; Remove existing WPF files if not selected
-[InstallDelete]
-Type: files; Name: "{app}\YouTube Downloader WPF.exe"; Tasks: not wpf
-Type: files; Name: "{app}\MahApps.Metro.dll"; Tasks: not wpf
-Type: files; Name: "{app}\System.Windows.Interactivity.dll"; Tasks: not wpf
-Type: files; Name: "{app}\Xceed.Wpf.Toolkit.dll"; Tasks: not wpf
-Type: files; Name: "{app}\Licenses\MahApps.Metro_LICENSE.txt"; Tasks: not wpf
-Type: files; Name: "{app}\Licenses\Xceed Extended WPF Toolkit_LICENSE.txt"; Tasks: not wpf
-; Shortcuts
-Type: files; Name: "{group}\{#MyAppName} WPF.lnk"; Tasks: not wpf
-Type: files; Name: "{commondesktop}\{#MyAppName} WPF.lnk"; Tasks: not wpf
-Type: files; Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName} WPF.lnk"; Tasks: not wpf
 
 ; Uninstall folder for stack traces/logs/json in %localappdata%
 [UninstallDelete]
@@ -79,12 +58,7 @@ Name: "{group}\{cm:ProgramOnTheWeb,{#MyAppName}}"; Filename: "{#MyAppURL}"
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
 Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: quicklaunchicon
-; WPF
-Name: "{group}\{#MyAppName} WPF"; Filename: "{app}\{#MyAppName} WPF.exe"; Tasks: wpf
-Name: "{commondesktop}\{#MyAppName} WPF"; Filename: "{app}\{#MyAppName} WPF.exe"; Tasks: desktopicon and wpf
-Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName} WPF"; Filename: "{app}\{#MyAppName} WPF.exe"; Tasks: quicklaunchicon and wpf
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
-Filename: "{app}\{#MyAppName} WPF.exe"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')} WPF}"; Flags: nowait postinstall skipifsilent; Tasks: wpf
 
