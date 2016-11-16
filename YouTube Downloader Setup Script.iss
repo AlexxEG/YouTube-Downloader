@@ -41,6 +41,7 @@ Source: "Licenses\Newtonsoft.Json_LICENSE.txt"; DestDir: "{app}\Licenses"; Flags
 Source: "Licenses\youtube-dl_LICENSE.txt"; DestDir: "{app}\Licenses"; Flags: ignoreversion
 Source: "YouTube Downloader\bin\Release\CommonMark.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "YouTube Downloader\bin\Release\Newtonsoft.Json.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "YouTube Downloader\bin\Release\ObjectListView.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "YouTube Downloader\bin\Release\YouTube Downloader.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "YouTube Downloader\bin\Release\YouTube Downloader.exe.config"; DestDir: "{app}"; Flags: ignoreversion
 Source: "YouTube Downloader\bin\Release\YouTube Downloader Library.dll"; DestDir: "{app}"; Flags: ignoreversion
