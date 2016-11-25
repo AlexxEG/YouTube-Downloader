@@ -33,7 +33,6 @@ namespace YouTube_Downloader
     {
         private string[] _args;
         private VideoInfo _selectedVideo;
-        private Settings _settings = Settings.Default;
         private YTDAuthentication _auth = null;
         Thread _maxSimDownloadsApplyThread;
 
@@ -181,7 +180,7 @@ namespace YouTube_Downloader
             {
                 txtYoutubeLink.Text = Helper.FixUrl(txtYoutubeLink.Text);
 
-                _settings.LastYouTubeUrl = txtYoutubeLink.Text;
+                Settings.Default.LastYouTubeUrl = txtYoutubeLink.Text;
 
                 txtTitle.Text = string.Empty;
                 cbQuality.Items.Clear();
@@ -503,7 +502,7 @@ namespace YouTube_Downloader
                 lvPlaylistVideos.UseWaitCursor = true;
 
                 // Save playlist url
-                _settings.LastPlaylistUrl = txtPlaylistLink.Text;
+                Settings.Default.LastPlaylistUrl = txtPlaylistLink.Text;
             }
         }
 
@@ -603,14 +602,14 @@ namespace YouTube_Downloader
 
         private void cbPlaylistSaveTo_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _settings.SelectedDirectoryPlaylist = cbPlaylistSaveTo.SelectedIndex;
+            Settings.Default.SelectedDirectoryPlaylist = cbPlaylistSaveTo.SelectedIndex;
             this.FilterPlaylistReset();
             this.FilterPlaylist();
         }
 
         private void cbPlaylistQuality_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _settings.PreferredQualityPlaylist = cbPlaylistQuality.SelectedIndex;
+            Settings.Default.PreferredQualityPlaylist = cbPlaylistQuality.SelectedIndex;
         }
 
         private void playlistSelectAllMenuItem_Click(object sender, EventArgs e)
@@ -692,7 +691,7 @@ namespace YouTube_Downloader
             if (!cbPlaylistSaveTo.Items.Contains(path))
                 cbPlaylistSaveTo.Items.Add(path);
 
-            _settings.LastPlaylistUrl = txtPlaylistLink.Text;
+            Settings.Default.LastPlaylistUrl = txtPlaylistLink.Text;
 
             if (chbPlaylistNamedFolder.Checked)
             {
@@ -1455,40 +1454,42 @@ namespace YouTube_Downloader
         /// </summary>
         private void LoadSettings()
         {
+            Settings settings = Settings.Default;
+
             // Upgrade settings between new versions. 
             // More information: http://www.ngpixel.com/2011/05/05/c-keep-user-settings-between-versions/
-            if (_settings.UpdateSettings)
+            if (settings.UpdateSettings)
             {
-                _settings.Upgrade();
-                _settings.UpdateSettings = false;
-                _settings.Save();
+                settings.Upgrade();
+                settings.UpdateSettings = false;
+                settings.Save();
             }
 
             // Initialize WindowStates collection if null
-            if (_settings.WindowStates == null)
+            if (settings.WindowStates == null)
             {
-                _settings.WindowStates = new WindowStates();
+                settings.WindowStates = new WindowStates();
             }
 
             // Add WindowState for form if WindowStates doesn't have a entry for it
-            if (!_settings.WindowStates.Contains(this.Name))
+            if (!settings.WindowStates.Contains(this.Name))
             {
-                _settings.WindowStates.Add(this.Name);
+                settings.WindowStates.Add(this.Name);
             }
 
             // Restore form location, size & window state, if not null
-            _settings.WindowStates[this.Name].RestoreForm(this, false);
+            settings.WindowStates[this.Name].RestoreForm(this, false);
 
             // Initialize StringCollection if null
-            if (_settings.SaveToDirectories == null)
+            if (settings.SaveToDirectories == null)
             {
-                _settings.SaveToDirectories = new StringCollection();
+                settings.SaveToDirectories = new StringCollection();
             }
 
             // Copy StringCollection to string array
-            string[] directories = new string[_settings.SaveToDirectories.Count];
+            string[] directories = new string[settings.SaveToDirectories.Count];
 
-            _settings.SaveToDirectories.CopyTo(directories, 0);
+            settings.SaveToDirectories.CopyTo(directories, 0);
 
             // Add string array to ComboBoxes
             cbSaveTo.Items.AddRange(directories);
@@ -1496,33 +1497,33 @@ namespace YouTube_Downloader
 
             // Restore ComboBox.SelectedIndex if it's not empty
             if (cbSaveTo.Items.Count > 0)
-                cbSaveTo.SelectedIndex = _settings.SelectedDirectory;
+                cbSaveTo.SelectedIndex = settings.SelectedDirectory;
 
             if (cbPlaylistSaveTo.Items.Count > 0)
-                cbPlaylistSaveTo.SelectedIndex = _settings.SelectedDirectoryPlaylist;
+                cbPlaylistSaveTo.SelectedIndex = settings.SelectedDirectoryPlaylist;
 
-            cbPlaylistQuality.SelectedIndex = _settings.PreferredQualityPlaylist;
+            cbPlaylistQuality.SelectedIndex = settings.PreferredQualityPlaylist;
 
             // Restore CheckBox.Checked
-            chbAutoConvert.Checked = _settings.AutoConvert;
+            chbAutoConvert.Checked = settings.AutoConvert;
 
             // Restore last used links
-            if (_settings.LastYouTubeUrl != null) txtYoutubeLink.Text = _settings.LastYouTubeUrl;
-            if (_settings.LastPlaylistUrl != null) txtPlaylistLink.Text = _settings.LastPlaylistUrl;
+            if (settings.LastYouTubeUrl != null) txtYoutubeLink.Text = settings.LastYouTubeUrl;
+            if (settings.LastPlaylistUrl != null) txtPlaylistLink.Text = settings.LastPlaylistUrl;
 
             chbMaxSimDownloads.Checked = Settings.Default.ShowMaxSimDownloads;
             nudMaxSimDownloads.Enabled = Settings.Default.ShowMaxSimDownloads;
 
             // Restore visible columns
-            string[] cols = _settings.VisibleColumns.Split(',');
+            string[] cols = settings.VisibleColumns.Split(',');
             for (int i = 0; i < olvQueue.AllColumns.Count; i++)
                 olvQueue.GetColumn(i).IsVisible = System.Convert.ToBoolean(int.Parse(cols[i]));
 
             // Restore column widths
-            if (_settings.ColumnWidths == null)
-                _settings.ColumnWidths = new StringCollection();
-            for (int i = 0; i < _settings.ColumnWidths.Count; i++)
-                olvQueue.GetColumn(i).Width = int.Parse(_settings.ColumnWidths[i]);
+            if (settings.ColumnWidths == null)
+                settings.ColumnWidths = new StringCollection();
+            for (int i = 0; i < settings.ColumnWidths.Count; i++)
+                olvQueue.GetColumn(i).Width = int.Parse(settings.ColumnWidths[i]);
 
             olvQueue.RebuildColumns();
         }
@@ -1532,8 +1533,10 @@ namespace YouTube_Downloader
         /// </summary>
         private void SaveSettings()
         {
-            _settings.WindowStates[this.Name].SaveForm(this, false);
-            _settings.SaveToDirectories.Clear();
+            Settings settings = Settings.Default;
+
+            settings.WindowStates[this.Name].SaveForm(this, false);
+            settings.SaveToDirectories.Clear();
 
             string[] paths = new string[cbSaveTo.Items.Count];
             cbSaveTo.Items.CopyTo(paths, 0);
@@ -1543,16 +1546,16 @@ namespace YouTube_Downloader
             // Merge paths, removing duplicates
             paths = paths.Union(pathsPlaylist).ToArray();
 
-            _settings.SaveToDirectories.AddRange(paths);
-            _settings.SelectedDirectory = cbSaveTo.SelectedIndex;
-            _settings.AutoConvert = chbAutoConvert.Checked;
-            _settings.MaxSimDownloads = (int)nudMaxSimDownloads.Value;
-            _settings.VisibleColumns = this.GetVisibleColumns();
+            settings.SaveToDirectories.AddRange(paths);
+            settings.SelectedDirectory = cbSaveTo.SelectedIndex;
+            settings.AutoConvert = chbAutoConvert.Checked;
+            settings.MaxSimDownloads = (int)nudMaxSimDownloads.Value;
+            settings.VisibleColumns = this.GetVisibleColumns();
 
-            _settings.ColumnWidths.Clear();
-            _settings.ColumnWidths.AddRange(this.GetColumnWidths());
+            settings.ColumnWidths.Clear();
+            settings.ColumnWidths.AddRange(this.GetColumnWidths());
 
-            _settings.Save();
+            settings.Save();
         }
 
         /// <summary>
