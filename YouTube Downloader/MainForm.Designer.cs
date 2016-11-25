@@ -694,6 +694,7 @@
             this.btnPlaylistBrowse.Size = new System.Drawing.Size(22, 22);
             this.btnPlaylistBrowse.TabIndex = 4;
             this.btnPlaylistBrowse.Text = "...";
+            this.toolTip1.SetToolTip(this.btnPlaylistBrowse, "Browse");
             this.btnPlaylistBrowse.UseVisualStyleBackColor = true;
             this.btnPlaylistBrowse.Click += new System.EventHandler(this.btnPlaylistBrowse_Click);
             // 
@@ -892,6 +893,7 @@
             this.btnBrowseOutputFolder.Size = new System.Drawing.Size(24, 22);
             this.btnBrowseOutputFolder.TabIndex = 3;
             this.btnBrowseOutputFolder.Text = "...";
+            this.toolTip1.SetToolTip(this.btnBrowseOutputFolder, "Browse");
             this.btnBrowseOutputFolder.UseVisualStyleBackColor = true;
             this.btnBrowseOutputFolder.Click += new System.EventHandler(this.btnBrowseOutputFolder_Click);
             // 
@@ -913,6 +915,7 @@
             this.btnBrowseInputFolder.Size = new System.Drawing.Size(24, 22);
             this.btnBrowseInputFolder.TabIndex = 1;
             this.btnBrowseInputFolder.Text = "...";
+            this.toolTip1.SetToolTip(this.btnBrowseInputFolder, "Browse");
             this.btnBrowseInputFolder.UseVisualStyleBackColor = true;
             this.btnBrowseInputFolder.Click += new System.EventHandler(this.btnBrowseInputFolder_Click);
             // 
