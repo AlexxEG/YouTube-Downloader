@@ -140,7 +140,7 @@ namespace YouTube_Downloader_DLL.Operations
 
         public override bool CanStop()
         {
-            return this.IsPaused || this.IsWorking;
+            return this.IsPaused || this.IsWorking || this.IsQueued;
         }
 
         public override bool OpenContainingFolder()

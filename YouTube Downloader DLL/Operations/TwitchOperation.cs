@@ -71,7 +71,7 @@ namespace YouTube_Downloader_DLL.Operations
 
         public override bool CanStop()
         {
-            return !_combining && this.IsWorking;
+            return !_combining && (this.IsPaused || this.IsWorking || this.IsQueued);
         }
 
         public override void Dispose()
@@ -131,7 +131,7 @@ namespace YouTube_Downloader_DLL.Operations
             _cancel = true;
 
             // Don't set status to canceled if already successful.
-            if (this.Status != OperationStatus.Success)
+            if (!this.IsSuccessful)
                 this.Status = OperationStatus.Canceled;
 
             return true;

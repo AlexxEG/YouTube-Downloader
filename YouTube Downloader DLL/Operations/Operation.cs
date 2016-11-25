@@ -598,8 +598,7 @@ namespace YouTube_Downloader_DLL.Operations
 
         protected void CancelAsync()
         {
-            if (_worker != null)
-                _worker.CancelAsync();
+            _worker?.CancelAsync();
         }
 
         protected void Complete()
@@ -621,8 +620,7 @@ namespace YouTube_Downloader_DLL.Operations
 
         protected void ReportProgress(int percentProgress, object userState)
         {
-            if (_worker != null)
-                _worker.ReportProgress(percentProgress, userState);
+            _worker?.ReportProgress(percentProgress, userState);
         }
 
         protected abstract void WorkerCompleted(RunWorkerCompletedEventArgs e);

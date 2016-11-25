@@ -47,7 +47,7 @@ namespace YouTube_Downloader_DLL.Operations
 
         public override bool CanStop()
         {
-            return this.IsWorking;
+            return this.IsWorking || this.IsQueued;
         }
 
         public override bool Open()
@@ -78,11 +78,11 @@ namespace YouTube_Downloader_DLL.Operations
 
         public override bool Stop()
         {
-            if (this.IsPaused || this.IsWorking)
+            if (this.IsPaused || this.IsWorking || this.IsQueued)
             {
                 try
                 {
-                    _cts.Cancel();
+                    _cts?.Cancel();
                     this.CancelAsync();
                     this.Status = OperationStatus.Canceled;
                 }

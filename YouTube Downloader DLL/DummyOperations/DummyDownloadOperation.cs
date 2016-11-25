@@ -70,7 +70,7 @@ namespace YouTube_Downloader_DLL.DummyOperations
 
         public override bool CanStop()
         {
-            return this.Status == OperationStatus.Working;
+            return this.IsPaused || this.IsWorking || this.IsQueued;
         }
 
         #endregion
