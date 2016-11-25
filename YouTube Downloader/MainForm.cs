@@ -143,8 +143,6 @@ namespace YouTube_Downloader
 
                 Settings.Default.MaxSimDownloads = (int)nudMaxSimDownloads.Value;
                 DownloadQueueHandler.MaxDownloads = (int)nudMaxSimDownloads.Value;
-
-                Console.WriteLine("Applied download limit");
             }));
             _maxSimDownloadsApplyThread.Start();
         }
