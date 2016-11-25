@@ -133,6 +133,7 @@
             this.cmPlaylistList = new System.Windows.Forms.ContextMenu();
             this.playlistSelectAllMenuItem = new System.Windows.Forms.MenuItem();
             this.playlistSelectNoneMenuItem = new System.Windows.Forms.MenuItem();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.groupBox1.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.videoThumbnail)).BeginInit();
@@ -184,6 +185,7 @@
             this.btnPaste.Name = "btnPaste";
             this.btnPaste.Size = new System.Drawing.Size(22, 22);
             this.btnPaste.TabIndex = 1;
+            this.toolTip1.SetToolTip(this.btnPaste, "Paste");
             this.btnPaste.UseVisualStyleBackColor = true;
             this.btnPaste.Click += new System.EventHandler(this.btnPaste_Click);
             // 
@@ -634,6 +636,7 @@
             this.btnPlaylistPaste.Name = "btnPlaylistPaste";
             this.btnPlaylistPaste.Size = new System.Drawing.Size(22, 22);
             this.btnPlaylistPaste.TabIndex = 1;
+            this.toolTip1.SetToolTip(this.btnPlaylistPaste, "Paste");
             this.btnPlaylistPaste.UseVisualStyleBackColor = true;
             this.btnPlaylistPaste.Click += new System.EventHandler(this.btnPlaylistPaste_Click);
             // 
@@ -1366,6 +1369,7 @@
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.TextBox txtExtension;
         private System.Windows.Forms.ImageList imageList1;
+        private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.Button btnPlaylistPaste;
         private System.Windows.Forms.Button btnMaxSimDownloadsApply;
         private System.Windows.Forms.NumericUpDown nudMaxSimDownloads;
