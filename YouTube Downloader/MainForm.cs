@@ -1513,6 +1513,7 @@ namespace YouTube_Downloader
 
             chbMaxSimDownloads.Checked = Settings.Default.ShowMaxSimDownloads;
             nudMaxSimDownloads.Enabled = Settings.Default.ShowMaxSimDownloads;
+            nudMaxSimDownloads.Value = Settings.Default.MaxSimDownloads;
 
             // Restore visible columns
             string[] cols = settings.VisibleColumns.Split(',');
