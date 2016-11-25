@@ -31,8 +31,6 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btnOK = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
-            this.chbShowMaxSimDownloads = new System.Windows.Forms.CheckBox();
-            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -40,18 +38,12 @@
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.Controls.Add(this.chbShowMaxSimDownloads);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(460, 215);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "General";
-            // 
-            // btnOK
-            // 
-            this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.btnOK.Location = new System.Drawing.Point(216, 176);
             // 
             // btnOK
             // 
@@ -76,16 +68,6 @@
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             // 
-            // chbShowMaxSimDownloads
-            // 
-            this.chbShowMaxSimDownloads.AutoSize = true;
-            this.chbShowMaxSimDownloads.Location = new System.Drawing.Point(6, 19);
-            this.chbShowMaxSimDownloads.Name = "chbShowMaxSimDownloads";
-            this.chbShowMaxSimDownloads.Size = new System.Drawing.Size(267, 17);
-            this.chbShowMaxSimDownloads.TabIndex = 3;
-            this.chbShowMaxSimDownloads.Text = "Show \"Max simultaneous downloads\" under queue";
-            this.chbShowMaxSimDownloads.UseVisualStyleBackColor = true;
-            // 
             // OptionsForm
             // 
             this.AcceptButton = this.btnOK;
@@ -100,8 +82,6 @@
             this.Name = "OptionsForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Options";
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -111,6 +91,5 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.CheckBox chbShowMaxSimDownloads;
     }
 }

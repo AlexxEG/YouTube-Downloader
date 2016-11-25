@@ -124,9 +124,7 @@
             this.olvColumn4 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvColumn5 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvColumn6 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.btnMaxSimDownloadsApply = new System.Windows.Forms.Button();
             this.nudMaxSimDownloads = new System.Windows.Forms.NumericUpDown();
-            this.lMaxSimDownloads = new System.Windows.Forms.Label();
             this.chbAutoConvert = new System.Windows.Forms.CheckBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
@@ -134,6 +132,7 @@
             this.playlistSelectAllMenuItem = new System.Windows.Forms.MenuItem();
             this.playlistSelectNoneMenuItem = new System.Windows.Forms.MenuItem();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.chbMaxSimDownloads = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.videoThumbnail)).BeginInit();
@@ -1083,10 +1082,9 @@
             // 
             // queueTabPage
             // 
+            this.queueTabPage.Controls.Add(this.chbMaxSimDownloads);
             this.queueTabPage.Controls.Add(this.olvQueue);
-            this.queueTabPage.Controls.Add(this.btnMaxSimDownloadsApply);
             this.queueTabPage.Controls.Add(this.nudMaxSimDownloads);
-            this.queueTabPage.Controls.Add(this.lMaxSimDownloads);
             this.queueTabPage.Controls.Add(this.chbAutoConvert);
             this.queueTabPage.Location = new System.Drawing.Point(4, 22);
             this.queueTabPage.Name = "queueTabPage";
@@ -1163,22 +1161,10 @@
             this.olvColumn6.Text = "Input";
             this.olvColumn6.Width = 178;
             // 
-            // btnMaxSimDownloadsApply
-            // 
-            this.btnMaxSimDownloadsApply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnMaxSimDownloadsApply.Enabled = false;
-            this.btnMaxSimDownloadsApply.Location = new System.Drawing.Point(521, 336);
-            this.btnMaxSimDownloadsApply.Name = "btnMaxSimDownloadsApply";
-            this.btnMaxSimDownloadsApply.Size = new System.Drawing.Size(75, 22);
-            this.btnMaxSimDownloadsApply.TabIndex = 6;
-            this.btnMaxSimDownloadsApply.Text = "Apply";
-            this.btnMaxSimDownloadsApply.UseVisualStyleBackColor = true;
-            this.btnMaxSimDownloadsApply.Click += new System.EventHandler(this.btnMaxSimDownloadsApply_Click);
-            // 
             // nudMaxSimDownloads
             // 
             this.nudMaxSimDownloads.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.nudMaxSimDownloads.Location = new System.Drawing.Point(475, 337);
+            this.nudMaxSimDownloads.Location = new System.Drawing.Point(553, 337);
             this.nudMaxSimDownloads.Maximum = new decimal(new int[] {
             999,
             0,
@@ -1198,16 +1184,6 @@
             0,
             0});
             this.nudMaxSimDownloads.ValueChanged += new System.EventHandler(this.nudMaxSimDownloads_ValueChanged);
-            // 
-            // lMaxSimDownloads
-            // 
-            this.lMaxSimDownloads.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.lMaxSimDownloads.AutoSize = true;
-            this.lMaxSimDownloads.Location = new System.Drawing.Point(329, 339);
-            this.lMaxSimDownloads.Name = "lMaxSimDownloads";
-            this.lMaxSimDownloads.Size = new System.Drawing.Size(148, 13);
-            this.lMaxSimDownloads.TabIndex = 4;
-            this.lMaxSimDownloads.Text = "Max simultaneous downloads:";
             // 
             // chbAutoConvert
             // 
@@ -1245,6 +1221,18 @@
             this.playlistSelectNoneMenuItem.Index = 1;
             this.playlistSelectNoneMenuItem.Text = "Select none";
             this.playlistSelectNoneMenuItem.Click += new System.EventHandler(this.playlistSelectNoneMenuItem_Click);
+            // 
+            // chbMaxSimDownloads
+            // 
+            this.chbMaxSimDownloads.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.chbMaxSimDownloads.AutoSize = true;
+            this.chbMaxSimDownloads.Location = new System.Drawing.Point(380, 338);
+            this.chbMaxSimDownloads.Name = "chbMaxSimDownloads";
+            this.chbMaxSimDownloads.Size = new System.Drawing.Size(167, 17);
+            this.chbMaxSimDownloads.TabIndex = 4;
+            this.chbMaxSimDownloads.Text = "Max simultaneous downloads:";
+            this.chbMaxSimDownloads.UseVisualStyleBackColor = true;
+            this.chbMaxSimDownloads.CheckedChanged += new System.EventHandler(this.chbMaxSimDownloads_CheckedChanged);
             // 
             // MainForm
             // 
@@ -1374,9 +1362,7 @@
         private System.Windows.Forms.ImageList imageList1;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.Button btnPlaylistPaste;
-        private System.Windows.Forms.Button btnMaxSimDownloadsApply;
         private System.Windows.Forms.NumericUpDown nudMaxSimDownloads;
-        private System.Windows.Forms.Label lMaxSimDownloads;
         private System.Windows.Forms.CheckBox chbPlaylistIgnoreExisting;
         private BrightIdeasSoftware.ObjectListView olvQueue;
         private BrightIdeasSoftware.OLVColumn olvColumn1;
@@ -1395,6 +1381,7 @@
         private System.Windows.Forms.CheckBox chbPlaylistNamedFolder;
         private System.Windows.Forms.CheckBox chbPlaylistReverse;
         private System.Windows.Forms.CheckBox chbPlaylistNumberPrefix;
+        private System.Windows.Forms.CheckBox chbMaxSimDownloads;
     }
 }
 

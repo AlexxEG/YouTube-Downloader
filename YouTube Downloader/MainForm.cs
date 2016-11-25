@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
@@ -34,6 +35,7 @@ namespace YouTube_Downloader
         private VideoInfo _selectedVideo;
         private Settings _settings = Settings.Default;
         private YTDAuthentication _auth = null;
+        Thread _maxSimDownloadsApplyThread;
 
         private delegate void UpdateFileSize(object sender, FileSizeUpdateEventArgs e);
 
@@ -93,8 +95,8 @@ namespace YouTube_Downloader
 #if DEBUG
             tabControl1.SelectedIndex = 3;
 
-            //for (int i = 0; i < 1; i++)
-            //    this.AddDummyDownloadOperation(10000);
+            for (int i = 0; i < 10; i++)
+                this.AddDummyDownloadOperation(100000);
 #endif
         }
 
@@ -134,16 +136,24 @@ namespace YouTube_Downloader
 
         private void nudMaxSimDownloads_ValueChanged(object sender, EventArgs e)
         {
-            btnMaxSimDownloadsApply.Enabled = nudMaxSimDownloads.Value != Settings.Default.MaxSimDownloads;
+            _maxSimDownloadsApplyThread?.Abort();
+            _maxSimDownloadsApplyThread = new Thread(new ThreadStart(delegate
+            {
+                Thread.Sleep(1000);
+
+                Settings.Default.MaxSimDownloads = (int)nudMaxSimDownloads.Value;
+                DownloadQueueHandler.MaxDownloads = (int)nudMaxSimDownloads.Value;
+
+                Console.WriteLine("Applied download limit");
+            }));
+            _maxSimDownloadsApplyThread.Start();
         }
 
-        private void btnMaxSimDownloadsApply_Click(object sender, EventArgs e)
+        private void chbMaxSimDownloads_CheckedChanged(object sender, EventArgs e)
         {
-            Settings.Default.MaxSimDownloads = (int)nudMaxSimDownloads.Value;
-
-            DownloadQueueHandler.MaxDownloads = (int)nudMaxSimDownloads.Value;
-
-            nudMaxSimDownloads_ValueChanged(sender, e);
+            Settings.Default.ShowMaxSimDownloads = chbMaxSimDownloads.Checked;
+            nudMaxSimDownloads.Enabled = Settings.Default.ShowMaxSimDownloads;
+            DownloadQueueHandler.LimitDownloads = Settings.Default.ShowMaxSimDownloads;
         }
 
         private void OperationModel_AspectChanged(object sender, EventArgs e)
@@ -1071,10 +1081,6 @@ namespace YouTube_Downloader
             {
                 if (of.ShowDialog(this) == DialogResult.OK)
                 {
-                    this.ShowMaxSimDownloads();
-
-                    DownloadQueueHandler.LimitDownloads = Settings.Default.ShowMaxSimDownloads;
-
                     // Refresh video formats, in case included formats has changed
                     if (_selectedVideo != null)
                     {
@@ -1506,7 +1512,8 @@ namespace YouTube_Downloader
             if (_settings.LastYouTubeUrl != null) txtYoutubeLink.Text = _settings.LastYouTubeUrl;
             if (_settings.LastPlaylistUrl != null) txtPlaylistLink.Text = _settings.LastPlaylistUrl;
 
-            this.ShowMaxSimDownloads();
+            chbMaxSimDownloads.Checked = Settings.Default.ShowMaxSimDownloads;
+            nudMaxSimDownloads.Enabled = Settings.Default.ShowMaxSimDownloads;
 
             // Restore visible columns
             string[] cols = _settings.VisibleColumns.Split(',');
@@ -1562,18 +1569,6 @@ namespace YouTube_Downloader
             };
 
             this.olvQueue.SetObjects(new object[0]);
-        }
-
-        /// <summary>
-        /// Shows or hides the "Max simultaneous downloads" option under queue depending on Settings.
-        /// </summary>
-        private void ShowMaxSimDownloads()
-        {
-            nudMaxSimDownloads.Value = Settings.Default.MaxSimDownloads;
-
-            lMaxSimDownloads.Visible =
-                nudMaxSimDownloads.Visible =
-                btnMaxSimDownloadsApply.Visible = Settings.Default.ShowMaxSimDownloads;
         }
 
         /// <summary>
