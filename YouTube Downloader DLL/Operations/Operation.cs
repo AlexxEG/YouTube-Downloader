@@ -635,7 +635,15 @@ namespace YouTube_Downloader_DLL.Operations
         {
             Operation.Running.Remove(this);
 
-            this.Status = (OperationStatus)e.Result;
+            if (e.Error != null)
+            {
+                this.Status = OperationStatus.Failed;
+            }
+            else
+            {
+                this.Status = (OperationStatus)e.Result;
+            }
+            
             this.Complete();
             this.WorkerCompleted(e);
         }
