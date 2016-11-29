@@ -358,6 +358,8 @@ namespace YouTube_Downloader_DLL.Operations
             get { return new ReadOnlyCollection<string>(_errors); }
         }
 
+        public Exception Exception { get; private set; }
+
         /// <summary>
         /// Gets the operation status.
         /// </summary>
@@ -637,13 +639,14 @@ namespace YouTube_Downloader_DLL.Operations
 
             if (e.Error != null)
             {
+                this.Exception = e.Error;
                 this.Status = OperationStatus.Failed;
             }
             else
             {
                 this.Status = (OperationStatus)e.Result;
             }
-            
+
             this.Complete();
             this.WorkerCompleted(e);
         }
