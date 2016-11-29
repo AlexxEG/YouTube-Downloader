@@ -59,6 +59,7 @@
     </Compile>
     <Compile Include="Dialogs\LoginDialog.Designer.cs">
       <DependentUpon>LoginDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\ExceptionDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -86,6 +87,7 @@
     <Compile Include="Settings.cs" />
     <EmbeddedResource Include="Dialogs\LoginDialog.resx">
       <DependentUpon>LoginDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\ExceptionDialog.resx">
       <DependentUpon>ExceptionDialog.cs</DependentUpon>
     </EmbeddedResource>
