@@ -78,6 +78,11 @@ namespace YouTube_Downloader_DLL.DummyOperations
         protected override void WorkerCompleted(RunWorkerCompletedEventArgs e)
         {
             this.ProgressTextOverride = string.Empty;
+
+            if (e.Error != null)
+            {
+                this.Title += " ERROR";
+            }
         }
 
         protected override void WorkerDoWork(DoWorkEventArgs e)
@@ -87,6 +92,11 @@ namespace YouTube_Downloader_DLL.DummyOperations
             OperationStatus status = OperationStatus.Success;
 
             sw.Start();
+
+            int hash = Guid.NewGuid().GetHashCode();
+            double d = new Random(hash).NextDouble();
+            if (d >= 0.5)
+                throw new Exception("Testing");
 
             while (sw.ElapsedMilliseconds < _workTimeMS)
             {
