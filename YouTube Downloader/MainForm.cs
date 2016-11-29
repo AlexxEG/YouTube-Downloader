@@ -91,12 +91,12 @@ namespace YouTube_Downloader
             this.LoadSettings();
             this.ShowUpdateNotification();
 
-#if DEBUG
+            //#if DEBUG
             tabControl1.SelectedIndex = 3;
 
             for (int i = 0; i < 10; i++)
                 this.AddDummyDownloadOperation(100000);
-#endif
+            //#endif
         }
 
         private void MainForm_Shown(object sender, EventArgs e)
@@ -1160,7 +1160,10 @@ namespace YouTube_Downloader
 
         private void viewErrorsMenuItem_Click(object sender, EventArgs e)
         {
-
+            Dialogs.ExceptionDialog.ShowDialog(this,
+                "An error occured.",
+                "Error",
+                (olvQueue.SelectedObjects[0] as OperationModel).Operation.Exception);
         }
 
         private void openMenuItem_Click(object sender, EventArgs e)
