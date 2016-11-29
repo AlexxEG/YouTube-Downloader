@@ -27,7 +27,7 @@ namespace YouTube_Downloader_DLL.DummyOperations
             this.Link = "https://www.google.no";
             this.ReportsProgress = true;
             this.Thumbnail = "https://i.ytimg.com/vi/koBVKAZ34kQ/hqdefault.jpg?custom=true&w=196&h=110&stc=true&jpg444=true&jpgq=90&sp=68&sigh=sZeir3d4uRtpKCKDx5619dwQeA8";
-            this.Title = "Dummy download operation" + new Random(Environment.TickCount).Next();
+            this.Title = "Dummy download operation #" + new Random(Environment.TickCount).Next(10000);
         }
 
         private void OnCombining()
