@@ -117,6 +117,7 @@
             this.mtxtFrom = new System.Windows.Forms.MaskedTextBox();
             this.btnConvert = new System.Windows.Forms.Button();
             this.queueTabPage = new System.Windows.Forms.TabPage();
+            this.chbMaxSimDownloads = new System.Windows.Forms.CheckBox();
             this.olvQueue = new BrightIdeasSoftware.ObjectListView();
             this.olvColumn1 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvColumn2 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -132,7 +133,8 @@
             this.playlistSelectAllMenuItem = new System.Windows.Forms.MenuItem();
             this.playlistSelectNoneMenuItem = new System.Windows.Forms.MenuItem();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.chbMaxSimDownloads = new System.Windows.Forms.CheckBox();
+            this.viewErrorsMenuItem = new System.Windows.Forms.MenuItem();
+            this.viewErrorsSeparator = new System.Windows.Forms.MenuItem();
             this.groupBox1.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.videoThumbnail)).BeginInit();
@@ -287,6 +289,8 @@
             // contextMenu1
             // 
             this.contextMenu1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.viewErrorsMenuItem,
+            this.viewErrorsSeparator,
             this.openMenuItem,
             this.openContainingFolderMenuItem,
             this.menuItem3,
@@ -303,64 +307,64 @@
             // 
             // openMenuItem
             // 
-            this.openMenuItem.Index = 0;
+            this.openMenuItem.Index = 2;
             this.openMenuItem.Text = "Open";
             this.openMenuItem.Click += new System.EventHandler(this.openMenuItem_Click);
             // 
             // openContainingFolderMenuItem
             // 
-            this.openContainingFolderMenuItem.Index = 1;
+            this.openContainingFolderMenuItem.Index = 3;
             this.openContainingFolderMenuItem.Text = "Open Containing Folder";
             this.openContainingFolderMenuItem.Click += new System.EventHandler(this.openContainingFolderMenuItem_Click);
             // 
             // menuItem3
             // 
-            this.menuItem3.Index = 2;
+            this.menuItem3.Index = 4;
             this.menuItem3.Text = "-";
             // 
             // convertToMP3MenuItem
             // 
-            this.convertToMP3MenuItem.Index = 3;
+            this.convertToMP3MenuItem.Index = 5;
             this.convertToMP3MenuItem.Text = "Convert to MP3";
             this.convertToMP3MenuItem.Click += new System.EventHandler(this.convertToMP3MenuItem_Click);
             // 
             // menuItem5
             // 
-            this.menuItem5.Index = 4;
+            this.menuItem5.Index = 6;
             this.menuItem5.Text = "-";
             // 
             // resumeMenuItem
             // 
-            this.resumeMenuItem.Index = 5;
+            this.resumeMenuItem.Index = 7;
             this.resumeMenuItem.Text = "Resume";
             this.resumeMenuItem.Click += new System.EventHandler(this.resumeMenuItem_Click);
             // 
             // pauseMenuItem
             // 
-            this.pauseMenuItem.Index = 6;
+            this.pauseMenuItem.Index = 8;
             this.pauseMenuItem.Text = "Pause";
             this.pauseMenuItem.Click += new System.EventHandler(this.pauseMenuItem_Click);
             // 
             // stopMenuItem
             // 
-            this.stopMenuItem.Index = 7;
+            this.stopMenuItem.Index = 9;
             this.stopMenuItem.Text = "Stop";
             this.stopMenuItem.Click += new System.EventHandler(this.stopMenuItem_Click);
             // 
             // removeMenuItem
             // 
-            this.removeMenuItem.Index = 8;
+            this.removeMenuItem.Index = 10;
             this.removeMenuItem.Text = "Remove";
             this.removeMenuItem.Click += new System.EventHandler(this.removeMenuItem_Click);
             // 
             // menuItem1
             // 
-            this.menuItem1.Index = 9;
+            this.menuItem1.Index = 11;
             this.menuItem1.Text = "-";
             // 
             // clearCompletedMenuItem
             // 
-            this.clearCompletedMenuItem.Index = 10;
+            this.clearCompletedMenuItem.Index = 12;
             this.clearCompletedMenuItem.Text = "Clear Completed";
             this.clearCompletedMenuItem.Click += new System.EventHandler(this.clearCompletedMenuItem_Click);
             // 
@@ -1094,6 +1098,18 @@
             this.queueTabPage.Text = "Queue";
             this.queueTabPage.UseVisualStyleBackColor = true;
             // 
+            // chbMaxSimDownloads
+            // 
+            this.chbMaxSimDownloads.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.chbMaxSimDownloads.AutoSize = true;
+            this.chbMaxSimDownloads.Location = new System.Drawing.Point(380, 338);
+            this.chbMaxSimDownloads.Name = "chbMaxSimDownloads";
+            this.chbMaxSimDownloads.Size = new System.Drawing.Size(167, 17);
+            this.chbMaxSimDownloads.TabIndex = 4;
+            this.chbMaxSimDownloads.Text = "Max simultaneous downloads:";
+            this.chbMaxSimDownloads.UseVisualStyleBackColor = true;
+            this.chbMaxSimDownloads.CheckedChanged += new System.EventHandler(this.chbMaxSimDownloads_CheckedChanged);
+            // 
             // olvQueue
             // 
             this.olvQueue.AllColumns.Add(this.olvColumn1);
@@ -1222,17 +1238,16 @@
             this.playlistSelectNoneMenuItem.Text = "Select none";
             this.playlistSelectNoneMenuItem.Click += new System.EventHandler(this.playlistSelectNoneMenuItem_Click);
             // 
-            // chbMaxSimDownloads
+            // viewErrorsMenuItem
             // 
-            this.chbMaxSimDownloads.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.chbMaxSimDownloads.AutoSize = true;
-            this.chbMaxSimDownloads.Location = new System.Drawing.Point(380, 338);
-            this.chbMaxSimDownloads.Name = "chbMaxSimDownloads";
-            this.chbMaxSimDownloads.Size = new System.Drawing.Size(167, 17);
-            this.chbMaxSimDownloads.TabIndex = 4;
-            this.chbMaxSimDownloads.Text = "Max simultaneous downloads:";
-            this.chbMaxSimDownloads.UseVisualStyleBackColor = true;
-            this.chbMaxSimDownloads.CheckedChanged += new System.EventHandler(this.chbMaxSimDownloads_CheckedChanged);
+            this.viewErrorsMenuItem.Index = 0;
+            this.viewErrorsMenuItem.Text = "View Error(s)";
+            this.viewErrorsMenuItem.Click += new System.EventHandler(this.viewErrorsMenuItem_Click);
+            // 
+            // viewErrorsSeparator
+            // 
+            this.viewErrorsSeparator.Index = 1;
+            this.viewErrorsSeparator.Text = "-";
             // 
             // MainForm
             // 
@@ -1382,6 +1397,8 @@
         private System.Windows.Forms.CheckBox chbPlaylistReverse;
         private System.Windows.Forms.CheckBox chbPlaylistNumberPrefix;
         private System.Windows.Forms.CheckBox chbMaxSimDownloads;
+        private System.Windows.Forms.MenuItem viewErrorsMenuItem;
+        private System.Windows.Forms.MenuItem viewErrorsSeparator;
     }
 }
 

@@ -1114,6 +1114,12 @@ namespace YouTube_Downloader
                 return;
             }
 
+            viewErrorsMenuItem.Visible = viewErrorsSeparator.Visible = olvQueue.SelectedObjects
+                .Cast<OperationModel>()
+                .All(
+                    x => x.Operation.Exception != null
+                 );
+
             bool canOpen = false, canPause = false, canResume = false, canStop = false, canConvert = false;
 
             foreach (OperationModel item in olvQueue.SelectedObjects)
@@ -1150,6 +1156,11 @@ namespace YouTube_Downloader
                 menuItem.Enabled = true;
                 menuItem.Visible = true;
             }
+        }
+
+        private void viewErrorsMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
 
         private void openMenuItem_Click(object sender, EventArgs e)
