@@ -37,7 +37,7 @@ namespace YouTube_Downloader_DLL.Classes
 
                     foreach (var file in dirInfo.GetFiles("*.*", SearchOption.AllDirectories))
                     {
-                        var age = DateTime.Today.Subtract(file.CreationTime);
+                        var age = DateTime.Now.Subtract(file.CreationTime);
 
                         if (age >= MaxLogAge)
                             cleanupList.Add(file.FullName);
