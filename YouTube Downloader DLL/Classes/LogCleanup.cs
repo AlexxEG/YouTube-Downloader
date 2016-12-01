@@ -20,7 +20,7 @@ namespace YouTube_Downloader_DLL.Classes
         /// <summary>
         /// Max log age. Default is 14 days.
         /// </summary>
-        public static TimeSpan MaxLogAge = new TimeSpan(14, 0, 0, 0);
+        public static TimeSpan MaxLogAge = new TimeSpan(3, 0, 0, 0);
 
         public static async void RunAsync()
         {
