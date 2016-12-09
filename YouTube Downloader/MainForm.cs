@@ -53,8 +53,17 @@ namespace YouTube_Downloader
 
             // Remove file size label text, should be empty when first starting.
             lFileSize.Text = string.Empty;
-        }
 
+            // Fix progress sorting
+            olvQueue.CustomSorter = delegate (OLVColumn column, SortOrder order)
+            {
+                if (column == olvColumn2)
+                {
+                    olvQueue.ListViewItemSorter = new BarTextProgressComparer(order);
+                }
+            };
+        }
+        
         public MainForm(string[] args)
             : this()
         {
@@ -156,6 +165,7 @@ namespace YouTube_Downloader
         private void OperationModel_AspectChanged(object sender, EventArgs e)
         {
             olvQueue.RefreshObject(sender);
+            olvQueue.Sort();
         }
 
         #region Download Tab
