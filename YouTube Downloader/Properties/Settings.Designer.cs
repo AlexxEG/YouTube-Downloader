@@ -211,5 +211,29 @@ namespace YouTube_Downloader.Properties {
                 this["PlaylistLastUsedFilter"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool PlaylistReverse {
+            get {
+                return ((bool)(this["PlaylistReverse"]));
+            }
+            set {
+                this["PlaylistReverse"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool PlaylistNumberPrefix {
+            get {
+                return ((bool)(this["PlaylistNumberPrefix"]));
+            }
+            set {
+                this["PlaylistNumberPrefix"] = value;
+            }
+        }
     }
 }

@@ -33,7 +33,7 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label2 = new System.Windows.Forms.Label();
             this.btnPaste = new System.Windows.Forms.Button();
-            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
+            this.imageList16px = new System.Windows.Forms.ImageList(this.components);
             this.btnGetVideo = new System.Windows.Forms.Button();
             this.txtYoutubeLink = new System.Windows.Forms.TextBox();
             this.btnBrowse = new System.Windows.Forms.Button();
@@ -44,6 +44,8 @@
             this.cbQuality = new System.Windows.Forms.ComboBox();
             this.bwGetVideo = new System.ComponentModel.BackgroundWorker();
             this.contextMenu1 = new System.Windows.Forms.ContextMenu();
+            this.viewErrorsMenuItem = new System.Windows.Forms.MenuItem();
+            this.viewErrorsSeparator = new System.Windows.Forms.MenuItem();
             this.openMenuItem = new System.Windows.Forms.MenuItem();
             this.openContainingFolderMenuItem = new System.Windows.Forms.MenuItem();
             this.menuItem3 = new System.Windows.Forms.MenuItem();
@@ -72,10 +74,13 @@
             this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.groupBox7 = new System.Windows.Forms.GroupBox();
-            this.chbPlaylistReverse = new System.Windows.Forms.CheckBox();
-            this.chbPlaylistNumberPrefix = new System.Windows.Forms.CheckBox();
-            this.chbPlaylistNamedFolder = new System.Windows.Forms.CheckBox();
-            this.chbPlaylistIgnoreExisting = new System.Windows.Forms.CheckBox();
+            this.menuButton1 = new YouTube_Downloader.Controls.MenuButton();
+            this.imageList14px = new System.Windows.Forms.ImageList(this.components);
+            this.cmsPlaylistOptions = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.playlistNamedFolderMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.playlistIgnoreExistingMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.playlistReverseMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.playlistNumberPrefixMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.btnPlaylistPaste = new System.Windows.Forms.Button();
             this.btnGetPlaylist = new System.Windows.Forms.Button();
             this.label14 = new System.Windows.Forms.Label();
@@ -133,8 +138,6 @@
             this.playlistSelectAllMenuItem = new System.Windows.Forms.MenuItem();
             this.playlistSelectNoneMenuItem = new System.Windows.Forms.MenuItem();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.viewErrorsMenuItem = new System.Windows.Forms.MenuItem();
-            this.viewErrorsSeparator = new System.Windows.Forms.MenuItem();
             this.groupBox1.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.videoThumbnail)).BeginInit();
@@ -142,6 +145,7 @@
             this.downloadTabPage.SuspendLayout();
             this.playlistTabPage.SuspendLayout();
             this.groupBox7.SuspendLayout();
+            this.cmsPlaylistOptions.SuspendLayout();
             this.convertTabPage.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox5.SuspendLayout();
@@ -181,7 +185,7 @@
             // 
             this.btnPaste.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnPaste.ImageIndex = 0;
-            this.btnPaste.ImageList = this.imageList1;
+            this.btnPaste.ImageList = this.imageList16px;
             this.btnPaste.Location = new System.Drawing.Point(562, 18);
             this.btnPaste.Name = "btnPaste";
             this.btnPaste.Size = new System.Drawing.Size(22, 22);
@@ -190,11 +194,11 @@
             this.btnPaste.UseVisualStyleBackColor = true;
             this.btnPaste.Click += new System.EventHandler(this.btnPaste_Click);
             // 
-            // imageList1
+            // imageList16px
             // 
-            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
-            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageList1.Images.SetKeyName(0, "Paste-64.png");
+            this.imageList16px.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList16px.ImageStream")));
+            this.imageList16px.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageList16px.Images.SetKeyName(0, "Paste-64.png");
             // 
             // btnGetVideo
             // 
@@ -304,6 +308,17 @@
             this.clearCompletedMenuItem});
             this.contextMenu1.Popup += new System.EventHandler(this.contextMenu1_Popup);
             this.contextMenu1.Collapse += new System.EventHandler(this.contextMenu1_Collapse);
+            // 
+            // viewErrorsMenuItem
+            // 
+            this.viewErrorsMenuItem.Index = 0;
+            this.viewErrorsMenuItem.Text = "View Error(s)";
+            this.viewErrorsMenuItem.Click += new System.EventHandler(this.viewErrorsMenuItem_Click);
+            // 
+            // viewErrorsSeparator
+            // 
+            this.viewErrorsSeparator.Index = 1;
+            this.viewErrorsSeparator.Text = "-";
             // 
             // openMenuItem
             // 
@@ -558,10 +573,7 @@
             // 
             this.groupBox7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox7.Controls.Add(this.chbPlaylistReverse);
-            this.groupBox7.Controls.Add(this.chbPlaylistNumberPrefix);
-            this.groupBox7.Controls.Add(this.chbPlaylistNamedFolder);
-            this.groupBox7.Controls.Add(this.chbPlaylistIgnoreExisting);
+            this.groupBox7.Controls.Add(this.menuButton1);
             this.groupBox7.Controls.Add(this.btnPlaylistPaste);
             this.groupBox7.Controls.Add(this.btnGetPlaylist);
             this.groupBox7.Controls.Add(this.label14);
@@ -580,61 +592,74 @@
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Playlist";
             // 
-            // chbPlaylistReverse
+            // menuButton1
             // 
-            this.chbPlaylistReverse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.chbPlaylistReverse.AutoSize = true;
-            this.chbPlaylistReverse.Location = new System.Drawing.Point(186, 83);
-            this.chbPlaylistReverse.Name = "chbPlaylistReverse";
-            this.chbPlaylistReverse.Size = new System.Drawing.Size(66, 17);
-            this.chbPlaylistReverse.TabIndex = 17;
-            this.chbPlaylistReverse.Text = "Reverse";
-            this.chbPlaylistReverse.UseVisualStyleBackColor = true;
-            this.chbPlaylistReverse.CheckedChanged += new System.EventHandler(this.chbPlaylistReverse_CheckedChanged);
+            this.menuButton1.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.menuButton1.ImageKey = "Maintenance-16.png";
+            this.menuButton1.ImageList = this.imageList14px;
+            this.menuButton1.Location = new System.Drawing.Point(6, 102);
+            this.menuButton1.Menu = this.cmsPlaylistOptions;
+            this.menuButton1.Name = "menuButton1";
+            this.menuButton1.Size = new System.Drawing.Size(115, 23);
+            this.menuButton1.TabIndex = 18;
+            this.menuButton1.Text = "Playlist Options";
+            this.menuButton1.UseVisualStyleBackColor = true;
             // 
-            // chbPlaylistNumberPrefix
+            // imageList14px
             // 
-            this.chbPlaylistNumberPrefix.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.chbPlaylistNumberPrefix.AutoSize = true;
-            this.chbPlaylistNumberPrefix.Location = new System.Drawing.Point(143, 106);
-            this.chbPlaylistNumberPrefix.Name = "chbPlaylistNumberPrefix";
-            this.chbPlaylistNumberPrefix.Size = new System.Drawing.Size(92, 17);
-            this.chbPlaylistNumberPrefix.TabIndex = 16;
-            this.chbPlaylistNumberPrefix.Text = "Number Prefix";
-            this.chbPlaylistNumberPrefix.UseVisualStyleBackColor = true;
+            this.imageList14px.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList14px.ImageStream")));
+            this.imageList14px.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageList14px.Images.SetKeyName(0, "Maintenance-16.png");
             // 
-            // chbPlaylistNamedFolder
+            // cmsPlaylistOptions
             // 
-            this.chbPlaylistNamedFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.chbPlaylistNamedFolder.AutoSize = true;
-            this.chbPlaylistNamedFolder.Checked = global::YouTube_Downloader.Properties.Settings.Default.PlaylistNamedFolder;
-            this.chbPlaylistNamedFolder.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::YouTube_Downloader.Properties.Settings.Default, "PlaylistNamedFolder", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.chbPlaylistNamedFolder.Location = new System.Drawing.Point(9, 83);
-            this.chbPlaylistNamedFolder.Name = "chbPlaylistNamedFolder";
-            this.chbPlaylistNamedFolder.Size = new System.Drawing.Size(171, 17);
-            this.chbPlaylistNamedFolder.TabIndex = 15;
-            this.chbPlaylistNamedFolder.Text = "Create folder with playlist name";
-            this.chbPlaylistNamedFolder.UseVisualStyleBackColor = true;
+            this.cmsPlaylistOptions.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.playlistNamedFolderMenuItem,
+            this.playlistIgnoreExistingMenuItem,
+            this.playlistReverseMenuItem,
+            this.playlistNumberPrefixMenuItem});
+            this.cmsPlaylistOptions.Name = "cmsPlaylistOptions";
+            this.cmsPlaylistOptions.ShowCheckMargin = true;
+            this.cmsPlaylistOptions.ShowImageMargin = false;
+            this.cmsPlaylistOptions.Size = new System.Drawing.Size(242, 114);
+            this.cmsPlaylistOptions.Closed += new System.Windows.Forms.ToolStripDropDownClosedEventHandler(this.cmsPlaylistOptions_Closed);
+            this.cmsPlaylistOptions.Closing += new System.Windows.Forms.ToolStripDropDownClosingEventHandler(this.cmsPlaylistOptions_Closing);
+            this.cmsPlaylistOptions.Opening += new System.ComponentModel.CancelEventHandler(this.cmsPlaylistOptions_Opening);
+            this.cmsPlaylistOptions.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.cmsPlaylistOptions_ItemClicked);
             // 
-            // chbPlaylistIgnoreExisting
+            // playlistNamedFolderMenuItem
             // 
-            this.chbPlaylistIgnoreExisting.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.chbPlaylistIgnoreExisting.AutoSize = true;
-            this.chbPlaylistIgnoreExisting.Checked = global::YouTube_Downloader.Properties.Settings.Default.PlaylistIgnoreExisting;
-            this.chbPlaylistIgnoreExisting.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::YouTube_Downloader.Properties.Settings.Default, "PlaylistIgnoreExisting", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.chbPlaylistIgnoreExisting.Location = new System.Drawing.Point(9, 106);
-            this.chbPlaylistIgnoreExisting.Name = "chbPlaylistIgnoreExisting";
-            this.chbPlaylistIgnoreExisting.Size = new System.Drawing.Size(128, 17);
-            this.chbPlaylistIgnoreExisting.TabIndex = 14;
-            this.chbPlaylistIgnoreExisting.Text = "Ignore existing videos";
-            this.chbPlaylistIgnoreExisting.UseVisualStyleBackColor = true;
-            this.chbPlaylistIgnoreExisting.CheckedChanged += new System.EventHandler(this.chbPlaylistIgnoreExisting_CheckedChanged);
+            this.playlistNamedFolderMenuItem.CheckOnClick = true;
+            this.playlistNamedFolderMenuItem.Name = "playlistNamedFolderMenuItem";
+            this.playlistNamedFolderMenuItem.Size = new System.Drawing.Size(241, 22);
+            this.playlistNamedFolderMenuItem.Text = "Create folder with playlist name";
+            // 
+            // playlistIgnoreExistingMenuItem
+            // 
+            this.playlistIgnoreExistingMenuItem.CheckOnClick = true;
+            this.playlistIgnoreExistingMenuItem.Name = "playlistIgnoreExistingMenuItem";
+            this.playlistIgnoreExistingMenuItem.Size = new System.Drawing.Size(241, 22);
+            this.playlistIgnoreExistingMenuItem.Text = "Ignore existing videos";
+            // 
+            // playlistReverseMenuItem
+            // 
+            this.playlistReverseMenuItem.CheckOnClick = true;
+            this.playlistReverseMenuItem.Name = "playlistReverseMenuItem";
+            this.playlistReverseMenuItem.Size = new System.Drawing.Size(241, 22);
+            this.playlistReverseMenuItem.Text = "Reverse playlist";
+            // 
+            // playlistNumberPrefixMenuItem
+            // 
+            this.playlistNumberPrefixMenuItem.CheckOnClick = true;
+            this.playlistNumberPrefixMenuItem.Name = "playlistNumberPrefixMenuItem";
+            this.playlistNumberPrefixMenuItem.Size = new System.Drawing.Size(241, 22);
+            this.playlistNumberPrefixMenuItem.Text = "Number prefix";
             // 
             // btnPlaylistPaste
             // 
             this.btnPlaylistPaste.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnPlaylistPaste.ImageIndex = 0;
-            this.btnPlaylistPaste.ImageList = this.imageList1;
+            this.btnPlaylistPaste.ImageList = this.imageList16px;
             this.btnPlaylistPaste.Location = new System.Drawing.Point(562, 18);
             this.btnPlaylistPaste.Name = "btnPlaylistPaste";
             this.btnPlaylistPaste.Size = new System.Drawing.Size(22, 22);
@@ -1238,17 +1263,6 @@
             this.playlistSelectNoneMenuItem.Text = "Select none";
             this.playlistSelectNoneMenuItem.Click += new System.EventHandler(this.playlistSelectNoneMenuItem_Click);
             // 
-            // viewErrorsMenuItem
-            // 
-            this.viewErrorsMenuItem.Index = 0;
-            this.viewErrorsMenuItem.Text = "View Error(s)";
-            this.viewErrorsMenuItem.Click += new System.EventHandler(this.viewErrorsMenuItem_Click);
-            // 
-            // viewErrorsSeparator
-            // 
-            this.viewErrorsSeparator.Index = 1;
-            this.viewErrorsSeparator.Text = "-";
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1273,6 +1287,7 @@
             this.playlistTabPage.PerformLayout();
             this.groupBox7.ResumeLayout(false);
             this.groupBox7.PerformLayout();
+            this.cmsPlaylistOptions.ResumeLayout(false);
             this.convertTabPage.ResumeLayout(false);
             this.convertTabPage.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -1374,11 +1389,10 @@
         private System.Windows.Forms.TextBox txtOutputFolder;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.TextBox txtExtension;
-        private System.Windows.Forms.ImageList imageList1;
+        private System.Windows.Forms.ImageList imageList16px;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.Button btnPlaylistPaste;
         private System.Windows.Forms.NumericUpDown nudMaxSimDownloads;
-        private System.Windows.Forms.CheckBox chbPlaylistIgnoreExisting;
         private BrightIdeasSoftware.ObjectListView olvQueue;
         private BrightIdeasSoftware.OLVColumn olvColumn1;
         private BrightIdeasSoftware.OLVColumn olvColumn2;
@@ -1393,12 +1407,16 @@
         private System.Windows.Forms.Button btnPlaylistRemove;
         private System.Windows.Forms.TextBox txtPlaylistFilter;
         private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.CheckBox chbPlaylistNamedFolder;
-        private System.Windows.Forms.CheckBox chbPlaylistReverse;
-        private System.Windows.Forms.CheckBox chbPlaylistNumberPrefix;
         private System.Windows.Forms.CheckBox chbMaxSimDownloads;
         private System.Windows.Forms.MenuItem viewErrorsMenuItem;
         private System.Windows.Forms.MenuItem viewErrorsSeparator;
+        private Controls.MenuButton menuButton1;
+        private System.Windows.Forms.ContextMenuStrip cmsPlaylistOptions;
+        private System.Windows.Forms.ToolStripMenuItem playlistNamedFolderMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem playlistIgnoreExistingMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem playlistReverseMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem playlistNumberPrefixMenuItem;
+        private System.Windows.Forms.ImageList imageList14px;
     }
 }
 

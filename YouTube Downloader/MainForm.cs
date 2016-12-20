@@ -63,7 +63,7 @@ namespace YouTube_Downloader
                 }
             };
         }
-        
+
         public MainForm(string[] args)
             : this()
         {
@@ -524,7 +524,7 @@ namespace YouTube_Downloader
 
             _backgroundWorkerPlaylist.ReportProgress(-1, playlist);
 
-            if (chbPlaylistReverse.Checked)
+            if (playlistReverseMenuItem.Checked)
                 videos = videos.Reverse();
 
             foreach (var video in videos)
@@ -580,14 +580,40 @@ namespace YouTube_Downloader
             }
         }
 
-        private void chbPlaylistIgnoreExisting_CheckedChanged(object sender, EventArgs e)
+        private void cmsPlaylistOptions_Closed(object sender, ToolStripDropDownClosedEventArgs e)
         {
-            this.FilterPlaylist();
+            Settings.Default.PlaylistNamedFolder = playlistNamedFolderMenuItem.Checked;
+            Settings.Default.PlaylistIgnoreExisting = playlistIgnoreExistingMenuItem.Checked;
+            Settings.Default.PlaylistReverse = playlistReverseMenuItem.Checked;
+            Settings.Default.PlaylistNumberPrefix = playlistNumberPrefixMenuItem.Checked;
         }
 
-        private void chbPlaylistReverse_CheckedChanged(object sender, EventArgs e)
+        private void cmsPlaylistOptions_Closing(object sender, ToolStripDropDownClosingEventArgs e)
         {
-            this.PlaylistReverse();
+            if (e.CloseReason == ToolStripDropDownCloseReason.ItemClicked)
+            {
+                e.Cancel = true;
+            }
+        }
+
+        private void cmsPlaylistOptions_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            if (e.ClickedItem == playlistIgnoreExistingMenuItem)
+            {
+                this.FilterPlaylist();
+            }
+            else if (e.ClickedItem == playlistReverseMenuItem)
+            {
+                this.PlaylistReverse();
+            }
+        }
+
+        private void cmsPlaylistOptions_Opening(object sender, CancelEventArgs e)
+        {
+            playlistNamedFolderMenuItem.Checked = Settings.Default.PlaylistNamedFolder;
+            playlistIgnoreExistingMenuItem.Checked = Settings.Default.PlaylistIgnoreExisting;
+            playlistReverseMenuItem.Checked = Settings.Default.PlaylistReverse;
+            playlistNumberPrefixMenuItem.Checked = Settings.Default.PlaylistNumberPrefix;
         }
 
         private void btnPlaylistDownloadSelected_Click(object sender, EventArgs e)
@@ -703,7 +729,7 @@ namespace YouTube_Downloader
 
             Settings.Default.LastPlaylistUrl = txtPlaylistLink.Text;
 
-            if (chbPlaylistNamedFolder.Checked)
+            if (playlistNamedFolderMenuItem.Checked)
             {
                 path = Path.Combine(path, Helper.FormatTitle(_playlist.Title));
 
@@ -728,8 +754,8 @@ namespace YouTube_Downloader
                                     path,
                                     Settings.Default.PreferredQualityPlaylist,
                                     videos,
-                                    chbPlaylistReverse.Checked,
-                                    chbPlaylistNumberPrefix.Checked)
+                                    playlistReverseMenuItem.Checked,
+                                    playlistNumberPrefixMenuItem.Checked)
                                 );
 
                 tabControl1.SelectedTab = queueTabPage;
@@ -786,15 +812,15 @@ namespace YouTube_Downloader
         private void FilterPlaylist()
         {
             // Reset if necessary
-            if (!chbPlaylistIgnoreExisting.Checked && _playlistIgnored.Count > 0)
+            if (!playlistIgnoreExistingMenuItem.Checked && _playlistIgnored.Count > 0)
             {
                 this.FilterPlaylistReset();
             }
-            else if (chbPlaylistIgnoreExisting.Checked)
+            else if (playlistIgnoreExistingMenuItem.Checked)
             {
                 string path = cbPlaylistSaveTo.Text;
 
-                if (_playlist != null && chbPlaylistNamedFolder.Checked)
+                if (_playlist != null && playlistNamedFolderMenuItem.Checked)
                     path = Path.Combine(path, _playlist.Title);
 
                 if (!Directory.Exists(path))

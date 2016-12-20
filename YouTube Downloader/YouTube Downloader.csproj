@@ -51,6 +51,9 @@
     <Compile Include="App.cs" />
     <Compile Include="Classes\BarTextProgressComparer.cs" />
     <Compile Include="Classes\WindowStates.cs" />
+    <Compile Include="Controls\MenuButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\OperationModel.cs" />
     <Compile Include="Classes\WindowState.cs" />
     <Compile Include="Delegates\SetItemTextDelegate.cs" />
