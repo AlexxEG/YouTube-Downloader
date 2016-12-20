@@ -26,3 +26,4 @@ Credits
 
 - Thanks to [Open Icon Library](http://openiconlibrary.sourceforge.net/) for the icon background.
 - Thanks to [VisualPharm](http://www.visualpharm.com/) for the download part of the icon.
+- Thanks to [Icons8](https://icons8.com/) for Playlist options icon.
