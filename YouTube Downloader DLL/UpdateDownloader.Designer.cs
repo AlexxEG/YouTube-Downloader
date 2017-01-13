@@ -39,7 +39,11 @@
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.btnClose = new System.Windows.Forms.Button();
             this.webBrowser1 = new System.Windows.Forms.WebBrowser();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.btnYTDUpdate = new System.Windows.Forms.Button();
+            this.lYTDLocal = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -168,11 +172,44 @@
             this.webBrowser1.TabIndex = 7;
             this.webBrowser1.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webBrowser1_Navigating);
             // 
+            // groupBox2
+            // 
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.btnYTDUpdate);
+            this.groupBox2.Controls.Add(this.lYTDLocal);
+            this.groupBox2.Location = new System.Drawing.Point(572, 12);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(200, 69);
+            this.groupBox2.TabIndex = 8;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "youtube-dl";
+            // 
+            // btnYTDUpdate
+            // 
+            this.btnYTDUpdate.Location = new System.Drawing.Point(6, 40);
+            this.btnYTDUpdate.Name = "btnYTDUpdate";
+            this.btnYTDUpdate.Size = new System.Drawing.Size(130, 23);
+            this.btnYTDUpdate.TabIndex = 10;
+            this.btnYTDUpdate.Text = "Update youtube-dl";
+            this.btnYTDUpdate.UseVisualStyleBackColor = true;
+            this.btnYTDUpdate.Click += new System.EventHandler(this.btnYTDUpdate_Click);
+            // 
+            // lYTDLocal
+            // 
+            this.lYTDLocal.AutoSize = true;
+            this.lYTDLocal.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lYTDLocal.Location = new System.Drawing.Point(6, 17);
+            this.lYTDLocal.Name = "lYTDLocal";
+            this.lYTDLocal.Size = new System.Drawing.Size(20, 18);
+            this.lYTDLocal.TabIndex = 9;
+            this.lYTDLocal.Text = "...";
+            // 
             // UpdateDownloader
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(784, 461);
+            this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.webBrowser1);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.groupBox1);
@@ -188,6 +225,8 @@
             this.Load += new System.EventHandler(this.UpdateDownloader_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -206,5 +245,8 @@
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Button btnClose;
         private System.Windows.Forms.WebBrowser webBrowser1;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.Button btnYTDUpdate;
+        private System.Windows.Forms.Label lYTDLocal;
     }
 }

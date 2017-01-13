@@ -2,6 +2,8 @@
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using YouTube_Downloader_DLL.Classes;
 
@@ -15,6 +17,7 @@ namespace YouTube_Downloader_DLL.YoutubeDl
             public const string GetJsonInfo = " -o \"{0}\\%(title)s\" --no-playlist --skip-download --restrict-filenames --write-info-json \"{1}\"{2}";
             public const string Authentication = " -u {0} -p {1}";
             public const string TwoFactor = " -2 {0}";
+            public const string Update = " -U";
             public const string Version = " --version";
         }
 
@@ -124,6 +127,31 @@ namespace YouTube_Downloader_DLL.YoutubeDl
                 null, null, null).WaitForExit();
 
             return version;
+        }
+
+        public static async Task<string> Update()
+        {
+            string returnMsg = string.Empty;
+            Regex versionRegex = new Regex(@"(\d{4}\.\d{2}\.\d{2})");
+            OperationLogger logger = OperationLogger.Create(OperationLogger.YTDLogFile);
+
+            await Task.Run(delegate
+            {
+                Helper.StartProcess(YouTubeDlPath, Commands.Update,
+                    delegate (Process process, string line)
+                    {
+                        Match m;
+                        if ((m = versionRegex.Match(line)).Success)
+                            returnMsg = m.Groups[1].Value;
+                    },
+                    delegate (Process process, string line)
+                    {
+                        returnMsg = "Failed";
+                    }, null, logger)
+                    .WaitForExit();
+            });
+
+            return returnMsg;
         }
     }
 }

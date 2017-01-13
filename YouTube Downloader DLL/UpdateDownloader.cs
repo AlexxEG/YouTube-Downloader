@@ -28,6 +28,7 @@ namespace YouTube_Downloader_DLL
         private void UpdateDownloader_Load(object sender, EventArgs e)
         {
             lLocalVersion.Text = Common.VersionString;
+            lYTDLocal.Text = YoutubeDl.YoutubeDlProcess.GetVersion();
             this.GetLatestUpdateAsync();
             this.GetChangelogAsync();
         }
@@ -78,6 +79,12 @@ namespace YouTube_Downloader_DLL
                     System.Windows.Application.Current.Shutdown();
                 }
             }
+        }
+
+        private async void btnYTDUpdate_Click(object sender, EventArgs e)
+        {
+            lYTDLocal.Text = "Updating...";
+            lYTDLocal.Text = await YoutubeDl.YoutubeDlProcess.Update();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
