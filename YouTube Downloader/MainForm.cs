@@ -1133,7 +1133,7 @@ namespace YouTube_Downloader
 
         private void aboutMenuItem_Click(object sender, EventArgs e)
         {
-
+            new AboutForm().ShowDialog(this);
         }
 
         #endregion
