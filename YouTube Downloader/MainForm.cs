@@ -1091,7 +1091,8 @@ namespace YouTube_Downloader
 
             mainMenu1 = new MainMenu();
             mainMenu1.MenuItems.Add(fileMenuItem = new MenuItem("&File", fileMenuItems));
-            mainMenu1.MenuItems.Add(toolsMenuItem = new MenuItem("&Tools", toolsMenuItems));
+            // === ToDo: Hide 'Tools' menu for now, until we actually have something useful to put here
+            //mainMenu1.MenuItems.Add(toolsMenuItem = new MenuItem("&Tools", toolsMenuItems));
             mainMenu1.MenuItems.Add(helpMenuItem = new MenuItem("&Help", helpMenuItems));
 
             mainMenu1.Collapse += delegate (object sender, EventArgs e)
