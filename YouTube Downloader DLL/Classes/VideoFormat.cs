@@ -212,7 +212,7 @@ namespace YouTube_Downloader_DLL.Classes
             }
             else
             {
-                string fps = !string.IsNullOrEmpty(this.FPS) ? $" {this.FPS}fps" : string.Empty;
+                string fps = !string.IsNullOrEmpty(this.FPS) ? $" - {this.FPS}fps" : string.Empty;
 
                 text = string.Format("{0}{1} (.{2})", this.Format, fps, this.Extension);
             }
