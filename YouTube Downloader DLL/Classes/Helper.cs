@@ -322,7 +322,7 @@ namespace YouTube_Downloader_DLL.Classes
         /// <param name="url">The url to check.</param>
         public static bool IsValidTwitchUrl(string url)
         {
-            string pattern = @"^(https?:\/\/)?(www.)?twitch\.tv\/(?!_)[a-zA-Z0-9_]{4,25}\/(v|c)\/\d+$";
+            string pattern = @"(https?:\/\/)?(www.)?twitch\.tv\/videos\/\d{9}(\?.*)?$";
 
             return Regex.IsMatch(url, pattern, RegexOptions.IgnoreCase);
         }
