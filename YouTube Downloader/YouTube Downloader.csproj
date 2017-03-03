@@ -57,6 +57,15 @@
     <Compile Include="App.cs" />
     <Compile Include="Classes\BarTextProgressComparer.cs" />
     <Compile Include="Classes\WindowStates.cs" />
+    <Compile Include="Controls\DurationPicker.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DurationPicker.Designer.cs">
+      <DependentUpon>DurationPicker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\DurationPickerTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\MenuButton.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -91,6 +100,9 @@
     <Compile Include="Settings.cs" />
     <EmbeddedResource Include="AboutForm.resx">
       <DependentUpon>AboutForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\DurationPicker.resx">
+      <DependentUpon>DurationPicker.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\LoginDialog.resx">
       <DependentUpon>LoginDialog.cs</DependentUpon>
