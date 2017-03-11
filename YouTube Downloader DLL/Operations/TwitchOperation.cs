@@ -58,6 +58,41 @@ namespace YouTube_Downloader_DLL.Operations
             this.Title = format.VideoInfo.Title;
         }
 
+        #region Internal Classes
+
+        class M3U8Part
+        {
+            public string Data { get; private set; }
+            public string ExtData { get; private set; }
+            public decimal Duration
+            {
+                get
+                {
+                    return decimal.Parse(ExtData.Substring(ExtData.IndexOf(':') + 1).TrimEnd(',').Replace('.', ','));
+                }
+            }
+
+            public M3U8Part(string extData, string data)
+            {
+                this.Data = data;
+                this.ExtData = extData;
+            }
+        }
+
+        class ClipDurationRange
+        {
+            public int Start { get; private set; }
+            public int Count { get; private set; }
+
+            public ClipDurationRange(int start, int count)
+            {
+                this.Start = start;
+                this.Count = count;
+            }
+        }
+
+        #endregion
+
         #region Operation members
 
         public override bool CanOpen()
@@ -228,97 +263,6 @@ namespace YouTube_Downloader_DLL.Operations
             }
         }
 
-        class M3U8Part
-        {
-            public string Data { get; private set; }
-            public string ExtData { get; private set; }
-            public decimal Duration
-            {
-                get
-                {
-                    return decimal.Parse(ExtData.Substring(ExtData.IndexOf(':') + 1).TrimEnd(',').Replace('.', ','));
-                }
-            }
-
-            public M3U8Part(string extData, string data)
-            {
-                this.Data = data;
-                this.ExtData = extData;
-            }
-        }
-
-        class ClipDurationRange
-        {
-            public int Start { get; private set; }
-            public int Count { get; private set; }
-
-            public ClipDurationRange(int start, int count)
-            {
-                this.Start = start;
-                this.Count = count;
-            }
-        }
-
-        private ClipDurationRange GetDurationRange(IEnumerable<M3U8Part> parts, TimeSpan clipFrom, TimeSpan clipTo)
-        {
-            var lengths = new List<decimal>();
-            foreach (M3U8Part part in parts)
-            {
-                lengths.Add(part.Duration);
-            }
-
-#if DEBUG
-            Console.WriteLine("Count:".PadRight(15) + lengths.Count);
-            Console.WriteLine("Total Length:".PadRight(15) + TimeSpan.FromSeconds((double)lengths.Sum()).ToString("c"));
-#endif
-            if (clipFrom != TimeSpan.Zero && clipTo <= clipFrom)
-                throw new Exception($"{nameof(clipFrom)} duration can't be less than or equal to {nameof(clipTo)} duration.");
-
-            int i = 0;
-            int count = 0;
-            int start_index = -1;
-            decimal l = 0;
-            decimal skipped_l = 0;
-            for (i = 0; i < lengths.Count; i++)
-            {
-                if (clipFrom == TimeSpan.Zero)
-                    start_index = i;
-
-                // First find start_index
-                if (start_index == -1)
-                {
-                    decimal new_l = skipped_l + lengths[i];
-
-                    if (new_l < (decimal)clipFrom.TotalSeconds)
-                    {
-                        skipped_l = new_l;
-                        continue;
-                    }
-                    else if (new_l == (decimal)clipFrom.TotalSeconds)
-                        start_index = i + 1;
-                    else if (new_l > (decimal)clipFrom.TotalSeconds)
-                        start_index = i;
-                }
-                else
-                {
-                    l += lengths[i];
-                    count++;
-
-                    if (l >= (decimal)(clipTo.TotalSeconds - clipFrom.TotalSeconds))
-                        break;
-                }
-            }
-
-#if DEBUG
-            Console.WriteLine("Parts Start:".PadRight(15) + start_index);
-            Console.WriteLine("Parts Count:".PadRight(15) + count);
-            Console.WriteLine("Skipped Length:".PadRight(15) + TimeSpan.FromSeconds((double)skipped_l).ToString("c"));
-            Console.WriteLine("New Length:".PadRight(15) + TimeSpan.FromSeconds((double)l).ToString("c"));
-#endif
-
-            return new ClipDurationRange(start_index, count);
-        }
-
         private bool Download(string outputFilename)
         {
             var line = string.Empty;
@@ -425,6 +369,66 @@ namespace YouTube_Downloader_DLL.Operations
         {
             new FFmpegProcess(logger).FixM3U8(tsFile, this.Output);
             Helper.DeleteFiles(tsFile);
+        }
+
+        private ClipDurationRange GetDurationRange(IEnumerable<M3U8Part> parts, TimeSpan clipFrom, TimeSpan clipTo)
+        {
+            var lengths = new List<decimal>();
+            foreach (M3U8Part part in parts)
+            {
+                lengths.Add(part.Duration);
+            }
+
+#if DEBUG
+            Console.WriteLine("Count:".PadRight(15) + lengths.Count);
+            Console.WriteLine("Total Length:".PadRight(15) + TimeSpan.FromSeconds((double)lengths.Sum()).ToString("c"));
+#endif
+            if (clipFrom != TimeSpan.Zero && clipTo <= clipFrom)
+                throw new Exception($"{nameof(clipFrom)} duration can't be less than or equal to {nameof(clipTo)} duration.");
+
+            int i = 0;
+            int count = 0;
+            int start_index = -1;
+            decimal l = 0;
+            decimal skipped_l = 0;
+            for (i = 0; i < lengths.Count; i++)
+            {
+                if (clipFrom == TimeSpan.Zero)
+                    start_index = i;
+
+                // First find start_index
+                if (start_index == -1)
+                {
+                    decimal new_l = skipped_l + lengths[i];
+
+                    if (new_l < (decimal)clipFrom.TotalSeconds)
+                    {
+                        skipped_l = new_l;
+                        continue;
+                    }
+                    else if (new_l == (decimal)clipFrom.TotalSeconds)
+                        start_index = i + 1;
+                    else if (new_l > (decimal)clipFrom.TotalSeconds)
+                        start_index = i;
+                }
+                else
+                {
+                    l += lengths[i];
+                    count++;
+
+                    if (l >= (decimal)(clipTo.TotalSeconds - clipFrom.TotalSeconds))
+                        break;
+                }
+            }
+
+#if DEBUG
+            Console.WriteLine("Parts Start:".PadRight(15) + start_index);
+            Console.WriteLine("Parts Count:".PadRight(15) + count);
+            Console.WriteLine("Skipped Length:".PadRight(15) + TimeSpan.FromSeconds((double)skipped_l).ToString("c"));
+            Console.WriteLine("New Length:".PadRight(15) + TimeSpan.FromSeconds((double)l).ToString("c"));
+#endif
+
+            return new ClipDurationRange(start_index, count);
         }
 
         public static Dictionary<string, object> Args(string output,
