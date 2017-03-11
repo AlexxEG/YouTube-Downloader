@@ -100,12 +100,12 @@ namespace YouTube_Downloader
             this.LoadSettings();
             this.ShowUpdateNotification();
 
-#if DEBUG
+            //#if DEBUG
             tabControl1.SelectedIndex = 3;
 
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 0; i++)
                 this.AddDummyDownloadOperation(100000);
-#endif
+            //#endif
         }
 
         private void MainForm_Shown(object sender, EventArgs e)
@@ -282,8 +282,14 @@ namespace YouTube_Downloader
 
                 if (_selectedVideo.VideoSource == VideoSource.Twitch)
                 {
-                    operation.Prepare(TwitchOperation.Args(Path.Combine(path, filename),
-                                                           tempFormat));
+                    if (chbDownloadClipFrom.Checked)
+                        operation.Prepare(TwitchOperation.Args(Path.Combine(path, filename),
+                                                               tempFormat,
+                                                               dpDownloadClipFrom.Duration,
+                                                               dpDownloadClipTo.Duration));
+                    else
+                        operation.Prepare(TwitchOperation.Args(Path.Combine(path, filename),
+                                                               tempFormat));
                 }
                 else
                 {
@@ -355,6 +361,17 @@ namespace YouTube_Downloader
             }
         }
 
+        private void chbDownloadClipFrom_CheckedChanged(object sender, EventArgs e)
+        {
+            dpDownloadClipFrom.Enabled = chbDownloadClipTo.Enabled = chbDownloadClipFrom.Checked;
+            dpDownloadClipTo.Enabled = chbDownloadClipFrom.Checked && chbDownloadClipTo.Checked;
+        }
+
+        private void chbDownloadClipTo_CheckedChanged(object sender, EventArgs e)
+        {
+            dpDownloadClipTo.Enabled = chbDownloadClipTo.Checked;
+        }
+
         private void videoInfo_FileSizeUpdated(object sender, FileSizeUpdateEventArgs e)
         {
             if (this._selectedVideo.VideoSource == VideoSource.Twitch)
@@ -417,6 +434,9 @@ namespace YouTube_Downloader
 
                 videoThumbnail.Refresh();
                 videoThumbnail.ImageLocation = videoInfo.ThumbnailUrl;
+
+                // Show clipping tool for twitch
+                flpDownloadClip.Visible = videoInfo.VideoSource == VideoSource.Twitch;
             }
 
             btnGetVideo.Enabled = txtYoutubeLink.Enabled = btnPaste.Enabled = true;

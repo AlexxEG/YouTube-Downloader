@@ -31,6 +31,11 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.flpDownloadClip = new System.Windows.Forms.FlowLayoutPanel();
+            this.chbDownloadClipFrom = new System.Windows.Forms.CheckBox();
+            this.dpDownloadClipFrom = new YouTube_Downloader.Controls.DurationPicker();
+            this.chbDownloadClipTo = new System.Windows.Forms.CheckBox();
+            this.dpDownloadClipTo = new YouTube_Downloader.Controls.DurationPicker();
             this.label2 = new System.Windows.Forms.Label();
             this.btnPaste = new System.Windows.Forms.Button();
             this.imageList16px = new System.Windows.Forms.ImageList(this.components);
@@ -139,6 +144,7 @@
             this.playlistSelectNoneMenuItem = new System.Windows.Forms.MenuItem();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.groupBox1.SuspendLayout();
+            this.flpDownloadClip.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.videoThumbnail)).BeginInit();
             this.tabControl1.SuspendLayout();
@@ -171,6 +177,65 @@
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Video Link";
+            // 
+            // flpDownloadClip
+            // 
+            this.flpDownloadClip.Controls.Add(this.chbDownloadClipFrom);
+            this.flpDownloadClip.Controls.Add(this.dpDownloadClipFrom);
+            this.flpDownloadClip.Controls.Add(this.chbDownloadClipTo);
+            this.flpDownloadClip.Controls.Add(this.dpDownloadClipTo);
+            this.flpDownloadClip.Location = new System.Drawing.Point(4, 105);
+            this.flpDownloadClip.Name = "flpDownloadClip";
+            this.flpDownloadClip.Size = new System.Drawing.Size(281, 20);
+            this.flpDownloadClip.TabIndex = 10;
+            this.flpDownloadClip.Visible = false;
+            // 
+            // chbDownloadClipFrom
+            // 
+            this.chbDownloadClipFrom.AutoSize = true;
+            this.chbDownloadClipFrom.Location = new System.Drawing.Point(3, 3);
+            this.chbDownloadClipFrom.Margin = new System.Windows.Forms.Padding(3, 3, 0, 3);
+            this.chbDownloadClipFrom.Name = "chbDownloadClipFrom";
+            this.chbDownloadClipFrom.Size = new System.Drawing.Size(66, 17);
+            this.chbDownloadClipFrom.TabIndex = 16;
+            this.chbDownloadClipFrom.Text = "Clip from";
+            this.chbDownloadClipFrom.UseVisualStyleBackColor = true;
+            this.chbDownloadClipFrom.CheckedChanged += new System.EventHandler(this.chbDownloadClipFrom_CheckedChanged);
+            // 
+            // dpDownloadClipFrom
+            // 
+            this.dpDownloadClipFrom.BackColor = System.Drawing.SystemColors.Window;
+            this.dpDownloadClipFrom.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.dpDownloadClipFrom.Enabled = false;
+            this.dpDownloadClipFrom.Location = new System.Drawing.Point(69, 0);
+            this.dpDownloadClipFrom.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
+            this.dpDownloadClipFrom.Name = "dpDownloadClipFrom";
+            this.dpDownloadClipFrom.Size = new System.Drawing.Size(68, 20);
+            this.dpDownloadClipFrom.TabIndex = 14;
+            // 
+            // chbDownloadClipTo
+            // 
+            this.chbDownloadClipTo.AutoSize = true;
+            this.chbDownloadClipTo.Enabled = false;
+            this.chbDownloadClipTo.Location = new System.Drawing.Point(143, 3);
+            this.chbDownloadClipTo.Margin = new System.Windows.Forms.Padding(3, 3, 0, 3);
+            this.chbDownloadClipTo.Name = "chbDownloadClipTo";
+            this.chbDownloadClipTo.Size = new System.Drawing.Size(35, 17);
+            this.chbDownloadClipTo.TabIndex = 17;
+            this.chbDownloadClipTo.Text = "to";
+            this.chbDownloadClipTo.UseVisualStyleBackColor = true;
+            this.chbDownloadClipTo.CheckedChanged += new System.EventHandler(this.chbDownloadClipTo_CheckedChanged);
+            // 
+            // dpDownloadClipTo
+            // 
+            this.dpDownloadClipTo.BackColor = System.Drawing.SystemColors.Window;
+            this.dpDownloadClipTo.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.dpDownloadClipTo.Enabled = false;
+            this.dpDownloadClipTo.Location = new System.Drawing.Point(178, 0);
+            this.dpDownloadClipTo.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
+            this.dpDownloadClipTo.Name = "dpDownloadClipTo";
+            this.dpDownloadClipTo.Size = new System.Drawing.Size(68, 20);
+            this.dpDownloadClipTo.TabIndex = 15;
             // 
             // label2
             // 
@@ -387,6 +452,7 @@
             // 
             this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox3.Controls.Add(this.flpDownloadClip);
             this.groupBox3.Controls.Add(this.txtTitle);
             this.groupBox3.Controls.Add(this.lFileSize);
             this.groupBox3.Controls.Add(this.videoThumbnail);
@@ -621,7 +687,7 @@
             this.cmsPlaylistOptions.Name = "cmsPlaylistOptions";
             this.cmsPlaylistOptions.ShowCheckMargin = true;
             this.cmsPlaylistOptions.ShowImageMargin = false;
-            this.cmsPlaylistOptions.Size = new System.Drawing.Size(242, 114);
+            this.cmsPlaylistOptions.Size = new System.Drawing.Size(242, 92);
             this.cmsPlaylistOptions.Closed += new System.Windows.Forms.ToolStripDropDownClosedEventHandler(this.cmsPlaylistOptions_Closed);
             this.cmsPlaylistOptions.Closing += new System.Windows.Forms.ToolStripDropDownClosingEventHandler(this.cmsPlaylistOptions_Closing);
             this.cmsPlaylistOptions.Opening += new System.ComponentModel.CancelEventHandler(this.cmsPlaylistOptions_Opening);
@@ -1278,6 +1344,8 @@
             this.Shown += new System.EventHandler(this.MainForm_Shown);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.flpDownloadClip.ResumeLayout(false);
+            this.flpDownloadClip.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.videoThumbnail)).EndInit();
@@ -1417,6 +1485,11 @@
         private System.Windows.Forms.ToolStripMenuItem playlistReverseMenuItem;
         private System.Windows.Forms.ToolStripMenuItem playlistNumberPrefixMenuItem;
         private System.Windows.Forms.ImageList imageList14px;
+        private System.Windows.Forms.CheckBox chbDownloadClipTo;
+        private System.Windows.Forms.CheckBox chbDownloadClipFrom;
+        private Controls.DurationPicker dpDownloadClipTo;
+        private Controls.DurationPicker dpDownloadClipFrom;
+        private System.Windows.Forms.FlowLayoutPanel flpDownloadClip;
     }
 }
 
