@@ -53,6 +53,14 @@ namespace YouTube_Downloader.Controls
                         parent.SelectPrevious(this, false);
                     }
                     break;
+                case Keys.Left:
+                    if (this.SelectionStart == 0)
+                        (this.Parent as DurationPicker).SelectPrevious(this, false);
+                    break;
+                case Keys.Right:
+                    if (this.SelectionStart == this.TextLength)
+                        (this.Parent as DurationPicker).SelectNext(this, false);
+                    break;
             }
 
             base.OnKeyUp(e);
