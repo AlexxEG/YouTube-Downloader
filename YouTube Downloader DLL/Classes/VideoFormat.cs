@@ -214,7 +214,10 @@ namespace YouTube_Downloader_DLL.Classes
             {
                 string fps = !string.IsNullOrEmpty(this.FPS) ? $" - {this.FPS}fps" : string.Empty;
 
-                text = string.Format("{0}{1} (.{2})", this.Format, fps, this.Extension);
+                if (VideoInfo.VideoSource == VideoSource.YouTube)
+                    text = string.Format("{0}{1} (.{2})", this.Format, fps, this.Extension);
+                else if (VideoInfo.VideoSource == VideoSource.Twitch)
+                    text = string.Format("{0} - {1}{2} (.{3})", this.FormatID, this.Format, fps, this.Extension);
             }
 
             return text;
