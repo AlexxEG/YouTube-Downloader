@@ -1390,7 +1390,7 @@ namespace YouTube_Downloader
         }
 
         /// <summary>
-        /// Cancels all active IOperations.
+        /// Cancels all active Operations.
         /// </summary>
         private async void CancelOperations()
         {
