@@ -100,13 +100,38 @@ namespace YouTube_Downloader
             this.LoadSettings();
             this.ShowUpdateNotification();
 
-            //#if DEBUG
-            tabControl1.SelectedIndex = 3;
-
-            for (int i = 0; i < 0; i++)
-                this.AddDummyDownloadOperation(100000);
-            //#endif
+#if DEBUG
+            //for (int i = 0; i < 0; i++)
+            //    this.AddDummyDownloadOperation(100000);
+            this.ReadDebugFile();
+#endif
         }
+
+#if DEBUG
+        private void ReadDebugFile()
+        {
+            string file = @"..\..\..\DEBUG_FILE.txt";
+
+            if (!File.Exists(file))
+                return;
+
+            using (var reader = new StreamReader(file))
+            {
+                string line = string.Empty;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    if (line.StartsWith("#"))
+                        continue;
+
+                    string[] data = line.Split('|');
+                    object obj = null;
+                    obj = this.GetType().GetField(data[0], System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(this);
+                    object converted_value = System.Convert.ChangeType(data[3], Type.GetType(data[2]));
+                    obj.GetType().GetProperty(data[1]).SetValue(obj, converted_value);
+                }
+            }
+        }
+#endif
 
         private void MainForm_Shown(object sender, EventArgs e)
         {
