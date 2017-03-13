@@ -379,10 +379,6 @@ namespace YouTube_Downloader_DLL.Operations
                 lengths.Add(part.Duration);
             }
 
-#if DEBUG
-            Console.WriteLine("Count:".PadRight(15) + lengths.Count);
-            Console.WriteLine("Total Length:".PadRight(15) + TimeSpan.FromSeconds((double)lengths.Sum()).ToString("c"));
-#endif
             if (clipFrom != TimeSpan.Zero && clipTo <= clipFrom)
                 throw new Exception($"{nameof(clipFrom)} duration can't be less than or equal to {nameof(clipTo)} duration.");
 
@@ -420,13 +416,6 @@ namespace YouTube_Downloader_DLL.Operations
                         break;
                 }
             }
-
-#if DEBUG
-            Console.WriteLine("Parts Start:".PadRight(15) + start_index);
-            Console.WriteLine("Parts Count:".PadRight(15) + count);
-            Console.WriteLine("Skipped Length:".PadRight(15) + TimeSpan.FromSeconds((double)skipped_l).ToString("c"));
-            Console.WriteLine("New Length:".PadRight(15) + TimeSpan.FromSeconds((double)l).ToString("c"));
-#endif
 
             return new ClipDurationRange(start_index, count);
         }
