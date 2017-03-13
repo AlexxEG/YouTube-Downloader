@@ -306,16 +306,6 @@ namespace YouTube_Downloader_DLL.Operations
             }
         }
 
-        public string Text
-        {
-            get { return _text; }
-            set
-            {
-                _text = value;
-                this.OnPropertyChanged();
-            }
-        }
-
         public string Thumbnail
         {
             get { return _thumbnail; }
@@ -614,8 +604,6 @@ namespace YouTube_Downloader_DLL.Operations
                 this.ProgressPercentage = ProgressMax;
 
             this.OnPropertyChangedExplicit(nameof(ProgressText));
-
-            this.Text = string.Empty;
 
             OnCompleted(new OperationEventArgs(null, this.Status));
         }

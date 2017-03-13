@@ -160,7 +160,6 @@ namespace YouTube_Downloader_DLL.Operations
             _end = (TimeSpan)args[ArgKeys.End];
 
             this.Duration = (long)FFmpegProcess.GetDuration(this.Input).Value.TotalSeconds;
-            this.Text = "Cropping...";
             this.Title = Path.GetFileName(this.Output);
         }
 
