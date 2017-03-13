@@ -77,8 +77,6 @@ namespace YouTube_Downloader_DLL.DummyOperations
 
         protected override void WorkerCompleted(RunWorkerCompletedEventArgs e)
         {
-            this.ProgressTextOverride = string.Empty;
-
             if (e.Error != null)
             {
                 this.Title += " ERROR";

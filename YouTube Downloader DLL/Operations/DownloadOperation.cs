@@ -193,7 +193,6 @@ namespace YouTube_Downloader_DLL.Operations
 
         protected override void WorkerCompleted(RunWorkerCompletedEventArgs e)
         {
-            this.ProgressTextOverride = string.Empty;
         }
 
         protected override void WorkerDoWork(DoWorkEventArgs e)
@@ -208,8 +207,7 @@ namespace YouTube_Downloader_DLL.Operations
 
                 this.ReportProgress(-1, new Dictionary<string, object>()
                 {
-                    { nameof(Progress), 0 },
-                    { nameof(ProgressTextOverride), "Combining..." }
+                    { nameof(Progress), 0 }
                 });
                 this.ReportProgress(ProgressMax, null);
 

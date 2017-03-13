@@ -333,8 +333,7 @@ namespace YouTube_Downloader_DLL.Operations
                         {
                             this.ReportProgress(-1, new Dictionary<string, object>()
                             {
-                                { nameof(Progress), 0 },
-                                { nameof(ProgressTextOverride), "Combining..." }
+                                { nameof(Progress), 0 }
                             });
                             this.ReportProgress(ProgressMax, null);
 
@@ -343,8 +342,7 @@ namespace YouTube_Downloader_DLL.Operations
 
                             this.ReportProgress(-1, new Dictionary<string, object>()
                             {
-                                { nameof(Progress), 0 },
-                                { nameof(ProgressTextOverride), string.Empty }
+                                { nameof(Progress), 0 }
                             });
                         }
 

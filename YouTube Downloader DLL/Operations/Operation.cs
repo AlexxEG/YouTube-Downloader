@@ -246,9 +246,6 @@ namespace YouTube_Downloader_DLL.Operations
         {
             get
             {
-                if (!string.IsNullOrEmpty(this.ProgressTextOverride))
-                    return _progressText = this.ProgressTextOverride;
-
                 if (this.Wait() && !string.IsNullOrEmpty(_progressText))
                     return _progressText;
 
@@ -281,17 +278,6 @@ namespace YouTube_Downloader_DLL.Operations
                 }
 
                 return _progressText;
-            }
-        }
-
-        public string ProgressTextOverride
-        {
-            get { return _progressTextOverride; }
-            set
-            {
-                _progressTextOverride = value;
-                OnPropertyChanged();
-                OnPropertyChangedExplicit(nameof(ProgressText));
             }
         }
 
