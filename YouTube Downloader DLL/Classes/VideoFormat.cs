@@ -208,7 +208,7 @@ namespace YouTube_Downloader_DLL.Classes
                 if (this.AudioBitRate > -1)
                     text = string.Format("Audio Only - {0} kbps (.{1})", this.AudioBitRate, this.Extension);
                 else
-                    text = string.Format("Audio Only (.{0}", this.Extension);
+                    text = string.Format("Audio Only (.{0})", this.Extension);
             }
             else
             {
