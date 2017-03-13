@@ -1242,7 +1242,10 @@ namespace YouTube_Downloader
 
         private void viewErrorsMenuItem_Click(object sender, EventArgs e)
         {
-
+            Dialogs.ExceptionDialog.ShowDialog(this,
+                "An error occured.",
+                "Error",
+                (olvQueue.SelectedObjects[0] as OperationModel).Operation.Exception);
         }
 
         private void openMenuItem_Click(object sender, EventArgs e)
