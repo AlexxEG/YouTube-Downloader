@@ -115,13 +115,14 @@ namespace YouTube_Downloader_DLL.Operations
 
             if (!this.IsSuccessful)
             {
-                if (_mode == ConvertingMode.File)
+                switch (_mode)
                 {
-                    Helper.DeleteFiles(this.Output);
-                }
-                else
-                {
-                    Helper.DeleteFiles(_currentOutput);
+                    case ConvertingMode.File:
+                        Helper.DeleteFiles(this.Output);
+                        break;
+                    case ConvertingMode.Folder:
+                        Helper.DeleteFiles(_currentOutput);
+                        break;
                 }
             }
 
