@@ -83,7 +83,8 @@ namespace YouTube_Downloader_DLL.Operations
 
                 string speed = string.Format(new FileSizeFormatProvider(), "{0:s}", downloader.Speed);
                 long longETA = Helper.GetETA(downloader.Speed, downloader.TotalSize, downloader.TotalProgress);
-                string ETA = longETA == 0 ? "" : "  [ " + FormatLeftTime.Format(((long)longETA) * 1000) + " ]";
+                // string ETA = longETA == 0 ? "" : "  [ " + FormatLeftTime.Format(((long)longETA) * 1000) + " ]";
+                string ETA = longETA == 0 ? "" : "  " + TimeSpan.FromMilliseconds(longETA * 1000).ToString(@"hh\:mm\:ss");
 
                 this.ETA = ETA;
                 this.Speed = speed;
