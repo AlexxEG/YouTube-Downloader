@@ -224,6 +224,8 @@ namespace YouTube_Downloader_DLL.Operations
 
         protected override void WorkerDoWork(DoWorkEventArgs e)
         {
+            downloader.Start();
+
             while (downloader?.IsBusy == true)
                 Thread.Sleep(200);
 
@@ -296,7 +298,6 @@ namespace YouTube_Downloader_DLL.Operations
 
         protected override void WorkerStart()
         {
-            downloader.Start();
         }
     }
 }
