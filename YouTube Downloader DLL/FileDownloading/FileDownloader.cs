@@ -256,11 +256,21 @@ namespace YouTube_Downloader_DLL.FileDownloading
             try
             {
                 webReq = (HttpWebRequest)WebRequest.Create(this.CurrentFile.Url);
-                webReq.AddRange(existLen);
+                webReq.Method = "HEAD";
 
                 webResp = (HttpWebResponse)webReq.GetResponse();
 
-                totalSize = existLen + webResp.ContentLength;
+                if (webResp.ContentLength == existLen)
+                    totalSize = existLen;
+                else
+                {
+                    webReq = (HttpWebRequest)WebRequest.Create(this.CurrentFile.Url);
+                    webReq.AddRange(existLen);
+
+                    webResp = (HttpWebResponse)webReq.GetResponse();
+
+                    totalSize = existLen + webResp.ContentLength;
+                }
             }
             catch (Exception ex)
             {
