@@ -8,17 +8,10 @@ namespace YouTube_Downloader_DLL.DummyOperations
 {
     public class DummyDownloadOperation : Operation
     {
-        enum Events
-        {
-            Combining
-        }
-
         bool _cancel;
         long _workTimeMS;
         static Random _random = new Random(Environment.TickCount);
-
-        public event EventHandler Combining;
-
+        
         public DummyDownloadOperation(long workTimeMS)
         {
             _workTimeMS = workTimeMS;
@@ -33,12 +26,7 @@ namespace YouTube_Downloader_DLL.DummyOperations
             this.Input = this.Link;
             this.Output = @"C:\output.mp4";
         }
-
-        private void OnCombining()
-        {
-            this.Combining?.Invoke(this, EventArgs.Empty);
-        }
-
+        
         #region Operation members
 
         public override void Pause()
@@ -141,18 +129,7 @@ namespace YouTube_Downloader_DLL.DummyOperations
         {
             if (e.UserState == null)
                 return;
-
-            // Raise event on correct thread
-            if (e.UserState is Events)
-            {
-                switch ((Events)e.UserState)
-                {
-                    case Events.Combining:
-                        this.OnCombining();
-                        break;
-                }
-            }
-
+            
             // Used to set multiple properties
             if (e.UserState is Dictionary<string, object>)
             {

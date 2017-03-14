@@ -13,16 +13,6 @@ namespace YouTube_Downloader_DLL.Operations
 {
     public class DownloadOperation : Operation
     {
-        class ArgKeys
-        {
-            public const int Min = 2;
-            public const int Max = 3;
-            public const string Url = "url";
-            public const string Audio = "audio";
-            public const string Video = "video";
-            public const string Output = "output";
-        }
-
         bool _combine, _processing, _downloadSuccessful;
         FileDownloader downloader;
 

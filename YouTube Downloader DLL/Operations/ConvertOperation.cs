@@ -12,17 +12,6 @@ namespace YouTube_Downloader_DLL.Operations
 {
     public class ConvertOperation : Operation
     {
-        class ArgKeys
-        {
-            public const int Min = 3;
-            public const int Max = 4;
-            public const string Input = "input";
-            public const string Output = "output";
-            public const string Start = "start";
-            public const string End = "end";
-            public const string SearchPattern = "search_pattern";
-        }
-
         public const int UpdateProperties = -1;
 
         int _count = 0;

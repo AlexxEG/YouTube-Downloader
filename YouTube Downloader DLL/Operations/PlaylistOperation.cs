@@ -16,18 +16,6 @@ namespace YouTube_Downloader_DLL.Operations
 {
     public class PlaylistOperation : Operation
     {
-        class ArgKeys
-        {
-            public const int Max = 6;
-            public const int Min = 5;
-            public const string Input = "input";
-            public const string Output = "output";
-            public const string PreferredQuality = "preferred_quality";
-            public const string Videos = "videos";
-            public const string Reverse = "reverse";
-            public const string IndexPrefix = "index_prefix";
-        }
-
         public const int EventFileDownloadComplete = 1002;
 
         int _downloads = 0;

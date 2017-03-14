@@ -14,16 +14,6 @@ namespace YouTube_Downloader_DLL.Operations
 {
     public class TwitchOperation : Operation
     {
-        class ArgKeys
-        {
-            public const int Min = 2;
-            public const int Max = 4;
-            public const string Output = "output";
-            public const string Format = "format";
-            public const string ClipFrom = "clip_from";
-            public const string ClipTo = "clip_to";
-        }
-
         private class ProgressReport
         {
             public long SpeedInBytes { get; private set; }
@@ -41,6 +31,7 @@ namespace YouTube_Downloader_DLL.Operations
         }
 
         bool _cancel = false;
+        bool _clipping = false;
         bool _combining = false;
         bool _processing = false;
         bool _pause = false;
@@ -69,6 +60,7 @@ namespace YouTube_Downloader_DLL.Operations
         {
             _clipFrom = clipFrom;
             _clipTo = clipTo;
+            _clipping = true;
         }
 
         #region Internal Classes
@@ -299,28 +291,21 @@ namespace YouTube_Downloader_DLL.Operations
                     }
                 }
 
-                int start_index = -1;
-                int count = -1;
+                int start_index = 0;
+                int count = parts.Count;
 
-                switch (this.Arguments.Count)
+                if (_clipping)
                 {
-                    case ArgKeys.Min:
-                        start_index = 0;
-                        count = parts.Count;
-                        break;
-                    case ArgKeys.Max:
-                        var range = this.GetDurationRange(parts, _clipFrom, _clipTo);
-                        start_index = range.Start;
-                        count = range.Count;
+                    var range = this.GetDurationRange(parts, _clipFrom, _clipTo);
+                    start_index = range.Start;
+                    count = range.Count;
 
-                        this.ReportProgress(-1, new Dictionary<string, object>()
-                        {
-                            { nameof(Duration), (long)(_clipTo - _clipFrom).TotalSeconds }
-                        });
-                        break;
+                    this.ReportProgress(-1, new Dictionary<string, object>()
+                    {
+                        { nameof(Duration), (long)(_clipTo - _clipFrom).TotalSeconds }
+                    });
                 }
 
-                //foreach (M3U8Part part in parts)
                 for (int i = start_index; i < (start_index + count); i++)
                 {
                     if (_cancel)

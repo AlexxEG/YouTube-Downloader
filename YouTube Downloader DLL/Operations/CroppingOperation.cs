@@ -11,15 +11,6 @@ namespace YouTube_Downloader_DLL.Operations
 {
     public class CroppingOperation : Operation
     {
-        class ArgKeys
-        {
-            public const int Count = 4;
-            public const string Input = "input";
-            public const string Output = "output";
-            public const string Start = "start";
-            public const string End = "end";
-        }
-
         TimeSpan _start = TimeSpan.MinValue;
         TimeSpan _end = TimeSpan.MinValue;
         Process _process;
