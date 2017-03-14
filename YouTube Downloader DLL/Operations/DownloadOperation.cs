@@ -71,8 +71,8 @@ namespace YouTube_Downloader_DLL.Operations
 
         private void downloader_Canceled(object sender, EventArgs e)
         {
-            // Pass the event along to a almost identical event handler.
-            this.Status = OperationStatus.Canceled;
+            if (this.Status == OperationStatus.Failed)
+                this.Status = OperationStatus.Canceled;
         }
 
         private void downloader_Completed(object sender, EventArgs e)
