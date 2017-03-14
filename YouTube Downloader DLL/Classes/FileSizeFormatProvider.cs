@@ -67,7 +67,7 @@ namespace YouTube_Downloader_DLL
             }
 
             if (format.StartsWith(SpeedFormat))
-                suffix += "/sec";
+                suffix += "/s";
 
             int postion = format.StartsWith(SpeedFormat) ? SpeedFormat.Length : FileSizeFormat.Length;
             string precision = format.Substring(postion);
