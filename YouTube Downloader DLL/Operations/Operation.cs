@@ -96,7 +96,6 @@ namespace YouTube_Downloader_DLL.Operations
         List<string> _errors = new List<string>();
         OperationStatus _status = OperationStatus.Queued;
 
-        Stopwatch sw;
         BackgroundWorker _worker;
 
         #endregion
@@ -253,44 +252,7 @@ namespace YouTube_Downloader_DLL.Operations
         /// </summary>
         public string Output { get; set; }
 
-        public string ProgressText
-        {
-            get
-            {
-                if (this.Wait() && !string.IsNullOrEmpty(_progressText))
-                    return _progressText;
-
-                if (sw != null)
-                    sw.Restart();
-
-                switch (this.Status)
-                {
-                    case OperationStatus.Working:
-                        StringBuilder sb = new StringBuilder();
-
-                        sb.AppendFormat("{0}%", ProgressPercentage);
-
-                        if (!(this.Progress == 0 && this.FileSize == 0))
-                        {
-                            sb.AppendFormat(" - {0}/{1} - {2}{3}",
-                                Helper.FormatFileSize(this.Progress),
-                                Helper.FormatFileSize(this.FileSize),
-                                this.Speed, this.ETA);
-                        }
-
-                        _progressText = sb.ToString();
-                        break;
-                    case OperationStatus.Success:
-                        _progressText = "Complete";
-                        break;
-                    default:
-                        _progressText = this.Status.ToString();
-                        break;
-                }
-
-                return _progressText;
-            }
-        }
+        public string ProgressText { get; set; }
 
         public string Speed
         {
@@ -466,9 +428,6 @@ namespace YouTube_Downloader_DLL.Operations
         {
             this.WorkerStart();
 
-            sw = new Stopwatch();
-            sw.Start();
-
             _worker.RunWorkerAsync(this.Arguments);
 
             Operation.Running.Add(this);
@@ -569,9 +528,6 @@ namespace YouTube_Downloader_DLL.Operations
 
         protected void Complete()
         {
-            sw.Stop();
-            sw = null;
-
             this.ReportsProgress = true;
 
             if (this.Status == OperationStatus.Success)
@@ -627,15 +583,6 @@ namespace YouTube_Downloader_DLL.Operations
 
             this.WorkerProgressChanged(e);
             this.OnProgressChanged(e);
-        }
-
-        private bool Wait()
-        {
-            if (sw == null || !sw.IsRunning)
-                return false;
-
-            // Limit the progress update to once a second to avoid flickering.
-            return sw.ElapsedMilliseconds < ProgressDelay;
         }
     }
 }

@@ -23,7 +23,6 @@ namespace YouTube_Downloader.Controls
         string _inputText;
         string _status;
         string _title;
-        string _workingText;
 
         Stopwatch sw;
 
@@ -113,18 +112,6 @@ namespace YouTube_Downloader.Controls
                     return;
 
                 _title = value;
-                this.OnAspectChanged();
-            }
-        }
-        public string WorkingText
-        {
-            get { return _workingText; }
-            set
-            {
-                if (_workingText == value)
-                    return;
-
-                _workingText = value;
                 this.OnAspectChanged();
             }
         }
@@ -232,8 +219,8 @@ namespace YouTube_Downloader.Controls
             this.Progress = Math.Min(ProgressMaximum,
                                      Math.Max(ProgressMinimum, e.ProgressPercentage));
 
-            if (!string.IsNullOrEmpty(this.WorkingText))
-                this.Status = this.WorkingText;
+            if (!string.IsNullOrEmpty(this.Operation.ProgressText))
+                this.Status = this.Operation.ProgressText;
             else
             {
                 if (this.Wait())
@@ -296,8 +283,8 @@ namespace YouTube_Downloader.Controls
                     this.Status = this.Operation.Status.ToString();
                     break;
                 case OperationStatus.Working:
-                    if (!string.IsNullOrEmpty(this.WorkingText))
-                        this.Status = this.WorkingText;
+                    if (!string.IsNullOrEmpty(this.Operation.ProgressText))
+                        this.Status = this.Operation.ProgressText;
                     break;
             }
         }

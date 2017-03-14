@@ -42,6 +42,7 @@ namespace YouTube_Downloader_DLL.Operations
             this.ReportsProgress = true;
             this.Input = input;
             this.Output = output;
+            this.ProgressText = "Converting...";
         }
 
         public ConvertOperation(string input,

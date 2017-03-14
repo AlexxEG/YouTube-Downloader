@@ -300,8 +300,6 @@ namespace YouTube_Downloader
                             VideoFormat audio = Helper.GetAudioFormat(tempFormat);
                             operation = new DownloadOperation(tempFormat, audio, output);
                         }
-
-                        (operation as DownloadOperation).Combining += DownloadOperation_Combining;
                         break;
                     default:
                         throw new Exception($"Unknown video source: {_selectedVideo.VideoSource}");
@@ -459,18 +457,6 @@ namespace YouTube_Downloader
             btnGetVideo.Enabled = txtYoutubeLink.Enabled = btnPaste.Enabled = true;
             cbQuality.Enabled = videoInfo.Formats.Count > 0;
             btnDownload.Enabled = true;
-        }
-
-        private void DownloadOperation_Combining(object sender, EventArgs e)
-        {
-            foreach (OperationModel item in olvQueue.Objects)
-            {
-                if (item.Operation == sender)
-                {
-                    item.WorkingText = "Combining...";
-                    return;
-                }
-            }
         }
 
         private void downloadItem_OperationComplete(object sender, OperationEventArgs e)
@@ -789,8 +775,6 @@ namespace YouTube_Downloader
                 olvQueue.AddObject(item);
                 olvQueue.SelectedObject = item;
 
-                operation.Combined += PlaylistOperation_Combined;
-                operation.Combining += PlaylistOperation_Combining;
                 operation.FileDownloadComplete += playlistOperation_FileDownloadComplete;
 
                 tabControl1.SelectedTab = queueTabPage;
@@ -800,30 +784,6 @@ namespace YouTube_Downloader
             catch (Exception ex)
             {
                 MessageBox.Show(this, ex.Message, ex.Source, MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void PlaylistOperation_Combined(object sender, EventArgs e)
-        {
-            foreach (OperationModel item in olvQueue.Objects)
-            {
-                if (item.Operation == sender)
-                {
-                    item.WorkingText = null;
-                    return;
-                }
-            }
-        }
-
-        private void PlaylistOperation_Combining(object sender, EventArgs e)
-        {
-            foreach (OperationModel item in olvQueue.Objects)
-            {
-                if (item.Operation == sender)
-                {
-                    item.WorkingText = "Combining...";
-                    return;
-                }
             }
         }
 
@@ -1429,7 +1389,6 @@ namespace YouTube_Downloader
             var operation = new ConvertOperation(input, output, start, end);
             var item = new OperationModel(Path.GetFileName(output), input, Path.GetFileName(input), operation);
 
-            item.WorkingText = "Converting...";
             item.Duration = Helper.FormatVideoLength(FFmpegProcess.GetDuration(input).Value);
             item.FileSize = Helper.GetFileSizeFormatted(input);
             item.AspectChanged += OperationModel_AspectChanged;
@@ -1453,7 +1412,6 @@ namespace YouTube_Downloader
             var operation = new ConvertOperation(input, output, extension);
             var item = new OperationModel(Path.GetFileName(output), input, Path.GetFileName(input), operation);
 
-            item.WorkingText = "Converting...";
             item.AspectChanged += OperationModel_AspectChanged;
 
             olvQueue.AddObject(item);
@@ -1482,7 +1440,6 @@ namespace YouTube_Downloader
             var operation = new CroppingOperation(input, output, start, end);
             var item = new OperationModel(Path.GetFileName(output), input, Path.GetFileName(input), operation);
 
-            item.WorkingText = "Cropping...";
             item.Duration = Helper.FormatVideoLength(FFmpegProcess.GetDuration(input).Value);
             item.FileSize = Helper.GetFileSizeFormatted(input);
             item.AspectChanged += OperationModel_AspectChanged;

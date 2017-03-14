@@ -39,6 +39,7 @@ namespace YouTube_Downloader_DLL.Operations
 
             this.Duration = (long)FFmpegProcess.GetDuration(this.Input).Value.TotalSeconds;
             this.Title = Path.GetFileName(this.Output);
+            this.ProgressText = "Cropping...";
         }
 
         #region Operation members

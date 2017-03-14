@@ -23,15 +23,8 @@ namespace YouTube_Downloader_DLL.Operations
             public const string Output = "output";
         }
 
-        enum Events
-        {
-            Combining
-        }
-
         bool _combine, _processing, _downloadSuccessful;
         FileDownloader downloader;
-
-        public event EventHandler Combining;
 
         private DownloadOperation(VideoFormat format)
         {
@@ -259,7 +252,10 @@ namespace YouTube_Downloader_DLL.Operations
                 {
                     FFmpegResult<bool> result;
 
-                    this.ReportProgress(-1, Events.Combining);
+                    this.ReportProgress(-1, new Dictionary<string, object>()
+                    {
+                        { nameof(ProgressText), "Combining..." }
+                    });
 
                     using (var logger = OperationLogger.Create(OperationLogger.FFmpegDLogFile))
                     {
@@ -298,17 +294,6 @@ namespace YouTube_Downloader_DLL.Operations
             if (e.UserState == null)
                 return;
 
-            // Raise event on correct thread
-            if (e.UserState is Events)
-            {
-                switch ((Events)e.UserState)
-                {
-                    case Events.Combining:
-                        this.OnCombining();
-                        break;
-                }
-            }
-
             // Used to set multiple properties
             if (e.UserState is Dictionary<string, object>)
             {
@@ -322,11 +307,6 @@ namespace YouTube_Downloader_DLL.Operations
         protected override void WorkerStart()
         {
             downloader.Start();
-        }
-
-        private void OnCombining()
-        {
-            this.Combining?.Invoke(this, EventArgs.Empty);
         }
     }
 }

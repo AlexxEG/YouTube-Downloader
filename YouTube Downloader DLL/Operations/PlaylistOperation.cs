@@ -28,8 +28,6 @@ namespace YouTube_Downloader_DLL.Operations
             public const string IndexPrefix = "index_prefix";
         }
 
-        public const int EventCombined = 1000;
-        public const int EventCombining = 1001;
         public const int EventFileDownloadComplete = 1002;
 
         int _downloads = 0;
@@ -54,8 +52,6 @@ namespace YouTube_Downloader_DLL.Operations
         public List<string> DownloadedFiles { get; set; } = new List<string>();
         public List<VideoInfo> Videos { get; set; } = new List<VideoInfo>();
 
-        public event EventHandler Combined;
-        public event EventHandler Combining;
         /// <summary>
         /// Occurs when a single file download from the playlist is complete.
         /// </summary>
@@ -420,12 +416,6 @@ namespace YouTube_Downloader_DLL.Operations
         {
             switch (e.ProgressPercentage)
             {
-                case EventCombined:
-                    this.OnCombined();
-                    break;
-                case EventCombining:
-                    this.OnCombining();
-                    break;
                 case EventFileDownloadComplete:
                     this.OnFileDownloadComplete(e.UserState as string);
                     break;
@@ -456,7 +446,10 @@ namespace YouTube_Downloader_DLL.Operations
             try
             {
                 // Raise events on main thread
-                this.ReportProgress(EventCombining, null);
+                this.ReportProgress(-1, new Dictionary<string, object>()
+                {
+                    { nameof(ProgressText), "Combining..." }
+                });
 
                 if (_ffmpegLogger == null)
                     _ffmpegLogger = OperationLogger.Create(OperationLogger.FFmpegDLogFile);
@@ -494,20 +487,13 @@ namespace YouTube_Downloader_DLL.Operations
             finally
             {
                 // Raise events on main thread
-                this.ReportProgress(EventCombined, null);
+                this.ReportProgress(-1, new Dictionary<string, object>()
+                {
+                    { nameof(ProgressText), null }
+                });
             }
 
             return result.Value;
-        }
-
-        private void OnCombined()
-        {
-            this.Combined?.Invoke(this, EventArgs.Empty);
-        }
-
-        private void OnCombining()
-        {
-            this.Combining?.Invoke(this, EventArgs.Empty);
         }
 
         private void OnFileDownloadComplete(string file)
