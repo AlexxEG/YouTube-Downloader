@@ -105,41 +105,6 @@ namespace YouTube_Downloader
 #endif
         }
 
-#if DEBUG
-        private void ReadDebugFile()
-        {
-            string file = @"..\..\..\DEBUG_FILE.txt";
-
-            if (!File.Exists(file))
-                return;
-
-            using (var reader = new StreamReader(file))
-            {
-                string line = string.Empty;
-                while ((line = reader.ReadLine()) != null)
-                {
-                    if (line.StartsWith("#"))
-                        continue;
-                    else if (line.StartsWith("!"))
-                    {
-                        int count = int.Parse(line.Replace("!", ""));
-
-                        for (int i = 0; i < count; i++)
-                            this.AddDummyDownloadOperation(100000);
-                    }
-                    else
-                    {
-                        string[] data = line.Split('|');
-                        object obj = null;
-                        obj = this.GetType().GetField(data[0], System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(this);
-                        object converted_value = System.Convert.ChangeType(data[3], Type.GetType(data[2]));
-                        obj.GetType().GetProperty(data[1]).SetValue(obj, converted_value);
-                    }
-                }
-            }
-        }
-#endif
-
         private void MainForm_Shown(object sender, EventArgs e)
         {
             if (_args != null)
@@ -1329,21 +1294,6 @@ namespace YouTube_Downloader
             btnGetVideo.PerformClick();
         }
 
-        private void AddDummyDownloadOperation(long workTimeMS)
-        {
-            Operation operation = new DummyDownloadOperation(workTimeMS);
-
-            var item = new OperationModel(operation.Title, operation.Link, operation);
-
-            item.Duration = Helper.FormatVideoLength(operation.Duration);
-            item.FileSize = Helper.FormatFileSize(operation.FileSize);
-            item.AspectChanged += OperationModel_AspectChanged;
-
-            olvQueue.AddObject(item);
-
-            DownloadQueueHandler.Add(operation);
-        }
-
         /// <summary>
         /// Cancels all active Operations.
         /// </summary>
@@ -1752,5 +1702,55 @@ namespace YouTube_Downloader
 
             return formats.ToArray();
         }
+
+#if DEBUG
+        private void AddDummyDownloadOperation(long workTimeMS)
+        {
+            Operation operation = new DummyDownloadOperation(workTimeMS);
+
+            var item = new OperationModel(operation.Title, operation.Link, operation);
+
+            item.Duration = Helper.FormatVideoLength(operation.Duration);
+            item.FileSize = Helper.FormatFileSize(operation.FileSize);
+            item.AspectChanged += OperationModel_AspectChanged;
+
+            olvQueue.AddObject(item);
+
+            DownloadQueueHandler.Add(operation);
+        }
+
+        private void ReadDebugFile()
+        {
+            string file = @"..\..\..\DEBUG_FILE.txt";
+
+            if (!File.Exists(file))
+                return;
+
+            using (var reader = new StreamReader(file))
+            {
+                string line = string.Empty;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    if (line.StartsWith("#"))
+                        continue;
+                    else if (line.StartsWith("!"))
+                    {
+                        int count = int.Parse(line.Replace("!", ""));
+
+                        for (int i = 0; i < count; i++)
+                            this.AddDummyDownloadOperation(100000);
+                    }
+                    else
+                    {
+                        string[] data = line.Split('|');
+                        object obj = null;
+                        obj = this.GetType().GetField(data[0], System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(this);
+                        object converted_value = System.Convert.ChangeType(data[3], Type.GetType(data[2]));
+                        obj.GetType().GetProperty(data[1]).SetValue(obj, converted_value);
+                    }
+                }
+            }
+        }
+#endif
     }
 }

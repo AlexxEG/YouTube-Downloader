@@ -6,6 +6,7 @@ using YouTube_Downloader_DLL.Operations;
 
 namespace YouTube_Downloader_DLL.DummyOperations
 {
+#if DEBUG
     public class DummyDownloadOperation : Operation
     {
         bool _cancel;
@@ -140,4 +141,5 @@ namespace YouTube_Downloader_DLL.DummyOperations
             }
         }
     }
+#endif
 }
