@@ -101,8 +101,6 @@ namespace YouTube_Downloader
             this.ShowUpdateNotification();
 
 #if DEBUG
-            //for (int i = 0; i < 0; i++)
-            //    this.AddDummyDownloadOperation(100000);
             this.ReadDebugFile();
 #endif
         }
@@ -122,12 +120,21 @@ namespace YouTube_Downloader
                 {
                     if (line.StartsWith("#"))
                         continue;
+                    else if (line.StartsWith("!"))
+                    {
+                        int count = int.Parse(line.Replace("!", ""));
 
-                    string[] data = line.Split('|');
-                    object obj = null;
-                    obj = this.GetType().GetField(data[0], System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(this);
-                    object converted_value = System.Convert.ChangeType(data[3], Type.GetType(data[2]));
-                    obj.GetType().GetProperty(data[1]).SetValue(obj, converted_value);
+                        for (int i = 0; i < count; i++)
+                            this.AddDummyDownloadOperation(100000);
+                    }
+                    else
+                    {
+                        string[] data = line.Split('|');
+                        object obj = null;
+                        obj = this.GetType().GetField(data[0], System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(this);
+                        object converted_value = System.Convert.ChangeType(data[3], Type.GetType(data[2]));
+                        obj.GetType().GetProperty(data[1]).SetValue(obj, converted_value);
+                    }
                 }
             }
         }
