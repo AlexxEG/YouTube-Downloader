@@ -107,6 +107,15 @@ namespace YouTube_Downloader_DLL.Operations
 
         #endregion
 
+        protected override void WorkerCompleted(RunWorkerCompletedEventArgs e)
+        {
+            if (this.IsSuccessful)
+            {
+                this.Duration = (long)FFmpegProcess.GetDuration(this.Input).Value.TotalSeconds;
+                this.FileSize = Helper.GetFileSize(this.Output);
+            }
+        }
+
         protected override void WorkerDoWork(DoWorkEventArgs e)
         {
             try
@@ -139,15 +148,6 @@ namespace YouTube_Downloader_DLL.Operations
             {
                 // FFmpegHelper will return the ffmpeg process so it can be used to cancel.
                 this._process = (Process)e.UserState;
-            }
-        }
-
-        protected override void WorkerCompleted(RunWorkerCompletedEventArgs e)
-        {
-            if (this.IsSuccessful)
-            {
-                this.Duration = (long)FFmpegProcess.GetDuration(this.Input).Value.TotalSeconds;
-                this.FileSize = Helper.GetFileSize(this.Output);
             }
         }
     }

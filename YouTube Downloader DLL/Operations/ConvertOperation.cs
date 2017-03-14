@@ -130,6 +130,23 @@ namespace YouTube_Downloader_DLL.Operations
 
         #endregion
 
+        protected override void WorkerCompleted(RunWorkerCompletedEventArgs e)
+        {
+            if (_mode == ConvertingMode.File)
+            {
+                if (this.IsSuccessful)
+                    this.FileSize = Helper.GetFileSize(this.Output);
+            }
+            else
+            {
+                if (_failures == 0)
+                    this.Title = string.Format("Converted {0} videos", _count);
+                else
+                    this.Title = string.Format("Converted {0} of {1} videos, {2} failed",
+                                        _count - _failures, _count, _failures);
+            }
+        }
+
         protected override void WorkerDoWork(DoWorkEventArgs e)
         {
             if (_mode == ConvertingMode.File)
@@ -221,23 +238,6 @@ namespace YouTube_Downloader_DLL.Operations
                 {
                     this.GetType().GetProperty(pair.Key).SetValue(this, pair.Value);
                 }
-            }
-        }
-
-        protected override void WorkerCompleted(RunWorkerCompletedEventArgs e)
-        {
-            if (_mode == ConvertingMode.File)
-            {
-                if (this.IsSuccessful)
-                    this.FileSize = Helper.GetFileSize(this.Output);
-            }
-            else
-            {
-                if (_failures == 0)
-                    this.Title = string.Format("Converted {0} videos", _count);
-                else
-                    this.Title = string.Format("Converted {0} of {1} videos, {2} failed",
-                                        _count - _failures, _count, _failures);
             }
         }
 
