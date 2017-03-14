@@ -23,6 +23,18 @@ namespace YouTube_Downloader_DLL.Operations
         /// </summary>
         public static List<Operation> Running = new List<Operation>();
 
+        protected Operation()
+        {
+            _worker = new BackgroundWorker()
+            {
+                WorkerReportsProgress = true,
+                WorkerSupportsCancellation = true
+            };
+            _worker.DoWork += Worker_DoWork;
+            _worker.ProgressChanged += Worker_ProgressChanged;
+            _worker.RunWorkerCompleted += Worker_Completed;
+        }
+
         #region Events
 
         /// <summary>
@@ -66,7 +78,6 @@ namespace YouTube_Downloader_DLL.Operations
 
         int _progressPercentage = 0;
 
-        bool _prepared = false;
         bool _reportsProgress = false;
 
         long _duration;
@@ -428,26 +439,6 @@ namespace YouTube_Downloader_DLL.Operations
         #endregion
 
         /// <summary>
-        /// Prepares the operation before starting, giving it all the data it requires.
-        /// </summary>
-        /// <param name="args"></param>
-        public void Prepare(Dictionary<string, object> args)
-        {
-            this.Arguments = args;
-
-            _worker = new BackgroundWorker()
-            {
-                WorkerReportsProgress = true,
-                WorkerSupportsCancellation = true
-            };
-            _worker.DoWork += Worker_DoWork;
-            _worker.ProgressChanged += Worker_ProgressChanged;
-            _worker.RunWorkerCompleted += Worker_Completed;
-
-            _prepared = true;
-        }
-
-        /// <summary>
         /// Resumes the operation if supported &amp; available.
         /// </summary>
         public void Resume()
@@ -473,10 +464,7 @@ namespace YouTube_Downloader_DLL.Operations
         /// </summary>
         public void Start()
         {
-            if (!_prepared)
-                throw new Exception("Operation can't be started before being prepared.");
-
-            WorkerStart(this.Arguments);
+            this.WorkerStart();
 
             sw = new Stopwatch();
             sw.Start();
@@ -605,7 +593,7 @@ namespace YouTube_Downloader_DLL.Operations
 
         protected abstract void WorkerProgressChanged(ProgressChangedEventArgs e);
 
-        protected abstract void WorkerStart(Dictionary<string, object> args);
+        protected abstract void WorkerStart();
 
         private void Worker_Completed(object sender, RunWorkerCompletedEventArgs e)
         {

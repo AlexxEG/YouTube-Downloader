@@ -263,8 +263,9 @@ namespace YouTube_Downloader
             {
                 VideoFormat tempFormat = cbQuality.SelectedItem as VideoFormat;
                 string filename = string.Format("{0}.{1}", txtTitle.Text, tempFormat.Extension);
+                string output = Path.Combine(path, filename);
 
-                if (File.Exists(Path.Combine(path, filename)))
+                if (File.Exists(output))
                 {
                     DialogResult result = MessageBox.Show(this,
                         string.Format("File '{1}' already exists.{0}{0}Overwrite?", Environment.NewLine, filename),
@@ -274,19 +275,36 @@ namespace YouTube_Downloader
                     if (result == DialogResult.No)
                         return;
 
-                    File.Delete(Path.Combine(path, filename));
+                    File.Delete(output);
                 }
 
                 Operation operation;
 
-                if (_selectedVideo.VideoSource == VideoSource.Twitch)
+                switch (_selectedVideo.VideoSource)
                 {
-                    operation = new TwitchOperation(tempFormat);
-                }
-                else
-                {
-                    operation = new DownloadOperation(tempFormat);
-                    (operation as DownloadOperation).Combining += DownloadOperation_Combining;
+                    case VideoSource.Twitch:
+                        if (!chbDownloadClipFrom.Checked)
+                            operation = new TwitchOperation(tempFormat, output);
+                        else
+                        {
+                            TimeSpan clipFrom = dpDownloadClipFrom.Duration;
+                            TimeSpan clipTo = dpDownloadClipTo.Duration;
+                            operation = new TwitchOperation(tempFormat, output, clipFrom, clipTo);
+                        }
+                        break;
+                    case VideoSource.YouTube:
+                        if (tempFormat.AudioOnly || tempFormat.HasAudioAndVideo)
+                            operation = new DownloadOperation(tempFormat, output);
+                        else
+                        {
+                            VideoFormat audio = Helper.GetAudioFormat(tempFormat);
+                            operation = new DownloadOperation(tempFormat, audio, output);
+                        }
+
+                        (operation as DownloadOperation).Combining += DownloadOperation_Combining;
+                        break;
+                    default:
+                        throw new Exception($"Unknown video source: {_selectedVideo.VideoSource}");
                 }
 
                 var item = new OperationModel(Path.GetFileName(filename), tempFormat.VideoInfo.Url, operation);
@@ -304,32 +322,6 @@ namespace YouTube_Downloader
 
                 olvQueue.AddObject(item);
                 olvQueue.SelectedObject = item;
-
-                if (_selectedVideo.VideoSource == VideoSource.Twitch)
-                {
-                    if (chbDownloadClipFrom.Checked)
-                        operation.Prepare(TwitchOperation.Args(Path.Combine(path, filename),
-                                                               tempFormat,
-                                                               dpDownloadClipFrom.Duration,
-                                                               dpDownloadClipTo.Duration));
-                    else
-                        operation.Prepare(TwitchOperation.Args(Path.Combine(path, filename),
-                                                               tempFormat));
-                }
-                else
-                {
-                    if (tempFormat.AudioOnly || tempFormat.HasAudioAndVideo)
-                        operation.Prepare(DownloadOperation.Args(tempFormat.DownloadUrl,
-                                                                 Path.Combine(path, filename)));
-                    else
-                    {
-                        VideoFormat audio = Helper.GetAudioFormat(tempFormat);
-
-                        operation.Prepare(DownloadOperation.Args(audio.DownloadUrl,
-                                                                 tempFormat.DownloadUrl,
-                                                                 Path.Combine(path, filename)));
-                    }
-                }
 
                 tabControl1.SelectedTab = queueTabPage;
 
@@ -784,7 +776,12 @@ namespace YouTube_Downloader
 
             try
             {
-                var operation = new PlaylistOperation();
+                var operation = new PlaylistOperation(txtPlaylistLink.Text,
+                                                      path,
+                                                      Settings.Default.PreferredQualityPlaylist,
+                                                      playlistReverseMenuItem.Checked,
+                                                      playlistNumberPrefixMenuItem.Checked,
+                                                      videos);
                 var item = new OperationModel("Getting playlist info...", txtPlaylistLink.Text, operation);
 
                 item.AspectChanged += OperationModel_AspectChanged;
@@ -795,13 +792,6 @@ namespace YouTube_Downloader
                 operation.Combined += PlaylistOperation_Combined;
                 operation.Combining += PlaylistOperation_Combining;
                 operation.FileDownloadComplete += playlistOperation_FileDownloadComplete;
-                operation.Prepare(operation.Args(txtPlaylistLink.Text,
-                                    path,
-                                    Settings.Default.PreferredQualityPlaylist,
-                                    videos,
-                                    playlistReverseMenuItem.Checked,
-                                    playlistNumberPrefixMenuItem.Checked)
-                                );
 
                 tabControl1.SelectedTab = queueTabPage;
 
@@ -1384,8 +1374,6 @@ namespace YouTube_Downloader
 
             olvQueue.AddObject(item);
 
-            operation.Prepare(null);
-
             DownloadQueueHandler.Add(operation);
         }
 
@@ -1438,7 +1426,7 @@ namespace YouTube_Downloader
                 end = TimeSpan.Parse(mtxtTo.Text);
             }
 
-            var operation = new ConvertOperation();
+            var operation = new ConvertOperation(input, output, start, end);
             var item = new OperationModel(Path.GetFileName(output), input, Path.GetFileName(input), operation);
 
             item.WorkingText = "Converting...";
@@ -1449,7 +1437,6 @@ namespace YouTube_Downloader
             olvQueue.AddObject(item);
             olvQueue.SelectedObject = item;
 
-            operation.Prepare(operation.Args(input, output, start, end));
             operation.Start();
 
             return item;
@@ -1463,7 +1450,7 @@ namespace YouTube_Downloader
         /// <param name="extension">The extension to match.</param>
         private void ConvertFolder(string input, string output, string extension)
         {
-            var operation = new ConvertOperation();
+            var operation = new ConvertOperation(input, output, extension);
             var item = new OperationModel(Path.GetFileName(output), input, Path.GetFileName(input), operation);
 
             item.WorkingText = "Converting...";
@@ -1472,7 +1459,6 @@ namespace YouTube_Downloader
             olvQueue.AddObject(item);
             olvQueue.SelectedObject = item;
 
-            operation.Prepare(operation.Args(input, output, extension));
             operation.Start();
         }
 
@@ -1493,7 +1479,7 @@ namespace YouTube_Downloader
             if (start > end)
                 end = TimeSpan.MinValue;
 
-            var operation = new CroppingOperation();
+            var operation = new CroppingOperation(input, output, start, end);
             var item = new OperationModel(Path.GetFileName(output), input, Path.GetFileName(input), operation);
 
             item.WorkingText = "Cropping...";
@@ -1503,8 +1489,7 @@ namespace YouTube_Downloader
 
             olvQueue.AddObject(item);
             olvQueue.SelectedObject = item;
-
-            operation.Prepare(operation.Args(input, output, start, end));
+            
             operation.Start();
         }
 

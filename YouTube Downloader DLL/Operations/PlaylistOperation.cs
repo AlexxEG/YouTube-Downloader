@@ -61,8 +61,43 @@ namespace YouTube_Downloader_DLL.Operations
         /// </summary>
         public event EventHandler<string> FileDownloadComplete;
 
-        public PlaylistOperation()
+        public PlaylistOperation(string url,
+                                 string output,
+                                 int preferredQuality,
+                                 bool reverse,
+                                 bool indexPrefix)
         {
+            // Temporary title.
+            this.Title = "Getting playlist info...";
+            this.ReportsProgress = true;
+
+            this.Input = url;
+            this.Output = output;
+            this.Link = this.Input;
+
+            _preferredQuality = preferredQuality;
+            _reverse = reverse;
+            _indexPrefix = indexPrefix;
+
+            _downloader = new FileDownloader();
+
+            // Attach events
+            _downloader.Canceled += downloader_Canceled;
+            _downloader.Completed += downloader_Completed;
+            _downloader.FileDownloadFailed += downloader_FileDownloadFailed;
+            _downloader.CalculatedTotalFileSize += downloader_CalculatedTotalFileSize;
+            _downloader.ProgressChanged += downloader_ProgressChanged;
+        }
+
+        public PlaylistOperation(string url,
+                                 string output,
+                                 int preferredQuality,
+                                 bool reverse,
+                                 bool indexPrefix,
+                                 IEnumerable<QuickVideoInfo> videos)
+            : this(url, output, preferredQuality, reverse, indexPrefix)
+        {
+            _videos.AddRange(videos);
         }
 
         private void downloader_Canceled(object sender, EventArgs e)
@@ -406,37 +441,8 @@ namespace YouTube_Downloader_DLL.Operations
             }
         }
 
-        protected override void WorkerStart(Dictionary<string, object> args)
+        protected override void WorkerStart()
         {
-            if (!(args.Count.Any(ArgKeys.Min, ArgKeys.Max)))
-                throw new ArgumentException();
-
-            // Temporary title.
-            this.Title = "Getting playlist info...";
-            this.ReportsProgress = true;
-
-            this.Input = (string)args[ArgKeys.Input];
-            this.Output = (string)args[ArgKeys.Output];
-            this.Link = this.Input;
-
-            _preferredQuality = (int)args[ArgKeys.PreferredQuality];
-            _reverse = (bool)args[ArgKeys.Reverse];
-            _indexPrefix = (bool)args[ArgKeys.IndexPrefix];
-
-            if (args.Count == ArgKeys.Max)
-            {
-                if (args[ArgKeys.Videos] != null)
-                    _videos.AddRange((IEnumerable<QuickVideoInfo>)args[ArgKeys.Videos]);
-            }
-
-            _downloader = new FileDownloader();
-
-            // Attach events
-            _downloader.Canceled += downloader_Canceled;
-            _downloader.Completed += downloader_Completed;
-            _downloader.FileDownloadFailed += downloader_FileDownloadFailed;
-            _downloader.CalculatedTotalFileSize += downloader_CalculatedTotalFileSize;
-            _downloader.ProgressChanged += downloader_ProgressChanged;
         }
 
         private bool Combine()
@@ -560,40 +566,6 @@ namespace YouTube_Downloader_DLL.Operations
             });
 
             _queryingVideos = false;
-        }
-
-        public Dictionary<string, object> Args(string url,
-                                               string output,
-                                               int preferredQuality,
-                                               bool reverse,
-                                               bool indexPrefix)
-        {
-            return new Dictionary<string, object>()
-            {
-                { ArgKeys.Input, url },
-                { ArgKeys.Output, output },
-                { ArgKeys.PreferredQuality, preferredQuality },
-                { ArgKeys.Reverse, reverse },
-                { ArgKeys.IndexPrefix, indexPrefix }
-            };
-        }
-
-        public Dictionary<string, object> Args(string url,
-                                               string output,
-                                               int preferredQuality,
-                                               IEnumerable<QuickVideoInfo> videos,
-                                               bool reverse,
-                                               bool indexPrefix)
-        {
-            return new Dictionary<string, object>()
-            {
-                { ArgKeys.Input, url },
-                { ArgKeys.Output, output },
-                { ArgKeys.PreferredQuality, preferredQuality },
-                { ArgKeys.Videos, videos },
-                { ArgKeys.Reverse, reverse },
-                { ArgKeys.IndexPrefix, indexPrefix }
-            };
         }
     }
 }

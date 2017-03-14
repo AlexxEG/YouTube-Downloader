@@ -25,9 +25,20 @@ namespace YouTube_Downloader_DLL.Operations
         Process _process;
         CancellationTokenSource _cts = new CancellationTokenSource();
 
-        public CroppingOperation()
+        public CroppingOperation(string input,
+                                 string output,
+                                 TimeSpan start,
+                                 TimeSpan end)
         {
             this.ReportsProgress = true;
+            this.Input = input;
+            this.Output = output;
+
+            _start = start;
+            _end = end;
+
+            this.Duration = (long)FFmpegProcess.GetDuration(this.Input).Value.TotalSeconds;
+            this.Title = Path.GetFileName(this.Output);
         }
 
         #region Operation members
@@ -148,33 +159,8 @@ namespace YouTube_Downloader_DLL.Operations
             }
         }
 
-        protected override void WorkerStart(Dictionary<string, object> args)
+        protected override void WorkerStart()
         {
-            if (args.Count != ArgKeys.Count)
-                throw new ArgumentException();
-
-            this.Input = (string)args[ArgKeys.Input];
-            this.Output = (string)args[ArgKeys.Output];
-
-            _start = (TimeSpan)args[ArgKeys.Start];
-            _end = (TimeSpan)args[ArgKeys.End];
-
-            this.Duration = (long)FFmpegProcess.GetDuration(this.Input).Value.TotalSeconds;
-            this.Title = Path.GetFileName(this.Output);
-        }
-
-        public Dictionary<string, object> Args(string input,
-                                               string output,
-                                               TimeSpan start,
-                                               TimeSpan end)
-        {
-            return new Dictionary<string, object>()
-            {
-                { ArgKeys.Input, input },
-                { ArgKeys.Output, output },
-                { ArgKeys.Start, start },
-                { ArgKeys.End, end }
-            };
         }
     }
 }

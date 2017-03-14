@@ -33,14 +33,57 @@ namespace YouTube_Downloader_DLL.Operations
 
         public event EventHandler Combining;
 
-        public DownloadOperation(VideoFormat format)
+        private DownloadOperation(VideoFormat format)
         {
+            this.ReportsProgress = true;
             this.Duration = format.VideoInfo.Duration;
             this.FileSize = format.FileSize;
             this.Link = format.VideoInfo.Url;
-            this.ReportsProgress = true;
             this.Thumbnail = format.VideoInfo.ThumbnailUrl;
             this.Title = format.VideoInfo.Title;
+
+            downloader = new FileDownloader();
+            // Attach events
+            downloader.Canceled += downloader_Canceled;
+            downloader.Completed += downloader_Completed;
+            downloader.FileDownloadFailed += downloader_FileDownloadFailed;
+            downloader.CalculatedTotalFileSize += downloader_CalculatedTotalFileSize;
+            downloader.ProgressChanged += downloader_ProgressChanged;
+        }
+
+        public DownloadOperation(VideoFormat format,
+                                 string output)
+            : this(format)
+        {
+            this.Input = format.DownloadUrl;
+            this.Output = output;
+
+            string file = Path.GetFileName(this.Output).Trim();
+
+            downloader.Files.Add(new FileDownload(this.Output, this.Input));
+        }
+
+        public DownloadOperation(VideoFormat format,
+                                 VideoFormat audio,
+                                 string output)
+            : this(format)
+        {
+            _combine = true;
+            this.Input = $"{audio.DownloadUrl}|{format.DownloadUrl}";
+            this.Output = output;
+
+            Regex regex = new Regex(@"^(\w:.*\\.*)(\..*)$");
+
+            downloader.Files.Add(new FileDownload(regex.Replace(this.Output, "$1_audio$2"),
+                                                  audio.DownloadUrl,
+                                                  true));
+            downloader.Files.Add(new FileDownload(regex.Replace(this.Output, "$1_video$2"),
+                                                  format.DownloadUrl,
+                                                  true));
+
+            // Delete _audio and _video files in case they exists from a previous attempt
+            Helper.DeleteFiles(downloader.Files[0].Path,
+                               downloader.Files[1].Path);
         }
 
         private void downloader_Canceled(object sender, EventArgs e)
@@ -276,78 +319,14 @@ namespace YouTube_Downloader_DLL.Operations
             }
         }
 
-        protected override void WorkerStart(Dictionary<string, object> args)
+        protected override void WorkerStart()
         {
-            downloader = new FileDownloader();
-
-            switch (args.Count)
-            {
-                case ArgKeys.Min:
-                    this.Input = (string)args[ArgKeys.Url];
-                    this.Output = (string)args[ArgKeys.Output];
-
-                    string file = Path.GetFileName(this.Output).Trim();
-
-                    downloader.Files.Add(new FileDownload(this.Output, this.Input));
-                    break;
-                case ArgKeys.Max:
-                    _combine = true;
-                    this.Input = $"{args[ArgKeys.Audio]}|{args[ArgKeys.Video]}";
-                    this.Output = (string)args[ArgKeys.Output];
-
-                    Regex regex = new Regex(@"^(\w:.*\\.*)(\..*)$");
-
-                    downloader.Files.Add(new FileDownload(regex.Replace(this.Output, "$1_audio$2"),
-                                                          (string)args[ArgKeys.Audio],
-                                                          true));
-                    downloader.Files.Add(new FileDownload(regex.Replace(this.Output, "$1_video$2"),
-                                                          (string)args[ArgKeys.Video],
-                                                          true));
-
-                    // Delete _audio and _video files in case they exists from a previous attempt
-                    Helper.DeleteFiles(downloader.Files[0].Path,
-                                       downloader.Files[1].Path);
-
-                    break;
-                default:
-                    throw new ArgumentException();
-            }
-
-            // Attach events
-            downloader.Canceled += downloader_Canceled;
-            downloader.Completed += downloader_Completed;
-            downloader.FileDownloadFailed += downloader_FileDownloadFailed;
-            downloader.CalculatedTotalFileSize += downloader_CalculatedTotalFileSize;
-            downloader.ProgressChanged += downloader_ProgressChanged;
-
             downloader.Start();
         }
 
         private void OnCombining()
         {
             this.Combining?.Invoke(this, EventArgs.Empty);
-        }
-
-        public static Dictionary<string, object> Args(string url,
-                                                      string output)
-        {
-            return new Dictionary<string, object>()
-            {
-                { ArgKeys.Url, url },
-                { ArgKeys.Output, output }
-            };
-        }
-
-        public static Dictionary<string, object> Args(string audio,
-                                                      string video,
-                                                      string output)
-        {
-            return new Dictionary<string, object>()
-            {
-                { ArgKeys.Audio, audio },
-                { ArgKeys.Video, video },
-                { ArgKeys.Output, output }
-            };
         }
     }
 }

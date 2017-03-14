@@ -36,9 +36,36 @@ namespace YouTube_Downloader_DLL.Operations
 
         public List<string> ProcessedFiles { get; set; } = new List<string>();
 
-        public ConvertOperation()
+        private ConvertOperation(string input,
+                                 string output)
         {
             this.ReportsProgress = true;
+            this.Input = input;
+            this.Output = output;
+        }
+
+        public ConvertOperation(string input,
+                                string output,
+                                string searchPattern)
+            : this(input, output)
+        {
+            _mode = ConvertingMode.Folder;
+            this.Title = Path.GetFileName(this.Input);
+            this.ValidateSearchPattern(searchPattern, out _searchPattern);
+        }
+
+        public ConvertOperation(string input,
+                                string output,
+                                TimeSpan start,
+                                TimeSpan end)
+            : this(input, output)
+        {
+            _mode = ConvertingMode.File;
+            _start = start;
+            _end = end;
+
+            this.Duration = (long)FFmpegProcess.GetDuration(this.Input).Value.TotalSeconds;
+            this.Title = Path.GetFileName(this.Output);
         }
 
         #region Operation members
@@ -224,56 +251,8 @@ namespace YouTube_Downloader_DLL.Operations
             }
         }
 
-        protected override void WorkerStart(Dictionary<string, object> args)
+        protected override void WorkerStart()
         {
-            if (!(args.Count.Any(ArgKeys.Min, ArgKeys.Max)))
-                throw new ArgumentException($"{nameof(ConvertOperation)}: Invalid argument count: ({args.Count}).");
-
-            this.Input = (string)args[ArgKeys.Input];
-            this.Output = (string)args[ArgKeys.Output];
-
-            if (args.Count == ArgKeys.Min)
-            {
-                _mode = ConvertingMode.Folder;
-
-                this.Title = Path.GetFileName(this.Input);
-                this.ValidateSearchPattern((string)args[ArgKeys.SearchPattern], out _searchPattern);
-            }
-            else if (args.Count == ArgKeys.Max)
-            {
-                _start = (TimeSpan)args[ArgKeys.Start];
-                _end = (TimeSpan)args[ArgKeys.End];
-                _mode = ConvertingMode.File;
-
-                this.Duration = (long)FFmpegProcess.GetDuration(this.Input).Value.TotalSeconds;
-                this.Title = Path.GetFileName(this.Output);
-            }
-        }
-
-        public Dictionary<string, object> Args(string input,
-                                               string output,
-                                               string searchPattern)
-        {
-            return new Dictionary<string, object>()
-            {
-                { ArgKeys.Input, input },
-                { ArgKeys.Output, output },
-                { ArgKeys.SearchPattern, searchPattern }
-            };
-        }
-
-        public Dictionary<string, object> Args(string input,
-                                               string output,
-                                               TimeSpan start,
-                                               TimeSpan end)
-        {
-            return new Dictionary<string, object>()
-            {
-                { ArgKeys.Input, input },
-                { ArgKeys.Output, output },
-                { ArgKeys.Start, start },
-                { ArgKeys.End, end }
-            };
         }
 
         private bool ValidateSearchPattern(string searchPattern, out string fixedSearchPattern)

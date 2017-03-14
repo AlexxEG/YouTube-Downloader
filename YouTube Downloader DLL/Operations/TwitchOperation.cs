@@ -48,14 +48,27 @@ namespace YouTube_Downloader_DLL.Operations
         TimeSpan _clipTo;
         VideoFormat _format;
 
-        public TwitchOperation(VideoFormat format)
+        public TwitchOperation(VideoFormat format, string output)
         {
+            this.ReportsProgress = true;
             this.Duration = format.VideoInfo.Duration;
             this.FileSize = format.FileSize;
             this.Link = format.VideoInfo.Url;
-            this.ReportsProgress = true;
             this.Thumbnail = format.VideoInfo.ThumbnailUrl;
             this.Title = format.VideoInfo.Title;
+
+            this.Output = output;
+            _format = format;
+        }
+
+        public TwitchOperation(VideoFormat format,
+                               string output,
+                               TimeSpan clipFrom,
+                               TimeSpan clipTo)
+            : this(format, output)
+        {
+            _clipFrom = clipFrom;
+            _clipTo = clipTo;
         }
 
         #region Internal Classes
@@ -248,19 +261,8 @@ namespace YouTube_Downloader_DLL.Operations
             }
         }
 
-        protected override void WorkerStart(Dictionary<string, object> args)
+        protected override void WorkerStart()
         {
-            if (args.Count != ArgKeys.Min && args.Count != ArgKeys.Max)
-                throw new ArgumentException($"{nameof(TwitchOperation)} expects {ArgKeys.Min} or {ArgKeys.Max} arguments, but has {args.Count}");
-
-            this.Output = (string)args[ArgKeys.Output];
-            _format = (VideoFormat)args[ArgKeys.Format];
-
-            if (args.Count == ArgKeys.Max)
-            {
-                _clipFrom = (TimeSpan)args[ArgKeys.ClipFrom];
-                _clipTo = (TimeSpan)args[ArgKeys.ClipTo];
-            }
         }
 
         private bool Download(string outputFilename)
@@ -418,30 +420,6 @@ namespace YouTube_Downloader_DLL.Operations
             }
 
             return new ClipDurationRange(start_index, count);
-        }
-
-        public static Dictionary<string, object> Args(string output,
-                                                      VideoFormat format)
-        {
-            return new Dictionary<string, object>()
-            {
-                { ArgKeys.Output,  output },
-                { ArgKeys.Format, format }
-            };
-        }
-
-        public static Dictionary<string, object> Args(string output,
-                                                      VideoFormat format,
-                                                      TimeSpan clipFrom,
-                                                      TimeSpan clipTo)
-        {
-            return new Dictionary<string, object>()
-            {
-                { ArgKeys.Output,  output },
-                { ArgKeys.Format, format },
-                { ArgKeys.ClipFrom, clipFrom },
-                { ArgKeys.ClipTo, clipTo }
-            };
         }
     }
 }
