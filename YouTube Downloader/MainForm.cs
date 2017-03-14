@@ -1389,8 +1389,6 @@ namespace YouTube_Downloader
             var operation = new ConvertOperation(input, output, start, end);
             var item = new OperationModel(Path.GetFileName(output), input, Path.GetFileName(input), operation);
 
-            item.Duration = Helper.FormatVideoLength(FFmpegProcess.GetDuration(input).Value);
-            item.FileSize = Helper.GetFileSizeFormatted(input);
             item.AspectChanged += OperationModel_AspectChanged;
 
             olvQueue.AddObject(item);
@@ -1440,8 +1438,6 @@ namespace YouTube_Downloader
             var operation = new CroppingOperation(input, output, start, end);
             var item = new OperationModel(Path.GetFileName(output), input, Path.GetFileName(input), operation);
 
-            item.Duration = Helper.FormatVideoLength(FFmpegProcess.GetDuration(input).Value);
-            item.FileSize = Helper.GetFileSizeFormatted(input);
             item.AspectChanged += OperationModel_AspectChanged;
 
             olvQueue.AddObject(item);

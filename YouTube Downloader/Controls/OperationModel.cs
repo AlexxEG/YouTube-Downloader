@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using YouTube_Downloader.Renderers;
 using YouTube_Downloader_DLL.Classes;
+using YouTube_Downloader_DLL.FFmpeg;
 using YouTube_Downloader_DLL.Operations;
 
 namespace YouTube_Downloader.Controls
@@ -154,6 +155,13 @@ namespace YouTube_Downloader.Controls
             this.Title = text;
             this.Input = input;
             this.InputText = inputText;
+
+            // Set 'Duration' and 'FileSize' is input is a single file
+            if (File.Exists(input))
+            {
+                this.Duration = Helper.FormatVideoLength(FFmpegProcess.GetDuration(input).Value);
+                this.FileSize = Helper.GetFileSizeFormatted(input);
+            }
 
             this.Operation = operation;
             this.Operation.Completed += Operation_Completed;
