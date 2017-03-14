@@ -295,9 +295,5 @@ namespace YouTube_Downloader_DLL.Operations
                 }
             }
         }
-
-        protected override void WorkerStart()
-        {
-        }
     }
 }

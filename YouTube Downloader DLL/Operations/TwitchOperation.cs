@@ -253,10 +253,6 @@ namespace YouTube_Downloader_DLL.Operations
             }
         }
 
-        protected override void WorkerStart()
-        {
-        }
-
         private bool Download(string outputFilename)
         {
             var line = string.Empty;

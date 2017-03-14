@@ -419,10 +419,6 @@ namespace YouTube_Downloader_DLL.Operations
             }
         }
 
-        protected override void WorkerStart()
-        {
-        }
-
         private bool Combine()
         {
             string audio = _downloader.Files[0].Path;

@@ -426,8 +426,6 @@ namespace YouTube_Downloader_DLL.Operations
         /// </summary>
         public void Start()
         {
-            this.WorkerStart();
-
             _worker.RunWorkerAsync(this.Arguments);
 
             Operation.Running.Add(this);
@@ -548,8 +546,6 @@ namespace YouTube_Downloader_DLL.Operations
         protected abstract void WorkerDoWork(DoWorkEventArgs e);
 
         protected abstract void WorkerProgressChanged(ProgressChangedEventArgs e);
-
-        protected abstract void WorkerStart();
 
         private void Worker_Completed(object sender, RunWorkerCompletedEventArgs e)
         {

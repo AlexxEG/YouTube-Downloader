@@ -241,10 +241,6 @@ namespace YouTube_Downloader_DLL.Operations
             }
         }
 
-        protected override void WorkerStart()
-        {
-        }
-
         private bool ValidateSearchPattern(string searchPattern, out string fixedSearchPattern)
         {
             fixedSearchPattern = searchPattern;

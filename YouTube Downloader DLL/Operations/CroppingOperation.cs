@@ -150,9 +150,5 @@ namespace YouTube_Downloader_DLL.Operations
                 this.FileSize = Helper.GetFileSize(this.Output);
             }
         }
-
-        protected override void WorkerStart()
-        {
-        }
     }
 }
