@@ -11,7 +11,7 @@ namespace YouTube_Downloader_DLL.DummyOperations
         bool _cancel;
         long _workTimeMS;
         static Random _random = new Random(Environment.TickCount);
-        
+
         public DummyDownloadOperation(long workTimeMS)
         {
             _workTimeMS = workTimeMS;
@@ -26,7 +26,7 @@ namespace YouTube_Downloader_DLL.DummyOperations
             this.Input = this.Link;
             this.Output = @"C:\output.mp4";
         }
-        
+
         #region Operation members
 
         public override void Pause()
@@ -129,7 +129,7 @@ namespace YouTube_Downloader_DLL.DummyOperations
         {
             if (e.UserState == null)
                 return;
-            
+
             // Used to set multiple properties
             if (e.UserState is Dictionary<string, object>)
             {
