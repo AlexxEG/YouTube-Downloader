@@ -18,7 +18,7 @@ Screenshots
 
 See [Images](Images) folder.
 
-![YouTube Downloader](Images/1. Download.png)
+![YouTube Downloader](Images/1.%20Download.png)
 
 Licenses
 --------
