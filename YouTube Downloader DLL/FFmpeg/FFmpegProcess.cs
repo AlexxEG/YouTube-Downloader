@@ -25,6 +25,8 @@ namespace YouTube_Downloader_DLL.FFmpeg
              * -b:a - Sets the audio bitrate. Output bitrate will not match exact.
              */
             public const string Convert = " -report -y -i \"{0}\" -vn -f mp3 -b:a {1}k \"{2}\"";
+            public const string ConvertCropFrom = " -report -y -ss {0} -i \"{1}\" -vn -f mp3 -b:a {2}k \"{3}\"";
+            public const string ConvertCropFromTo = " -report -y -ss {0} -i \"{1}\" -to {2} -vn -f mp3 -b:a {3}k \"{4}\"";
             public const string CropFrom = " -report -y -ss {0} -i \"{1}\" -map 0 -acodec copy -vcodec copy \"{2}\"";
             public const string CropFromTo = " -report -y -ss {0} -i \"{1}\" -to {2} -map 0 -acodec copy -vcodec copy \"{3}\"";
             public const string FixM3U8 = " -report -y -i \"{0}\" -c copy -f mp4 -bsf:a aac_adtstoasc \"{1}\"";
@@ -277,6 +279,204 @@ namespace YouTube_Downloader_DLL.FFmpeg
                     {
                         started = false;
 
+                        reportProgress.Invoke(100, null);
+                    }
+                }, EnvironmentVariables, _logger);
+
+            p.WaitForExit();
+            LogFooter();
+
+            if (canceled)
+            {
+                return new FFmpegResult<bool>(false);
+            }
+            else if (p.ExitCode != 0)
+            {
+                string reportFile = FindReportFile(lines.ToString());
+
+                return new FFmpegResult<bool>(false, p.ExitCode, CheckForErrors(reportFile));
+            }
+
+            return new FFmpegResult<bool>(true);
+        }
+
+        public FFmpegResult<bool> ConvertCrop(string input,
+                                              string output,
+                                              TimeSpan cropStart,
+                                              Action<int, object> reportProgress,
+                                              CancellationToken ct)
+        {
+            if (input == output)
+            {
+                throw new Exception("Input & output can't be the same.");
+            }
+
+            var args = new string[]
+            {
+                string.Format("{0:00}:{1:00}:{2:00}.{3:000}", cropStart.Hours, cropStart.Minutes, cropStart.Seconds, cropStart.Milliseconds),
+                input,
+                GetBitRate(input).Value.ToString(),
+                output
+            };
+            var arguments = string.Format(Commands.ConvertCropFrom, args);
+
+            bool canceled = false;
+            bool started = false;
+            double milliseconds = 0;
+            StringBuilder lines = new StringBuilder();
+
+            reportProgress?.Invoke(0, null);
+            LogHeader(arguments);
+
+            var p = Helper.StartProcess(FFmpegPath, arguments,
+                null,
+                delegate (Process process, string line)
+                {
+                    // Queued lines might still fire even after canceling process, don't actually know
+                    if (canceled)
+                        return;
+
+                    lines.AppendLine(line = line.Trim());
+
+                    if (ct != null && ct.IsCancellationRequested)
+                    {
+                        process.Kill();
+                        canceled = true;
+                        return;
+                    }
+
+                    // If reportProgress is null it can't be invoked. So skip code below
+                    if (reportProgress == null)
+                        return;
+
+                    if (line.StartsWith("Duration: "))
+                    {
+                        // Get total milliseconds to track progress
+                        int start = "Duration: ".Length;
+                        int length = "00:00:00.00".Length;
+
+                        string time = line.Substring(start, length);
+
+                        milliseconds = TimeSpan.Parse(time).TotalMilliseconds - cropStart.TotalMilliseconds;
+                    }
+                    else if (line == "Press [q] to stop, [?] for help")
+                    {
+                        // Process has started
+                        started = true;
+                        reportProgress.Invoke(0, null);
+                    }
+                    else if (started && line.StartsWith("size="))
+                    {
+                        // Track progress
+                        int start = line.IndexOf("time=") + 5;
+                        int length = "00:00:00.00".Length;
+
+                        string time = line.Substring(start, length);
+
+                        double currentMilli = TimeSpan.Parse(time).TotalMilliseconds;
+                        double percentage = (currentMilli / milliseconds) * 100;
+
+                        reportProgress.Invoke(System.Convert.ToInt32(percentage), null);
+                    }
+                    else if (started && line == string.Empty)
+                    {
+                        // Process has ended
+                        started = false;
+                        reportProgress.Invoke(100, null);
+                    }
+                }, EnvironmentVariables, _logger);
+
+            p.WaitForExit();
+            LogFooter();
+
+            if (canceled)
+            {
+                return new FFmpegResult<bool>(false);
+            }
+            else if (p.ExitCode != 0)
+            {
+                string reportFile = FindReportFile(lines.ToString());
+
+                return new FFmpegResult<bool>(false, p.ExitCode, CheckForErrors(reportFile));
+            }
+
+            return new FFmpegResult<bool>(true);
+        }
+
+        public FFmpegResult<bool> ConvertCrop(string input,
+                                              string output,
+                                              TimeSpan cropStart,
+                                              TimeSpan cropEnd,
+                                              Action<int, object> reportProgress,
+                                              CancellationToken ct)
+        {
+            if (input == output)
+            {
+                throw new Exception("Input & output can't be the same.");
+            }
+
+            var args = new string[]
+            {
+                string.Format("{0:00}:{1:00}:{2:00}.{3:000}", cropStart.Hours, cropStart.Minutes, cropStart.Seconds, cropStart.Milliseconds),
+                input,
+                string.Format("{0:00}:{1:00}:{2:00}.{3:000}", cropEnd.Hours, cropEnd.Minutes, cropEnd.Seconds, cropEnd.Milliseconds),
+                GetBitRate(input).Value.ToString(),
+                output
+            };
+            var arguments = string.Format(Commands.ConvertCropFromTo, args);
+
+            bool canceled = false;
+            bool started = false;
+            double milliseconds = cropEnd.TotalMilliseconds;
+            StringBuilder lines = new StringBuilder();
+
+            reportProgress?.Invoke(0, null);
+            LogHeader(arguments);
+
+            var p = Helper.StartProcess(FFmpegPath, arguments,
+                null,
+                delegate (Process process, string line)
+                {
+                    // Queued lines might still fire even after canceling process, don't actually know
+                    if (canceled)
+                        return;
+
+                    lines.AppendLine(line = line.Trim());
+
+                    if (ct != null && ct.IsCancellationRequested)
+                    {
+                        process.Kill();
+                        canceled = true;
+                        return;
+                    }
+
+                    // If reportProgress is null it can't be invoked. So skip code below
+                    if (reportProgress == null)
+                        return;
+
+                    if (line == "Press [q] to stop, [?] for help")
+                    {
+                        // Process has started
+                        started = true;
+                        reportProgress.Invoke(0, null);
+                    }
+                    else if (started && line.StartsWith("size="))
+                    {
+                        // Track progress
+                        int start = line.IndexOf("time=") + 5;
+                        int length = "00:00:00.00".Length;
+
+                        string time = line.Substring(start, length);
+
+                        double currentMilli = TimeSpan.Parse(time).TotalMilliseconds;
+                        double percentage = (currentMilli / milliseconds) * 100;
+
+                        reportProgress.Invoke(System.Convert.ToInt32(percentage), null);
+                    }
+                    else if (started && line == string.Empty)
+                    {
+                        // Process has ended
+                        started = false;
                         reportProgress.Invoke(100, null);
                     }
                 }, EnvironmentVariables, _logger);
