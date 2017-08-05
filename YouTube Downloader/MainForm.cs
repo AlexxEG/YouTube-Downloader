@@ -1407,10 +1407,9 @@ namespace YouTube_Downloader
         /// </summary>
         private string[] GetColumnWidths()
         {
-            var widths = new List<string>();
-            foreach (OLVColumn column in olvQueue.AllColumns)
-                widths.Add(column.Width.ToString());
-            return widths.ToArray();
+            return olvQueue.AllColumns
+                    .Select(x => x.Width.ToString())
+                    .ToArray();
         }
 
         /// <summary>
@@ -1428,10 +1427,8 @@ namespace YouTube_Downloader
         /// </summary>
         private string GetVisibleColumns()
         {
-            var sb = new StringBuilder();
-            foreach (var column in olvQueue.AllColumns)
-                sb.Append($"{System.Convert.ToInt32(column.IsVisible)},");
-            return sb.ToString().TrimEnd(',');
+            return string.Join(",", olvQueue.AllColumns
+                                    .Select(x => System.Convert.ToInt32(x.IsVisible)));
         }
 
         /// <summary>
