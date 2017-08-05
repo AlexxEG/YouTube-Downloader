@@ -950,7 +950,6 @@ namespace YouTube_Downloader
                     {
                         return;
                     }
-
                 }
                 else
                 {
