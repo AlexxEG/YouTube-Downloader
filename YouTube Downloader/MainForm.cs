@@ -1444,10 +1444,11 @@ namespace YouTube_Downloader
         /// </summary>
         private void LoadSettings()
         {
-            Settings settings = Settings.Default;
+            var settings = Settings.Default;
 
             // Upgrade settings between new versions. 
-            // More information: http://www.ngpixel.com/2011/05/05/c-keep-user-settings-between-versions/
+            // More information:
+            // http://www.ngpixel.com/2011/05/05/c-keep-user-settings-between-versions/
             if (settings.UpdateSettings)
             {
                 settings.Upgrade();
@@ -1501,9 +1502,9 @@ namespace YouTube_Downloader
             if (settings.LastYouTubeUrl != null) txtYoutubeLink.Text = settings.LastYouTubeUrl;
             if (settings.LastPlaylistUrl != null) txtPlaylistLink.Text = settings.LastPlaylistUrl;
 
-            chbMaxSimDownloads.Checked = Settings.Default.ShowMaxSimDownloads;
-            nudMaxSimDownloads.Enabled = Settings.Default.ShowMaxSimDownloads;
-            nudMaxSimDownloads.Value = Settings.Default.MaxSimDownloads;
+            chbMaxSimDownloads.Checked = settings.ShowMaxSimDownloads;
+            nudMaxSimDownloads.Enabled = settings.ShowMaxSimDownloads;
+            nudMaxSimDownloads.Value = settings.MaxSimDownloads;
 
             // Restore visible columns
             string[] cols = settings.VisibleColumns.Split(',');
@@ -1524,7 +1525,7 @@ namespace YouTube_Downloader
         /// </summary>
         private void SaveSettings()
         {
-            Settings settings = Settings.Default;
+            var settings = Settings.Default;
 
             settings.WindowStates[this.Name].SaveForm(this, false);
             settings.SaveToDirectories.Clear();
