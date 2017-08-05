@@ -1434,7 +1434,7 @@ namespace YouTube_Downloader
         private string GetVisibleColumns()
         {
             var sb = new StringBuilder();
-            foreach (OLVColumn column in olvQueue.AllColumns)
+            foreach (var column in olvQueue.AllColumns)
                 sb.Append($"{System.Convert.ToInt32(column.IsVisible)},");
             return sb.ToString().TrimEnd(',');
         }
