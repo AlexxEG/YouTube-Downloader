@@ -1684,20 +1684,11 @@ namespace YouTube_Downloader
         /// <param name="list">The list of VideoFormat to check.</param>
         private VideoFormat[] CheckFormats(IList<VideoFormat> list)
         {
-            List<VideoFormat> formats = new List<VideoFormat>(list);
+            var formats = new List<VideoFormat>(list);
 
-            for (int i = formats.Count - 1; i >= 0; i--)
-            {
-                VideoFormat f = formats[i];
-
-                // Remove .webm and youtube formats with audio and video in one
-                if (f.Extension.Contains("webm") ||
-                    (f.VideoInfo.VideoSource == VideoSource.YouTube && f.HasAudioAndVideo) ||
-                    f.FormatID == "meta")
-                {
-                    formats.RemoveAt(i);
-                }
-            }
+            formats.RemoveAll(f => f.Extension.Contains("webm") ||
+                                   (f.VideoInfo.VideoSource == VideoSource.YouTube && f.HasAudioAndVideo) ||
+                                   f.FormatID == "meta");
 
             return formats.ToArray();
         }
