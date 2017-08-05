@@ -1651,15 +1651,8 @@ namespace YouTube_Downloader
             bool valid = true;
             char[] illegalChars = Path.GetInvalidFileNameChars();
 
-            foreach (char ch in illegalChars)
-            {
-                // filename contains illegal characters, ask to format title.
-                if (filename.Contains(ch.ToString()))
-                {
-                    valid = false;
-                    break;
-                }
-            }
+            // Check if filename contains illegal characters
+            valid = filename.Any(x => illegalChars.Contains(x));
 
             if (!valid)
             {
