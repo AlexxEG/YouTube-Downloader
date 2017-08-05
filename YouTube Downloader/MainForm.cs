@@ -1418,14 +1418,9 @@ namespace YouTube_Downloader
         /// </summary>
         private bool GetIsWorking()
         {
-            foreach (OperationModel item in olvQueue.Objects)
-            {
-                var operation = item.Operation;
-
-                if (operation.IsWorking)
-                    return true;
-            }
-            return false;
+            return olvQueue.Objects
+                    .Cast<OperationModel>()
+                    .Any(x => x.Operation.IsWorking);
         }
 
         /// <summary>
