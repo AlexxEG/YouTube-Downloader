@@ -89,8 +89,7 @@ namespace YouTube_Downloader
                 return;
             }
 
-            if (_selectedVideo != null)
-                _selectedVideo.AbortUpdateFileSizes();
+            _selectedVideo?.AbortUpdateFileSizes();
 
             this.SaveSettings();
         }
