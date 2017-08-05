@@ -1656,14 +1656,14 @@ namespace YouTube_Downloader
 
             if (!valid)
             {
-                string newFilename = Helper.FormatTitle(filename);
+                string new_filename = Helper.FormatTitle(filename);
                 string text = "Filename contains illegal characters, do you want to automatically remove these characters?\n\n" +
-                    "New filename: \"" + newFilename + "\"\n\n" +
+                    $"New: '{new_filename}'\n\n" +
                     "Clicking 'No' will cancel the download.";
 
-                if (MessageBox.Show(this, text, "", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if (MessageBox.Show(this, text, "Illegal Characters", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
-                    txtTitle.Text = newFilename;
+                    txtTitle.Text = new_filename;
                     valid = true;
                 }
             }
