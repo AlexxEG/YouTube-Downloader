@@ -811,8 +811,8 @@ namespace YouTube_Downloader
             if (_playlistIgnored.Count == 0)
                 return;
 
-            int[] indexes = _playlistIgnored.Keys.Cast<int>().ToArray();
-            ListViewItem[] items = _playlistIgnored.Values.Cast<ListViewItem>().ToArray();
+            var indexes = _playlistIgnored.Keys.Cast<int>().ToArray();
+            var items = _playlistIgnored.Values.Cast<ListViewItem>().ToArray();
 
             for (int i = 0; i < _playlistIgnored.Count; i++)
                 lvPlaylistVideos.Items.Insert(indexes[i], items[i]);
