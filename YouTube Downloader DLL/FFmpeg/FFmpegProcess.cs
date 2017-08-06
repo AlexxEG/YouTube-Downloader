@@ -120,17 +120,17 @@ namespace YouTube_Downloader_DLL.FFmpeg
         /// </summary>
         /// <param name="video">The input video file.</param>
         /// <param name="audio">The input audio file.</param>
-        /// <param name="output">Where to save the output file.</param>
+        /// <param name="output">The output destination.</param>
+        /// <param name="reportProgress">The method to call when there is progress. Can be null.</param>
         public FFmpegResult<bool> Combine(string video,
                                           string audio,
                                           string output,
                                           Action<int> reportProgress)
         {
-            string arguments = string.Format(Commands.Combine, video, audio, output);
-            var lines = new StringBuilder();
-
             bool started = false;
             double milliseconds = 0;
+            string arguments = string.Format(Commands.Combine, video, audio, output);
+            var lines = new StringBuilder();
 
             LogHeader(arguments);
 
@@ -156,7 +156,6 @@ namespace YouTube_Downloader_DLL.FFmpeg
                     else if (line == "Press [q] to stop, [?] for help")
                     {
                         started = true;
-
                         reportProgress.Invoke(0);
                     }
                     else if (started && line.StartsWith("frame="))
@@ -174,7 +173,6 @@ namespace YouTube_Downloader_DLL.FFmpeg
                     else if (started && line == string.Empty)
                     {
                         started = false;
-
                         reportProgress.Invoke(100);
                     }
                 }, EnvironmentVariables, _logger);
@@ -196,17 +194,20 @@ namespace YouTube_Downloader_DLL.FFmpeg
         /// Converts file to MP3.
         /// Possibly more formats in the future.
         /// </summary>
-        /// <param name="reportProgress">The method to call when there is progress. Can be null.</param>
         /// <param name="input">The input file.</param>
-        /// <param name="output">Where to save the output file.</param>
+        /// <param name="output">The output destination.</param>
+        /// <param name="reportProgress">The method to call when there is progress. Can be null.</param>
         public FFmpegResult<bool> Convert(string input,
                                           string output,
                                           Action<int, object> reportProgress,
                                           CancellationToken ct)
         {
+            bool isTempFile = false;
+
             if (input == output)
             {
-                throw new Exception("Input & output can't be the same.");
+                input = FFmpegProcess.RenameTemp(input);
+                isTempFile = true;
             }
 
             var args = new string[]
@@ -215,16 +216,13 @@ namespace YouTube_Downloader_DLL.FFmpeg
                 GetBitRate(input).Value.ToString(),
                 output
             };
-            var arguments = string.Format(Commands.Convert, args);
-
-            if (reportProgress != null)
-                reportProgress.Invoke(0, null);
-
             bool canceled = false;
             bool started = false;
             double milliseconds = 0;
-            StringBuilder lines = new StringBuilder();
+            string arguments = string.Format(Commands.Convert, args);
+            var lines = new StringBuilder();
 
+            reportProgress?.Invoke(0, null);
             LogHeader(arguments);
 
             var p = Helper.StartProcess(FFmpegPath, arguments,
@@ -260,7 +258,6 @@ namespace YouTube_Downloader_DLL.FFmpeg
                     else if (line == "Press [q] to stop, [?] for help")
                     {
                         started = true;
-
                         reportProgress.Invoke(0, null);
                     }
                     else if (started && line.StartsWith("size="))
@@ -278,12 +275,15 @@ namespace YouTube_Downloader_DLL.FFmpeg
                     else if (started && line == string.Empty)
                     {
                         started = false;
-
                         reportProgress.Invoke(100, null);
                     }
                 }, EnvironmentVariables, _logger);
 
             p.WaitForExit();
+
+            if (isTempFile)
+                Helper.DeleteFiles(input);
+
             LogFooter();
 
             if (canceled)
@@ -300,15 +300,26 @@ namespace YouTube_Downloader_DLL.FFmpeg
             return new FFmpegResult<bool>(true);
         }
 
+        /// <summary>
+        /// Converts file to MP3 and crops from start to end.
+        /// </summary>
+        /// <param name="input">The input file.</param>
+        /// <param name="output">The output destination.</param>
+        /// <param name="cropStart">The <see cref="System.TimeSpan"/> crop start position.</param>
+        /// <param name="reportProgress">The method to call when there is progress. Can be null.</param>
+        /// <returns></returns>
         public FFmpegResult<bool> ConvertCrop(string input,
                                               string output,
                                               TimeSpan cropStart,
                                               Action<int, object> reportProgress,
                                               CancellationToken ct)
         {
+            bool isTempFile = false;
+
             if (input == output)
             {
-                throw new Exception("Input & output can't be the same.");
+                input = FFmpegProcess.RenameTemp(input);
+                isTempFile = true;
             }
 
             var args = new string[]
@@ -387,6 +398,10 @@ namespace YouTube_Downloader_DLL.FFmpeg
                 }, EnvironmentVariables, _logger);
 
             p.WaitForExit();
+
+            if (isTempFile)
+                Helper.DeleteFiles(input);
+
             LogFooter();
 
             if (canceled)
@@ -403,6 +418,15 @@ namespace YouTube_Downloader_DLL.FFmpeg
             return new FFmpegResult<bool>(true);
         }
 
+        /// <summary>
+        /// Converts file to MP3 and crops from start to end.
+        /// </summary>
+        /// <param name="input">The input file.</param>
+        /// <param name="output">The output destination.</param>
+        /// <param name="cropStart">The <see cref="System.TimeSpan"/> crop start position.</param>
+        /// <param name="cropEnd">The <see cref="System.TimeSpan"/> crop end position.</param>
+        /// <param name="reportProgress">The method to call when there is progress. Can be null.</param>
+        /// <returns></returns>
         public FFmpegResult<bool> ConvertCrop(string input,
                                               string output,
                                               TimeSpan cropStart,
@@ -410,9 +434,12 @@ namespace YouTube_Downloader_DLL.FFmpeg
                                               Action<int, object> reportProgress,
                                               CancellationToken ct)
         {
+            bool isTempFile = false;
+
             if (input == output)
             {
-                throw new Exception("Input & output can't be the same.");
+                input = FFmpegProcess.RenameTemp(input);
+                isTempFile = true;
             }
 
             var args = new string[]
@@ -501,19 +528,22 @@ namespace YouTube_Downloader_DLL.FFmpeg
         /// <summary>
         /// Crops file from given start position to end.
         /// </summary>
-        /// <param name="reportProgress">The method to call when there is progress. Can be null.</param>
         /// <param name="input">The input file.</param>
-        /// <param name="output">Where to save the output file.</param>
-        /// <param name="start">The <see cref="System.TimeSpan"/> start position.</param>
+        /// <param name="output">The output destination.</param>
+        /// <param name="start">The <see cref="System.TimeSpan"/> crop start position.</param>
+        /// <param name="reportProgress">The method to call when there is progress. Can be null.</param>
         public FFmpegResult<bool> Crop(string input,
                                        string output,
                                        TimeSpan start,
                                        Action<int, object> reportProgress,
                                        CancellationToken ct)
         {
+            bool isTempFile = false;
+
             if (input == output)
             {
-                throw new Exception("Input & output can't be the same.");
+                input = FFmpegProcess.RenameTemp(input);
+                isTempFile = true;
             }
 
             var args = new string[]
@@ -523,15 +553,12 @@ namespace YouTube_Downloader_DLL.FFmpeg
                 output
             };
             var arguments = string.Format(Commands.CropFrom, args);
-
-            if (reportProgress != null)
-                reportProgress.Invoke(0, null);
-
             bool canceled = false;
             bool started = false;
             double milliseconds = 0;
             StringBuilder lines = new StringBuilder();
 
+            reportProgress?.Invoke(0, null);
             LogHeader(arguments);
 
             var p = Helper.StartProcess(FFmpegPath, arguments,
@@ -567,7 +594,6 @@ namespace YouTube_Downloader_DLL.FFmpeg
                     else if (line == "Press [q] to stop, [?] for help")
                     {
                         started = true;
-
                         reportProgress.Invoke(0, null);
                     }
                     else if (started && line.StartsWith("frame="))
@@ -585,12 +611,15 @@ namespace YouTube_Downloader_DLL.FFmpeg
                     else if (started && line == string.Empty)
                     {
                         started = false;
-
                         reportProgress.Invoke(100, null);
                     }
                 }, EnvironmentVariables, _logger);
 
             p.WaitForExit();
+
+            if (isTempFile)
+                Helper.DeleteFiles(input);
+
             LogFooter();
 
             if (canceled)
@@ -610,11 +639,11 @@ namespace YouTube_Downloader_DLL.FFmpeg
         /// <summary>
         /// Crops file from given start position to given end position.
         /// </summary>
-        /// <param name="reportProgress">The method to call when there is progress. Can be null.</param>
         /// <param name="input">The input file.</param>
-        /// <param name="output">Where to save the output file.</param>
-        /// <param name="start">The <see cref="System.TimeSpan"/> start position.</param>
-        /// <param name="end">The <see cref="System.TimeSpan"/> end position.</param>
+        /// <param name="output">The output destination.</param>
+        /// <param name="start">The <see cref="System.TimeSpan"/> crop start position.</param>
+        /// <param name="end">The <see cref="System.TimeSpan"/> crop end position.</param>
+        /// <param name="reportProgress">The method to call when there is progress. Can be null.</param>
         public FFmpegResult<bool> Crop(string input,
                                        string output,
                                        TimeSpan start,
@@ -622,9 +651,12 @@ namespace YouTube_Downloader_DLL.FFmpeg
                                        Action<int, object> reportProgress,
                                        CancellationToken ct)
         {
+            bool isTempFile = false;
+
             if (input == output)
             {
-                throw new Exception("Input & output can't be the same.");
+                input = FFmpegProcess.RenameTemp(input);
+                isTempFile = true;
             }
 
             TimeSpan length = new TimeSpan((long)Math.Abs(start.Ticks - end.Ticks));
@@ -636,90 +668,66 @@ namespace YouTube_Downloader_DLL.FFmpeg
                 string.Format("{0:00}:{1:00}:{2:00}.{3:000}", length.Hours, length.Minutes, length.Seconds, length.Milliseconds),
                 output
             };
-            string arguments = string.Format(Commands.CropFromTo, args);
-
-            if (reportProgress != null)
-                reportProgress.Invoke(0, null);
-
             bool canceled = false;
             bool started = false;
-            double milliseconds = 0;
-            StringBuilder lines = new StringBuilder();
+            double milliseconds = end.TotalMilliseconds;
+            string arguments = string.Format(Commands.CropFromTo, args);
+            var lines = new StringBuilder();
             Process p = null;
 
+            reportProgress?.Invoke(0, null);
             LogHeader(arguments);
 
-            if (reportProgress == null)
-            {
-                p = Helper.StartProcess(FFmpegPath, arguments,
-                    null,
-                    delegate (Process process, string line)
+            p = Helper.StartProcess(FFmpegPath, arguments,
+                null,
+                delegate (Process process, string line)
+                {
+                    // Queued lines might still fire even after canceling process, don't actually know
+                    if (canceled)
+                        return;
+
+                    lines.AppendLine(line = line.Trim());
+
+                    if (ct != null && ct.IsCancellationRequested)
                     {
-                        // Queued lines might still fire even after canceling process, don't actually know
-                        if (canceled)
-                            return;
+                        process.Kill();
+                        canceled = true;
+                        return;
+                    }
 
-                        if (ct != null && ct.IsCancellationRequested)
-                        {
-                            process.Kill();
-                            canceled = true;
-                            return;
-                        }
-                    }, EnvironmentVariables, _logger);
-            }
-            else
-            {
-                p = Helper.StartProcess(FFmpegPath, arguments,
-                    null,
-                    delegate (Process process, string line)
+                    // If reportProgress is null it can't be invoked. So skip code below
+                    if (reportProgress == null)
+                        return;
+
+                    if (line == "Press [q] to stop, [?] for help")
                     {
-                        // Queued lines might still fire even after canceling process, don't actually know
-                        if (canceled)
-                            return;
+                        started = true;
+                        reportProgress.Invoke(0, null);
+                    }
+                    else if (started && line.StartsWith("frame="))
+                    {
+                        int lineStart = line.IndexOf("time=") + 5;
+                        int lineLength = "00:00:00.00".Length;
 
-                        lines.AppendLine(line = line.Trim());
+                        string time = line.Substring(lineStart, lineLength);
 
-                        if (ct != null && ct.IsCancellationRequested)
-                        {
-                            process.Kill();
-                            canceled = true;
-                            return;
-                        }
+                        double currentMilli = TimeSpan.Parse(time).TotalMilliseconds;
+                        double percentage = (currentMilli / milliseconds) * 100;
 
-                        // If reportProgress is null it can't be invoked. So skip code below
-                        if (reportProgress == null)
-                            return;
-
-                        milliseconds = end.TotalMilliseconds;
-
-                        if (line == "Press [q] to stop, [?] for help")
-                        {
-                            started = true;
-
-                            reportProgress.Invoke(0, null);
-                        }
-                        else if (started && line.StartsWith("frame="))
-                        {
-                            int lineStart = line.IndexOf("time=") + 5;
-                            int lineLength = "00:00:00.00".Length;
-
-                            string time = line.Substring(lineStart, lineLength);
-
-                            double currentMilli = TimeSpan.Parse(time).TotalMilliseconds;
-                            double percentage = (currentMilli / milliseconds) * 100;
-
-                            reportProgress.Invoke(System.Convert.ToInt32(percentage), null);
-                        }
-                        else if (started && line == string.Empty)
-                        {
-                            started = false;
-
-                            reportProgress.Invoke(100, null);
-                        }
-                    }, EnvironmentVariables, _logger);
-            }
+                        reportProgress.Invoke(System.Convert.ToInt32(percentage), null);
+                    }
+                    else if (started && line == string.Empty)
+                    {
+                        started = false;
+                        reportProgress.Invoke(100, null);
+                    }
+                }, EnvironmentVariables, _logger);
 
             p.WaitForExit();
+
+            if (isTempFile)
+                Helper.DeleteFiles(input);
+
             LogFooter();
 
             if (canceled)
@@ -929,6 +937,16 @@ namespace YouTube_Downloader_DLL.FFmpeg
                 return Path.Combine(Common.GetLogsDirectory(), m.Groups[1].Value);
 
             return string.Empty;
+        }
+
+        private static string RenameTemp(string input)
+        {
+            string newInput =
+                Path.Combine(Path.GetDirectoryName(input), Path.GetFileNameWithoutExtension(input)) +
+                "_temp" +
+                Path.GetExtension(input);
+            File.Move(input, newInput);
+            return newInput;
         }
 
         /// <summary>
