@@ -372,12 +372,15 @@ namespace YouTube_Downloader_DLL.Operations
             decimal skipped_l = 0;
             for (i = 0; i < lengths.Count; i++)
             {
-                if (clipFrom == TimeSpan.Zero)
-                    start_index = i;
-
                 // First find start_index
                 if (start_index == -1)
                 {
+                    if (clipFrom == TimeSpan.Zero)
+                    {
+                        start_index = i;
+                        continue;
+                    }
+
                     decimal new_l = skipped_l + lengths[i];
 
                     if (new_l < (decimal)clipFrom.TotalSeconds)
