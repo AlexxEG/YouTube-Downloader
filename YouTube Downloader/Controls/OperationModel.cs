@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using YouTube_Downloader.Renderers;
 using YouTube_Downloader_DLL.Classes;
 using YouTube_Downloader_DLL.FFmpeg;
@@ -210,10 +211,7 @@ namespace YouTube_Downloader.Controls
                 else
                     throw new Exception("Couldn't get affected file list from operation " + this.Operation.GetType().Name);
 
-                long fileSize = 0;
-
-                foreach (string file in fileList)
-                    fileSize += Helper.GetFileSize(file);
+                long fileSize = fileList.Sum(f => Helper.GetFileSize(f));
 
                 this.FileSize = Helper.FormatFileSize(fileSize);
             }
