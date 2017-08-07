@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using YouTube_Downloader_DLL.Operations;
 
@@ -15,11 +14,7 @@ namespace YouTube_Downloader_DLL.Helpers
         {
             get
             {
-                int count = 0;
-                foreach (var operation in Queue)
-                    if (IsDownloaderType(operation) && operation.CanPause())
-                        count++;
-                return count;
+                return Queue.Count(o => IsDownloaderType(o) && o.CanPause());
             }
         }
         public static int MaxDownloads { get; set; }
@@ -64,20 +59,12 @@ namespace YouTube_Downloader_DLL.Helpers
 
         public static Operation[] GetQueued()
         {
-            var queued = new List<Operation>();
-            foreach (var operation in Queue)
-                if (IsDownloaderType(operation) && operation.Status == OperationStatus.Queued)
-                    queued.Add(operation);
-            return queued.ToArray();
+            return Queue.Where(o => IsDownloaderType(o) && o.Status == OperationStatus.Queued).ToArray();
         }
 
         public static Operation[] GetWorking()
         {
-            var working = new List<Operation>();
-            foreach (var operation in Queue)
-                if (IsDownloaderType(operation) && operation.Status == OperationStatus.Working)
-                    working.Add(operation);
-            return working.ToArray();
+            return Queue.Where(o => IsDownloaderType(o) && o.Status == OperationStatus.Working).ToArray();
         }
 
         private static bool IsDownloaderType(Operation operation)
