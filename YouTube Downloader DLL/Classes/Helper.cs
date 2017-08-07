@@ -137,14 +137,9 @@ namespace YouTube_Downloader_DLL.Classes
 
         public static long GetDirectorySize(string directory)
         {
-            long size = 0;
-
-            foreach (string file in Directory.GetFiles(directory, "*.*", SearchOption.AllDirectories))
-            {
-                size += new FileInfo(file).Length;
-            }
-
-            return size;
+            return Directory
+                    .GetFiles(directory, "*.*", SearchOption.AllDirectories)
+                    .Sum(f => new FileInfo(f).Length);
         }
 
         public static string GetDirectorySizeFormatted(string directory)
