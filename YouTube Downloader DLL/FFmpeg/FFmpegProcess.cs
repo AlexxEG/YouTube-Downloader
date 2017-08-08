@@ -509,6 +509,10 @@ namespace YouTube_Downloader_DLL.FFmpeg
                 }, EnvironmentVariables, _logger);
 
             p.WaitForExit();
+
+            if (isTempFile)
+                Helper.DeleteFiles(input);
+
             LogFooter();
 
             if (canceled)
