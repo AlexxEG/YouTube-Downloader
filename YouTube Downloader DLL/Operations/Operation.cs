@@ -106,10 +106,7 @@ namespace YouTube_Downloader_DLL.Operations
         {
             get
             {
-                if (_worker == null)
-                    return false;
-
-                return _worker.CancellationPending;
+                return _worker?.CancellationPending == true;
             }
         }
 
