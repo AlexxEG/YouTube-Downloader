@@ -119,10 +119,7 @@ namespace YouTube_Downloader_DLL.Operations
         {
             get
             {
-                if (_worker == null)
-                    return false;
-
-                return _worker.IsBusy;
+                return _worker?.IsBusy == true;
             }
         }
 
