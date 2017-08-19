@@ -41,8 +41,6 @@ namespace YouTube_Downloader_DLL.Operations
             this.Input = format.DownloadUrl;
             this.Output = output;
 
-            string file = Path.GetFileName(this.Output).Trim();
-
             downloader.Files.Add(new FileDownload(this.Output, this.Input));
         }
 
