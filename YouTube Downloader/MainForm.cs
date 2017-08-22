@@ -7,7 +7,6 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -31,7 +30,6 @@ namespace YouTube_Downloader
 {
     public partial class MainForm : Form
     {
-        private string[] _args;
         private VideoInfo _selectedVideo;
         private YTDAuthentication _auth = null;
         Thread _maxSimDownloadsApplyThread;
@@ -40,6 +38,8 @@ namespace YouTube_Downloader
 
         public MainForm()
         {
+
+
             InitializeComponent();
             InitializeMainMenu();
 
@@ -62,12 +62,6 @@ namespace YouTube_Downloader
                     olvQueue.ListViewItemSorter = new BarTextProgressComparer(order);
                 }
             };
-        }
-
-        public MainForm(string[] args)
-            : this()
-        {
-            this._args = args;
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -106,11 +100,10 @@ namespace YouTube_Downloader
 
         private void MainForm_Shown(object sender, EventArgs e)
         {
-            if (_args != null)
+            if (Program.Arguments.Count > 0)
             {
-                txtYoutubeLink.Text = _args[0];
+                txtYoutubeLink.Text = Program.Arguments[0];
                 btnGetVideo.PerformClick();
-                _args = null;
             }
 
             // Disable & enable functions depending on if FFmpeg is available, and

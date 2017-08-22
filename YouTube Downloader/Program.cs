@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows.Forms;
 using YouTube_Downloader_DLL.Classes;
@@ -10,7 +12,17 @@ namespace YouTube_Downloader
     {
         public const string Name = "YouTube Downloader";
 
+        private static List<string> _arguments;
+
         public static bool FFmpegAvailable = true;
+
+        public static ReadOnlyCollection<string> Arguments
+        {
+            get
+            {
+                return _arguments.AsReadOnly();
+            }
+        }
 
         /// <summary>
         /// The main entry point for the application.
@@ -22,6 +34,7 @@ namespace YouTube_Downloader
             Application.SetCompatibleTextRenderingDefault(false);
 
             Program.FFmpegAvailable = File.Exists(FFmpegProcess.FFmpegPath);
+            Program._arguments = new List<string>(args);
 
             // Up the connection limit for getting the file sizes of video formats
             System.Net.ServicePointManager.DefaultConnectionLimit = 20;

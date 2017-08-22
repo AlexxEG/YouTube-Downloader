@@ -18,14 +18,11 @@ namespace YouTube_Downloader
             string[] args = new string[this.CommandLineArgs.Count];
 
             this.CommandLineArgs.CopyTo(args, 0);
-            
+
             DownloadQueueHandler.LimitDownloads = Settings.Default.ShowMaxSimDownloads;
             DownloadQueueHandler.StartWatching(Settings.Default.MaxSimDownloads);
 
-            if (this.CommandLineArgs.Count > 0)
-                this.MainForm = new MainForm(args);
-            else
-                this.MainForm = new MainForm();
+            this.MainForm = new MainForm();
         }
 
         protected override void OnStartupNextInstance(StartupNextInstanceEventArgs eventArgs)
