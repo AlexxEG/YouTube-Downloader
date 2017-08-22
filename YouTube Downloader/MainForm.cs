@@ -38,8 +38,6 @@ namespace YouTube_Downloader
 
         public MainForm()
         {
-
-
             InitializeComponent();
             InitializeMainMenu();
 
