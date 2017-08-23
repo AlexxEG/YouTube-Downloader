@@ -407,7 +407,7 @@ namespace YouTube_Downloader
             btnDownload.Enabled = true;
         }
 
-        private void downloadItem_OperationComplete(object sender, OperationEventArgs e)
+        private void OperationModel_OperationComplete(object sender, OperationEventArgs e)
         {
             if (!((sender as OperationModel).Operation is DownloadOperation))
                 return;
@@ -1297,7 +1297,7 @@ namespace YouTube_Downloader
             var item = new OperationModel(operation);
 
             item.AspectChanged += OperationModel_AspectChanged;
-            item.OperationComplete += downloadItem_OperationComplete;
+            item.OperationComplete += OperationModel_OperationComplete;
 
             olvQueue.AddObject(item);
             olvQueue.SelectedObject = item;
