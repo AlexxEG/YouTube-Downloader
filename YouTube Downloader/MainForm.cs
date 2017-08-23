@@ -270,16 +270,7 @@ namespace YouTube_Downloader
                         throw new Exception($"Unknown video source: {_selectedVideo.VideoSource}");
                 }
 
-                var item = new OperationModel(operation);
-                
-                item.AspectChanged += OperationModel_AspectChanged;
-                item.OperationComplete += downloadItem_OperationComplete;
-
-                olvQueue.AddObject(item);
-                olvQueue.SelectedObject = item;
-
-                tabControl1.SelectedTab = queueTabPage;
-
+                this.AddQueueItem(operation);
                 DownloadQueueHandler.Add(operation);
             }
             catch (Exception ex)
@@ -418,6 +409,9 @@ namespace YouTube_Downloader
 
         private void downloadItem_OperationComplete(object sender, OperationEventArgs e)
         {
+            if (!((sender as OperationModel).Operation is DownloadOperation))
+                return;
+
             var operation = (sender as OperationModel).Operation;
 
             if (chbAutoConvert.Enabled && chbAutoConvert.Checked && operation.Status == OperationStatus.Success)
@@ -725,17 +719,9 @@ namespace YouTube_Downloader
                                                       playlistReverseMenuItem.Checked,
                                                       playlistNumberPrefixMenuItem.Checked,
                                                       videos);
-                var item = new OperationModel(operation);
-
-                item.AspectChanged += OperationModel_AspectChanged;
-
-                olvQueue.AddObject(item);
-                olvQueue.SelectedObject = item;
-
                 operation.FileDownloadComplete += playlistOperation_FileDownloadComplete;
 
-                tabControl1.SelectedTab = queueTabPage;
-
+                this.AddQueueItem(operation);
                 DownloadQueueHandler.Add(operation);
             }
             catch (Exception ex)
@@ -1306,6 +1292,22 @@ namespace YouTube_Downloader
             this.Close();
         }
 
+        private OperationModel AddQueueItem(Operation operation, bool switchTab = false)
+        {
+            var item = new OperationModel(operation);
+
+            item.AspectChanged += OperationModel_AspectChanged;
+            item.OperationComplete += downloadItem_OperationComplete;
+
+            olvQueue.AddObject(item);
+            olvQueue.SelectedObject = item;
+
+            if (switchTab)
+                tabControl1.SelectedTab = queueTabPage;
+
+            return item;
+        }
+
         /// <summary>
         /// Starts a ConvertOperation.
         /// </summary>
@@ -1328,16 +1330,10 @@ namespace YouTube_Downloader
             }
 
             var operation = new ConvertOperation(input, output, start, end);
-            var item = new OperationModel(operation, Path.GetFileName(input));
-
-            item.AspectChanged += OperationModel_AspectChanged;
-
-            olvQueue.AddObject(item);
-            olvQueue.SelectedObject = item;
 
             operation.Start();
 
-            return item;
+            return this.AddQueueItem(operation, false);
         }
 
         /// <summary>
@@ -1349,14 +1345,10 @@ namespace YouTube_Downloader
         private void ConvertFolder(string input, string output, string extension)
         {
             var operation = new ConvertOperation(input, output, extension);
-            var item = new OperationModel(operation, Path.GetFileName(input));
-
-            item.AspectChanged += OperationModel_AspectChanged;
-
-            olvQueue.AddObject(item);
-            olvQueue.SelectedObject = item;
 
             operation.Start();
+
+            this.AddQueueItem(operation, false);
         }
 
         /// <summary>
@@ -1377,14 +1369,10 @@ namespace YouTube_Downloader
                 end = TimeSpan.MinValue;
 
             var operation = new CroppingOperation(input, output, start, end);
-            var item = new OperationModel(operation, Path.GetFileName(input));
-
-            item.AspectChanged += OperationModel_AspectChanged;
-
-            olvQueue.AddObject(item);
-            olvQueue.SelectedObject = item;
 
             operation.Start();
+
+            this.AddQueueItem(operation, false);
         }
 
         /// <summary>
