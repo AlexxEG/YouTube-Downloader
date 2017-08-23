@@ -32,6 +32,7 @@ namespace YouTube_Downloader_DLL.Operations
             this.Input = input;
             this.Output = output;
             this.ProgressText = "Converting...";
+            this.Title = Path.GetFileName(this.Output);
         }
 
         public ConvertOperation(string input,
@@ -40,7 +41,6 @@ namespace YouTube_Downloader_DLL.Operations
             : this(input, output)
         {
             _mode = ConvertingMode.Folder;
-            this.Title = Path.GetFileName(this.Input);
             this.ValidateSearchPattern(searchPattern, out _searchPattern);
         }
 
@@ -55,7 +55,6 @@ namespace YouTube_Downloader_DLL.Operations
             _end = end;
 
             this.Duration = (long)FFmpegProcess.GetDuration(this.Input).Value.TotalSeconds;
-            this.Title = Path.GetFileName(this.Output);
         }
 
         #region Operation members

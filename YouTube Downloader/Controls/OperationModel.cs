@@ -146,23 +146,18 @@ namespace YouTube_Downloader.Controls
         public event EventHandler AspectChanged;
         public event OperationEventHandler OperationComplete;
 
-        public OperationModel(string text, string input, Operation operation)
-            : this(text, input, input, operation)
+        public OperationModel(Operation operation)
+            : this(operation, operation.Input)
         {
         }
 
-        public OperationModel(string text, string input, string inputText, Operation operation)
+        public OperationModel(Operation operation, string inputText)
         {
-            this.Title = text;
-            this.Input = input;
+            this.Title = operation.Title;
+            this.Input = operation.Link;
             this.InputText = inputText;
-
-            // Set 'Duration' and 'FileSize' is input is a single file
-            if (File.Exists(input))
-            {
-                this.Duration = Helper.FormatVideoLength(FFmpegProcess.GetDuration(input).Value);
-                this.FileSize = Helper.GetFileSizeFormatted(input);
-            }
+            this.FileSize = Helper.FormatFileSize(operation.FileSize);
+            this.Duration = Helper.FormatVideoLength(operation.Duration);
 
             this.Operation = operation;
             this.Operation.Completed += Operation_Completed;

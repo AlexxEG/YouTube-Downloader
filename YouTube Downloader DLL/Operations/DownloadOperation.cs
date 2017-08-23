@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
+using Newtonsoft.Json.Linq;
 using YouTube_Downloader_DLL.Classes;
 using YouTube_Downloader_DLL.FFmpeg;
 using YouTube_Downloader_DLL.FileDownloading;
@@ -13,18 +14,15 @@ namespace YouTube_Downloader_DLL.Operations
 {
     public class DownloadOperation : Operation
     {
+        private const string RegexAddToFilename = @"^(\w:.*\\.*)(\..*)$";
+
         bool _combine, _processing, _downloadSuccessful;
         FileDownloader downloader;
 
-        private DownloadOperation(VideoFormat format)
-        {
-            this.ReportsProgress = true;
-            this.Duration = format.VideoInfo.Duration;
-            this.FileSize = format.FileSize;
-            this.Link = format.VideoInfo.Url;
-            this.Thumbnail = format.VideoInfo.ThumbnailUrl;
-            this.Title = format.VideoInfo.Title;
+        public List<VideoFormat> Formats { get; } = new List<VideoFormat>();
 
+        private DownloadOperation()
+        {
             downloader = new FileDownloader();
             // Attach events
             downloader.Canceled += downloader_Canceled;
@@ -32,6 +30,19 @@ namespace YouTube_Downloader_DLL.Operations
             downloader.FileDownloadFailed += downloader_FileDownloadFailed;
             downloader.CalculatedTotalFileSize += downloader_CalculatedTotalFileSize;
             downloader.ProgressChanged += downloader_ProgressChanged;
+        }
+
+        private DownloadOperation(VideoFormat format)
+            : this()
+        {
+            this.ReportsProgress = true;
+            this.Duration = format.VideoInfo.Duration;
+            this.FileSize = format.FileSize;
+            this.Link = format.VideoInfo.Url;
+            this.Thumbnail = format.VideoInfo.ThumbnailUrl;
+            this.Title = Path.GetFileName(this.Output);
+
+            this.Formats.Add(format);
         }
 
         public DownloadOperation(VideoFormat format,
@@ -44,22 +55,25 @@ namespace YouTube_Downloader_DLL.Operations
             downloader.Files.Add(new FileDownload(this.Output, this.Input));
         }
 
-        public DownloadOperation(VideoFormat format,
+        public DownloadOperation(VideoFormat video,
                                  VideoFormat audio,
                                  string output)
-            : this(format)
+            : this(video)
         {
             _combine = true;
-            this.Input = $"{audio.DownloadUrl}|{format.DownloadUrl}";
+            this.Input = $"{audio.DownloadUrl}|{video.DownloadUrl}";
             this.Output = output;
+            this.FileSize += audio.FileSize;
 
-            Regex regex = new Regex(@"^(\w:.*\\.*)(\..*)$");
+            this.Formats.Add(audio);
+
+            var regex = new Regex(RegexAddToFilename);
 
             downloader.Files.Add(new FileDownload(regex.Replace(this.Output, "$1_audio$2"),
                                                   audio.DownloadUrl,
                                                   true));
             downloader.Files.Add(new FileDownload(regex.Replace(this.Output, "$1_video$2"),
-                                                  format.DownloadUrl,
+                                                  video.DownloadUrl,
                                                   true));
 
             // Delete _audio and _video files in case they exists from a previous attempt

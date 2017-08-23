@@ -11,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using Newtonsoft.Json.Linq;
 using YouTube_Downloader.Classes;
 using YouTube_Downloader.Controls;
 using YouTube_Downloader.Properties;
@@ -69,8 +70,8 @@ namespace YouTube_Downloader
                 string text = "Files are being downloaded/converted/cut.\n\nAre you sure you want to quit?";
 
                 if (MessageBox.Show(this, text, "Confirmation",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Warning) == DialogResult.Yes)
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Warning) == DialogResult.Yes)
                 {
                     // Hide form while waiting for threads to finish,
                     // except downloads which will abort.
@@ -267,16 +268,8 @@ namespace YouTube_Downloader
                         throw new Exception($"Unknown video source: {_selectedVideo.VideoSource}");
                 }
 
-                var item = new OperationModel(Path.GetFileName(filename), tempFormat.VideoInfo.Url, operation);
-
-                item.Duration = Helper.FormatVideoLength(tempFormat.VideoInfo.Duration);
-
-                // Combine video and audio file size if the format only has video
-                if (_selectedVideo.VideoSource == VideoSource.YouTube && tempFormat.VideoOnly)
-                    item.FileSize = Helper.FormatFileSize(tempFormat.FileSize + Helper.GetAudioFormat(tempFormat).FileSize);
-                else
-                    item.FileSize = Helper.FormatFileSize(tempFormat.FileSize);
-
+                var item = new OperationModel(operation);
+                
                 item.AspectChanged += OperationModel_AspectChanged;
                 item.OperationComplete += downloadItem_OperationComplete;
 
@@ -730,7 +723,7 @@ namespace YouTube_Downloader
                                                       playlistReverseMenuItem.Checked,
                                                       playlistNumberPrefixMenuItem.Checked,
                                                       videos);
-                var item = new OperationModel("Getting playlist info...", txtPlaylistLink.Text, operation);
+                var item = new OperationModel(operation);
 
                 item.AspectChanged += OperationModel_AspectChanged;
 
@@ -1333,7 +1326,7 @@ namespace YouTube_Downloader
             }
 
             var operation = new ConvertOperation(input, output, start, end);
-            var item = new OperationModel(Path.GetFileName(output), input, Path.GetFileName(input), operation);
+            var item = new OperationModel(operation, Path.GetFileName(input));
 
             item.AspectChanged += OperationModel_AspectChanged;
 
@@ -1354,7 +1347,7 @@ namespace YouTube_Downloader
         private void ConvertFolder(string input, string output, string extension)
         {
             var operation = new ConvertOperation(input, output, extension);
-            var item = new OperationModel(Path.GetFileName(output), input, Path.GetFileName(input), operation);
+            var item = new OperationModel(operation, Path.GetFileName(input));
 
             item.AspectChanged += OperationModel_AspectChanged;
 
@@ -1382,7 +1375,7 @@ namespace YouTube_Downloader
                 end = TimeSpan.MinValue;
 
             var operation = new CroppingOperation(input, output, start, end);
-            var item = new OperationModel(Path.GetFileName(output), input, Path.GetFileName(input), operation);
+            var item = new OperationModel(operation, Path.GetFileName(input));
 
             item.AspectChanged += OperationModel_AspectChanged;
 
@@ -1674,10 +1667,8 @@ namespace YouTube_Downloader
         {
             Operation operation = new DummyDownloadOperation(workTimeMS);
 
-            var item = new OperationModel(operation.Title, operation.Link, operation);
+            var item = new OperationModel(operation);
 
-            item.Duration = Helper.FormatVideoLength(operation.Duration);
-            item.FileSize = Helper.FormatFileSize(operation.FileSize);
             item.AspectChanged += OperationModel_AspectChanged;
 
             olvQueue.AddObject(item);
