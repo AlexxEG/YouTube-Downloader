@@ -77,9 +77,11 @@ namespace YouTube_Downloader
                     // except downloads which will abort.
                     this.CancelOperations();
                 }
-
-                e.Cancel = true;
-                return;
+                else
+                {
+                    e.Cancel = true;
+                    return;
+                }
             }
 
             _selectedVideo?.AbortUpdateFileSizes();
