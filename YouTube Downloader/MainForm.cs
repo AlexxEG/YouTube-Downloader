@@ -226,8 +226,8 @@ namespace YouTube_Downloader
 
             try
             {
-                VideoFormat tempFormat = cbQuality.SelectedItem as VideoFormat;
-                string filename = string.Format("{0}.{1}", txtTitle.Text, tempFormat.Extension);
+                VideoFormat format = cbQuality.SelectedItem as VideoFormat;
+                string filename = string.Format("{0}.{1}", txtTitle.Text, format.Extension);
                 string output = Path.Combine(path, filename);
 
                 if (File.Exists(output))
@@ -249,21 +249,21 @@ namespace YouTube_Downloader
                 {
                     case VideoSource.Twitch:
                         if (!chbDownloadClipFrom.Checked)
-                            operation = new TwitchOperation(tempFormat, output);
+                            operation = new TwitchOperation(format, output);
                         else
                         {
                             TimeSpan clipFrom = dpDownloadClipFrom.Duration;
                             TimeSpan clipTo = dpDownloadClipTo.Duration;
-                            operation = new TwitchOperation(tempFormat, output, clipFrom, clipTo);
+                            operation = new TwitchOperation(format, output, clipFrom, clipTo);
                         }
                         break;
                     case VideoSource.YouTube:
-                        if (tempFormat.AudioOnly || tempFormat.HasAudioAndVideo)
-                            operation = new DownloadOperation(tempFormat, output);
+                        if (format.AudioOnly || format.HasAudioAndVideo)
+                            operation = new DownloadOperation(format, output);
                         else
                         {
-                            VideoFormat audio = Helper.GetAudioFormat(tempFormat);
-                            operation = new DownloadOperation(tempFormat, audio, output);
+                            VideoFormat audio = Helper.GetAudioFormat(format);
+                            operation = new DownloadOperation(format, audio, output);
                         }
                         break;
                     default:
