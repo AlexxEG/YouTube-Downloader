@@ -89,7 +89,6 @@ namespace YouTube_Downloader_DLL.Operations
         string _progressText = string.Empty;
         string _progressTextOverride = string.Empty;
         string _speed;
-        string _text;
         string _thumbnail;
         string _title;
 
