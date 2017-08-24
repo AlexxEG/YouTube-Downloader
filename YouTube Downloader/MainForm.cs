@@ -65,7 +65,7 @@ namespace YouTube_Downloader
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (this.GetIsWorking())
+            if (this.IsWorking())
             {
                 string text = "Files are being downloaded/converted/cut.\n\nAre you sure you want to quit?";
 
@@ -1388,7 +1388,7 @@ namespace YouTube_Downloader
         /// <summary>
         /// Returns true if there is a working <see cref="Operation"/>.
         /// </summary>
-        private bool GetIsWorking()
+        private bool IsWorking()
         {
             return olvQueue.Objects
                     .Cast<OperationModel>()
