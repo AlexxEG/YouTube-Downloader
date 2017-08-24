@@ -128,20 +128,20 @@ namespace YouTube_Downloader_DLL.Classes
 
         public void DeserializeJson(string json_file)
         {
-            string json = ReadJSON(json_file);
-            JObject jObject = JObject.Parse(json);
+            string raw_json = ReadJSON(json_file);
+            JObject json = JObject.Parse(raw_json);
 
-            this.Duration = long.Parse(jObject["duration"].ToString());
-            this.Title = jObject["fulltitle"].ToString();
-            this.ID = jObject["id"].ToString();
+            this.Duration = json.Value<long>("duration");
+            this.Title = json.Value<string>("fulltitle");
+            this.ID = json.Value<string>("id");
 
-            string displayId = jObject["display_id"].ToString();
+            string displayId = json.Value<string>("display_id");
 
             // Get thumbnail
-            if (jObject["extractor"].ToString() == "twitch:vod")
+            if (json.Value<string>("extractor") == "twitch:vod")
             {
                 this.VideoSource = VideoSource.Twitch;
-                this.ThumbnailUrl = jObject["thumbnail"].ToString();
+                this.ThumbnailUrl = json.Value<string>("thumbnail");
             }
             else
             {
@@ -150,11 +150,9 @@ namespace YouTube_Downloader_DLL.Classes
                 this.ThumbnailUrl = string.Format("https://i.ytimg.com/vi/{0}/mqdefault.jpg", displayId);
             }
 
-            this.Url = jObject["webpage_url"].ToString();
+            this.Url = json.Value<string>("webpage_url");
 
-            JArray array = (JArray)jObject["formats"];
-
-            foreach (JToken token in array)
+            foreach (JToken token in (JArray)json["formats"])
             {
                 this.Formats.Add(new VideoFormat(this, token));
             }
