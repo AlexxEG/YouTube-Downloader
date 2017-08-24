@@ -50,12 +50,7 @@ namespace YouTube_Downloader_DLL.Classes
             {
                 // Make sure the video indexes is sorted, otherwise reversing wont do anything
                 Array.Sort(videos);
-                var items = new StringBuilder(videos[0].ToString());
-
-                for (int i = 1; i < videos.Length; i++)
-                    items.Append("," + videos[i]);
-
-                range = string.Format(CmdPlaylistRange, items);
+                range = string.Format(CmdPlaylistRange, string.Join(",", videos));
             }
 
             string reverseS = reverse ? CmdPlaylistReverse : string.Empty;
