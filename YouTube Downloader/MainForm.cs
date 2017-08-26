@@ -193,17 +193,18 @@ namespace YouTube_Downloader
 
         private void btnBrowse_Click(object sender, EventArgs e)
         {
-            OpenFolderDialog ofd = new OpenFolderDialog();
-
-            if (Directory.Exists(cbSaveTo.Text))
-                ofd.InitialFolder = cbSaveTo.Text;
-            else
-                ofd.InitialFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-
-            if (ofd.ShowDialog(this) == DialogResult.OK)
+            using (var ofd = new OpenFolderDialog())
             {
-                cbSaveTo.SelectedIndex = cbSaveTo.Items.Add(ofd.Folder);
-                cbPlaylistSaveTo.Items.Add(ofd.Folder);
+                if (Directory.Exists(cbSaveTo.Text))
+                    ofd.InitialFolder = cbSaveTo.Text;
+                else
+                    ofd.InitialFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+                if (ofd.ShowDialog(this) == DialogResult.OK)
+                {
+                    cbSaveTo.SelectedIndex = cbSaveTo.Items.Add(ofd.Folder);
+                    cbPlaylistSaveTo.Items.Add(ofd.Folder);
+                }
             }
         }
 
@@ -226,18 +227,16 @@ namespace YouTube_Downloader
 
             try
             {
-                VideoFormat format = cbQuality.SelectedItem as VideoFormat;
-                string filename = string.Format("{0}.{1}", txtTitle.Text, format.Extension);
-                string output = Path.Combine(path, filename);
+                var format = cbQuality.SelectedItem as VideoFormat;
+                var filename = string.Format("{0}.{1}", txtTitle.Text, format.Extension);
+                var output = Path.Combine(path, filename);
 
                 if (File.Exists(output))
                 {
-                    DialogResult result = MessageBox.Show(this,
-                        string.Format("File '{1}' already exists.{0}{0}Overwrite?", Environment.NewLine, filename),
-                        "Overwrite?",
-                        MessageBoxButtons.YesNo);
-
-                    if (result == DialogResult.No)
+                    if (MessageBox.Show(this,
+                            string.Format("File '{1}' already exists.{0}{0}Overwrite?", Environment.NewLine, filename),
+                            "Overwrite?",
+                            MessageBoxButtons.YesNo) == DialogResult.No)
                         return;
 
                     File.Delete(output);
@@ -252,9 +251,9 @@ namespace YouTube_Downloader
                             operation = new TwitchOperation(format, output);
                         else
                         {
-                            TimeSpan clipFrom = dpDownloadClipFrom.Duration;
-                            TimeSpan clipTo = dpDownloadClipTo.Duration;
-                            operation = new TwitchOperation(format, output, clipFrom, clipTo);
+                            operation = new TwitchOperation(format, output,
+                                dpDownloadClipFrom.Duration,
+                                dpDownloadClipTo.Duration);
                         }
                         break;
                     case VideoSource.YouTube:
@@ -262,8 +261,9 @@ namespace YouTube_Downloader
                             operation = new DownloadOperation(format, output);
                         else
                         {
-                            VideoFormat audio = Helper.GetAudioFormat(format);
-                            operation = new DownloadOperation(format, audio, output);
+                            operation = new DownloadOperation(format,
+                                Helper.GetAudioFormat(format),
+                                output);
                         }
                         break;
                     default:
@@ -285,13 +285,13 @@ namespace YouTube_Downloader
         {
             if (videoThumbnail.Tag != null)
             {
-                string length = (string)videoThumbnail.Tag;
-                Font mFont = new Font(this.Font.Name, 10.0F, FontStyle.Bold, GraphicsUnit.Point);
-                SizeF mSize = e.Graphics.MeasureString(length, mFont);
-                Rectangle mRec = new Rectangle((int)(videoThumbnail.Width - mSize.Width - 6),
-                                               (int)(videoThumbnail.Height - mSize.Height - 6),
-                                               (int)(mSize.Width + 2),
-                                               (int)(mSize.Height + 2));
+                var length = (string)videoThumbnail.Tag;
+                var mFont = new Font(this.Font.Name, 10.0F, FontStyle.Bold, GraphicsUnit.Point);
+                var mSize = e.Graphics.MeasureString(length, mFont);
+                var mRec = new Rectangle((int)(videoThumbnail.Width - mSize.Width - 6),
+                                         (int)(videoThumbnail.Height - mSize.Height - 6),
+                                         (int)(mSize.Width + 2),
+                                         (int)(mSize.Height + 2));
 
                 e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(200, Color.Black)), mRec);
                 e.Graphics.DrawString(length, mFont, new SolidBrush(Color.Gainsboro), new PointF((videoThumbnail.Width - mSize.Width - 5),
@@ -302,11 +302,11 @@ namespace YouTube_Downloader
         private void cbQuality_SelectedIndexChanged(object sender, EventArgs e)
         {
             // Display file size.
-            VideoFormat format = (VideoFormat)cbQuality.SelectedItem;
+            var format = (VideoFormat)cbQuality.SelectedItem;
 
             if (format == null || _selectedVideo.VideoSource == VideoSource.Twitch)
             {
-                lFileSize.Text = "";
+                lFileSize.Text = string.Empty;
             }
             else if (format.FileSize == 0)
             {
@@ -361,7 +361,7 @@ namespace YouTube_Downloader
 
         private void bwGetVideo_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            VideoInfo videoInfo = e.Result as VideoInfo;
+            var videoInfo = e.Result as VideoInfo;
 
             if (videoInfo.RequiresAuthentication)
             {
@@ -389,7 +389,7 @@ namespace YouTube_Downloader
 
                 txtTitle.Text = Helper.FormatTitle(videoInfo.Title);
 
-                TimeSpan videoLength = TimeSpan.FromSeconds(videoInfo.Duration);
+                var videoLength = TimeSpan.FromSeconds(videoInfo.Duration);
                 if (videoLength.Hours > 0)
                     videoThumbnail.Tag = string.Format("{0}:{1:00}:{2:00}", videoLength.Hours, videoLength.Minutes, videoLength.Seconds);
                 else
@@ -442,17 +442,18 @@ namespace YouTube_Downloader
 
         private void btnPlaylistBrowse_Click(object sender, EventArgs e)
         {
-            OpenFolderDialog ofd = new OpenFolderDialog();
-
-            if (Directory.Exists(cbPlaylistSaveTo.Text))
-                ofd.InitialFolder = cbPlaylistSaveTo.Text;
-            else
-                ofd.InitialFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-
-            if (ofd.ShowDialog(this) == DialogResult.OK)
+            using (var ofd = new OpenFolderDialog())
             {
-                cbSaveTo.Items.Add(ofd.Folder);
-                cbPlaylistSaveTo.SelectedIndex = cbPlaylistSaveTo.Items.Add(ofd.Folder);
+                if (Directory.Exists(cbPlaylistSaveTo.Text))
+                    ofd.InitialFolder = cbPlaylistSaveTo.Text;
+                else
+                    ofd.InitialFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+                if (ofd.ShowDialog(this) == DialogResult.OK)
+                {
+                    cbSaveTo.Items.Add(ofd.Folder);
+                    cbPlaylistSaveTo.SelectedIndex = cbPlaylistSaveTo.Items.Add(ofd.Folder);
+                }
             }
         }
 
@@ -509,8 +510,8 @@ namespace YouTube_Downloader
                     break;
                 }
 
-                string title = WebUtility.HtmlDecode(video.Title);
-                ListViewItem item = new ListViewItem(Helper.FormatTitle(title));
+                var title = WebUtility.HtmlDecode(video.Title);
+                var item = new ListViewItem(Helper.FormatTitle(title));
                 item.SubItems.Add(video.Duration);
                 item.Checked = true;
                 item.Tag = video;
@@ -652,7 +653,7 @@ namespace YouTube_Downloader
         {
             lvPlaylistVideos.BeginUpdate();
 
-            foreach (ListViewItem item in this.GetFilteredItems())
+            foreach (var item in this.GetFilteredItems())
             {
                 lvPlaylistVideos.Items.Remove(item);
             }
@@ -664,7 +665,7 @@ namespace YouTube_Downloader
         {
             lvPlaylistVideos.BeginUpdate();
 
-            foreach (ListViewItem item in this.GetFilteredItems())
+            foreach (var item in this.GetFilteredItems())
             {
                 item.Checked = !item.Checked;
             }
@@ -682,7 +683,7 @@ namespace YouTube_Downloader
 
             lvPlaylistVideos.BeginUpdate();
 
-            foreach (ListViewItem item in this.GetFilteredItems())
+            foreach (var item in this.GetFilteredItems())
             {
                 item.BackColor = Color.LightGray;
             }
