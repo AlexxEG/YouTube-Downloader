@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace YouTube_Downloader_DLL.Classes
 {
@@ -60,6 +61,50 @@ namespace YouTube_Downloader_DLL.Classes
                     Thread.Sleep(2000);
                 }
             }).Start();
+        }
+
+        public static async void DeleteFilesAsync(params string[] files)
+        {
+            await Task.Run(delegate
+            {
+                var dict = new Dictionary<string, int>();
+                var keys = new List<string>();
+
+                foreach (string file in files)
+                {
+                    dict.Add(file, 0);
+                    keys.Add(file);
+                }
+
+                while (dict.Count > 0)
+                {
+                    foreach (string key in keys)
+                    {
+                        try
+                        {
+                            if (File.Exists(key))
+                                File.Delete(key);
+
+                            // Remove file from dictionary since it either got deleted
+                            // or it doesn't exist anymore.
+                            dict.Remove(key);
+                        }
+                        catch
+                        {
+                            if (dict[key] == 10)
+                            {
+                                dict.Remove(key);
+                            }
+                            else
+                            {
+                                dict[key]++;
+                            }
+                        }
+                    }
+
+                    Task.Delay(2000).Wait();
+                }
+            });
         }
 
         /// <summary>
