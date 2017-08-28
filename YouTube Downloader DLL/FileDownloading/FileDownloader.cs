@@ -16,6 +16,7 @@ namespace YouTube_Downloader_DLL.FileDownloading
 {
     public class FileDownloader : IDisposable
     {
+        bool _cleanup;
         BackgroundWorker _downloader;
 
         public event EventHandler CalculatedTotalFileSize;
@@ -49,7 +50,6 @@ namespace YouTube_Downloader_DLL.FileDownloading
         {
             get { return this.IsBusy && !_downloader.CancellationPending; }
         }
-        public bool DeleteUnfinishedFilesOnCancel { get; set; }
         public bool IsBusy { get; private set; }
         public bool IsPaused { get; private set; }
         public bool WasCanceled { get; set; }
@@ -110,7 +110,6 @@ namespace YouTube_Downloader_DLL.FileDownloading
             _downloader.ProgressChanged += downloader_ProgressChanged;
             _downloader.RunWorkerCompleted += downloader_RunWorkerCompleted;
 
-            this.DeleteUnfinishedFilesOnCancel = true;
             this.Files = new List<FileDownload>();
         }
 
@@ -143,8 +142,9 @@ namespace YouTube_Downloader_DLL.FileDownloading
             this.OnStarted();
         }
 
-        public void Stop()
+        public void Stop(bool cleanup)
         {
+            _cleanup = cleanup;
             this.IsBusy = false;
             this.IsPaused = false;
             this.WasCanceled = true;
@@ -376,7 +376,7 @@ namespace YouTube_Downloader_DLL.FileDownloading
                 this.RaiseEventFromBackground(BackgroundEvents.FileDownloadComplete,
                         new FileDownloadEventArgs(file));
 
-                if (_downloader.CancellationPending)
+                if (_downloader.CancellationPending && _cleanup)
                 {
                     this.CleanupFiles();
                 }

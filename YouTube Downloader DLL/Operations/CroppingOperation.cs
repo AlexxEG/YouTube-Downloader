@@ -79,7 +79,7 @@ namespace YouTube_Downloader_DLL.Operations
             return true;
         }
 
-        public override bool Stop()
+        public override bool Stop(bool cleanup)
         {
             if (this.IsPaused || this.IsWorking || this.IsQueued)
             {
@@ -96,7 +96,7 @@ namespace YouTube_Downloader_DLL.Operations
                 }
             }
 
-            if (!this.IsSuccessful)
+            if (cleanup && !this.IsSuccessful)
             {
                 Helper.DeleteFiles(this.Output);
             }

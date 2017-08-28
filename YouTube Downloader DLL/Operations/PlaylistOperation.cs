@@ -23,6 +23,7 @@ namespace YouTube_Downloader_DLL.Operations
         int _preferredQuality;
         int _selectedVideosCount = 0;
         bool _cancel;
+        bool _cleanup;
         bool _indexPrefix;
         bool _queryingVideos = false;
         bool _processing;
@@ -199,13 +200,14 @@ namespace YouTube_Downloader_DLL.Operations
             this.Status = OperationStatus.Working;
         }
 
-        public override bool Stop()
+        public override bool Stop(bool cleanup)
         {
             if (this.IsBusy)
                 this.CancelAsync();
 
             this.Status = OperationStatus.Canceled;
             _cancel = true;
+            _cleanup = cleanup;
             return true;
         }
 
@@ -326,6 +328,7 @@ namespace YouTube_Downloader_DLL.Operations
                         _downloader.Files.Add(new FileDownload(audioFile, audioFormat.DownloadUrl));
                         _downloader.Files.Add(new FileDownload(videoFile, format.DownloadUrl));
 
+                        // ToDo: Add variable to know when we're resuming downloads (after program shutdown) and not delete leftovers
                         // Delete _audio and _video files in case they exists from a previous attempt
                         Helper.DeleteFiles(_downloader.Files[0].Path,
                                            _downloader.Files[1].Path);
@@ -338,7 +341,7 @@ namespace YouTube_Downloader_DLL.Operations
                     {
                         if (this.CancellationPending)
                         {
-                            _downloader.Stop();
+                            _downloader.Stop(_cleanup);
                             break;
                         }
 

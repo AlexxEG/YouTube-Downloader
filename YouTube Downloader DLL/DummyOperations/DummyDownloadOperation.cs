@@ -44,7 +44,7 @@ namespace YouTube_Downloader_DLL.DummyOperations
             this.Status = OperationStatus.Working;
         }
 
-        public override bool Stop()
+        public override bool Stop(bool cleanup)
         {
             _cancel = true;
             return true;

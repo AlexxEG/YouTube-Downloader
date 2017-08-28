@@ -29,6 +29,19 @@ namespace YouTube_Downloader_DLL.Classes
         }
 
         /// <summary>
+        /// Returns the incomplete directory for this program. Also makes sure the directory exists.
+        /// </summary>
+        public static string GetIncompleteDirectory()
+        {
+            string path = Path.Combine(GetAppDataDirectory(), "incomplete");
+
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+
+            return path;
+        }
+
+        /// <summary>
         /// Returns the json directory for this program. Also makes sure the directory exists.
         /// </summary>
         public static string GetJsonDirectory()

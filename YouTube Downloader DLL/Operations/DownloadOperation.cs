@@ -45,6 +45,12 @@ namespace YouTube_Downloader_DLL.Operations
             this.Formats.Add(format);
         }
 
+        public DownloadOperation(JObject json)
+            : this()
+        {
+            this.Restart(json);
+        }
+
         public DownloadOperation(VideoFormat format,
                                  string output)
             : this(format)
@@ -75,10 +81,6 @@ namespace YouTube_Downloader_DLL.Operations
             downloader.Files.Add(new FileDownload(regex.Replace(this.Output, "$1_video$2"),
                                                   video.DownloadUrl,
                                                   true));
-
-            // Delete _audio and _video files in case they exists from a previous attempt
-            Helper.DeleteFiles(downloader.Files[0].Path,
-                               downloader.Files[1].Path);
         }
 
         private void downloader_Canceled(object sender, EventArgs e)
@@ -102,7 +104,7 @@ namespace YouTube_Downloader_DLL.Operations
             // If one or more files fail, whole operation failed. Might handle it more
             // elegantly in the future.
             this.Status = OperationStatus.Failed;
-            downloader.Stop();
+            downloader.Stop(true);
         }
 
         private void downloader_CalculatedTotalFileSize(object sender, EventArgs e)
@@ -208,6 +210,36 @@ namespace YouTube_Downloader_DLL.Operations
             this.Status = OperationStatus.Queued;
         }
 
+        protected override void Restart(JObject json)
+        {
+            this.Input = json.Value<string>("input");
+            this.Output = json.Value<string>("output");
+            this.ReportsProgress = json.Value<bool>("reports_progress");
+            this.Duration = json.Value<long>("duration");
+            this.FileSize = json.Value<long>("filesize");
+            this.Link = json.Value<string>("link");
+            this.Thumbnail = json.Value<string>("thumbnail");
+            this.Title = json.Value<string>("title");
+
+            // Input contains '|' if there are separate audio and video downloads
+            if (!this.Input.Contains("|"))
+            {
+                downloader.Files.Add(new FileDownload(this.Output, this.Input));
+            }
+            else
+            {
+                _combine = true;
+                var regex = new Regex(RegexAddToFilename);
+
+                downloader.Files.Add(new FileDownload(regex.Replace(this.Output, "$1_audio$2"),
+                                                      this.Input.Split('|')[0],
+                                                      true));
+                downloader.Files.Add(new FileDownload(regex.Replace(this.Output, "$1_video$2"),
+                                                      this.Input.Split('|')[1],
+                                                      true));
+            }
+        }
+
         protected override void ResumeInternal()
         {
             downloader.Resume();
@@ -215,17 +247,37 @@ namespace YouTube_Downloader_DLL.Operations
             this.Status = OperationStatus.Working;
         }
 
-        public override bool Stop()
+        protected override JObject SaveInternal()
+        {
+            var json = new JObject();
+            json["type"] = this.GetType().Name;
+            json["input"] = this.Input;
+            json["output"] = this.Output;
+            json["reports_progress"] = this.ReportsProgress;
+            json["duration"] = this.Duration;
+            json["filesize"] = this.FileSize;
+            json["link"] = this.Link;
+            json["thumbnail"] = this.Thumbnail;
+            json["title"] = this.Title;
+            return json;
+        }
+
+        public override bool Stop(bool cleanup)
         {
             // Stop downloader if still running.
             if (downloader?.CanStop == true)
-                downloader.Stop();
+                downloader.Stop(cleanup);
 
             // Don't set status to canceled if already successful.
             if (!this.IsSuccessful)
                 this.Status = OperationStatus.Canceled;
 
             return true;
+        }
+
+        public override bool SupportsRestart()
+        {
+            return this.IsWorking || this.IsPaused;
         }
 
         #endregion

@@ -111,6 +111,8 @@ namespace YouTube_Downloader
             // display error for the user.
             groupBox2.Enabled = chbAutoConvert.Enabled = Program.FFmpegAvailable;
             lFFmpegMissing.Visible = btnCheckAgain.Visible = !Program.FFmpegAvailable;
+
+            this.LoadIncomplete();
         }
 
         private void olvQueue_HyperlinkClicked(object sender, HyperlinkClickedEventArgs e)
@@ -1225,7 +1227,7 @@ namespace YouTube_Downloader
                 var operation = item.Operation;
 
                 if (operation.CanStop())
-                    operation.Stop();
+                    operation.Stop(true);
             }
         }
 
@@ -1236,7 +1238,7 @@ namespace YouTube_Downloader
                 var item = (OperationModel)olvQueue.SelectedObjects[i];
                 var operation = item.Operation;
 
-                operation.Stop();
+                operation.Stop(true);
 
                 olvQueue.RemoveObject(item);
             }
@@ -1274,9 +1276,12 @@ namespace YouTube_Downloader
 
             foreach (Operation operation in Operation.Running)
             {
-                // Stop & delete unfinished files
+                // Stop & delete unfinished files if restarting is not supported
                 if (operation.CanStop())
-                    operation.Stop();
+                    operation.Stop(!operation.SupportsRestart());
+
+                if (operation.SupportsRestart())
+                    operation.Save();
             }
 
             if (bwGetVideo.IsBusy)
@@ -1403,6 +1408,43 @@ namespace YouTube_Downloader
         {
             return string.Join(",", olvQueue.AllColumns
                                     .Select(x => System.Convert.ToInt32(x.IsVisible)));
+        }
+
+        private void LoadIncomplete()
+        {
+            foreach (FileInfo file in new DirectoryInfo(Common.GetIncompleteDirectory()).GetFiles("*.json"))
+            {
+                var json = JObject.Parse(File.ReadAllText(file.FullName));
+
+                if (!json.TryGetValue("type", out _))
+                    continue;
+
+                var operation = this.InitializeOperation(json.Value<string>("type"), json);
+
+                this.AddQueueItem(operation, false);
+                DownloadQueueHandler.Add(operation);
+
+                file.Delete();
+            }
+        }
+
+        private Operation InitializeOperation(string type, JObject json)
+        {
+            switch (type)
+            {
+                case nameof(ConvertOperation):
+                    throw new NotImplementedException();
+                case nameof(CroppingOperation):
+                    throw new NotImplementedException();
+                case nameof(DownloadOperation):
+                    return new DownloadOperation(json);
+                case nameof(PlaylistOperation):
+                    throw new NotImplementedException();
+                case nameof(TwitchOperation):
+                    throw new NotImplementedException();
+                default:
+                    return null;
+            }
         }
 
         /// <summary>

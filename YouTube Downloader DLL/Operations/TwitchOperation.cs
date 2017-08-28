@@ -31,6 +31,7 @@ namespace YouTube_Downloader_DLL.Operations
         }
 
         bool _cancel = false;
+        bool _cleanup = true;
         bool _clipping = false;
         bool _combining = false;
         bool _processing = false;
@@ -172,9 +173,10 @@ namespace YouTube_Downloader_DLL.Operations
             this.Status = OperationStatus.Working;
         }
 
-        public override bool Stop()
+        public override bool Stop(bool cleanup)
         {
             _cancel = true;
+            _cleanup = cleanup;
 
             // Don't set status to canceled if already successful.
             if (!this.IsSuccessful)
@@ -199,8 +201,11 @@ namespace YouTube_Downloader_DLL.Operations
                         this.Optimize(logger, tempFilename);
                     else
                     {
-                        // Download was canceled
-                        Helper.DeleteFiles(tempFilename);
+                        if (_cleanup)
+                        {
+                            // Download was canceled
+                            Helper.DeleteFiles(tempFilename);
+                        }
                     }
                 }
 

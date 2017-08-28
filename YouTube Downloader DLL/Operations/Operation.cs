@@ -2,13 +2,22 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
+using System.IO;
 using System.Runtime.CompilerServices;
-using System.Text;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using YouTube_Downloader_DLL.Classes;
 
 namespace YouTube_Downloader_DLL.Operations
 {
+    public class IncompleteOperation
+    {
+        public IncompleteOperation()
+        {
+
+        }
+    }
+
     public abstract class Operation : IDisposable, INotifyPropertyChanged
     {
         protected const int ProgressMax = 100;
@@ -495,9 +504,34 @@ namespace YouTube_Downloader_DLL.Operations
         }
 
         /// <summary>
+        /// Restarts incomplete operation if supported.
+        /// </summary>
+        protected virtual void Restart(JObject json)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
         /// Resumes the operation if supported &amp; available.
         /// </summary>
         protected virtual void ResumeInternal()
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// Saves information needed to restart the operation if supported.
+        /// </summary>
+        public void Save()
+        {
+            JObject json = this.SaveInternal();
+            string content = JsonConvert.SerializeObject(json);
+            string path = Path.Combine(Common.GetIncompleteDirectory(), Path.GetFileNameWithoutExtension(this.Output)) + ".json";
+
+            File.WriteAllText(path, content);
+        }
+
+        protected virtual JObject SaveInternal()
         {
             throw new NotSupportedException();
         }
@@ -507,9 +541,17 @@ namespace YouTube_Downloader_DLL.Operations
         /// </summary>
         /// <param name="remove">Remove operation from it's ListView if set to true.</param>
         /// <param name="cleanup">Delete unfinished files if set to true.</param>
-        public virtual bool Stop()
+        public virtual bool Stop(bool cleanup)
         {
             throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// Returns whether 'Restart' method is supported.
+        /// </summary>
+        public virtual bool SupportsRestart()
+        {
+            return false;
         }
 
         protected void CancelAsync()
