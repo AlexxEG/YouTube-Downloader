@@ -622,6 +622,44 @@ namespace YouTube_Downloader
             Settings.Default.PreferredQualityPlaylist = cbPlaylistQuality.SelectedIndex;
         }
 
+        private void playlistOpenMenuItem_Click(object sender, EventArgs e)
+        {
+            bool error = false;
+
+            foreach (ListViewItem item in lvPlaylistVideos.SelectedItems)
+            {
+                try
+                {
+                    Process.Start($"https://www.youtube.com/watch?v={ (item.Tag as QuickVideoInfo).ID}");
+                }
+                catch
+                {
+                    error = true;
+                }
+            }
+
+            if (error)
+                MessageBox.Show(this, "Some links couldn't be opened.");
+        }
+
+        private void playlistCopyMenuItem_Click(object sender, EventArgs e)
+        {
+            string text = string.Join(
+                Environment.NewLine,
+                lvPlaylistVideos.SelectedItems
+                    .Cast<ListViewItem>()
+                    .Select(x => x.Text));
+
+            try
+            {
+                Clipboard.SetText(text);
+            }
+            catch
+            {
+                MessageBox.Show(this, "Couldn't set the clipboard text.");
+            }
+        }
+
         private void playlistSelectAllMenuItem_Click(object sender, EventArgs e)
         {
             foreach (ListViewItem item in lvPlaylistVideos.Items)
