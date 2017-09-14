@@ -11,8 +11,8 @@
     <Setting Name="SelectedDirectory" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="PreferredQualityPlaylist" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">0</Value>
+    <Setting Name="PreferredQualityPlaylist" Type="YouTube_Downloader_DLL.Enums.PreferredQuality" Scope="User">
+      <Value Profile="(Default)">Highest</Value>
     </Setting>
     <Setting Name="SelectedDirectoryPlaylist" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>

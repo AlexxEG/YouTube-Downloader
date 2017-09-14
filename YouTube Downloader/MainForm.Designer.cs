@@ -140,13 +140,13 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.cmPlaylistList = new System.Windows.Forms.ContextMenu();
+            this.playlistOpenMenuItem = new System.Windows.Forms.MenuItem();
+            this.menuItem6 = new System.Windows.Forms.MenuItem();
+            this.playlistCopyMenuItem = new System.Windows.Forms.MenuItem();
+            this.menuItem7 = new System.Windows.Forms.MenuItem();
             this.playlistSelectAllMenuItem = new System.Windows.Forms.MenuItem();
             this.playlistSelectNoneMenuItem = new System.Windows.Forms.MenuItem();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.playlistOpenMenuItem = new System.Windows.Forms.MenuItem();
-            this.playlistCopyMenuItem = new System.Windows.Forms.MenuItem();
-            this.menuItem6 = new System.Windows.Forms.MenuItem();
-            this.menuItem7 = new System.Windows.Forms.MenuItem();
             this.groupBox1.SuspendLayout();
             this.flpDownloadClip.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -762,10 +762,6 @@
             // 
             this.cbPlaylistQuality.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbPlaylistQuality.FormattingEnabled = true;
-            this.cbPlaylistQuality.Items.AddRange(new object[] {
-            "Highest",
-            "Medium",
-            "Low"});
             this.cbPlaylistQuality.Location = new System.Drawing.Point(60, 45);
             this.cbPlaylistQuality.Name = "cbPlaylistQuality";
             this.cbPlaylistQuality.Size = new System.Drawing.Size(129, 21);
@@ -1325,6 +1321,28 @@
             this.playlistSelectAllMenuItem,
             this.playlistSelectNoneMenuItem});
             // 
+            // playlistOpenMenuItem
+            // 
+            this.playlistOpenMenuItem.Index = 0;
+            this.playlistOpenMenuItem.Text = "Open";
+            this.playlistOpenMenuItem.Click += new System.EventHandler(this.playlistOpenMenuItem_Click);
+            // 
+            // menuItem6
+            // 
+            this.menuItem6.Index = 1;
+            this.menuItem6.Text = "-";
+            // 
+            // playlistCopyMenuItem
+            // 
+            this.playlistCopyMenuItem.Index = 2;
+            this.playlistCopyMenuItem.Text = "Copy";
+            this.playlistCopyMenuItem.Click += new System.EventHandler(this.playlistCopyMenuItem_Click);
+            // 
+            // menuItem7
+            // 
+            this.menuItem7.Index = 3;
+            this.menuItem7.Text = "-";
+            // 
             // playlistSelectAllMenuItem
             // 
             this.playlistSelectAllMenuItem.Index = 4;
@@ -1336,28 +1354,6 @@
             this.playlistSelectNoneMenuItem.Index = 5;
             this.playlistSelectNoneMenuItem.Text = "Select none";
             this.playlistSelectNoneMenuItem.Click += new System.EventHandler(this.playlistSelectNoneMenuItem_Click);
-            // 
-            // playlistOpenMenuItem
-            // 
-            this.playlistOpenMenuItem.Index = 0;
-            this.playlistOpenMenuItem.Text = "Open";
-            this.playlistOpenMenuItem.Click += new System.EventHandler(this.playlistOpenMenuItem_Click);
-            // 
-            // playlistCopyMenuItem
-            // 
-            this.playlistCopyMenuItem.Index = 2;
-            this.playlistCopyMenuItem.Text = "Copy";
-            this.playlistCopyMenuItem.Click += new System.EventHandler(this.playlistCopyMenuItem_Click);
-            // 
-            // menuItem6
-            // 
-            this.menuItem6.Index = 1;
-            this.menuItem6.Text = "-";
-            // 
-            // menuItem7
-            // 
-            this.menuItem7.Index = 3;
-            this.menuItem7.Text = "-";
             // 
             // MainForm
             // 

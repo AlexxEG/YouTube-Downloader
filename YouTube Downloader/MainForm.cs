@@ -619,7 +619,7 @@ namespace YouTube_Downloader
 
         private void cbPlaylistQuality_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Settings.Default.PreferredQualityPlaylist = cbPlaylistQuality.SelectedIndex;
+            Settings.Default.PreferredQualityPlaylist = (PreferredQuality)cbPlaylistQuality.SelectedIndex;
         }
 
         private void playlistOpenMenuItem_Click(object sender, EventArgs e)
@@ -1496,7 +1496,8 @@ namespace YouTube_Downloader
             if (cbPlaylistSaveTo.Items.Count > 0)
                 cbPlaylistSaveTo.SelectedIndex = settings.SelectedDirectoryPlaylist;
 
-            cbPlaylistQuality.SelectedIndex = settings.PreferredQualityPlaylist;
+            cbPlaylistQuality.Items.AddRange(Enum.GetNames(typeof(PreferredQuality)));
+            cbPlaylistQuality.SelectedIndex = (int)settings.PreferredQualityPlaylist;
 
             // Restore CheckBox.Checked
             chbAutoConvert.Checked = settings.AutoConvert;
