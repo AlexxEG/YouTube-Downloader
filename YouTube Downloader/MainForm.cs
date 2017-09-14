@@ -1042,7 +1042,7 @@ namespace YouTube_Downloader
         MainMenu mainMenu1;
         MenuItem fileMenuItem;
         MenuItem exitMenuItem;
-        MenuItem toolsMenuItem;
+        // MenuItem toolsMenuItem;
         MenuItem optionsMenuItem;
         MenuItem helpMenuItem;
         MenuItem checkForUpdateMenuItem;
