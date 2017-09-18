@@ -147,7 +147,7 @@ namespace YouTube_Downloader.Controls
         public event OperationEventHandler OperationComplete;
 
         public OperationModel(Operation operation)
-            : this(operation, operation.Input)
+            : this(operation, operation.Link)
         {
         }
 

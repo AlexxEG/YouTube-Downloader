@@ -18,8 +18,10 @@ namespace YouTube_Downloader_DLL.Operations
 
         bool _combine, _processing, _downloadSuccessful;
         FileDownloader downloader;
+        VideoInfo _video;
 
         public List<VideoFormat> Formats { get; } = new List<VideoFormat>();
+        public VideoInfo Video { get; private set; }
 
         private DownloadOperation()
         {
@@ -40,9 +42,9 @@ namespace YouTube_Downloader_DLL.Operations
             this.FileSize = format.FileSize;
             this.Link = format.VideoInfo.Url;
             this.Thumbnail = format.VideoInfo.ThumbnailUrl;
-            this.Title = Path.GetFileName(this.Output);
 
             this.Formats.Add(format);
+            this.Video = format.VideoInfo;
         }
 
         public DownloadOperation(VideoFormat format,
@@ -51,6 +53,7 @@ namespace YouTube_Downloader_DLL.Operations
         {
             this.Input = format.DownloadUrl;
             this.Output = output;
+            this.Title = Path.GetFileName(this.Output);
 
             downloader.Files.Add(new FileDownload(this.Output, this.Input));
         }
@@ -64,6 +67,7 @@ namespace YouTube_Downloader_DLL.Operations
             this.Input = $"{audio.DownloadUrl}|{video.DownloadUrl}";
             this.Output = output;
             this.FileSize += audio.FileSize;
+            this.Title = Path.GetFileName(this.Output);
 
             this.Formats.Add(audio);
 
