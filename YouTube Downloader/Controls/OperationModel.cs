@@ -183,7 +183,7 @@ namespace YouTube_Downloader.Controls
 
         private void Operation_Completed(object sender, OperationEventArgs e)
         {
-            sw.Stop();
+            sw?.Stop();
             sw = null;
 
             if (File.Exists(this.Operation.Output))
