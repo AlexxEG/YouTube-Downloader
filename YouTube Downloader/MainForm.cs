@@ -269,7 +269,7 @@ namespace YouTube_Downloader
                         throw new Exception($"Unknown video source: {_selectedVideo.VideoSource}");
                 }
 
-                this.AddQueueItem(operation);
+                this.AddQueueItem(operation, true);
                 DownloadQueueHandler.Add(operation);
             }
             catch (Exception ex)
@@ -759,7 +759,7 @@ namespace YouTube_Downloader
                                                       videos);
                 operation.FileDownloadComplete += playlistOperation_FileDownloadComplete;
 
-                this.AddQueueItem(operation);
+                this.AddQueueItem(operation, true);
                 DownloadQueueHandler.Add(operation);
             }
             catch (Exception ex)
