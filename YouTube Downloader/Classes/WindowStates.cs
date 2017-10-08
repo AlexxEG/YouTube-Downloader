@@ -50,7 +50,7 @@ namespace YouTube_Downloader.Classes
             {
                 string strWindowName = reader["name"];
 
-                XmlSerializer xsrWindowState = new XmlSerializer(typeof(WindowState));
+                var xsrWindowState = new XmlSerializer(typeof(WindowState));
                 windowStates.Add(strWindowName, (WindowState)xsrWindowState.Deserialize(reader));
             }
             while (reader.ReadToNextSibling("WindowState"));
@@ -62,9 +62,9 @@ namespace YouTube_Downloader.Classes
         /// <param name="writer">The stream to which this object will be serialized.</param>
         void IXmlSerializable.WriteXml(XmlWriter writer)
         {
-            foreach (KeyValuePair<string, WindowState> kvpWindowState in windowStates)
+            foreach (var kvpWindowState in windowStates)
             {
-                XmlSerializer xsrLocationInfo = new XmlSerializer(typeof(WindowState));
+                var xsrLocationInfo = new XmlSerializer(typeof(WindowState));
                 xsrLocationInfo.Serialize(writer, kvpWindowState.Value);
             }
         }

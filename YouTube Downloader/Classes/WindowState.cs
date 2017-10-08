@@ -139,7 +139,7 @@ namespace YouTube_Downloader.Classes
             if (reader.IsEmptyElement)
                 return;
 
-            XmlReader subtree = reader.ReadSubtree();
+            var subtree = reader.ReadSubtree();
 
             while (subtree.Read())
             {
@@ -178,7 +178,7 @@ namespace YouTube_Downloader.Classes
             writer.WriteAttributeString("height", this.Size.Height.ToString());
             writer.WriteAttributeString("windowState", this.FormWindowState.ToString());
 
-            foreach (KeyValuePair<string, int> pair in this.ColumnWidths)
+            foreach (var pair in this.ColumnWidths)
             {
                 writer.WriteStartElement("column");
                 writer.WriteAttributeString("name", pair.Key);
@@ -186,7 +186,7 @@ namespace YouTube_Downloader.Classes
                 writer.WriteEndElement();
             }
 
-            foreach (KeyValuePair<string, int> pair in this.SplitterDistances)
+            foreach (var pair in this.SplitterDistances)
             {
                 writer.WriteStartElement("splitter");
                 writer.WriteAttributeString("name", pair.Key);
@@ -205,7 +205,7 @@ namespace YouTube_Downloader.Classes
         /// <param name="controls">The <see cref="Control.ControlCollection"/> to look through.</param>
         private ICollection<ColumnHeader> GetColumns(Control.ControlCollection controls)
         {
-            List<ColumnHeader> columns = new List<ColumnHeader>();
+            var columns = new List<ColumnHeader>();
 
             foreach (Control c in controls)
             {
@@ -232,7 +232,7 @@ namespace YouTube_Downloader.Classes
         /// <param name="controls">The <see cref="Control.ControlCollection"/> to look through.</param>
         private ICollection<SplitContainer> GetSplitContainers(Control.ControlCollection controls)
         {
-            List<SplitContainer> columns = new List<SplitContainer>();
+            var columns = new List<SplitContainer>();
 
             foreach (Control c in controls)
             {
@@ -256,7 +256,7 @@ namespace YouTube_Downloader.Classes
         /// <param name="form">The <see cref="Form"/> to restore columns from.</param>
         private void RestoreColumns(Form form)
         {
-            foreach (ColumnHeader col in GetColumns(form.Controls))
+            foreach (var col in GetColumns(form.Controls))
             {
                 string key = string.Format("{0} - {1}", col.ListView.Name, col.DisplayIndex);
 
@@ -274,7 +274,7 @@ namespace YouTube_Downloader.Classes
         /// <param name="form">The <see cref="Form"/> to restore columns from.</param>
         private void RestoreSplitContainers(Form form)
         {
-            foreach (SplitContainer splitContainer in GetSplitContainers(form.Controls))
+            foreach (var splitContainer in GetSplitContainers(form.Controls))
             {
                 string key = splitContainer.Name;
 
@@ -291,7 +291,7 @@ namespace YouTube_Downloader.Classes
         /// <param name="form"></param>
         private void SaveColumns(Form form)
         {
-            foreach (ColumnHeader col in GetColumns(form.Controls))
+            foreach (var col in GetColumns(form.Controls))
             {
                 // Skip column if Name is null or empty, since it can't be identified.
                 if (string.IsNullOrEmpty(col.ListView.Name))
@@ -316,7 +316,7 @@ namespace YouTube_Downloader.Classes
         /// <param name="form"></param>
         private void SaveSplitContainers(Form form)
         {
-            foreach (SplitContainer splitContainer in GetSplitContainers(form.Controls))
+            foreach (var splitContainer in GetSplitContainers(form.Controls))
             {
                 string key = splitContainer.Name;
 
