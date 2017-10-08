@@ -31,16 +31,16 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.flpDownloadClip = new System.Windows.Forms.FlowLayoutPanel();
-            this.chbDownloadClipFrom = new System.Windows.Forms.CheckBox();
-            this.dpDownloadClipFrom = new YouTube_Downloader.Controls.DurationPicker();
-            this.chbDownloadClipTo = new System.Windows.Forms.CheckBox();
-            this.dpDownloadClipTo = new YouTube_Downloader.Controls.DurationPicker();
             this.label2 = new System.Windows.Forms.Label();
             this.btnPaste = new System.Windows.Forms.Button();
             this.imageList16px = new System.Windows.Forms.ImageList(this.components);
             this.btnGetVideo = new System.Windows.Forms.Button();
             this.txtYoutubeLink = new System.Windows.Forms.TextBox();
+            this.flpDownloadClip = new System.Windows.Forms.FlowLayoutPanel();
+            this.chbDownloadClipFrom = new System.Windows.Forms.CheckBox();
+            this.dpDownloadClipFrom = new YouTube_Downloader.Controls.DurationPicker();
+            this.chbDownloadClipTo = new System.Windows.Forms.CheckBox();
+            this.dpDownloadClipTo = new YouTube_Downloader.Controls.DurationPicker();
             this.btnBrowse = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.cbSaveTo = new System.Windows.Forms.ComboBox();
@@ -140,6 +140,10 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.cmPlaylistList = new System.Windows.Forms.ContextMenu();
+            this.playlistOpenMenuItem = new System.Windows.Forms.MenuItem();
+            this.menuItem6 = new System.Windows.Forms.MenuItem();
+            this.playlistCopyMenuItem = new System.Windows.Forms.MenuItem();
+            this.menuItem7 = new System.Windows.Forms.MenuItem();
             this.playlistSelectAllMenuItem = new System.Windows.Forms.MenuItem();
             this.playlistSelectNoneMenuItem = new System.Windows.Forms.MenuItem();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
@@ -177,6 +181,54 @@
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Video Link";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(6, 22);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(27, 13);
+            this.label2.TabIndex = 3;
+            this.label2.Text = "Link";
+            // 
+            // btnPaste
+            // 
+            this.btnPaste.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnPaste.ImageIndex = 0;
+            this.btnPaste.ImageList = this.imageList16px;
+            this.btnPaste.Location = new System.Drawing.Point(562, 18);
+            this.btnPaste.Name = "btnPaste";
+            this.btnPaste.Size = new System.Drawing.Size(22, 22);
+            this.btnPaste.TabIndex = 1;
+            this.toolTip1.SetToolTip(this.btnPaste, "Paste");
+            this.btnPaste.UseVisualStyleBackColor = true;
+            this.btnPaste.Click += new System.EventHandler(this.btnPaste_Click);
+            // 
+            // imageList16px
+            // 
+            this.imageList16px.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList16px.ImageStream")));
+            this.imageList16px.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageList16px.Images.SetKeyName(0, "Paste-64.png");
+            // 
+            // btnGetVideo
+            // 
+            this.btnGetVideo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnGetVideo.Location = new System.Drawing.Point(494, 45);
+            this.btnGetVideo.Name = "btnGetVideo";
+            this.btnGetVideo.Size = new System.Drawing.Size(90, 23);
+            this.btnGetVideo.TabIndex = 2;
+            this.btnGetVideo.Text = "Get";
+            this.btnGetVideo.UseVisualStyleBackColor = true;
+            this.btnGetVideo.Click += new System.EventHandler(this.btnGetVideo_Click);
+            // 
+            // txtYoutubeLink
+            // 
+            this.txtYoutubeLink.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtYoutubeLink.Location = new System.Drawing.Point(39, 19);
+            this.txtYoutubeLink.Name = "txtYoutubeLink";
+            this.txtYoutubeLink.Size = new System.Drawing.Size(517, 20);
+            this.txtYoutubeLink.TabIndex = 0;
             // 
             // flpDownloadClip
             // 
@@ -236,54 +288,6 @@
             this.dpDownloadClipTo.Name = "dpDownloadClipTo";
             this.dpDownloadClipTo.Size = new System.Drawing.Size(68, 20);
             this.dpDownloadClipTo.TabIndex = 15;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 22);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(27, 13);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Link";
-            // 
-            // btnPaste
-            // 
-            this.btnPaste.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPaste.ImageIndex = 0;
-            this.btnPaste.ImageList = this.imageList16px;
-            this.btnPaste.Location = new System.Drawing.Point(562, 18);
-            this.btnPaste.Name = "btnPaste";
-            this.btnPaste.Size = new System.Drawing.Size(22, 22);
-            this.btnPaste.TabIndex = 1;
-            this.toolTip1.SetToolTip(this.btnPaste, "Paste");
-            this.btnPaste.UseVisualStyleBackColor = true;
-            this.btnPaste.Click += new System.EventHandler(this.btnPaste_Click);
-            // 
-            // imageList16px
-            // 
-            this.imageList16px.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList16px.ImageStream")));
-            this.imageList16px.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageList16px.Images.SetKeyName(0, "Paste-64.png");
-            // 
-            // btnGetVideo
-            // 
-            this.btnGetVideo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnGetVideo.Location = new System.Drawing.Point(494, 45);
-            this.btnGetVideo.Name = "btnGetVideo";
-            this.btnGetVideo.Size = new System.Drawing.Size(90, 23);
-            this.btnGetVideo.TabIndex = 2;
-            this.btnGetVideo.Text = "Get";
-            this.btnGetVideo.UseVisualStyleBackColor = true;
-            this.btnGetVideo.Click += new System.EventHandler(this.btnGetVideo_Click);
-            // 
-            // txtYoutubeLink
-            // 
-            this.txtYoutubeLink.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtYoutubeLink.Location = new System.Drawing.Point(39, 19);
-            this.txtYoutubeLink.Name = "txtYoutubeLink";
-            this.txtYoutubeLink.Size = new System.Drawing.Size(517, 20);
-            this.txtYoutubeLink.TabIndex = 0;
             // 
             // btnBrowse
             // 
@@ -758,10 +762,6 @@
             // 
             this.cbPlaylistQuality.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbPlaylistQuality.FormattingEnabled = true;
-            this.cbPlaylistQuality.Items.AddRange(new object[] {
-            "Highest",
-            "Medium",
-            "Low"});
             this.cbPlaylistQuality.Location = new System.Drawing.Point(60, 45);
             this.cbPlaylistQuality.Name = "cbPlaylistQuality";
             this.cbPlaylistQuality.Size = new System.Drawing.Size(129, 21);
@@ -1314,18 +1314,44 @@
             // cmPlaylistList
             // 
             this.cmPlaylistList.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.playlistOpenMenuItem,
+            this.menuItem6,
+            this.playlistCopyMenuItem,
+            this.menuItem7,
             this.playlistSelectAllMenuItem,
             this.playlistSelectNoneMenuItem});
             // 
+            // playlistOpenMenuItem
+            // 
+            this.playlistOpenMenuItem.Index = 0;
+            this.playlistOpenMenuItem.Text = "Open";
+            this.playlistOpenMenuItem.Click += new System.EventHandler(this.playlistOpenMenuItem_Click);
+            // 
+            // menuItem6
+            // 
+            this.menuItem6.Index = 1;
+            this.menuItem6.Text = "-";
+            // 
+            // playlistCopyMenuItem
+            // 
+            this.playlistCopyMenuItem.Index = 2;
+            this.playlistCopyMenuItem.Text = "Copy";
+            this.playlistCopyMenuItem.Click += new System.EventHandler(this.playlistCopyMenuItem_Click);
+            // 
+            // menuItem7
+            // 
+            this.menuItem7.Index = 3;
+            this.menuItem7.Text = "-";
+            // 
             // playlistSelectAllMenuItem
             // 
-            this.playlistSelectAllMenuItem.Index = 0;
+            this.playlistSelectAllMenuItem.Index = 4;
             this.playlistSelectAllMenuItem.Text = "Select all";
             this.playlistSelectAllMenuItem.Click += new System.EventHandler(this.playlistSelectAllMenuItem_Click);
             // 
             // playlistSelectNoneMenuItem
             // 
-            this.playlistSelectNoneMenuItem.Index = 1;
+            this.playlistSelectNoneMenuItem.Index = 5;
             this.playlistSelectNoneMenuItem.Text = "Select none";
             this.playlistSelectNoneMenuItem.Click += new System.EventHandler(this.playlistSelectNoneMenuItem_Click);
             // 
@@ -1490,6 +1516,10 @@
         private Controls.DurationPicker dpDownloadClipTo;
         private Controls.DurationPicker dpDownloadClipFrom;
         private System.Windows.Forms.FlowLayoutPanel flpDownloadClip;
+        private System.Windows.Forms.MenuItem playlistOpenMenuItem;
+        private System.Windows.Forms.MenuItem menuItem6;
+        private System.Windows.Forms.MenuItem playlistCopyMenuItem;
+        private System.Windows.Forms.MenuItem menuItem7;
     }
 }
 

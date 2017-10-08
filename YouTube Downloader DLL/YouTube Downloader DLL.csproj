@@ -53,6 +53,7 @@
     <Compile Include="Classes\QuickPlaylist.cs" />
     <Compile Include="Classes\QuickVideoInfo.cs" />
     <Compile Include="DummyOperations\DummyDownloadOperation.cs" />
+    <Compile Include="Enums\PreferredQuality.cs" />
     <Compile Include="FFmpeg\FFmpegProcess.cs" />
     <Compile Include="FileDownloading\FileDownload.cs" />
     <Compile Include="FileDownloading\FileDownloader.cs" />

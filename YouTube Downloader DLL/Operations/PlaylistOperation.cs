@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using YouTube_Downloader_DLL.Classes;
+using YouTube_Downloader_DLL.Enums;
 using YouTube_Downloader_DLL.FFmpeg;
 using YouTube_Downloader_DLL.FileDownloading;
 
@@ -20,7 +21,6 @@ namespace YouTube_Downloader_DLL.Operations
 
         int _downloads = 0;
         int _failures = 0;
-        int _preferredQuality;
         int _selectedVideosCount = 0;
         bool _cancel;
         bool _cleanup;
@@ -29,6 +29,7 @@ namespace YouTube_Downloader_DLL.Operations
         bool _processing;
         bool _reverse;
         bool? _downloaderSuccessful;
+        PreferredQuality _preferredQuality;
 
         List<QuickVideoInfo> _videos = new List<QuickVideoInfo>();
 
@@ -48,7 +49,7 @@ namespace YouTube_Downloader_DLL.Operations
 
         public PlaylistOperation(string url,
                                  string output,
-                                 int preferredQuality,
+                                 PreferredQuality preferredQuality,
                                  bool reverse,
                                  bool indexPrefix)
         {
@@ -76,7 +77,7 @@ namespace YouTube_Downloader_DLL.Operations
 
         public PlaylistOperation(string url,
                                  string output,
-                                 int preferredQuality,
+                                 PreferredQuality preferredQuality,
                                  bool reverse,
                                  bool indexPrefix,
                                  IEnumerable<QuickVideoInfo> videos)

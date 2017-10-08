@@ -11,6 +11,10 @@ namespace YouTube_Downloader_DLL.Classes
         public const string Name = "YouTube Downloader";
         public const string VersionString = "2.0.0";
 
+        private const string JsonDirectory = "json";
+        private const string LogsDirectory = "logs";
+        private const string StackTracesDirectory = "stack traces";
+
         public static Encoding LogEncoding = Encoding.UTF8;
         public static Version Version = new Version(VersionString);
 
@@ -46,7 +50,7 @@ namespace YouTube_Downloader_DLL.Classes
         /// </summary>
         public static string GetJsonDirectory()
         {
-            string path = Path.Combine(GetAppDataDirectory(), "json");
+            string path = Path.Combine(GetAppDataDirectory(), JsonDirectory);
 
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
@@ -59,7 +63,7 @@ namespace YouTube_Downloader_DLL.Classes
         /// </summary>
         public static string GetLogsDirectory()
         {
-            string path = Path.Combine(GetAppDataDirectory(), "logs");
+            string path = Path.Combine(GetAppDataDirectory(), LogsDirectory);
 
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
@@ -69,7 +73,7 @@ namespace YouTube_Downloader_DLL.Classes
 
         public static string GetStackTracesDirectory()
         {
-            string path = Path.Combine(GetAppDataDirectory(), "stack traces");
+            string path = Path.Combine(GetAppDataDirectory(), StackTracesDirectory);
 
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);

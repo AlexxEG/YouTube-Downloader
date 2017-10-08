@@ -11,7 +11,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using Newtonsoft.Json.Linq;
 using YouTube_Downloader.Classes;
 using YouTube_Downloader.Controls;
 using YouTube_Downloader.Properties;
@@ -272,7 +271,7 @@ namespace YouTube_Downloader
                         throw new Exception($"Unknown video source: {_selectedVideo.VideoSource}");
                 }
 
-                this.AddQueueItem(operation);
+                this.AddQueueItem(operation, true);
                 DownloadQueueHandler.Add(operation);
             }
             catch (Exception ex)
@@ -622,7 +621,45 @@ namespace YouTube_Downloader
 
         private void cbPlaylistQuality_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Settings.Default.PreferredQualityPlaylist = cbPlaylistQuality.SelectedIndex;
+            Settings.Default.PreferredQualityPlaylist = (PreferredQuality)cbPlaylistQuality.SelectedIndex;
+        }
+
+        private void playlistOpenMenuItem_Click(object sender, EventArgs e)
+        {
+            bool error = false;
+
+            foreach (ListViewItem item in lvPlaylistVideos.SelectedItems)
+            {
+                try
+                {
+                    Process.Start($"https://www.youtube.com/watch?v={ (item.Tag as QuickVideoInfo).ID}");
+                }
+                catch
+                {
+                    error = true;
+                }
+            }
+
+            if (error)
+                MessageBox.Show(this, "Some links couldn't be opened.");
+        }
+
+        private void playlistCopyMenuItem_Click(object sender, EventArgs e)
+        {
+            string text = string.Join(
+                Environment.NewLine,
+                lvPlaylistVideos.SelectedItems
+                    .Cast<ListViewItem>()
+                    .Select(x => x.Text));
+
+            try
+            {
+                Clipboard.SetText(text);
+            }
+            catch
+            {
+                MessageBox.Show(this, "Couldn't set the clipboard text.");
+            }
         }
 
         private void playlistSelectAllMenuItem_Click(object sender, EventArgs e)
@@ -724,7 +761,7 @@ namespace YouTube_Downloader
                                                       videos);
                 operation.FileDownloadComplete += playlistOperation_FileDownloadComplete;
 
-                this.AddQueueItem(operation);
+                this.AddQueueItem(operation, true);
                 DownloadQueueHandler.Add(operation);
             }
             catch (Exception ex)
@@ -1007,7 +1044,7 @@ namespace YouTube_Downloader
         MainMenu mainMenu1;
         MenuItem fileMenuItem;
         MenuItem exitMenuItem;
-        MenuItem toolsMenuItem;
+        // MenuItem toolsMenuItem;
         MenuItem optionsMenuItem;
         MenuItem helpMenuItem;
         MenuItem checkForUpdateMenuItem;
@@ -1501,7 +1538,8 @@ namespace YouTube_Downloader
             if (cbPlaylistSaveTo.Items.Count > 0)
                 cbPlaylistSaveTo.SelectedIndex = settings.SelectedDirectoryPlaylist;
 
-            cbPlaylistQuality.SelectedIndex = settings.PreferredQualityPlaylist;
+            cbPlaylistQuality.Items.AddRange(Enum.GetNames(typeof(PreferredQuality)));
+            cbPlaylistQuality.SelectedIndex = (int)settings.PreferredQualityPlaylist;
 
             // Restore CheckBox.Checked
             chbAutoConvert.Checked = settings.AutoConvert;
@@ -1661,7 +1699,8 @@ namespace YouTube_Downloader
             char[] illegalChars = Path.GetInvalidFileNameChars();
 
             // Check if filename contains illegal characters
-            valid = filename.Any(x => illegalChars.Contains(x));
+            // Returning true for some reason: valid = filename.Any(x => illegalChars.Contains(x));
+            valid = filename.IndexOfAny(illegalChars) <= -1;
 
             if (!valid)
             {

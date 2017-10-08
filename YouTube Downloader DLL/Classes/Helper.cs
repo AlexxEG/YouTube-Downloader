@@ -5,15 +5,13 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
+using YouTube_Downloader_DLL.Enums;
 
 namespace YouTube_Downloader_DLL.Classes
 {
     public class Helper
     {
-        public const int PreferredQualityHighest = 0;
-        public const int PreferredQualityMedium = 1;
-        public const int PreferredQualityLow = 2;
-
         /// <summary>
         /// Attempts to delete given file(s), ignoring exceptions for 10 tries, with 2 second delay between each try.
         /// </summary>
@@ -60,6 +58,50 @@ namespace YouTube_Downloader_DLL.Classes
                     Thread.Sleep(2000);
                 }
             }).Start();
+        }
+
+        public static async void DeleteFilesAsync(params string[] files)
+        {
+            await Task.Run(delegate
+            {
+                var dict = new Dictionary<string, int>();
+                var keys = new List<string>();
+
+                foreach (string file in files)
+                {
+                    dict.Add(file, 0);
+                    keys.Add(file);
+                }
+
+                while (dict.Count > 0)
+                {
+                    foreach (string key in keys)
+                    {
+                        try
+                        {
+                            if (File.Exists(key))
+                                File.Delete(key);
+
+                            // Remove file from dictionary since it either got deleted
+                            // or it doesn't exist anymore.
+                            dict.Remove(key);
+                        }
+                        catch
+                        {
+                            if (dict[key] == 10)
+                            {
+                                dict.Remove(key);
+                            }
+                            else
+                            {
+                                dict[key]++;
+                            }
+                        }
+                    }
+
+                    Task.Delay(2000).Wait();
+                }
+            });
         }
 
         /// <summary>
@@ -218,29 +260,46 @@ namespace YouTube_Downloader_DLL.Classes
         /// Returns the preferred video format quality based on application setting.
         /// </summary>
         /// <param name="video">The video to get format from.</param>
-        public static VideoFormat GetPreferredFormat(VideoInfo video, int preferredQuality)
+        public static VideoFormat GetPreferredFormat(VideoInfo video, PreferredQuality preferredQuality)
         {
             VideoFormat[] qualities = Helper.GetVideoFormats(video);
 
             /* Find a format based on user's preference.
              * 
              * Highest  : Self-explanatory
-             * Medium   : 720p or highest
-             * Low      : 360p or highest
+             * High     : 1080p
+             * Medium   : 720p
+             * Low      : 360p
+             * Lowest   : 140p
              */
 
             int index = -1;
 
             switch (preferredQuality)
             {
-                case PreferredQualityMedium:
+                case PreferredQuality.Highest:
+                    // Do nothing
+                    break;
+                case PreferredQuality.High:
+                    if ((index = qualities.IndexOf("1080")) > -1)
+                    {
+                        return qualities[index];
+                    }
+                    break;
+                case PreferredQuality.Medium:
                     if ((index = qualities.IndexOf("720")) > -1)
                     {
                         return qualities[index];
                     }
                     break;
-                case PreferredQualityLow:
+                case PreferredQuality.Low:
                     if ((index = qualities.IndexOf("360")) > -1)
+                    {
+                        return qualities[index];
+                    }
+                    break;
+                case PreferredQuality.Lowest:
+                    if ((index = qualities.IndexOf("140")) > -1)
                     {
                         return qualities[index];
                     }

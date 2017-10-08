@@ -147,7 +147,7 @@ namespace YouTube_Downloader.Controls
         public event OperationEventHandler OperationComplete;
 
         public OperationModel(Operation operation)
-            : this(operation, operation.Input)
+            : this(operation, operation.Link)
         {
         }
 
@@ -183,7 +183,7 @@ namespace YouTube_Downloader.Controls
 
         private void Operation_Completed(object sender, OperationEventArgs e)
         {
-            sw.Stop();
+            sw?.Stop();
             sw = null;
 
             if (File.Exists(this.Operation.Output))
