@@ -1,11 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using YouTube_Downloader_DLL.Classes;
+using System.Collections.Specialized;
+using System.Collections;
 
 namespace YouTube_Downloader_DLL.YoutubeDl
 {
@@ -15,11 +19,14 @@ namespace YouTube_Downloader_DLL.YoutubeDl
         {
             public const string Download = " -o \"{0}\" --hls-prefer-native -f {1} {2}";
             public const string GetJsonInfo = " -o \"{0}\\%(title)s\" --no-playlist --skip-download --restrict-filenames --write-info-json \"{1}\"{2}";
+            public const string GetJsonInfoBatch = " -o \"{0}\\%(id)s_%(title)s\" --no-playlist --skip-download --restrict-filenames --write-info-json {1}";
             public const string Authentication = " -u {0} -p {1}";
             public const string TwoFactor = " -2 {0}";
             public const string Update = " -U";
             public const string Version = " --version";
         }
+
+        private const string ErrorSignIn = "YouTube said: Please sign in to view this video.";
 
         public static string YouTubeDlPath = Path.Combine(Application.StartupPath, "Externals", "youtube-dl.exe");
 
@@ -92,7 +99,7 @@ namespace YouTube_Downloader_DLL.YoutubeDl
                 {
                     error = error.Trim();
 
-                    if (error.Contains("YouTube said: Please sign in to view this video."))
+                    if (error.Contains(ErrorSignIn))
                     {
                         video.RequiresAuthentication = true;
                     }
@@ -108,6 +115,71 @@ namespace YouTube_Downloader_DLL.YoutubeDl
                 video.DeserializeJson(json_file);
 
             return video;
+        }
+
+        public ICollection<VideoInfo> GetVideoInfoBatch(ICollection<string> urls)
+        {
+            string json_dir = Common.GetJsonDirectory();
+            string arguments = string.Format(Commands.GetJsonInfoBatch, json_dir, string.Join(" ", urls));
+            var videos = new OrderedDictionary();
+            var jsonFiles = new Dictionary<string, string>();
+            var findVideoID = new Regex(@"(?:\]|ERROR:)\s(.{11}):", RegexOptions.Compiled);
+            var findVideoIDJson = new Regex(@":\s.*\\(.*?)_", RegexOptions.Compiled);
+
+            LogHeader(arguments);
+
+            Helper.StartProcess(YouTubeDlPath, arguments,
+                delegate (Process process, string line)
+                {
+                    line = line.Trim();
+
+                    Match m;
+                    string id;
+                    VideoInfo video = null;
+                    if ((m = findVideoID.Match(line)).Success)
+                    {
+                        id = findVideoID.Match(line).Groups[1].Value;
+                        video = videos.Get<VideoInfo>(id, new VideoInfo() { ID = id });
+                    }
+
+                    if (line.StartsWith("[info] Writing video description metadata as JSON to:"))
+                    {
+                        id = findVideoIDJson.Match(line).Groups[1].Value;
+                        var jsonFile = line.Substring(line.IndexOf(":") + 1).Trim();
+                        jsonFiles.Put(id, jsonFile);
+                    }
+                    else if (line.Contains("Refetching age-gated info webpage"))
+                    {
+                        video.RequiresAuthentication = true;
+                    }
+                },
+                delegate (Process process, string error)
+                {
+                    error = error.Trim();
+                    var id = findVideoID.Match(error).Groups[1].Value;
+                    var video = videos.Get<VideoInfo>(id, new VideoInfo() { ID = id });
+
+                    if (error.Contains(ErrorSignIn))
+                    {
+                        video.RequiresAuthentication = true;
+                    }
+                    else if (error.StartsWith("ERROR:"))
+                    {
+                        video.Failure = true;
+                        video.FailureReason = error.Substring("ERROR: ".Length);
+                    }
+                }, null, _logger)
+                .WaitForExit();
+
+            // Deserialize after because I'm not sure errors comes before or after json info
+            foreach (DictionaryEntry pair in videos)
+            {
+                var video = pair.Value as VideoInfo;
+                if (!video.Failure && !video.RequiresAuthentication)
+                    video.DeserializeJson(jsonFiles[pair.Key as string]);
+            }
+
+            return videos.Values.Cast<VideoInfo>().ToArray();
         }
 
         /// <summary>
@@ -152,6 +224,41 @@ namespace YouTube_Downloader_DLL.YoutubeDl
             });
 
             return returnMsg;
+        }
+    }
+
+    public static class DictionaryExtensions
+    {
+        public static TValue Get<TKey, TValue>(this Dictionary<TKey, TValue> thiz, TKey key, TValue defaultValue)
+        {
+            if (!thiz.ContainsKey(key))
+                thiz.Add(key, defaultValue);
+
+            return thiz[key];
+        }
+
+        public static void Put<TKey, TValue>(this Dictionary<TKey, TValue> thiz, TKey key, TValue value)
+        {
+            if (thiz.ContainsKey(key))
+                thiz[key] = value;
+            else
+                thiz.Add(key, value);
+        }
+
+        public static TValue Get<TValue>(this OrderedDictionary thiz, object key, object defaultValue)
+        {
+            if (!thiz.Contains(key))
+                thiz.Add(key, defaultValue);
+
+            return (TValue)thiz[key];
+        }
+
+        public static void Put(this OrderedDictionary thiz, object key, object value)
+        {
+            if (thiz.Contains(key))
+                thiz[key] = value;
+            else
+                thiz.Add(key, value);
         }
     }
 }
