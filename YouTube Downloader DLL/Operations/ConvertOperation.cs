@@ -6,7 +6,7 @@ using System.IO;
 using System.Threading;
 using YouTube_Downloader_DLL.Classes;
 using YouTube_Downloader_DLL.Enums;
-using YouTube_Downloader_DLL.FFmpeg;
+using YouTube_Downloader_DLL.FFmpegHelpers;
 
 namespace YouTube_Downloader_DLL.Operations
 {
@@ -54,7 +54,7 @@ namespace YouTube_Downloader_DLL.Operations
             _start = start;
             _end = end;
 
-            this.Duration = (long)FFmpegProcess.GetDuration(this.Input).Value.TotalSeconds;
+            this.Duration = (long)FFmpeg.GetDuration(this.Input).Value.TotalSeconds;
         }
 
         #region Operation members
@@ -155,18 +155,16 @@ namespace YouTube_Downloader_DLL.Operations
                 {
                     using (var logger = OperationLogger.Create(OperationLogger.FFmpegDLogFile))
                     {
-                        var ffmpeg = new FFmpegProcess(logger);
-
-                        ffmpeg.Convert(this.Input, this.Output, this.ReportProgress, _cts.Token);
+                        FFmpeg.Convert(this.Input, this.Output, this.ReportProgress, _cts.Token, logger);
 
                         // Crop if not operation wasn't canceled and _start has a valid value
                         if (!this.CancellationPending && _start != TimeSpan.MinValue)
                         {
                             // Crop to end of file, unless _end has a valid value
                             if (_end == TimeSpan.MinValue)
-                                ffmpeg.Crop(this.Output, this.Output, _start, this.ReportProgress, _cts.Token);
+                                FFmpeg.Crop(this.Output, this.Output, _start, this.ReportProgress, _cts.Token, logger);
                             else
-                                ffmpeg.Crop(this.Output, this.Output, _start, _end, this.ReportProgress, _cts.Token);
+                                FFmpeg.Crop(this.Output, this.Output, _start, _end, this.ReportProgress, _cts.Token, logger);
                         }
                     }
 
@@ -184,8 +182,6 @@ namespace YouTube_Downloader_DLL.Operations
             {
                 using (var logger = OperationLogger.Create(OperationLogger.FFmpegDLogFile))
                 {
-                    var ffmpeg = new FFmpegProcess(logger);
-
                     foreach (string input in Directory.GetFiles(this.Input, _searchPattern))
                     {
                         if (this.CancellationPending)
@@ -200,13 +196,13 @@ namespace YouTube_Downloader_DLL.Operations
 
                             this.ReportProgress(UpdateProperties, new Dictionary<string, object>()
                             {
-                                { nameof(Title), Path.GetFileName(input) },
-                                { nameof(Duration), (int)FFmpegProcess.GetDuration(input).Value.TotalSeconds },
-                                { nameof(FileSize), Helper.GetFileSize(input) }
+                                { nameof(Operation.Title), Path.GetFileName(input) },
+                                { nameof(Operation.Duration), (int)FFmpeg.GetDuration(input).Value.TotalSeconds },
+                                { nameof(Operation.FileSize), Helper.GetFileSize(input) }
                             });
 
                             _currentOutput = output;
-                            ffmpeg.Convert(input, output, this.ReportProgress, _cts.Token);
+                            FFmpeg.Convert(input, output, this.ReportProgress, _cts.Token, logger);
                             _currentOutput = null;
 
                             this.ProcessedFiles.Add(output);

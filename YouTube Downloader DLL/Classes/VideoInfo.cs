@@ -49,7 +49,7 @@ namespace YouTube_Downloader_DLL.Classes
         public string FailureReason { get; set; }
 
         /// <summary>
-        /// Gets the video ID.
+        /// Gets or sets the video ID.
         /// </summary>
         public string ID { get; set; }
 

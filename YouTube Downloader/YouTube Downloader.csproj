@@ -49,6 +49,9 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowState, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WindowState.1.1.1\lib\net45\WindowState.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AboutForm.cs">
@@ -59,7 +62,6 @@
     </Compile>
     <Compile Include="App.cs" />
     <Compile Include="Classes\BarTextProgressComparer.cs" />
-    <Compile Include="Classes\WindowStates.cs" />
     <Compile Include="Controls\DurationPicker.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -73,7 +75,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\OperationModel.cs" />
-    <Compile Include="Classes\WindowState.cs" />
     <Compile Include="Delegates\SetItemTextDelegate.cs" />
     <Compile Include="Delegates\SetTextDelegate.cs" />
     <Compile Include="Dialogs\LoginDialog.cs">

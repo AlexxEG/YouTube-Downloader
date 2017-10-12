@@ -7,7 +7,7 @@ using System.Net;
 using System.Linq;
 using System.Threading;
 using YouTube_Downloader_DLL.Classes;
-using YouTube_Downloader_DLL.FFmpeg;
+using YouTube_Downloader_DLL.FFmpegHelpers;
 using YouTube_Downloader_DLL.YoutubeDl;
 
 namespace YouTube_Downloader_DLL.Operations
@@ -355,7 +355,7 @@ namespace YouTube_Downloader_DLL.Operations
 
         private void Optimize(OperationLogger logger, string tsFile)
         {
-            new FFmpegProcess(logger).FixM3U8(tsFile, this.Output);
+            FFmpeg.FixM3U8(tsFile, this.Output, logger);
             Helper.DeleteFiles(tsFile);
         }
 
