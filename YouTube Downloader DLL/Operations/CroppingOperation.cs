@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using YouTube_Downloader_DLL.Classes;
-using YouTube_Downloader_DLL.FFmpeg;
+using YouTube_Downloader_DLL.FFmpegHelpers;
 
 namespace YouTube_Downloader_DLL.Operations
 {
@@ -28,7 +28,7 @@ namespace YouTube_Downloader_DLL.Operations
             _start = start;
             _end = end;
 
-            this.Duration = (long)FFmpeg.FFmpeg.GetDuration(this.Input).Value.TotalSeconds;
+            this.Duration = (long)FFmpeg.GetDuration(this.Input).Value.TotalSeconds;
             this.Title = Path.GetFileName(this.Output);
             this.ProgressText = "Cropping...";
         }
@@ -110,7 +110,7 @@ namespace YouTube_Downloader_DLL.Operations
         {
             if (this.IsSuccessful)
             {
-                this.Duration = (long)FFmpeg.FFmpeg.GetDuration(this.Input).Value.TotalSeconds;
+                this.Duration = (long)FFmpeg.GetDuration(this.Input).Value.TotalSeconds;
                 this.FileSize = Helper.GetFileSize(this.Output);
             }
         }
@@ -122,9 +122,9 @@ namespace YouTube_Downloader_DLL.Operations
                 using (var logger = OperationLogger.Create(OperationLogger.FFmpegDLogFile))
                 {
                     if (_end == TimeSpan.MinValue)
-                        FFmpeg.FFmpeg.Crop(this.Input, this.Output, _start, this.ReportProgress, _cts.Token, logger);
+                        FFmpeg.Crop(this.Input, this.Output, _start, this.ReportProgress, _cts.Token, logger);
                     else
-                        FFmpeg.FFmpeg.Crop(this.Input, this.Output, _start, _end, this.ReportProgress, _cts.Token, logger);
+                        FFmpeg.Crop(this.Input, this.Output, _start, _end, this.ReportProgress, _cts.Token, logger);
                 }
 
                 _start = _end = TimeSpan.MinValue;

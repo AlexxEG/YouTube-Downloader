@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace YouTube_Downloader_DLL.FFmpeg
+namespace YouTube_Downloader_DLL.FFmpegHelpers
 {
     public class FFmpegResult<T>
     {

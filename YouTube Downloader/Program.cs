@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows.Forms;
 using YouTube_Downloader_DLL.Classes;
-using YouTube_Downloader_DLL.FFmpeg;
+using YouTube_Downloader_DLL.FFmpegHelpers;
 
 namespace YouTube_Downloader
 {

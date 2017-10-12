@@ -10,7 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using YouTube_Downloader_DLL.Classes;
 using YouTube_Downloader_DLL.Enums;
-using YouTube_Downloader_DLL.FFmpeg;
+using YouTube_Downloader_DLL.FFmpegHelpers;
 using YouTube_Downloader_DLL.FileDownloading;
 
 namespace YouTube_Downloader_DLL.Operations
@@ -437,7 +437,7 @@ namespace YouTube_Downloader_DLL.Operations
                 if (_ffmpegLogger == null)
                     _ffmpegLogger = OperationLogger.Create(OperationLogger.FFmpegDLogFile);
 
-                result = FFmpeg.FFmpeg.Combine(video, audio, output, delegate (int percentage)
+                result = FFmpeg.Combine(video, audio, output, delegate (int percentage)
                 {
                     // Combine progress
                     this.ReportProgress(percentage, null);

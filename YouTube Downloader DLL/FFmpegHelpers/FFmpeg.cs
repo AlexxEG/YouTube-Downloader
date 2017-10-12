@@ -9,7 +9,7 @@ using System.Threading;
 using System.Windows.Forms;
 using YouTube_Downloader_DLL.Classes;
 
-namespace YouTube_Downloader_DLL.FFmpeg
+namespace YouTube_Downloader_DLL.FFmpegHelpers
 {
     public class FFmpeg
     {

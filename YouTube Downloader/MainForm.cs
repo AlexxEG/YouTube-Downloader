@@ -21,7 +21,7 @@ using YouTube_Downloader_DLL.Classes;
 using YouTube_Downloader_DLL.Dialogs;
 using YouTube_Downloader_DLL.DummyOperations;
 using YouTube_Downloader_DLL.Enums;
-using YouTube_Downloader_DLL.FFmpeg;
+using YouTube_Downloader_DLL.FFmpegHelpers;
 using YouTube_Downloader_DLL.Helpers;
 using YouTube_Downloader_DLL.Operations;
 using YouTube_Downloader_DLL.Updating;

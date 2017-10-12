@@ -54,7 +54,7 @@
     <Compile Include="Classes\QuickVideoInfo.cs" />
     <Compile Include="DummyOperations\DummyDownloadOperation.cs" />
     <Compile Include="Enums\PreferredQuality.cs" />
-    <Compile Include="FFmpeg\FFmpeg.cs" />
+    <Compile Include="FFmpegHelpers\FFmpeg.cs" />
     <Compile Include="FileDownloading\FileDownload.cs" />
     <Compile Include="FileDownloading\FileDownloader.cs" />
     <Compile Include="FileDownloading\FileDownloadEventArgs.cs" />
@@ -72,8 +72,8 @@
     <Compile Include="Helpers\DownloadQueueHandler.cs" />
     <Compile Include="Dialogs\OpenFolderDialog.cs" />
     <Compile Include="Enums\ConvertingMode.cs" />
-    <Compile Include="FFmpeg\FFmpegFileType.cs" />
-    <Compile Include="FFmpeg\FFmpegResult.cs" />
+    <Compile Include="FFmpegHelpers\FFmpegFileType.cs" />
+    <Compile Include="FFmpegHelpers\FFmpegResult.cs" />
     <Compile Include="Updating\Update.cs" />
     <Compile Include="Updating\UpdateHelper.cs" />
     <Compile Include="Operations\ConvertOperation.cs" />
