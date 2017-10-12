@@ -99,7 +99,7 @@
     <Compile Include="UpdateDownloader.Designer.cs">
       <DependentUpon>UpdateDownloader.cs</DependentUpon>
     </Compile>
-    <Compile Include="YoutubeDl\YoutubeDlProcess.cs" />
+    <Compile Include="YoutubeDl\YTD.cs" />
     <Compile Include="YoutubeDl\YTDAuthentication.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -356,7 +356,7 @@ namespace YouTube_Downloader
 
         private void bwGetVideo_DoWork(object sender, DoWorkEventArgs e)
         {
-            e.Result = new YoutubeDlProcess(null, _auth).GetVideoInfo((string)e.Argument);
+            e.Result = YTD.GetVideoInfo((string)e.Argument, _auth);
         }
 
         private void bwGetVideo_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
