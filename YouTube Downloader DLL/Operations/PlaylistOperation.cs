@@ -10,7 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using YouTube_Downloader_DLL.Classes;
 using YouTube_Downloader_DLL.Enums;
-using YouTube_Downloader_DLL.FFmpeg;
+using YouTube_Downloader_DLL.FFmpegHelpers;
 using YouTube_Downloader_DLL.FileDownloading;
 
 namespace YouTube_Downloader_DLL.Operations

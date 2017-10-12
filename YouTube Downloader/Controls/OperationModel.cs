@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using YouTube_Downloader.Renderers;
 using YouTube_Downloader_DLL.Classes;
-using YouTube_Downloader_DLL.FFmpeg;
+using YouTube_Downloader_DLL.FFmpegHelpers;
 using YouTube_Downloader_DLL.Operations;
 
 namespace YouTube_Downloader.Controls

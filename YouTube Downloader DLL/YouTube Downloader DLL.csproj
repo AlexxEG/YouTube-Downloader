@@ -54,7 +54,7 @@
     <Compile Include="Classes\QuickVideoInfo.cs" />
     <Compile Include="DummyOperations\DummyDownloadOperation.cs" />
     <Compile Include="Enums\PreferredQuality.cs" />
-    <Compile Include="FFmpeg\FFmpegProcess.cs" />
+    <Compile Include="FFmpegHelpers\FFmpeg.cs" />
     <Compile Include="FileDownloading\FileDownload.cs" />
     <Compile Include="FileDownloading\FileDownloader.cs" />
     <Compile Include="FileDownloading\FileDownloadEventArgs.cs" />
@@ -76,6 +76,8 @@
     <Compile Include="FFmpeg\FFmpegResult.cs" />
     <Compile Include="Operations\BatchOperation.cs" />
     <Compile Include="Operations\OperationHelpers.cs" />
+    <Compile Include="FFmpegHelpers\FFmpegFileType.cs" />
+    <Compile Include="FFmpegHelpers\FFmpegResult.cs" />
     <Compile Include="Updating\Update.cs" />
     <Compile Include="Updating\UpdateHelper.cs" />
     <Compile Include="Operations\ConvertOperation.cs" />
@@ -101,7 +103,7 @@
     <Compile Include="UpdateDownloader.Designer.cs">
       <DependentUpon>UpdateDownloader.cs</DependentUpon>
     </Compile>
-    <Compile Include="YoutubeDl\YoutubeDlProcess.cs" />
+    <Compile Include="YoutubeDl\YTD.cs" />
     <Compile Include="YoutubeDl\YTDAuthentication.cs" />
   </ItemGroup>
   <ItemGroup>

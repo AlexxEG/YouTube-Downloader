@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using Newtonsoft.Json.Linq;
 using YouTube_Downloader_DLL.Classes;
-using YouTube_Downloader_DLL.FFmpeg;
+using YouTube_Downloader_DLL.FFmpegHelpers;
 using YouTube_Downloader_DLL.FileDownloading;
 
 namespace YouTube_Downloader_DLL.Operations
@@ -267,11 +267,11 @@ namespace YouTube_Downloader_DLL.Operations
 
                     using (var logger = OperationLogger.Create(OperationLogger.FFmpegDLogFile))
                     {
-                        result = new FFmpegProcess(logger).Combine(video, audio, this.Output, delegate (int percentage)
+                        result = FFmpeg.Combine(video, audio, this.Output, delegate (int percentage)
                         {
                             // Combine progress
                             this.ReportProgress(percentage, null);
-                        });
+                        }, logger);
                     }
 
                     if (result.Value)

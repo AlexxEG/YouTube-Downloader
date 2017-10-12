@@ -9,9 +9,9 @@ using System.Threading;
 using System.Windows.Forms;
 using YouTube_Downloader_DLL.Classes;
 
-namespace YouTube_Downloader_DLL.FFmpeg
+namespace YouTube_Downloader_DLL.FFmpegHelpers
 {
-    public class FFmpegProcess
+    public class FFmpeg
     {
         public static class Commands
         {
@@ -46,46 +46,39 @@ namespace YouTube_Downloader_DLL.FFmpeg
             { "FFREPORT", string.Format("file={0}:level=8", ReportFile) }
         };
 
-        OperationLogger _logger;
-
-        public FFmpegProcess(OperationLogger logger)
-        {
-            _logger = logger;
-        }
-
         /// <summary>
         /// Writes log footer to log.
         /// </summary>
-        private void LogFooter()
+        private static void LogFooter(OperationLogger logger)
         {
             // Write log footer to stream.
             // Possibly write elapsed time and/or error in future.
-            _logger?.LogLine(Environment.NewLine);
+            logger?.LogLine(Environment.NewLine);
         }
 
         /// <summary>
         /// Writes log header to log.
         /// </summary>
-        private void LogHeader(string arguments, [CallerMemberName]string caller = "")
+        private static void LogHeader(string arguments, OperationLogger logger, [CallerMemberName]string caller = "")
         {
-            _logger?.LogLine($"[{DateTime.Now}]");
-            _logger?.LogLine($"function: {caller}");
-            _logger?.LogLine($"cmd: {arguments}");
-            _logger?.LogLine();
-            _logger?.LogLine("OUTPUT");
+            logger?.LogLine($"[{DateTime.Now}]");
+            logger?.LogLine($"function: {caller}");
+            logger?.LogLine($"cmd: {arguments}");
+            logger?.LogLine();
+            logger?.LogLine("OUTPUT");
         }
 
         /// <summary>
         /// Returns true if given file can be converted to a MP3 file, false otherwise.
         /// </summary>
         /// <param name="file">The file to check.</param>
-        public FFmpegResult<bool> CanConvertToMP3(string file)
+        public static FFmpegResult<bool> CanConvertToMP3(string file, OperationLogger logger = null)
         {
             bool hasAudioStream = false;
             string arguments = string.Format(Commands.GetFileInfo, file);
             var lines = new StringBuilder();
 
-            LogHeader(arguments);
+            LogHeader(arguments, logger);
 
             var p = Helper.StartProcess(FFmpegPath, arguments,
                 null,
@@ -98,10 +91,10 @@ namespace YouTube_Downloader_DLL.FFmpeg
                         // File has audio stream
                         hasAudioStream = true;
                     }
-                }, EnvironmentVariables, _logger);
+                }, EnvironmentVariables, logger);
 
             p.WaitForExit();
-            LogFooter();
+            LogFooter(logger);
 
             if (p.ExitCode != 0)
             {
@@ -122,17 +115,18 @@ namespace YouTube_Downloader_DLL.FFmpeg
         /// <param name="audio">The input audio file.</param>
         /// <param name="output">The output destination.</param>
         /// <param name="reportProgress">The method to call when there is progress. Can be null.</param>
-        public FFmpegResult<bool> Combine(string video,
-                                          string audio,
-                                          string output,
-                                          Action<int> reportProgress)
+        public static FFmpegResult<bool> Combine(string video,
+                                                 string audio,
+                                                 string output,
+                                                 Action<int> reportProgress,
+                                                 OperationLogger logger = null)
         {
             bool started = false;
             double milliseconds = 0;
             string arguments = string.Format(Commands.Combine, video, audio, output);
             var lines = new StringBuilder();
 
-            LogHeader(arguments);
+            LogHeader(arguments, logger);
 
             var p = Helper.StartProcess(FFmpegPath, arguments,
                 null,
@@ -175,10 +169,10 @@ namespace YouTube_Downloader_DLL.FFmpeg
                         started = false;
                         reportProgress.Invoke(100);
                     }
-                }, EnvironmentVariables, _logger);
+                }, EnvironmentVariables, logger);
 
             p.WaitForExit();
-            LogFooter();
+            LogFooter(logger);
 
             if (p.ExitCode != 0)
             {
@@ -197,16 +191,17 @@ namespace YouTube_Downloader_DLL.FFmpeg
         /// <param name="input">The input file.</param>
         /// <param name="output">The output destination.</param>
         /// <param name="reportProgress">The method to call when there is progress. Can be null.</param>
-        public FFmpegResult<bool> Convert(string input,
-                                          string output,
-                                          Action<int, object> reportProgress,
-                                          CancellationToken ct)
+        public static FFmpegResult<bool> Convert(string input,
+                                                 string output,
+                                                 Action<int, object> reportProgress,
+                                                 CancellationToken ct,
+                                                 OperationLogger logger = null)
         {
             bool isTempFile = false;
 
             if (input == output)
             {
-                input = FFmpegProcess.RenameTemp(input);
+                input = FFmpeg.RenameTemp(input);
                 isTempFile = true;
             }
 
@@ -223,7 +218,7 @@ namespace YouTube_Downloader_DLL.FFmpeg
             var lines = new StringBuilder();
 
             reportProgress?.Invoke(0, null);
-            LogHeader(arguments);
+            LogHeader(arguments, logger);
 
             var p = Helper.StartProcess(FFmpegPath, arguments,
                 null,
@@ -277,14 +272,14 @@ namespace YouTube_Downloader_DLL.FFmpeg
                         started = false;
                         reportProgress.Invoke(100, null);
                     }
-                }, EnvironmentVariables, _logger);
+                }, EnvironmentVariables, logger);
 
             p.WaitForExit();
 
             if (isTempFile)
                 Helper.DeleteFiles(input);
 
-            LogFooter();
+            LogFooter(logger);
 
             if (canceled)
             {
@@ -308,17 +303,18 @@ namespace YouTube_Downloader_DLL.FFmpeg
         /// <param name="cropStart">The <see cref="System.TimeSpan"/> crop start position.</param>
         /// <param name="reportProgress">The method to call when there is progress. Can be null.</param>
         /// <returns></returns>
-        public FFmpegResult<bool> ConvertCrop(string input,
-                                              string output,
-                                              TimeSpan cropStart,
-                                              Action<int, object> reportProgress,
-                                              CancellationToken ct)
+        public static FFmpegResult<bool> ConvertCrop(string input,
+                                                     string output,
+                                                     TimeSpan cropStart,
+                                                     Action<int, object> reportProgress,
+                                                     CancellationToken ct,
+                                                     OperationLogger logger = null)
         {
             bool isTempFile = false;
 
             if (input == output)
             {
-                input = FFmpegProcess.RenameTemp(input);
+                input = FFmpeg.RenameTemp(input);
                 isTempFile = true;
             }
 
@@ -337,7 +333,7 @@ namespace YouTube_Downloader_DLL.FFmpeg
             StringBuilder lines = new StringBuilder();
 
             reportProgress?.Invoke(0, null);
-            LogHeader(arguments);
+            LogHeader(arguments, logger);
 
             var p = Helper.StartProcess(FFmpegPath, arguments,
                 null,
@@ -395,14 +391,14 @@ namespace YouTube_Downloader_DLL.FFmpeg
                         started = false;
                         reportProgress.Invoke(100, null);
                     }
-                }, EnvironmentVariables, _logger);
+                }, EnvironmentVariables, logger);
 
             p.WaitForExit();
 
             if (isTempFile)
                 Helper.DeleteFiles(input);
 
-            LogFooter();
+            LogFooter(logger);
 
             if (canceled)
             {
@@ -427,18 +423,19 @@ namespace YouTube_Downloader_DLL.FFmpeg
         /// <param name="cropEnd">The <see cref="System.TimeSpan"/> crop end position.</param>
         /// <param name="reportProgress">The method to call when there is progress. Can be null.</param>
         /// <returns></returns>
-        public FFmpegResult<bool> ConvertCrop(string input,
-                                              string output,
-                                              TimeSpan cropStart,
-                                              TimeSpan cropEnd,
-                                              Action<int, object> reportProgress,
-                                              CancellationToken ct)
+        public static FFmpegResult<bool> ConvertCrop(string input,
+                                                     string output,
+                                                     TimeSpan cropStart,
+                                                     TimeSpan cropEnd,
+                                                     Action<int, object> reportProgress,
+                                                     CancellationToken ct,
+                                                     OperationLogger logger = null)
         {
             bool isTempFile = false;
 
             if (input == output)
             {
-                input = FFmpegProcess.RenameTemp(input);
+                input = FFmpeg.RenameTemp(input);
                 isTempFile = true;
             }
 
@@ -458,7 +455,7 @@ namespace YouTube_Downloader_DLL.FFmpeg
             StringBuilder lines = new StringBuilder();
 
             reportProgress?.Invoke(0, null);
-            LogHeader(arguments);
+            LogHeader(arguments, logger);
 
             var p = Helper.StartProcess(FFmpegPath, arguments,
                 null,
@@ -506,14 +503,14 @@ namespace YouTube_Downloader_DLL.FFmpeg
                         started = false;
                         reportProgress.Invoke(100, null);
                     }
-                }, EnvironmentVariables, _logger);
+                }, EnvironmentVariables, logger);
 
             p.WaitForExit();
 
             if (isTempFile)
                 Helper.DeleteFiles(input);
 
-            LogFooter();
+            LogFooter(logger);
 
             if (canceled)
             {
@@ -536,17 +533,18 @@ namespace YouTube_Downloader_DLL.FFmpeg
         /// <param name="output">The output destination.</param>
         /// <param name="start">The <see cref="System.TimeSpan"/> crop start position.</param>
         /// <param name="reportProgress">The method to call when there is progress. Can be null.</param>
-        public FFmpegResult<bool> Crop(string input,
-                                       string output,
-                                       TimeSpan start,
-                                       Action<int, object> reportProgress,
-                                       CancellationToken ct)
+        public static FFmpegResult<bool> Crop(string input,
+                                              string output,
+                                              TimeSpan start,
+                                              Action<int, object> reportProgress,
+                                              CancellationToken ct,
+                                              OperationLogger logger = null)
         {
             bool isTempFile = false;
 
             if (input == output)
             {
-                input = FFmpegProcess.RenameTemp(input);
+                input = FFmpeg.RenameTemp(input);
                 isTempFile = true;
             }
 
@@ -563,7 +561,7 @@ namespace YouTube_Downloader_DLL.FFmpeg
             StringBuilder lines = new StringBuilder();
 
             reportProgress?.Invoke(0, null);
-            LogHeader(arguments);
+            LogHeader(arguments, logger);
 
             var p = Helper.StartProcess(FFmpegPath, arguments,
                 null,
@@ -617,14 +615,14 @@ namespace YouTube_Downloader_DLL.FFmpeg
                         started = false;
                         reportProgress.Invoke(100, null);
                     }
-                }, EnvironmentVariables, _logger);
+                }, EnvironmentVariables, logger);
 
             p.WaitForExit();
 
             if (isTempFile)
                 Helper.DeleteFiles(input);
 
-            LogFooter();
+            LogFooter(logger);
 
             if (canceled)
             {
@@ -648,18 +646,19 @@ namespace YouTube_Downloader_DLL.FFmpeg
         /// <param name="start">The <see cref="System.TimeSpan"/> crop start position.</param>
         /// <param name="end">The <see cref="System.TimeSpan"/> crop end position.</param>
         /// <param name="reportProgress">The method to call when there is progress. Can be null.</param>
-        public FFmpegResult<bool> Crop(string input,
-                                       string output,
-                                       TimeSpan start,
-                                       TimeSpan end,
-                                       Action<int, object> reportProgress,
-                                       CancellationToken ct)
+        public static FFmpegResult<bool> Crop(string input,
+                                              string output,
+                                              TimeSpan start,
+                                              TimeSpan end,
+                                              Action<int, object> reportProgress,
+                                              CancellationToken ct,
+                                              OperationLogger logger = null)
         {
             bool isTempFile = false;
 
             if (input == output)
             {
-                input = FFmpegProcess.RenameTemp(input);
+                input = FFmpeg.RenameTemp(input);
                 isTempFile = true;
             }
 
@@ -680,7 +679,7 @@ namespace YouTube_Downloader_DLL.FFmpeg
             Process p = null;
 
             reportProgress?.Invoke(0, null);
-            LogHeader(arguments);
+            LogHeader(arguments, logger);
 
             p = Helper.StartProcess(FFmpegPath, arguments,
                 null,
@@ -725,14 +724,14 @@ namespace YouTube_Downloader_DLL.FFmpeg
                         started = false;
                         reportProgress.Invoke(100, null);
                     }
-                }, EnvironmentVariables, _logger);
+                }, EnvironmentVariables, logger);
 
             p.WaitForExit();
 
             if (isTempFile)
                 Helper.DeleteFiles(input);
 
-            LogFooter();
+            LogFooter(logger);
 
             if (canceled)
             {
@@ -751,22 +750,22 @@ namespace YouTube_Downloader_DLL.FFmpeg
         /// <summary>
         /// Fixes and optimizes final .ts file from .m3u8 playlist.
         /// </summary>
-        public FFmpegResult<bool> FixM3U8(string input, string output)
+        public static FFmpegResult<bool> FixM3U8(string input, string output, OperationLogger logger = null)
         {
             var lines = new StringBuilder();
             string arguments = string.Format(Commands.FixM3U8, input, output);
 
-            LogHeader(arguments);
+            LogHeader(arguments, logger);
 
             var p = Helper.StartProcess(FFmpegPath, arguments,
                 null,
                 delegate (Process process, string line)
                 {
                     lines.Append(line);
-                }, EnvironmentVariables, _logger);
+                }, EnvironmentVariables, logger);
 
             p.WaitForExit();
-            LogFooter();
+            LogFooter(logger);
 
             if (p.ExitCode != 0)
             {

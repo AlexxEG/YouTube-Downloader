@@ -228,10 +228,10 @@ namespace YouTube_Downloader_DLL.Operations
 
         protected override void WorkerDoWork(DoWorkEventArgs e)
         {
-            var task = new YoutubeDlProcess(_logger, null).GetVideoInfoBatchAsync(this.Inputs, video =>
+            var task = YTD.GetVideoInfoBatchAsync(this.Inputs, video =>
             {
                 this.Videos.Add(video);
-            });
+            }, null, _logger);
 
             try
             {
