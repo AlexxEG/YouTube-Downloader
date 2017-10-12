@@ -943,7 +943,7 @@ namespace YouTube_Downloader
                     return;
                 }
 
-                if (!FFmpegProcess.CanConvertToMP3(txtInputFile.Text).Value)
+                if (!FFmpeg.CanConvertToMP3(txtInputFile.Text).Value)
                 {
                     MessageBox.Show(this, "Can't convert input file to MP3. File doesn't appear to have audio.",
                         "Missing Audio",
@@ -1017,7 +1017,7 @@ namespace YouTube_Downloader
 
         private void btnCheckAgain_Click(object sender, EventArgs e)
         {
-            Program.FFmpegAvailable = File.Exists(FFmpegProcess.FFmpegPath);
+            Program.FFmpegAvailable = File.Exists(FFmpeg.FFmpegPath);
 
             groupBox2.Enabled = chbAutoConvert.Enabled = Program.FFmpegAvailable;
             lFFmpegMissing.Visible = btnCheckAgain.Visible = !Program.FFmpegAvailable;

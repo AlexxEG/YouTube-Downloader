@@ -33,7 +33,7 @@ namespace YouTube_Downloader
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             Application.SetCompatibleTextRenderingDefault(false);
 
-            Program.FFmpegAvailable = File.Exists(FFmpegProcess.FFmpegPath);
+            Program.FFmpegAvailable = File.Exists(FFmpeg.FFmpegPath);
             Program._arguments = new List<string>(args);
 
             // Up the connection limit for getting the file sizes of video formats

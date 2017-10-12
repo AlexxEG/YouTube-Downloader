@@ -11,7 +11,7 @@ using YouTube_Downloader_DLL.Classes;
 
 namespace YouTube_Downloader_DLL.FFmpeg
 {
-    public class FFmpegProcess
+    public class FFmpeg
     {
         public static class Commands
         {
@@ -201,7 +201,7 @@ namespace YouTube_Downloader_DLL.FFmpeg
 
             if (input == output)
             {
-                input = FFmpegProcess.RenameTemp(input);
+                input = FFmpeg.RenameTemp(input);
                 isTempFile = true;
             }
 
@@ -314,7 +314,7 @@ namespace YouTube_Downloader_DLL.FFmpeg
 
             if (input == output)
             {
-                input = FFmpegProcess.RenameTemp(input);
+                input = FFmpeg.RenameTemp(input);
                 isTempFile = true;
             }
 
@@ -435,7 +435,7 @@ namespace YouTube_Downloader_DLL.FFmpeg
 
             if (input == output)
             {
-                input = FFmpegProcess.RenameTemp(input);
+                input = FFmpeg.RenameTemp(input);
                 isTempFile = true;
             }
 
@@ -544,7 +544,7 @@ namespace YouTube_Downloader_DLL.FFmpeg
 
             if (input == output)
             {
-                input = FFmpegProcess.RenameTemp(input);
+                input = FFmpeg.RenameTemp(input);
                 isTempFile = true;
             }
 
@@ -658,7 +658,7 @@ namespace YouTube_Downloader_DLL.FFmpeg
 
             if (input == output)
             {
-                input = FFmpegProcess.RenameTemp(input);
+                input = FFmpeg.RenameTemp(input);
                 isTempFile = true;
             }
 

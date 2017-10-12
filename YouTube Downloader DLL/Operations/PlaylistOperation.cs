@@ -437,7 +437,7 @@ namespace YouTube_Downloader_DLL.Operations
                 if (_ffmpegLogger == null)
                     _ffmpegLogger = OperationLogger.Create(OperationLogger.FFmpegDLogFile);
 
-                result = FFmpegProcess.Combine(video, audio, output, delegate (int percentage)
+                result = FFmpeg.FFmpeg.Combine(video, audio, output, delegate (int percentage)
                 {
                     // Combine progress
                     this.ReportProgress(percentage, null);
