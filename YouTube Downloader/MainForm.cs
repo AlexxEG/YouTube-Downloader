@@ -1107,7 +1107,31 @@ namespace YouTube_Downloader
 
         private void batchDownloadMenuItem_Click(object sender, EventArgs e)
         {
-            BatchDownloadDialog.ShowDialog(this);
+            var result = BatchDownloadDialog.ShowDialog(this);
+            this.StartBatchDownloadOperation(result.Inputs);
+        }
+
+        private void StartBatchDownloadOperation(ICollection<string> videos)
+        {
+            string path = cbPlaylistSaveTo.Text;
+
+            // Make sure download directory exists.
+            if (!this.ValidateDirectory(path))
+                return;
+
+            try
+            {
+                var operation = new BatchOperation(path,
+                                                   videos,
+                                                   Settings.Default.PreferredQualityPlaylist);
+
+                this.AddQueueItem(operation, true);
+                DownloadQueueHandler.Add(operation);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, ex.Message, ex.Source, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void checkForUpdateMenuItem_Click(object sender, EventArgs e)

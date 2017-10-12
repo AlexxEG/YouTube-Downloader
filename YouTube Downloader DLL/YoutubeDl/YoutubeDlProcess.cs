@@ -117,7 +117,7 @@ namespace YouTube_Downloader_DLL.YoutubeDl
             return video;
         }
 
-        public ICollection<VideoInfo> GetVideoInfoBatch(ICollection<string> urls)
+        public async Task GetVideoInfoBatchAsync(ICollection<string> urls, Action<VideoInfo> videoReady)
         {
             string json_dir = Common.GetJsonDirectory();
             string arguments = string.Format(Commands.GetJsonInfoBatch, json_dir, string.Join(" ", urls));
@@ -128,58 +128,55 @@ namespace YouTube_Downloader_DLL.YoutubeDl
 
             LogHeader(arguments);
 
-            Helper.StartProcess(YouTubeDlPath, arguments,
-                delegate (Process process, string line)
-                {
-                    line = line.Trim();
-
-                    Match m;
-                    string id;
-                    VideoInfo video = null;
-                    if ((m = findVideoID.Match(line)).Success)
-                    {
-                        id = findVideoID.Match(line).Groups[1].Value;
-                        video = videos.Get<VideoInfo>(id, new VideoInfo() { ID = id });
-                    }
-
-                    if (line.StartsWith("[info] Writing video description metadata as JSON to:"))
-                    {
-                        id = findVideoIDJson.Match(line).Groups[1].Value;
-                        var jsonFile = line.Substring(line.IndexOf(":") + 1).Trim();
-                        jsonFiles.Put(id, jsonFile);
-                    }
-                    else if (line.Contains("Refetching age-gated info webpage"))
-                    {
-                        video.RequiresAuthentication = true;
-                    }
-                },
-                delegate (Process process, string error)
-                {
-                    error = error.Trim();
-                    var id = findVideoID.Match(error).Groups[1].Value;
-                    var video = videos.Get<VideoInfo>(id, new VideoInfo() { ID = id });
-
-                    if (error.Contains(ErrorSignIn))
-                    {
-                        video.RequiresAuthentication = true;
-                    }
-                    else if (error.StartsWith("ERROR:"))
-                    {
-                        video.Failure = true;
-                        video.FailureReason = error.Substring("ERROR: ".Length);
-                    }
-                }, null, _logger)
-                .WaitForExit();
-
-            // Deserialize after because I'm not sure errors comes before or after json info
-            foreach (DictionaryEntry pair in videos)
+            await Task.Run(() =>
             {
-                var video = pair.Value as VideoInfo;
-                if (!video.Failure && !video.RequiresAuthentication)
-                    video.DeserializeJson(jsonFiles[pair.Key as string]);
-            }
+                Helper.StartProcess(YouTubeDlPath, arguments,
+                        (Process process, string line) =>
+                        {
+                            line = line.Trim();
+                            Match m;
+                            string id;
+                            VideoInfo video = null;
 
-            return videos.Values.Cast<VideoInfo>().ToArray();
+                            if ((m = findVideoID.Match(line)).Success)
+                            {
+                                id = findVideoID.Match(line).Groups[1].Value;
+                                video = videos.Get<VideoInfo>(id, new VideoInfo() { ID = id });
+                            }
+
+                            if (line.StartsWith("[info] Writing video description metadata as JSON to:"))
+                            {
+                                id = findVideoIDJson.Match(line).Groups[1].Value;
+                                var jsonFile = line.Substring(line.IndexOf(":") + 1).Trim();
+                                jsonFiles.Put(id, jsonFile);
+
+                                video = videos[id] as VideoInfo;
+                                video.DeserializeJson(jsonFile);
+                                videoReady(video);
+                            }
+                            else if (line.Contains("Refetching age-gated info webpage"))
+                            {
+                                video.RequiresAuthentication = true;
+                            }
+                        },
+                        (Process process, string error) =>
+                        {
+                            error = error.Trim();
+                            var id = findVideoID.Match(error).Groups[1].Value;
+                            var video = videos.Get<VideoInfo>(id, new VideoInfo() { ID = id });
+
+                            if (error.Contains(ErrorSignIn))
+                            {
+                                video.RequiresAuthentication = true;
+                            }
+                            else if (error.StartsWith("ERROR:"))
+                            {
+                                video.Failure = true;
+                                video.FailureReason = error.Substring("ERROR: ".Length);
+                            }
+                        }, null, _logger)
+                    .WaitForExit();
+            });
         }
 
         /// <summary>

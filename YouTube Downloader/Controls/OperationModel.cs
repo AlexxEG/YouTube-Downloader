@@ -199,7 +199,9 @@ namespace YouTube_Downloader.Controls
                  */
                 string[] fileList = null;
 
-                if (this.Operation is ConvertOperation)
+                if (this.Operation is BatchOperation)
+                    fileList = (this.Operation as BatchOperation).DownloadedFiles.ToArray();
+                else if (this.Operation is ConvertOperation)
                     fileList = (this.Operation as ConvertOperation).ProcessedFiles.ToArray();
                 else if (this.Operation is PlaylistOperation)
                     fileList = (this.Operation as PlaylistOperation).DownloadedFiles.ToArray();

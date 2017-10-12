@@ -74,6 +74,8 @@
     <Compile Include="Enums\ConvertingMode.cs" />
     <Compile Include="FFmpeg\FFmpegFileType.cs" />
     <Compile Include="FFmpeg\FFmpegResult.cs" />
+    <Compile Include="Operations\BatchOperation.cs" />
+    <Compile Include="Operations\OperationHelpers.cs" />
     <Compile Include="Updating\Update.cs" />
     <Compile Include="Updating\UpdateHelper.cs" />
     <Compile Include="Operations\ConvertOperation.cs" />
