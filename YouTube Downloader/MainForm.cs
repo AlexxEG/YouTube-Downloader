@@ -943,7 +943,7 @@ namespace YouTube_Downloader
                     return;
                 }
 
-                if (!new FFmpegProcess(null).CanConvertToMP3(txtInputFile.Text).Value)
+                if (!FFmpegProcess.CanConvertToMP3(txtInputFile.Text).Value)
                 {
                     MessageBox.Show(this, "Can't convert input file to MP3. File doesn't appear to have audio.",
                         "Missing Audio",

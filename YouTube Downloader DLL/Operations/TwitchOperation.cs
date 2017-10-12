@@ -350,7 +350,7 @@ namespace YouTube_Downloader_DLL.Operations
 
         private void Optimize(OperationLogger logger, string tsFile)
         {
-            new FFmpegProcess(logger).FixM3U8(tsFile, this.Output);
+            FFmpegProcess.FixM3U8(tsFile, this.Output, logger);
             Helper.DeleteFiles(tsFile);
         }
 

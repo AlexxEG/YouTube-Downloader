@@ -267,11 +267,11 @@ namespace YouTube_Downloader_DLL.Operations
 
                     using (var logger = OperationLogger.Create(OperationLogger.FFmpegDLogFile))
                     {
-                        result = new FFmpegProcess(logger).Combine(video, audio, this.Output, delegate (int percentage)
+                        result = FFmpegProcess.Combine(video, audio, this.Output, delegate (int percentage)
                         {
                             // Combine progress
                             this.ReportProgress(percentage, null);
-                        });
+                        }, logger);
                     }
 
                     if (result.Value)

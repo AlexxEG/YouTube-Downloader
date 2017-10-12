@@ -121,12 +121,10 @@ namespace YouTube_Downloader_DLL.Operations
             {
                 using (var logger = OperationLogger.Create(OperationLogger.FFmpegDLogFile))
                 {
-                    var ffmpeg = new FFmpegProcess(logger);
-
                     if (_end == TimeSpan.MinValue)
-                        ffmpeg.Crop(this.Input, this.Output, _start, this.ReportProgress, _cts.Token);
+                        FFmpegProcess.Crop(this.Input, this.Output, _start, this.ReportProgress, _cts.Token, logger);
                     else
-                        ffmpeg.Crop(this.Input, this.Output, _start, _end, this.ReportProgress, _cts.Token);
+                        FFmpegProcess.Crop(this.Input, this.Output, _start, _end, this.ReportProgress, _cts.Token, logger);
                 }
 
                 _start = _end = TimeSpan.MinValue;
