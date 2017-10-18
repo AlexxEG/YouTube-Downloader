@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using YouTube_Downloader_DLL.Classes;
-using YouTube_Downloader_DLL.FFmpeg;
+using YouTube_Downloader_DLL.FFmpegHelpers;
 
 namespace YouTube_Downloader_DLL.Operations
 {
@@ -29,11 +29,11 @@ namespace YouTube_Downloader_DLL.Operations
                     { "ProgressText", "Combining..." }
                 });
 
-                result = new FFmpegProcess(logger).Combine(video, audio, output, delegate (int percentage)
+                result = FFmpeg.Combine(video, audio, output, delegate (int percentage)
                 {
                     // Combine progress
                     reportProgress(percentage, null);
-                });
+                }, logger);
 
                 // Save errors if combining failed
                 if (!result.Value)
