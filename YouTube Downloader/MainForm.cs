@@ -1498,14 +1498,8 @@ namespace YouTube_Downloader
                 settings.WindowStates = new WindowStates();
             }
 
-            // Add WindowState for form if WindowStates doesn't have a entry for it
-            if (!settings.WindowStates.Contains(this.Name))
-            {
-                settings.WindowStates.Add(this.Name);
-            }
-
             // Restore form location, size & window state, if not null
-            settings.WindowStates[this.Name].RestoreForm(this, false);
+            settings.WindowStates.Restore(this, false);
 
             // Initialize StringCollection if null
             if (settings.SaveToDirectories == null)
@@ -1564,7 +1558,7 @@ namespace YouTube_Downloader
         {
             var settings = Settings.Default;
 
-            settings.WindowStates[this.Name].SaveForm(this, false);
+            settings.WindowStates.Save(this);
             settings.SaveToDirectories.Clear();
 
             string[] paths = new string[cbSaveTo.Items.Count];
