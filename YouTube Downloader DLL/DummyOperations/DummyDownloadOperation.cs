@@ -86,7 +86,7 @@ namespace YouTube_Downloader_DLL.DummyOperations
             int hash = Guid.NewGuid().GetHashCode();
             double d = new Random(hash).NextDouble();
             if (d >= 0.5)
-                throw new Exception("Testing");
+                throw new IgnoreException("Testing");
 
             while (sw.ElapsedMilliseconds < _workTimeMS)
             {
@@ -123,6 +123,19 @@ namespace YouTube_Downloader_DLL.DummyOperations
             }
 
             e.Result = status;
+        }
+
+        public class IgnoreException : Exception
+        {
+            public IgnoreException() : base()
+            {
+            }
+            public IgnoreException(string message) : base(message)
+            {
+            }
+            public IgnoreException(string message, Exception innerException) : base(message, innerException)
+            {
+            }
         }
 
         protected override void WorkerProgressChanged(ProgressChangedEventArgs e)
