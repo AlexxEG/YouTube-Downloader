@@ -253,9 +253,8 @@ namespace YouTube_Downloader_DLL.Operations
                     _downloaderSuccessful = null;
                     _downloader.Files.Clear();
 
-                    count++;
-
-                    var video = this.Videos[count - 1];
+                    // Get video, then increment count variable after
+                    var video = this.Videos[count++];
 
                     if (video.Failure)
                     {

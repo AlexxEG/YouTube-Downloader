@@ -58,6 +58,12 @@
       <DependentUpon>AboutForm.cs</DependentUpon>
     </Compile>
     <Compile Include="App.cs" />
+    <Compile Include="Dialogs\BatchDownloadDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\BatchDownloadDialog.Designer.cs">
+      <DependentUpon>BatchDownloadDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Classes\BarTextProgressComparer.cs" />
     <Compile Include="Controls\DurationPicker.cs">
       <SubType>UserControl</SubType>
@@ -74,6 +80,7 @@
     <Compile Include="Controls\OperationModel.cs" />
     <Compile Include="Delegates\SetItemTextDelegate.cs" />
     <Compile Include="Delegates\SetTextDelegate.cs" />
+    <Compile Include="Dialogs\BatchDownloadResult.cs" />
     <Compile Include="Dialogs\LoginDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -107,6 +114,9 @@
     <Compile Include="Settings.cs" />
     <EmbeddedResource Include="AboutForm.resx">
       <DependentUpon>AboutForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\BatchDownloadDialog.resx">
+      <DependentUpon>BatchDownloadDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\DurationPicker.resx">
       <DependentUpon>DurationPicker.cs</DependentUpon>

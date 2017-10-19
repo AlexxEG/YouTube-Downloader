@@ -253,12 +253,6 @@ namespace YouTube_Downloader_DLL.Operations
 
         protected override void WorkerDoWork(DoWorkEventArgs e)
         {
-            /* ToDo:
-             * 
-             * [ ] Handle TimeoutException from PlaylistReader in 'GetPlaylistInfoAsync' somehow.
-             *     Can't catch it here, needs to catch it inside 'GetPlaylistInfoAsync'.
-             */
-
             this.GetPlaylistInfoAsync();
 
             try
@@ -356,8 +350,20 @@ namespace YouTube_Downloader_DLL.Operations
                             });
                             this.ReportProgress(ProgressMax, null);
 
-                            if (!this.Combine())
+                            Exception combineException;
+
+                            if (!OperationHelpers.Combine(
+                                    _downloader.Files[0].Path,
+                                    _downloader.Files[1].Path,
+                                    this.Title,
+                                    _ffmpegLogger,
+                                    out combineException,
+                                    this.ReportProgress))
+                            {
                                 _failures++;
+                            }
+
+                            this.ErrorsInternal.Add(combineException.Message);
 
                             this.ReportProgress(-1, new Dictionary<string, object>()
                             {
@@ -416,64 +422,6 @@ namespace YouTube_Downloader_DLL.Operations
                     this.GetType().GetProperty(pair.Key).SetValue(this, pair.Value);
                 }
             }
-        }
-
-        private bool Combine()
-        {
-            string audio = _downloader.Files[0].Path;
-            string video = _downloader.Files[1].Path;
-            // Remove '_video' from video file to get a final filename.
-            string output = video.Replace("_video", string.Empty);
-            FFmpegResult<bool> result = null;
-
-            try
-            {
-                // Raise events on main thread
-                this.ReportProgress(-1, new Dictionary<string, object>()
-                {
-                    { nameof(ProgressText), "Combining..." }
-                });
-
-                if (_ffmpegLogger == null)
-                    _ffmpegLogger = OperationLogger.Create(OperationLogger.FFmpegDLogFile);
-
-                result = FFmpeg.Combine(video, audio, output, delegate (int percentage)
-                {
-                    // Combine progress
-                    this.ReportProgress(percentage, null);
-                }, _ffmpegLogger);
-
-                // Save errors if combining failed
-                if (!result.Value)
-                {
-                    var sb = new StringBuilder();
-
-                    sb.AppendLine(this.Title);
-
-                    foreach (string error in result.Errors)
-                        sb.AppendLine($" - {error}");
-
-                    this.ErrorsInternal.Add(sb.ToString());
-                }
-
-                // Cleanup the separate audio and video files
-                Helper.DeleteFiles(audio, video);
-            }
-            catch (Exception ex)
-            {
-                Common.SaveException(ex);
-                return false;
-            }
-            finally
-            {
-                // Raise events on main thread
-                this.ReportProgress(-1, new Dictionary<string, object>()
-                {
-                    { nameof(ProgressText), null }
-                });
-            }
-
-            return result.Value;
         }
 
         private void OnFileDownloadComplete(string file)

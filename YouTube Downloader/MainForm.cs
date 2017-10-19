@@ -14,6 +14,7 @@ using BrightIdeasSoftware;
 using LeaxDev.WindowStates;
 using YouTube_Downloader.Classes;
 using YouTube_Downloader.Controls;
+using YouTube_Downloader.Dialogs;
 using YouTube_Downloader.Properties;
 using YouTube_Downloader.Renderers;
 using YouTube_Downloader_DLL;
@@ -1043,23 +1044,26 @@ namespace YouTube_Downloader
         MainMenu mainMenu1;
         MenuItem fileMenuItem;
         MenuItem exitMenuItem;
-        // MenuItem toolsMenuItem;
+        MenuItem toolsMenuItem;
         MenuItem optionsMenuItem;
+        MenuItem batchDownloadMenuItem;
         MenuItem helpMenuItem;
         MenuItem checkForUpdateMenuItem;
         MenuItem aboutMenuItem;
 
         private void InitializeMainMenu()
         {
-            MenuItem[] fileMenuItems = new MenuItem[]
+            var fileMenuItems = new MenuItem[]
             {
                 exitMenuItem = new MenuItem("&Exit", exitMenuItem_Click, Shortcut.CtrlQ)
             };
-            MenuItem[] toolsMenuItems = new MenuItem[]
+            var toolsMenuItems = new MenuItem[]
             {
                 optionsMenuItem = new MenuItem("&Options", optionsMenuItem_Click),
+                new MenuItem("-"),
+                batchDownloadMenuItem = new MenuItem("&Batch Download", batchDownloadMenuItem_Click)
             };
-            MenuItem[] helpMenuItems = new MenuItem[]
+            var helpMenuItems = new MenuItem[]
             {
                 checkForUpdateMenuItem = new MenuItem("&Check for updates", checkForUpdateMenuItem_Click),
                 aboutMenuItem = new MenuItem("&About", aboutMenuItem_Click)
@@ -1067,8 +1071,7 @@ namespace YouTube_Downloader
 
             mainMenu1 = new MainMenu();
             mainMenu1.MenuItems.Add(fileMenuItem = new MenuItem("&File", fileMenuItems));
-            // === ToDo: Hide 'Tools' menu for now, until we actually have something useful to put here
-            //mainMenu1.MenuItems.Add(toolsMenuItem = new MenuItem("&Tools", toolsMenuItems));
+            mainMenu1.MenuItems.Add(toolsMenuItem = new MenuItem("&Tools", toolsMenuItems));
             mainMenu1.MenuItems.Add(helpMenuItem = new MenuItem("&Help", helpMenuItems));
 
             mainMenu1.Collapse += delegate (object sender, EventArgs e)
@@ -1099,6 +1102,34 @@ namespace YouTube_Downloader
                         cbQuality.SelectedIndex = cbQuality.Items.Count - 1;
                     }
                 }
+            }
+        }
+
+        private void batchDownloadMenuItem_Click(object sender, EventArgs e)
+        {
+            var result = BatchDownloadDialog.ShowDialog(this);
+            if (result.Result == DialogResult.OK)
+                this.StartBatchDownloadOperation(result.Inputs, Settings.Default.PreferredQualityBatch);
+        }
+
+        private void StartBatchDownloadOperation(ICollection<string> videos, PreferredQuality preferredQuality)
+        {
+            string path = cbPlaylistSaveTo.Text;
+
+            // Make sure download directory exists.
+            if (!this.ValidateDirectory(path))
+                return;
+
+            try
+            {
+                var operation = new BatchOperation(path, videos, preferredQuality);
+
+                this.AddQueueItem(operation, true);
+                DownloadQueueHandler.Add(operation);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, ex.Message, ex.Source, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

@@ -72,6 +72,8 @@
     <Compile Include="Helpers\DownloadQueueHandler.cs" />
     <Compile Include="Dialogs\OpenFolderDialog.cs" />
     <Compile Include="Enums\ConvertingMode.cs" />
+    <Compile Include="Operations\BatchOperation.cs" />
+    <Compile Include="Operations\OperationHelpers.cs" />
     <Compile Include="FFmpegHelpers\FFmpegFileType.cs" />
     <Compile Include="FFmpegHelpers\FFmpegResult.cs" />
     <Compile Include="Updating\Update.cs" />

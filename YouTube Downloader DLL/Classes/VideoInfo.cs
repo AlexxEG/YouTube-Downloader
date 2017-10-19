@@ -174,7 +174,7 @@ namespace YouTube_Downloader_DLL.Classes
                 }
                 catch (IOException ex)
                 {
-                    if (ex.Message.EndsWith("because it is being used by another process."))
+                    if (ex is FileNotFoundException || ex.Message.EndsWith("because it is being used by another process."))
                     {
                         Console.WriteLine(ex);
                         Thread.Sleep(500);

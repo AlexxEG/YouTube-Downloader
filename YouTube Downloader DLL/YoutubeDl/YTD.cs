@@ -120,7 +120,7 @@ namespace YouTube_Downloader_DLL.YoutubeDl
             var videos = new OrderedDictionary();
             var jsonFiles = new Dictionary<string, string>();
             var findVideoID = new Regex(@"(?:\]|ERROR:)\s(.{11}):", RegexOptions.Compiled);
-            var findVideoIDJson = new Regex(@":\s.*\\(.*?)_", RegexOptions.Compiled);
+            var findVideoIDJson = new Regex(@":\s.*\\(.{11})_", RegexOptions.Compiled);
 
             LogHeader(logger, arguments);
 
