@@ -1,4 +1,24 @@
 ## Changelog
+**3.0.0**
+
+A year of changes, should've kept track. But here are a few I found reading through the commits.
+- "Bug fixes and performance improvements" (aka I didn't keep track :D. Still true though)
+- Added batch download feature
+- Added dialog to view all errors in a operation
+- Added max simultaneous download option
+- Added playlist filtering
+- Added playlist options. (Create playlist folder, ignore existing, reverse & number prefix)
+- Added VERY silent update notification
+- Added login for age-gated videos
+- Added in-app updater for `youtube-dl`, since it can become outdated rather quick
+- Added 'Open' & 'Copy' menu items for playlist list
+- Faster playlist download
+- Resume downloads
+- Download specific Twitch VOD portions
+- Crop and convert in same operation
+- Removed WPF version
+- Replaced queue list with [ObjectListView](http://objectlistview.sourceforge.net/cs/index.html). Queue should feel and look better now.
+
 **2.0.0**
 
 - Added a separate executable with for a WPF version of this program. It's more visually pleasing than Windows Forms, but it has the exact same functions as the "old" one. For now I'm just going to develop both along side each other, but I might choose one over the other in the future. 
