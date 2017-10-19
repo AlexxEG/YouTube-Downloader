@@ -1,5 +1,5 @@
 ## Changelog
-**3.0.0**
+**3.0.0** (Not released yet...)
 
 A year of changes, should've kept track. But here are a few I found reading through the commits.
 - "Bug fixes and performance improvements" (aka I didn't keep track :D. Still true though)
