@@ -8,6 +8,13 @@ namespace YouTube_Downloader_DLL.DummyOperations
 {
     public class DummyDownloadOperation : Operation
     {
+        public class IgnoreException : Exception
+        {
+            public IgnoreException() : base() { }
+            public IgnoreException(string message) : base(message) { }
+            public IgnoreException(string message, Exception innerException) : base(message, innerException) { }
+        }
+
         bool _cancel;
         long _workTimeMS;
         static Random _random = new Random(Environment.TickCount);
@@ -123,19 +130,6 @@ namespace YouTube_Downloader_DLL.DummyOperations
             }
 
             e.Result = status;
-        }
-
-        public class IgnoreException : Exception
-        {
-            public IgnoreException() : base()
-            {
-            }
-            public IgnoreException(string message) : base(message)
-            {
-            }
-            public IgnoreException(string message, Exception innerException) : base(message, innerException)
-            {
-            }
         }
 
         protected override void WorkerProgressChanged(ProgressChangedEventArgs e)
