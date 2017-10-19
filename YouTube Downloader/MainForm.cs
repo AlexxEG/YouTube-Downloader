@@ -1170,6 +1170,7 @@ namespace YouTube_Downloader
             {
                 var operation = item.Operation;
 
+                // These variables should never be set to false again if they're true
                 if (operation.CanOpen())
                     canOpen = true;
 
