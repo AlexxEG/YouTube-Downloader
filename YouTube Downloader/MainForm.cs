@@ -1108,7 +1108,8 @@ namespace YouTube_Downloader
         private void batchDownloadMenuItem_Click(object sender, EventArgs e)
         {
             var result = BatchDownloadDialog.ShowDialog(this);
-            this.StartBatchDownloadOperation(result.Inputs);
+            if (result.Result == DialogResult.OK)
+                this.StartBatchDownloadOperation(result.Inputs);
         }
 
         private void StartBatchDownloadOperation(ICollection<string> videos)
