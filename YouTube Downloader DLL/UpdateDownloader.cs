@@ -170,7 +170,8 @@ namespace YouTube_Downloader_DLL
             try
             {
                 var wc = new WebClient();
-                var task = await wc.DownloadStringTaskAsync(ChangelogUrl);
+                // Add TickCount to "disable" cache
+                var task = await wc.DownloadStringTaskAsync(ChangelogUrl + "?nocache=" + Environment.TickCount);
                 var html = CommonMark.CommonMarkConverter.Convert(task);
 
                 // Insert changelog into html template
