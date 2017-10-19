@@ -1109,10 +1109,10 @@ namespace YouTube_Downloader
         {
             var result = BatchDownloadDialog.ShowDialog(this);
             if (result.Result == DialogResult.OK)
-                this.StartBatchDownloadOperation(result.Inputs);
+                this.StartBatchDownloadOperation(result.Inputs, Settings.Default.PreferredQualityBatch);
         }
 
-        private void StartBatchDownloadOperation(ICollection<string> videos)
+        private void StartBatchDownloadOperation(ICollection<string> videos, PreferredQuality preferredQuality)
         {
             string path = cbPlaylistSaveTo.Text;
 
@@ -1122,9 +1122,7 @@ namespace YouTube_Downloader
 
             try
             {
-                var operation = new BatchOperation(path,
-                                                   videos,
-                                                   Settings.Default.PreferredQualityPlaylist);
+                var operation = new BatchOperation(path, videos, preferredQuality);
 
                 this.AddQueueItem(operation, true);
                 DownloadQueueHandler.Add(operation);

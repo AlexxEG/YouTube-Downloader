@@ -56,5 +56,8 @@
     <Setting Name="PlaylistNumberPrefix" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="PreferredQualityBatch" Type="YouTube_Downloader_DLL.Enums.PreferredQuality" Scope="User">
+      <Value Profile="(Default)">Highest</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

@@ -293,5 +293,20 @@ namespace YouTube_Downloader.Properties
                 this["PlaylistNumberPrefix"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Highest")]
+        public global::YouTube_Downloader_DLL.Enums.PreferredQuality PreferredQualityBatch
+        {
+            get
+            {
+                return ((global::YouTube_Downloader_DLL.Enums.PreferredQuality)(this["PreferredQualityBatch"]));
+            }
+            set
+            {
+                this["PreferredQualityBatch"] = value;
+            }
+        }
     }
 }

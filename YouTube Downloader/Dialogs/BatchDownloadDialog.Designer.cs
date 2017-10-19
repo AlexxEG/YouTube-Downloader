@@ -31,6 +31,8 @@
             this.txtInput = new System.Windows.Forms.TextBox();
             this.btnDownload = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
+            this.label14 = new System.Windows.Forms.Label();
+            this.cbPreferredQuality = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // txtInput
@@ -69,22 +71,44 @@
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             // 
-            // BatchDownloadForm
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(12, 431);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(39, 13);
+            this.label14.TabIndex = 15;
+            this.label14.Text = "Quality";
+            // 
+            // cbPreferredQuality
+            // 
+            this.cbPreferredQuality.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbPreferredQuality.FormattingEnabled = true;
+            this.cbPreferredQuality.Location = new System.Drawing.Point(66, 428);
+            this.cbPreferredQuality.Name = "cbPreferredQuality";
+            this.cbPreferredQuality.Size = new System.Drawing.Size(129, 21);
+            this.cbPreferredQuality.TabIndex = 14;
+            this.cbPreferredQuality.SelectedIndexChanged += new System.EventHandler(this.cbPreferredQuality_SelectedIndexChanged);
+            // 
+            // BatchDownloadDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(784, 461);
             this.ControlBox = false;
+            this.Controls.Add(this.label14);
+            this.Controls.Add(this.cbPreferredQuality);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnDownload);
             this.Controls.Add(this.txtInput);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.Name = "BatchDownloadForm";
+            this.Name = "BatchDownloadDialog";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Batch Download";
+            this.Load += new System.EventHandler(this.BatchDownloadDialog_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -95,5 +119,7 @@
         private System.Windows.Forms.TextBox txtInput;
         private System.Windows.Forms.Button btnDownload;
         private System.Windows.Forms.Button btnCancel;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.ComboBox cbPreferredQuality;
     }
 }

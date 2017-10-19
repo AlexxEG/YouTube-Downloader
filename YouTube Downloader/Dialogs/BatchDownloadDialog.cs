@@ -1,13 +1,18 @@
 ﻿using System;
 using System.Linq;
 using System.Windows.Forms;
+using YouTube_Downloader.Properties;
 using YouTube_Downloader_DLL.Classes;
+using YouTube_Downloader_DLL.Enums;
 
 namespace YouTube_Downloader.Dialogs
 {
     public partial class BatchDownloadDialog : Form
     {
         public string[] Lines { get; set; }
+        public PreferredQuality PreferredQuality { get; set; }
+
+        private Settings settings = Settings.Default;
 
         public BatchDownloadDialog()
         {
@@ -29,11 +34,23 @@ namespace YouTube_Downloader.Dialogs
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
+        private void BatchDownloadDialog_Load(object sender, EventArgs e)
+        {
+            cbPreferredQuality.Items.AddRange(Enum.GetNames(typeof(PreferredQuality)));
+            cbPreferredQuality.SelectedIndex = (int)settings.PreferredQualityBatch;
+        }
+
+        private void cbPreferredQuality_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            settings.PreferredQualityBatch = (PreferredQuality)cbPreferredQuality.SelectedIndex;
+        }
+
         private void btnDownload_Click(object sender, EventArgs e)
         {
             if (txtInput.Lines.All(x => Helper.IsValidYouTubeUrl(x)))
             {
                 this.Lines = txtInput.Lines;
+
                 this.DialogResult = DialogResult.OK;
             }
             else
