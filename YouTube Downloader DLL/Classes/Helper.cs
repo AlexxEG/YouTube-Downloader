@@ -299,7 +299,7 @@ namespace YouTube_Downloader_DLL.Classes
                     }
                     break;
                 case PreferredQuality.Lowest:
-                    if ((index = qualities.IndexOf("140")) > -1)
+                    if ((index = qualities.IndexOf("144")) > -1)
                     {
                         return qualities[index];
                     }
