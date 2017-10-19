@@ -37,8 +37,8 @@
             // 
             // txtInput
             // 
-            this.txtInput.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.txtInput.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtInput.Font = new System.Drawing.Font("Consolas", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtInput.Location = new System.Drawing.Point(12, 12);
@@ -73,6 +73,7 @@
             // 
             // label14
             // 
+            this.label14.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label14.AutoSize = true;
             this.label14.Location = new System.Drawing.Point(12, 431);
             this.label14.Name = "label14";
@@ -82,6 +83,7 @@
             // 
             // cbPreferredQuality
             // 
+            this.cbPreferredQuality.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.cbPreferredQuality.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbPreferredQuality.FormattingEnabled = true;
             this.cbPreferredQuality.Location = new System.Drawing.Point(66, 428);
