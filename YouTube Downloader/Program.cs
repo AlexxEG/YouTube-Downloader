@@ -38,6 +38,8 @@ namespace YouTube_Downloader
 
             // Up the connection limit for getting the file sizes of video formats
             System.Net.ServicePointManager.DefaultConnectionLimit = 20;
+            System.Net.ServicePointManager.Expect100Continue = true;
+            System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
 
             LogCleanup.RunAsync();
 
