@@ -1517,7 +1517,7 @@ namespace YouTube_Downloader
             cbPlaylistSaveTo.Items.AddRange(directories);
 
             // Restore ComboBox.SelectedIndex if it's not empty
-            if (cbSaveTo.Items.Count > 0)
+            if (cbSaveTo.Items.Count > 0 && settings.SelectedDirectory < cbSaveTo.Items.Count)
                 cbSaveTo.SelectedIndex = settings.SelectedDirectory;
 
             if (cbPlaylistSaveTo.Items.Count > 0)
