@@ -97,6 +97,20 @@
             this.btnPlaylistDownloadAll = new System.Windows.Forms.Button();
             this.label12 = new System.Windows.Forms.Label();
             this.txtPlaylistLink = new System.Windows.Forms.TextBox();
+            this.batchTabPage = new System.Windows.Forms.TabPage();
+            this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.btnBatchDownload = new System.Windows.Forms.Button();
+            this.chbBatchNumberPrefix = new System.Windows.Forms.CheckBox();
+            this.chbBatchReverse = new System.Windows.Forms.CheckBox();
+            this.chbBatchIgnoreExisting = new System.Windows.Forms.CheckBox();
+            this.txtBatchFolder = new System.Windows.Forms.TextBox();
+            this.chbBatchCreateFolder = new System.Windows.Forms.CheckBox();
+            this.cbBatchSaveTo = new System.Windows.Forms.ComboBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.label15 = new System.Windows.Forms.Label();
+            this.cbBatchPreferredQuality = new System.Windows.Forms.ComboBox();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.txtBatchLinks = new System.Windows.Forms.TextBox();
             this.convertTabPage = new System.Windows.Forms.TabPage();
             this.btnCheckAgain = new System.Windows.Forms.Button();
             this.lFFmpegMissing = new System.Windows.Forms.Label();
@@ -156,6 +170,9 @@
             this.playlistTabPage.SuspendLayout();
             this.groupBox7.SuspendLayout();
             this.cmsPlaylistOptions.SuspendLayout();
+            this.batchTabPage.SuspendLayout();
+            this.groupBox6.SuspendLayout();
+            this.groupBox4.SuspendLayout();
             this.convertTabPage.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox5.SuspendLayout();
@@ -177,7 +194,7 @@
             this.groupBox1.Controls.Add(this.txtYoutubeLink);
             this.groupBox1.Location = new System.Drawing.Point(6, 6);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(590, 74);
+            this.groupBox1.Size = new System.Drawing.Size(740, 74);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Video Link";
@@ -196,7 +213,7 @@
             this.btnPaste.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnPaste.ImageIndex = 0;
             this.btnPaste.ImageList = this.imageList16px;
-            this.btnPaste.Location = new System.Drawing.Point(562, 18);
+            this.btnPaste.Location = new System.Drawing.Point(712, 18);
             this.btnPaste.Name = "btnPaste";
             this.btnPaste.Size = new System.Drawing.Size(22, 22);
             this.btnPaste.TabIndex = 1;
@@ -213,7 +230,7 @@
             // btnGetVideo
             // 
             this.btnGetVideo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnGetVideo.Location = new System.Drawing.Point(494, 45);
+            this.btnGetVideo.Location = new System.Drawing.Point(644, 45);
             this.btnGetVideo.Name = "btnGetVideo";
             this.btnGetVideo.Size = new System.Drawing.Size(90, 23);
             this.btnGetVideo.TabIndex = 2;
@@ -227,7 +244,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtYoutubeLink.Location = new System.Drawing.Point(39, 19);
             this.txtYoutubeLink.Name = "txtYoutubeLink";
-            this.txtYoutubeLink.Size = new System.Drawing.Size(517, 20);
+            this.txtYoutubeLink.Size = new System.Drawing.Size(667, 20);
             this.txtYoutubeLink.TabIndex = 0;
             // 
             // flpDownloadClip
@@ -292,7 +309,7 @@
             // btnBrowse
             // 
             this.btnBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBrowse.Location = new System.Drawing.Point(553, 73);
+            this.btnBrowse.Location = new System.Drawing.Point(703, 73);
             this.btnBrowse.Name = "btnBrowse";
             this.btnBrowse.Size = new System.Drawing.Size(31, 23);
             this.btnBrowse.TabIndex = 3;
@@ -316,7 +333,7 @@
             this.cbSaveTo.FormattingEnabled = true;
             this.cbSaveTo.Location = new System.Drawing.Point(182, 74);
             this.cbSaveTo.Name = "cbSaveTo";
-            this.cbSaveTo.Size = new System.Drawing.Size(365, 21);
+            this.cbSaveTo.Size = new System.Drawing.Size(515, 21);
             this.cbSaveTo.TabIndex = 2;
             // 
             // label4
@@ -332,7 +349,7 @@
             // 
             this.btnDownload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnDownload.Enabled = false;
-            this.btnDownload.Location = new System.Drawing.Point(494, 102);
+            this.btnDownload.Location = new System.Drawing.Point(644, 102);
             this.btnDownload.Name = "btnDownload";
             this.btnDownload.Size = new System.Drawing.Size(90, 23);
             this.btnDownload.TabIndex = 4;
@@ -349,7 +366,7 @@
             this.cbQuality.FormattingEnabled = true;
             this.cbQuality.Location = new System.Drawing.Point(182, 46);
             this.cbQuality.Name = "cbQuality";
-            this.cbQuality.Size = new System.Drawing.Size(284, 21);
+            this.cbQuality.Size = new System.Drawing.Size(434, 21);
             this.cbQuality.TabIndex = 1;
             this.cbQuality.SelectedIndexChanged += new System.EventHandler(this.cbQuality_SelectedIndexChanged);
             // 
@@ -469,7 +486,7 @@
             this.groupBox3.Controls.Add(this.cbSaveTo);
             this.groupBox3.Location = new System.Drawing.Point(6, 86);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(590, 131);
+            this.groupBox3.Size = new System.Drawing.Size(740, 131);
             this.groupBox3.TabIndex = 8;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Video Information";
@@ -480,14 +497,14 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtTitle.Location = new System.Drawing.Point(182, 20);
             this.txtTitle.Name = "txtTitle";
-            this.txtTitle.Size = new System.Drawing.Size(365, 20);
+            this.txtTitle.Size = new System.Drawing.Size(515, 20);
             this.txtTitle.TabIndex = 0;
             // 
             // lFileSize
             // 
             this.lFileSize.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lFileSize.AutoSize = true;
-            this.lFileSize.Location = new System.Drawing.Point(472, 49);
+            this.lFileSize.Location = new System.Drawing.Point(622, 49);
             this.lFileSize.Name = "lFileSize";
             this.lFileSize.Size = new System.Drawing.Size(44, 13);
             this.lFileSize.TabIndex = 11;
@@ -521,12 +538,13 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.downloadTabPage);
             this.tabControl1.Controls.Add(this.playlistTabPage);
+            this.tabControl1.Controls.Add(this.batchTabPage);
             this.tabControl1.Controls.Add(this.convertTabPage);
             this.tabControl1.Controls.Add(this.queueTabPage);
             this.tabControl1.Location = new System.Drawing.Point(12, 12);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(610, 387);
+            this.tabControl1.Size = new System.Drawing.Size(760, 437);
             this.tabControl1.TabIndex = 0;
             // 
             // downloadTabPage
@@ -536,7 +554,7 @@
             this.downloadTabPage.Location = new System.Drawing.Point(4, 22);
             this.downloadTabPage.Name = "downloadTabPage";
             this.downloadTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.downloadTabPage.Size = new System.Drawing.Size(602, 361);
+            this.downloadTabPage.Size = new System.Drawing.Size(752, 411);
             this.downloadTabPage.TabIndex = 0;
             this.downloadTabPage.Text = "Download";
             this.downloadTabPage.UseVisualStyleBackColor = true;
@@ -553,7 +571,7 @@
             this.playlistTabPage.Location = new System.Drawing.Point(4, 22);
             this.playlistTabPage.Name = "playlistTabPage";
             this.playlistTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.playlistTabPage.Size = new System.Drawing.Size(602, 361);
+            this.playlistTabPage.Size = new System.Drawing.Size(752, 411);
             this.playlistTabPage.TabIndex = 4;
             this.playlistTabPage.Text = "Playlist";
             this.playlistTabPage.UseVisualStyleBackColor = true;
@@ -561,7 +579,7 @@
             // btnPlaylistSearch
             // 
             this.btnPlaylistSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPlaylistSearch.Location = new System.Drawing.Point(521, 332);
+            this.btnPlaylistSearch.Location = new System.Drawing.Point(671, 382);
             this.btnPlaylistSearch.Name = "btnPlaylistSearch";
             this.btnPlaylistSearch.Size = new System.Drawing.Size(75, 23);
             this.btnPlaylistSearch.TabIndex = 7;
@@ -572,7 +590,7 @@
             // btnPlaylistToggle
             // 
             this.btnPlaylistToggle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPlaylistToggle.Location = new System.Drawing.Point(440, 332);
+            this.btnPlaylistToggle.Location = new System.Drawing.Point(590, 382);
             this.btnPlaylistToggle.Name = "btnPlaylistToggle";
             this.btnPlaylistToggle.Size = new System.Drawing.Size(75, 23);
             this.btnPlaylistToggle.TabIndex = 6;
@@ -583,7 +601,7 @@
             // btnPlaylistRemove
             // 
             this.btnPlaylistRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPlaylistRemove.Location = new System.Drawing.Point(359, 332);
+            this.btnPlaylistRemove.Location = new System.Drawing.Point(509, 382);
             this.btnPlaylistRemove.Name = "btnPlaylistRemove";
             this.btnPlaylistRemove.Size = new System.Drawing.Size(75, 23);
             this.btnPlaylistRemove.TabIndex = 5;
@@ -596,9 +614,9 @@
             this.txtPlaylistFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtPlaylistFilter.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::YouTube_Downloader.Properties.Settings.Default, "PlaylistLastUsedFilter", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.txtPlaylistFilter.Location = new System.Drawing.Point(66, 333);
+            this.txtPlaylistFilter.Location = new System.Drawing.Point(66, 383);
             this.txtPlaylistFilter.Name = "txtPlaylistFilter";
-            this.txtPlaylistFilter.Size = new System.Drawing.Size(287, 20);
+            this.txtPlaylistFilter.Size = new System.Drawing.Size(437, 20);
             this.txtPlaylistFilter.TabIndex = 4;
             this.txtPlaylistFilter.Text = global::YouTube_Downloader.Properties.Settings.Default.PlaylistLastUsedFilter;
             // 
@@ -606,7 +624,7 @@
             // 
             this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(12, 336);
+            this.label10.Location = new System.Drawing.Point(12, 386);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(29, 13);
             this.label10.TabIndex = 3;
@@ -622,9 +640,10 @@
             this.columnHeader7,
             this.columnHeader8});
             this.lvPlaylistVideos.FullRowSelect = true;
+            this.lvPlaylistVideos.HideSelection = false;
             this.lvPlaylistVideos.Location = new System.Drawing.Point(6, 143);
             this.lvPlaylistVideos.Name = "lvPlaylistVideos";
-            this.lvPlaylistVideos.Size = new System.Drawing.Size(590, 183);
+            this.lvPlaylistVideos.Size = new System.Drawing.Size(740, 233);
             this.lvPlaylistVideos.TabIndex = 0;
             this.lvPlaylistVideos.UseCompatibleStateImageBehavior = false;
             this.lvPlaylistVideos.View = System.Windows.Forms.View.Details;
@@ -657,7 +676,7 @@
             this.groupBox7.Controls.Add(this.txtPlaylistLink);
             this.groupBox7.Location = new System.Drawing.Point(6, 6);
             this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(590, 131);
+            this.groupBox7.Size = new System.Drawing.Size(740, 131);
             this.groupBox7.TabIndex = 0;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Playlist";
@@ -730,7 +749,7 @@
             this.btnPlaylistPaste.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnPlaylistPaste.ImageIndex = 0;
             this.btnPlaylistPaste.ImageList = this.imageList16px;
-            this.btnPlaylistPaste.Location = new System.Drawing.Point(562, 18);
+            this.btnPlaylistPaste.Location = new System.Drawing.Point(712, 18);
             this.btnPlaylistPaste.Name = "btnPlaylistPaste";
             this.btnPlaylistPaste.Size = new System.Drawing.Size(22, 22);
             this.btnPlaylistPaste.TabIndex = 1;
@@ -741,7 +760,7 @@
             // btnGetPlaylist
             // 
             this.btnGetPlaylist.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnGetPlaylist.Location = new System.Drawing.Point(494, 102);
+            this.btnGetPlaylist.Location = new System.Drawing.Point(644, 102);
             this.btnGetPlaylist.Name = "btnGetPlaylist";
             this.btnGetPlaylist.Size = new System.Drawing.Size(90, 23);
             this.btnGetPlaylist.TabIndex = 5;
@@ -772,7 +791,7 @@
             // 
             this.btnPlaylistDownloadSelected.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnPlaylistDownloadSelected.Enabled = false;
-            this.btnPlaylistDownloadSelected.Location = new System.Drawing.Point(277, 102);
+            this.btnPlaylistDownloadSelected.Location = new System.Drawing.Point(427, 102);
             this.btnPlaylistDownloadSelected.Name = "btnPlaylistDownloadSelected";
             this.btnPlaylistDownloadSelected.Size = new System.Drawing.Size(115, 23);
             this.btnPlaylistDownloadSelected.TabIndex = 1;
@@ -783,7 +802,7 @@
             // btnPlaylistBrowse
             // 
             this.btnPlaylistBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPlaylistBrowse.Location = new System.Drawing.Point(562, 45);
+            this.btnPlaylistBrowse.Location = new System.Drawing.Point(712, 45);
             this.btnPlaylistBrowse.Name = "btnPlaylistBrowse";
             this.btnPlaylistBrowse.Size = new System.Drawing.Size(22, 22);
             this.btnPlaylistBrowse.TabIndex = 4;
@@ -808,7 +827,7 @@
             this.cbPlaylistSaveTo.FormattingEnabled = true;
             this.cbPlaylistSaveTo.Location = new System.Drawing.Point(245, 45);
             this.cbPlaylistSaveTo.Name = "cbPlaylistSaveTo";
-            this.cbPlaylistSaveTo.Size = new System.Drawing.Size(311, 21);
+            this.cbPlaylistSaveTo.Size = new System.Drawing.Size(461, 21);
             this.cbPlaylistSaveTo.TabIndex = 3;
             this.cbPlaylistSaveTo.SelectedIndexChanged += new System.EventHandler(this.cbPlaylistSaveTo_SelectedIndexChanged);
             // 
@@ -816,7 +835,7 @@
             // 
             this.btnPlaylistDownloadAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnPlaylistDownloadAll.Enabled = false;
-            this.btnPlaylistDownloadAll.Location = new System.Drawing.Point(398, 102);
+            this.btnPlaylistDownloadAll.Location = new System.Drawing.Point(548, 102);
             this.btnPlaylistDownloadAll.Name = "btnPlaylistDownloadAll";
             this.btnPlaylistDownloadAll.Size = new System.Drawing.Size(90, 23);
             this.btnPlaylistDownloadAll.TabIndex = 2;
@@ -839,8 +858,169 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtPlaylistLink.Location = new System.Drawing.Point(60, 19);
             this.txtPlaylistLink.Name = "txtPlaylistLink";
-            this.txtPlaylistLink.Size = new System.Drawing.Size(496, 20);
+            this.txtPlaylistLink.Size = new System.Drawing.Size(646, 20);
             this.txtPlaylistLink.TabIndex = 0;
+            // 
+            // batchTabPage
+            // 
+            this.batchTabPage.Controls.Add(this.groupBox6);
+            this.batchTabPage.Controls.Add(this.groupBox4);
+            this.batchTabPage.Location = new System.Drawing.Point(4, 22);
+            this.batchTabPage.Name = "batchTabPage";
+            this.batchTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.batchTabPage.Size = new System.Drawing.Size(752, 411);
+            this.batchTabPage.TabIndex = 5;
+            this.batchTabPage.Text = "Batch";
+            this.batchTabPage.UseVisualStyleBackColor = true;
+            // 
+            // groupBox6
+            // 
+            this.groupBox6.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox6.Controls.Add(this.btnBatchDownload);
+            this.groupBox6.Controls.Add(this.chbBatchNumberPrefix);
+            this.groupBox6.Controls.Add(this.chbBatchReverse);
+            this.groupBox6.Controls.Add(this.chbBatchIgnoreExisting);
+            this.groupBox6.Controls.Add(this.txtBatchFolder);
+            this.groupBox6.Controls.Add(this.chbBatchCreateFolder);
+            this.groupBox6.Controls.Add(this.cbBatchSaveTo);
+            this.groupBox6.Controls.Add(this.label11);
+            this.groupBox6.Controls.Add(this.label15);
+            this.groupBox6.Controls.Add(this.cbBatchPreferredQuality);
+            this.groupBox6.Location = new System.Drawing.Point(6, 6);
+            this.groupBox6.Name = "groupBox6";
+            this.groupBox6.Size = new System.Drawing.Size(740, 131);
+            this.groupBox6.TabIndex = 18;
+            this.groupBox6.TabStop = false;
+            this.groupBox6.Text = "Batch";
+            // 
+            // btnBatchDownload
+            // 
+            this.btnBatchDownload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBatchDownload.Location = new System.Drawing.Point(644, 102);
+            this.btnBatchDownload.Name = "btnBatchDownload";
+            this.btnBatchDownload.Size = new System.Drawing.Size(90, 23);
+            this.btnBatchDownload.TabIndex = 25;
+            this.btnBatchDownload.Text = "Download";
+            this.btnBatchDownload.UseVisualStyleBackColor = true;
+            this.btnBatchDownload.Click += new System.EventHandler(this.btnBatchDownload_Click);
+            // 
+            // chbBatchNumberPrefix
+            // 
+            this.chbBatchNumberPrefix.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chbBatchNumberPrefix.AutoSize = true;
+            this.chbBatchNumberPrefix.Location = new System.Drawing.Point(179, 108);
+            this.chbBatchNumberPrefix.Name = "chbBatchNumberPrefix";
+            this.chbBatchNumberPrefix.Size = new System.Drawing.Size(92, 17);
+            this.chbBatchNumberPrefix.TabIndex = 24;
+            this.chbBatchNumberPrefix.Text = "Number Prefix";
+            this.chbBatchNumberPrefix.UseVisualStyleBackColor = true;
+            // 
+            // chbBatchReverse
+            // 
+            this.chbBatchReverse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chbBatchReverse.AutoSize = true;
+            this.chbBatchReverse.Location = new System.Drawing.Point(107, 108);
+            this.chbBatchReverse.Name = "chbBatchReverse";
+            this.chbBatchReverse.Size = new System.Drawing.Size(66, 17);
+            this.chbBatchReverse.TabIndex = 23;
+            this.chbBatchReverse.Text = "Reverse";
+            this.chbBatchReverse.UseVisualStyleBackColor = true;
+            // 
+            // chbBatchIgnoreExisting
+            // 
+            this.chbBatchIgnoreExisting.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chbBatchIgnoreExisting.AutoSize = true;
+            this.chbBatchIgnoreExisting.Location = new System.Drawing.Point(6, 108);
+            this.chbBatchIgnoreExisting.Name = "chbBatchIgnoreExisting";
+            this.chbBatchIgnoreExisting.Size = new System.Drawing.Size(95, 17);
+            this.chbBatchIgnoreExisting.TabIndex = 22;
+            this.chbBatchIgnoreExisting.Text = "Ignore Existing";
+            this.chbBatchIgnoreExisting.UseVisualStyleBackColor = true;
+            // 
+            // txtBatchFolder
+            // 
+            this.txtBatchFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtBatchFolder.Location = new System.Drawing.Point(99, 19);
+            this.txtBatchFolder.Name = "txtBatchFolder";
+            this.txtBatchFolder.Size = new System.Drawing.Size(635, 20);
+            this.txtBatchFolder.TabIndex = 21;
+            // 
+            // chbBatchCreateFolder
+            // 
+            this.chbBatchCreateFolder.AutoSize = true;
+            this.chbBatchCreateFolder.Location = new System.Drawing.Point(7, 21);
+            this.chbBatchCreateFolder.Name = "chbBatchCreateFolder";
+            this.chbBatchCreateFolder.Size = new System.Drawing.Size(86, 17);
+            this.chbBatchCreateFolder.TabIndex = 20;
+            this.chbBatchCreateFolder.Text = "Create folder";
+            this.chbBatchCreateFolder.UseVisualStyleBackColor = true;
+            // 
+            // cbBatchSaveTo
+            // 
+            this.cbBatchSaveTo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbBatchSaveTo.FormattingEnabled = true;
+            this.cbBatchSaveTo.Location = new System.Drawing.Point(296, 45);
+            this.cbBatchSaveTo.Name = "cbBatchSaveTo";
+            this.cbBatchSaveTo.Size = new System.Drawing.Size(438, 21);
+            this.cbBatchSaveTo.TabIndex = 17;
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(246, 48);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(44, 13);
+            this.label11.TabIndex = 16;
+            this.label11.Text = "Save to";
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(6, 48);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(39, 13);
+            this.label15.TabIndex = 15;
+            this.label15.Text = "Quality";
+            // 
+            // cbBatchPreferredQuality
+            // 
+            this.cbBatchPreferredQuality.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbBatchPreferredQuality.FormattingEnabled = true;
+            this.cbBatchPreferredQuality.Location = new System.Drawing.Point(99, 45);
+            this.cbBatchPreferredQuality.Name = "cbBatchPreferredQuality";
+            this.cbBatchPreferredQuality.Size = new System.Drawing.Size(129, 21);
+            this.cbBatchPreferredQuality.TabIndex = 14;
+            this.cbBatchPreferredQuality.SelectedIndexChanged += new System.EventHandler(this.cbBatchPreferredQuality_SelectedIndexChanged);
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox4.Controls.Add(this.txtBatchLinks);
+            this.groupBox4.Location = new System.Drawing.Point(6, 143);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Padding = new System.Windows.Forms.Padding(1, 2, 1, 2);
+            this.groupBox4.Size = new System.Drawing.Size(740, 262);
+            this.groupBox4.TabIndex = 2;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Links (one per line)";
+            // 
+            // txtBatchLinks
+            // 
+            this.txtBatchLinks.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.txtBatchLinks.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtBatchLinks.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtBatchLinks.Location = new System.Drawing.Point(1, 15);
+            this.txtBatchLinks.Multiline = true;
+            this.txtBatchLinks.Name = "txtBatchLinks";
+            this.txtBatchLinks.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.txtBatchLinks.Size = new System.Drawing.Size(738, 245);
+            this.txtBatchLinks.TabIndex = 1;
+            this.txtBatchLinks.WordWrap = false;
             // 
             // convertTabPage
             // 
@@ -850,7 +1030,7 @@
             this.convertTabPage.Location = new System.Drawing.Point(4, 22);
             this.convertTabPage.Name = "convertTabPage";
             this.convertTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.convertTabPage.Size = new System.Drawing.Size(602, 361);
+            this.convertTabPage.Size = new System.Drawing.Size(752, 411);
             this.convertTabPage.TabIndex = 2;
             this.convertTabPage.Text = "Convert";
             this.convertTabPage.UseVisualStyleBackColor = true;
@@ -1184,7 +1364,7 @@
             this.queueTabPage.Location = new System.Drawing.Point(4, 22);
             this.queueTabPage.Name = "queueTabPage";
             this.queueTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.queueTabPage.Size = new System.Drawing.Size(602, 361);
+            this.queueTabPage.Size = new System.Drawing.Size(752, 411);
             this.queueTabPage.TabIndex = 1;
             this.queueTabPage.Text = "Queue";
             this.queueTabPage.UseVisualStyleBackColor = true;
@@ -1221,6 +1401,7 @@
             this.olvColumn6});
             this.olvQueue.Cursor = System.Windows.Forms.Cursors.Default;
             this.olvQueue.FullRowSelect = true;
+            this.olvQueue.HideSelection = false;
             this.olvQueue.Location = new System.Drawing.Point(6, 6);
             this.olvQueue.Name = "olvQueue";
             this.olvQueue.ShowGroups = false;
@@ -1359,7 +1540,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(634, 411);
+            this.ClientSize = new System.Drawing.Size(784, 461);
             this.Controls.Add(this.tabControl1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(644, 425);
@@ -1382,6 +1563,11 @@
             this.groupBox7.ResumeLayout(false);
             this.groupBox7.PerformLayout();
             this.cmsPlaylistOptions.ResumeLayout(false);
+            this.batchTabPage.ResumeLayout(false);
+            this.groupBox6.ResumeLayout(false);
+            this.groupBox6.PerformLayout();
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
             this.convertTabPage.ResumeLayout(false);
             this.convertTabPage.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -1520,6 +1706,20 @@
         private System.Windows.Forms.MenuItem menuItem6;
         private System.Windows.Forms.MenuItem playlistCopyMenuItem;
         private System.Windows.Forms.MenuItem menuItem7;
+        private System.Windows.Forms.TabPage batchTabPage;
+        private System.Windows.Forms.TextBox txtBatchLinks;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.GroupBox groupBox6;
+        private System.Windows.Forms.CheckBox chbBatchNumberPrefix;
+        private System.Windows.Forms.CheckBox chbBatchReverse;
+        private System.Windows.Forms.CheckBox chbBatchIgnoreExisting;
+        private System.Windows.Forms.TextBox txtBatchFolder;
+        private System.Windows.Forms.CheckBox chbBatchCreateFolder;
+        private System.Windows.Forms.ComboBox cbBatchSaveTo;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.ComboBox cbBatchPreferredQuality;
+        private System.Windows.Forms.Button btnBatchDownload;
     }
 }
 

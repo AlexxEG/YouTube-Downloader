@@ -59,5 +59,8 @@
     <Setting Name="PreferredQualityBatch" Type="YouTube_Downloader_DLL.Enums.PreferredQuality" Scope="User">
       <Value Profile="(Default)">Highest</Value>
     </Setting>
+    <Setting Name="SelectedDirectoryBatch" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

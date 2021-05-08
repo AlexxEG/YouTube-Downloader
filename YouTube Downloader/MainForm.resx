@@ -134,7 +134,7 @@
         AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj00LjAuMC4w
         LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0
         ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkDAAAADwMAAADE
-        AQAAAk1TRnQBSQFMAwEBAAEYAQEBGAEBARABAAEQAQAE/wEhAQAI/wFCAU0BNgcAATYDAAEoAwABQAMA
+        AQAAAk1TRnQBSQFMAwEBAAFQAQEBUAEBARABAAEQAQAE/wEhAQAI/wFCAU0BNgcAATYDAAEoAwABQAMA
         ARADAAEBAQABIAYAARD/ADIAAf8DAAH/AwAB/wMAAf8DAAH/AwAB/wMAAf/XAAH/AwAB/wMAAf8DAAH/
         AwAB/xcAAf/XAAH/DwAB/xcAAf/XAAH/DwAB/xcAAf/XAAH/DwAB/xcAAf/XAAH/DwAB/xcAAf/XAAH/
         DwAB/xcAAf/XAAH/DwAB/wMAAf8DAAH/AwAB/wMAAf8DAAH/AwAB/9cAAf8jAAH/2wAB/wcAAf8DAAH/
@@ -247,27 +247,27 @@
     <value>
         AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj00LjAuMC4w
         LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0
-        ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkDAAAADwMAAACg
-        BAAAAk1TRnQBSQFMAwEBAAEYAQEBGAEBAQ4BAAEOAQAE/wEhAQAI/wFCAU0BNgcAATYDAAEoAwABOAMA
+        ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkDAAAADwMAAACS
+        BAAAAk1TRnQBSQFMAwEBAAFQAQEBUAEBAQ4BAAEOAQAE/wEhAQAI/wFCAU0BNgcAATYDAAEoAwABOAMA
         AQ4DAAEBAQABIAUAAUABDBIAAx0BKQNcAc0DZQH0A1ABmwMaASUDAQECCwABAQMUARsDSQGHAlQBYQHu
-        AloBXgHVAykBP6gAA14BzgHZAbgBwwH/Ae0BzwHXAf8BdwFqAWsB+QNSAaMDHAEoAwEBAgQAAxQBGwNM
-        AZICXwGIAfsCWwHsAf8CVAHoAf8CWgFeAdWoAANdAfAB6QHKAdMB/wHyAdUB3AH/Ae4B0AHYAf8BdgFu
-        AXEB+gNTAaUDGgElAxABFQJNAU4BlQI1AX0B/AJVAekB/wJNAeQB/wJbAewB/wJUAWEB7qgAA0QBeQNi
-        AfYB7AHOAdYB/wHyAdUB3AH/Ae4B0QHYAf8BewFtAXQB/ANUAa4DUQGiAjYBfQH8AlYB6QH/AkUB3gH/
-        AlQB6AH/AjUBfQH8A0kBiKgAAwoBDgNEAXkBWgJZAfUB7AHOAdYB/wHyAdUB3AH/Ae8B0QHZAf8DqAH9
-        AY8BQAGfAf0BhgGBAeQB/wJVAegB/wJXAekB/wJfAYgB+wNMAZIDFAEbrAADDAEQA0QBegNiAfYB7AHO
-        AdYB/wHyAdUB3AH/AfAB0wHaAf8B2QG5AcQB/wGhAVkBnQH/AZ0BVwGiAf8BmwFUAZwB/wNeAdUDLAFD
-        AwIBA7AAAwoBDgNHAYADbQH3Ae0B0AHXAf8B7QHPAdgB/wGwAYYBmgH/Ab8BmQGpAf8B5wHIAdEB/wHv
-        AdIB2gH/AXsBbQFzAfwDYQHiAxYBH7QAAw8BFANQAZ0BcgFnAW0B+gG2AY0BoAH/Ac8BrAG5Af8B8gHV
-        AdwB/wHxAdQB2wH/Ae4B0AHYAf8B8AHTAdoB/wF0AWwBcAH6A0wBkLAAAwMBBAMjATMDVwG3AWoCXwH7
-        Ab8BmQGpAf8B8gHVAdwB/wHxAdQB2wH/AZkBfwGDAf4BdwFnAW0B/AGUAn8B/gHlAcUBzwH/A18B6KwA
-        AxoBJQM+AWsDVQG1A2IB9gFoAVwBXwH8Ad8BvgHIAf8B8gHVAdwB/wHfAb8ByQH/A2EB4QNSAaEDYAHU
-        AZICfwH+AasBgAGVAf+oAAMHAQkDVQGtA2UB9AGoAZoBiAH9A1UBtQNdAdMDqAH9AfIB1QHcAf8BhwJ/
-        Af4DWQG+AxoBJQM0AVQDXQHXA14B3agAAzwBZgNfAfMBygG2AaUB/wNlAfQDPgFqA0cBgANiAe8B8gHV
-        AdwB/wHkAcUBzgH/A1wB6gNFAXwDEQEXAzEBTgMuAUeoAANbAcsBaQJcAfgDZwHyA1UBrQMaASUDEgEZ
-        A1kBwgNiAfYB4gHCAc0B/wHjAcMBzQH/A2EB7gNCAXUDDQERAwIBA6gAAwwBEANdAcoDOwFlAwcBCQgA
-        AwoBDgNAAW8DXwHjAaEBUgGLAf8DYQHhAzYBWQMEAQWsAAFCAU0BPgcAAT4DAAEoAwABOAMAAQ4DAAEB
-        AQABAQUAAXAXAAP/AQABAwcAAQEfAAGABwABwAcAAeAHAAHABwABgB8AAQwBBAYACw==
+        AloBXgHVAykBP6gAA14BzgHZAbgBwwH/Ae0BzwHXAf8DagH5A1IBowMcASgDAQECBAADFAEbA0wBkgJf
+        AYEB+wJUAewB/wJNAegB/wJaAV4B1agAA10B8AHpAcoB0wH/AfIB1QHcAf8B7gHQAdgB/wFvAWcBagH6
+        A1MBpQMaASUDEAEVAk0BTgGVAi4BdgH8Ak4B6QH/AkYB5AH/AlQB7AH/AlQBYQHuqAADRAF5A2IB9gHs
+        Ac4B1gH/AfIB1QHcAf8B7gHRAdgB/wF0AWYBbQH8A1QBrgNRAaICLwF2AfwCTwHpAf8CPgHeAf8CTQHo
+        Af8CLgF2AfwDSQGIqAADCgEOA0QBeQNZAfUB7AHOAdYB/wHyAdUB3AH/Ae8B0QHZAf8DqAH9AY8BQAGf
+        Af0BhgGBAeQB/wJOAegB/wJQAekB/wJfAYEB+wNMAZIDFAEbrAADDAEQA0QBegNiAfYB7AHOAdYB/wHy
+        AdUB3AH/AfAB0wHaAf8B2QG5AcQB/wGhAVIBnQH/AZ0BUAGiAf8BmwFNAZwB/wNeAdUDLAFDAwIBA7AA
+        AwoBDgNHAYADbQH3Ae0B0AHXAf8B7QHPAdgB/wGwAYYBmgH/Ab8BmQGpAf8B5wHIAdEB/wHvAdIB2gH/
+        AXQBZgFsAfwDYQHiAxYBH7QAAw8BFANQAZ0BawFaAWYB+gG2AY0BoAH/Ac8BrAG5Af8B8gHVAdwB/wHx
+        AdQB2wH/Ae4B0AHYAf8B8AHTAdoB/wFtAWQBaQH6A0wBkLAAAwMBBAMjATMDVwG3A18B+wG/AZkBqQH/
+        AfIB1QHcAf8B8QHUAdsB/wGLAn8B/gFwAWABZgH8AYYCfwH+AeUBxQHPAf8DXwHorAADGgElAz4BawNV
+        AbUDYgH2AWEBVQFYAfwB3wG+AcgB/wHyAdUB3AH/Ad8BvwHJAf8DYQHhA1IBoQNgAdQBhAJ/Af4BqwGA
+        AZUB/6gAAwcBCQNVAa0DZQH0AagBmgGIAf0DVQG1A10B0wOoAf0B8gHVAdwB/wN/Af4DWQG+AxoBJQM0
+        AVQDXQHXA14B3agAAzwBZgNfAfMBygG2AaUB/wNlAfQDPgFqA0cBgANiAe8B8gHVAdwB/wHkAcUBzgH/
+        A1wB6gNFAXwDEQEXAzEBTgMuAUeoAANbAcsDXAH4A2cB8gNVAa0DGgElAxIBGQNZAcIDYgH2AeIBwgHN
+        Af8B4wHDAc0B/wNhAe4DQgF1Aw0BEQMCAQOoAAMMARADXQHKAzsBZQMHAQkIAAMKAQ4DQAFvA18B4wGh
+        AUsBiwH/A2EB4QM2AVkDBAEFrAABQgFNAT4HAAE+AwABKAMAATgDAAEOAwABAQEAAQEFAAFwFwAD/wEA
+        AQMHAAEBHwABgAcAAcAHAAHgBwABwAcAAYAfAAEMAQQGAAs=
 </value>
   </data>
   <metadata name="cmsPlaylistOptions.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
@@ -304,6 +304,48 @@
     <value>True</value>
   </metadata>
   <metadata name="txtPlaylistLink.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="batchTabPage.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="groupBox6.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="btnBatchDownload.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="chbBatchNumberPrefix.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="chbBatchReverse.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="chbBatchIgnoreExisting.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="txtBatchFolder.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="chbBatchCreateFolder.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="cbBatchSaveTo.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="label11.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="label15.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="cbBatchPreferredQuality.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="groupBox4.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="txtBatchLinks.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
   <metadata name="convertTabPage.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">

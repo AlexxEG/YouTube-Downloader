@@ -95,6 +95,8 @@ namespace YouTube_Downloader
             this.LoadSettings();
             this.ShowUpdateNotification();
 
+
+
 #if DEBUG
             this.ReadDebugFile();
 #endif
@@ -855,6 +857,48 @@ namespace YouTube_Downloader
 
         #endregion
 
+        #region Batch Tab
+
+        private void cbBatchPreferredQuality_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Settings.Default.PreferredQualityBatch = (PreferredQuality)cbBatchPreferredQuality.SelectedIndex;
+        }
+
+        private void btnBatchDownload_Click(object sender, EventArgs e)
+        {
+            if (txtBatchLinks.Lines.All(x => Helper.IsValidYouTubeUrl(x)))
+            {
+                this.StartBatchDownloadOperation(txtBatchLinks.Lines, Settings.Default.PreferredQualityBatch);
+            }
+            else
+            {
+                MessageBox.Show(this, "One or more URLs are not valid.");
+            }
+        }
+
+        private void StartBatchDownloadOperation(ICollection<string> videos, PreferredQuality preferredQuality)
+        {
+            string path = cbBatchSaveTo.Text;
+
+            // Make sure download directory exists.
+            if (!this.ValidateDirectory(path))
+                return;
+
+            try
+            {
+                var operation = new BatchOperation(path, videos, preferredQuality);
+
+                this.AddQueueItem(operation, true);
+                DownloadQueueHandler.Add(operation);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, ex.Message, ex.Source, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        #endregion
+
         #region Convert Tab
 
         OpenFolderDialog openFolderDialog = new OpenFolderDialog();
@@ -1046,7 +1090,6 @@ namespace YouTube_Downloader
         MenuItem exitMenuItem;
         MenuItem toolsMenuItem;
         MenuItem optionsMenuItem;
-        MenuItem batchDownloadMenuItem;
         MenuItem helpMenuItem;
         MenuItem checkForUpdateMenuItem;
         MenuItem aboutMenuItem;
@@ -1059,9 +1102,7 @@ namespace YouTube_Downloader
             };
             var toolsMenuItems = new MenuItem[]
             {
-                optionsMenuItem = new MenuItem("&Options", optionsMenuItem_Click),
-                new MenuItem("-"),
-                batchDownloadMenuItem = new MenuItem("&Batch Download", batchDownloadMenuItem_Click)
+                optionsMenuItem = new MenuItem("&Options", optionsMenuItem_Click)
             };
             var helpMenuItems = new MenuItem[]
             {
@@ -1102,34 +1143,6 @@ namespace YouTube_Downloader
                         cbQuality.SelectedIndex = cbQuality.Items.Count - 1;
                     }
                 }
-            }
-        }
-
-        private void batchDownloadMenuItem_Click(object sender, EventArgs e)
-        {
-            var result = BatchDownloadDialog.ShowDialog(this);
-            if (result.Result == DialogResult.OK)
-                this.StartBatchDownloadOperation(result.Inputs, Settings.Default.PreferredQualityBatch);
-        }
-
-        private void StartBatchDownloadOperation(ICollection<string> videos, PreferredQuality preferredQuality)
-        {
-            string path = cbPlaylistSaveTo.Text;
-
-            // Make sure download directory exists.
-            if (!this.ValidateDirectory(path))
-                return;
-
-            try
-            {
-                var operation = new BatchOperation(path, videos, preferredQuality);
-
-                this.AddQueueItem(operation, true);
-                DownloadQueueHandler.Add(operation);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(this, ex.Message, ex.Source, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -1525,6 +1538,15 @@ namespace YouTube_Downloader
 
             cbPlaylistQuality.Items.AddRange(Enum.GetNames(typeof(PreferredQuality)));
             cbPlaylistQuality.SelectedIndex = (int)settings.PreferredQualityPlaylist;
+
+            // Batch
+            cbBatchSaveTo.Items.AddRange(directories);
+
+            if (cbBatchSaveTo.Items.Count > 0 && settings.SelectedDirectory < cbBatchSaveTo.Items.Count)
+                cbBatchSaveTo.SelectedIndex = settings.SelectedDirectoryBatch;
+
+            cbBatchPreferredQuality.Items.AddRange(Enum.GetNames(typeof(PreferredQuality)));
+            cbBatchPreferredQuality.SelectedIndex = (int)settings.PreferredQualityBatch;
 
             // Restore CheckBox.Checked
             chbAutoConvert.Checked = settings.AutoConvert;

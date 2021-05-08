@@ -8,304 +8,255 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace YouTube_Downloader.Properties
-{
-
-
+namespace YouTube_Downloader.Properties {
+    
+    
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.3.0.0")]
-    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase
-    {
-
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.7.0.0")]
+    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
+        
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
-
-        public static Settings Default
-        {
-            get
-            {
+        
+        public static Settings Default {
+            get {
                 return defaultInstance;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string LastYouTubeUrl
-        {
-            get
-            {
+        public string LastYouTubeUrl {
+            get {
                 return ((string)(this["LastYouTubeUrl"]));
             }
-            set
-            {
+            set {
                 this["LastYouTubeUrl"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool AutoConvert
-        {
-            get
-            {
+        public bool AutoConvert {
+            get {
                 return ((bool)(this["AutoConvert"]));
             }
-            set
-            {
+            set {
                 this["AutoConvert"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int SelectedDirectory
-        {
-            get
-            {
+        public int SelectedDirectory {
+            get {
                 return ((int)(this["SelectedDirectory"]));
             }
-            set
-            {
+            set {
                 this["SelectedDirectory"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Highest")]
-        public global::YouTube_Downloader_DLL.Enums.PreferredQuality PreferredQualityPlaylist
-        {
-            get
-            {
+        public global::YouTube_Downloader_DLL.Enums.PreferredQuality PreferredQualityPlaylist {
+            get {
                 return ((global::YouTube_Downloader_DLL.Enums.PreferredQuality)(this["PreferredQualityPlaylist"]));
             }
-            set
-            {
+            set {
                 this["PreferredQualityPlaylist"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int SelectedDirectoryPlaylist
-        {
-            get
-            {
+        public int SelectedDirectoryPlaylist {
+            get {
                 return ((int)(this["SelectedDirectoryPlaylist"]));
             }
-            set
-            {
+            set {
                 this["SelectedDirectoryPlaylist"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::System.Collections.Specialized.StringCollection SaveToDirectories
-        {
-            get
-            {
+        public global::System.Collections.Specialized.StringCollection SaveToDirectories {
+            get {
                 return ((global::System.Collections.Specialized.StringCollection)(this["SaveToDirectories"]));
             }
-            set
-            {
+            set {
                 this["SaveToDirectories"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool UpdateSettings
-        {
-            get
-            {
+        public bool UpdateSettings {
+            get {
                 return ((bool)(this["UpdateSettings"]));
             }
-            set
-            {
+            set {
                 this["UpdateSettings"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::LeaxDev.WindowStates.WindowStates WindowStates
-        {
-            get
-            {
+        public global::LeaxDev.WindowStates.WindowStates WindowStates {
+            get {
                 return ((global::LeaxDev.WindowStates.WindowStates)(this["WindowStates"]));
             }
-            set
-            {
+            set {
                 this["WindowStates"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string LastPlaylistUrl
-        {
-            get
-            {
+        public string LastPlaylistUrl {
+            get {
                 return ((string)(this["LastPlaylistUrl"]));
             }
-            set
-            {
+            set {
                 this["LastPlaylistUrl"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool ShowMaxSimDownloads
-        {
-            get
-            {
+        public bool ShowMaxSimDownloads {
+            get {
                 return ((bool)(this["ShowMaxSimDownloads"]));
             }
-            set
-            {
+            set {
                 this["ShowMaxSimDownloads"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("100")]
-        public int MaxSimDownloads
-        {
-            get
-            {
+        public int MaxSimDownloads {
+            get {
                 return ((int)(this["MaxSimDownloads"]));
             }
-            set
-            {
+            set {
                 this["MaxSimDownloads"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool PlaylistIgnoreExisting
-        {
-            get
-            {
+        public bool PlaylistIgnoreExisting {
+            get {
                 return ((bool)(this["PlaylistIgnoreExisting"]));
             }
-            set
-            {
+            set {
                 this["PlaylistIgnoreExisting"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("1,1,0,1,1,1")]
-        public string VisibleColumns
-        {
-            get
-            {
+        public string VisibleColumns {
+            get {
                 return ((string)(this["VisibleColumns"]));
             }
-            set
-            {
+            set {
                 this["VisibleColumns"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::System.Collections.Specialized.StringCollection ColumnWidths
-        {
-            get
-            {
+        public global::System.Collections.Specialized.StringCollection ColumnWidths {
+            get {
                 return ((global::System.Collections.Specialized.StringCollection)(this["ColumnWidths"]));
             }
-            set
-            {
+            set {
                 this["ColumnWidths"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool PlaylistNamedFolder
-        {
-            get
-            {
+        public bool PlaylistNamedFolder {
+            get {
                 return ((bool)(this["PlaylistNamedFolder"]));
             }
-            set
-            {
+            set {
                 this["PlaylistNamedFolder"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string PlaylistLastUsedFilter
-        {
-            get
-            {
+        public string PlaylistLastUsedFilter {
+            get {
                 return ((string)(this["PlaylistLastUsedFilter"]));
             }
-            set
-            {
+            set {
                 this["PlaylistLastUsedFilter"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool PlaylistReverse
-        {
-            get
-            {
+        public bool PlaylistReverse {
+            get {
                 return ((bool)(this["PlaylistReverse"]));
             }
-            set
-            {
+            set {
                 this["PlaylistReverse"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool PlaylistNumberPrefix
-        {
-            get
-            {
+        public bool PlaylistNumberPrefix {
+            get {
                 return ((bool)(this["PlaylistNumberPrefix"]));
             }
-            set
-            {
+            set {
                 this["PlaylistNumberPrefix"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Highest")]
-        public global::YouTube_Downloader_DLL.Enums.PreferredQuality PreferredQualityBatch
-        {
-            get
-            {
+        public global::YouTube_Downloader_DLL.Enums.PreferredQuality PreferredQualityBatch {
+            get {
                 return ((global::YouTube_Downloader_DLL.Enums.PreferredQuality)(this["PreferredQualityBatch"]));
             }
-            set
-            {
+            set {
                 this["PreferredQualityBatch"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int SelectedDirectoryBatch {
+            get {
+                return ((int)(this["SelectedDirectoryBatch"]));
+            }
+            set {
+                this["SelectedDirectoryBatch"] = value;
             }
         }
     }
