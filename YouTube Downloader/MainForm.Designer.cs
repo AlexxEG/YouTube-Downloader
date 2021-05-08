@@ -159,6 +159,7 @@
             this.playlistSelectAllMenuItem = new System.Windows.Forms.MenuItem();
             this.playlistSelectNoneMenuItem = new System.Windows.Forms.MenuItem();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.btnBatchBrowse = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.flpDownloadClip.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -772,9 +773,9 @@
             // btnPlaylistBrowse
             // 
             this.btnPlaylistBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPlaylistBrowse.Location = new System.Drawing.Point(712, 45);
+            this.btnPlaylistBrowse.Location = new System.Drawing.Point(708, 45);
             this.btnPlaylistBrowse.Name = "btnPlaylistBrowse";
-            this.btnPlaylistBrowse.Size = new System.Drawing.Size(22, 22);
+            this.btnPlaylistBrowse.Size = new System.Drawing.Size(26, 22);
             this.btnPlaylistBrowse.TabIndex = 4;
             this.btnPlaylistBrowse.Text = "...";
             this.toolTip1.SetToolTip(this.btnPlaylistBrowse, "Browse");
@@ -797,7 +798,7 @@
             this.cbPlaylistSaveTo.FormattingEnabled = true;
             this.cbPlaylistSaveTo.Location = new System.Drawing.Point(245, 45);
             this.cbPlaylistSaveTo.Name = "cbPlaylistSaveTo";
-            this.cbPlaylistSaveTo.Size = new System.Drawing.Size(461, 21);
+            this.cbPlaylistSaveTo.Size = new System.Drawing.Size(457, 21);
             this.cbPlaylistSaveTo.TabIndex = 3;
             this.cbPlaylistSaveTo.SelectedIndexChanged += new System.EventHandler(this.cbPlaylistSaveTo_SelectedIndexChanged);
             // 
@@ -847,6 +848,7 @@
             // 
             this.groupBox6.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox6.Controls.Add(this.btnBatchBrowse);
             this.groupBox6.Controls.Add(this.btnBatchDownload);
             this.groupBox6.Controls.Add(this.chbBatchNumberPrefix);
             this.groupBox6.Controls.Add(this.chbBatchReverse);
@@ -912,6 +914,7 @@
             // 
             this.txtBatchFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtBatchFolder.Enabled = false;
             this.txtBatchFolder.Location = new System.Drawing.Point(99, 19);
             this.txtBatchFolder.Name = "txtBatchFolder";
             this.txtBatchFolder.Size = new System.Drawing.Size(635, 20);
@@ -926,6 +929,7 @@
             this.chbBatchCreateFolder.TabIndex = 20;
             this.chbBatchCreateFolder.Text = "Create folder";
             this.chbBatchCreateFolder.UseVisualStyleBackColor = true;
+            this.chbBatchCreateFolder.CheckedChanged += new System.EventHandler(this.chbBatchCreateFolder_CheckedChanged);
             // 
             // cbBatchSaveTo
             // 
@@ -934,7 +938,7 @@
             this.cbBatchSaveTo.FormattingEnabled = true;
             this.cbBatchSaveTo.Location = new System.Drawing.Point(296, 45);
             this.cbBatchSaveTo.Name = "cbBatchSaveTo";
-            this.cbBatchSaveTo.Size = new System.Drawing.Size(438, 21);
+            this.cbBatchSaveTo.Size = new System.Drawing.Size(406, 21);
             this.cbBatchSaveTo.TabIndex = 17;
             // 
             // label11
@@ -1506,6 +1510,18 @@
             this.playlistSelectNoneMenuItem.Text = "Select none";
             this.playlistSelectNoneMenuItem.Click += new System.EventHandler(this.playlistSelectNoneMenuItem_Click);
             // 
+            // btnBatchBrowse
+            // 
+            this.btnBatchBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBatchBrowse.Location = new System.Drawing.Point(708, 45);
+            this.btnBatchBrowse.Name = "btnBatchBrowse";
+            this.btnBatchBrowse.Size = new System.Drawing.Size(26, 22);
+            this.btnBatchBrowse.TabIndex = 26;
+            this.btnBatchBrowse.Text = "...";
+            this.toolTip1.SetToolTip(this.btnBatchBrowse, "Browse");
+            this.btnBatchBrowse.UseVisualStyleBackColor = true;
+            this.btnBatchBrowse.Click += new System.EventHandler(this.btnBatchBrowse_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1688,6 +1704,7 @@
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.ComboBox cbBatchPreferredQuality;
         private System.Windows.Forms.Button btnBatchDownload;
+        private System.Windows.Forms.Button btnBatchBrowse;
     }
 }
 

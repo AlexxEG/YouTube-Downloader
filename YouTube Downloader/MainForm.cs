@@ -841,9 +841,31 @@ namespace YouTube_Downloader
 
         #region Batch Tab
 
+        private void chbBatchCreateFolder_CheckedChanged(object sender, EventArgs e)
+        {
+            txtBatchFolder.Enabled = chbBatchCreateFolder.Checked;
+        }
+
         private void cbBatchPreferredQuality_SelectedIndexChanged(object sender, EventArgs e)
         {
             Settings.Default.PreferredQualityBatch = (PreferredQuality)cbBatchPreferredQuality.SelectedIndex;
+        }
+
+        private void btnBatchBrowse_Click(object sender, EventArgs e)
+        {
+            using (var ofd = new OpenFolderDialog())
+            {
+                if (Directory.Exists(cbBatchSaveTo.Text))
+                    ofd.InitialFolder = cbBatchSaveTo.Text;
+                else
+                    ofd.InitialFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+                if (ofd.ShowDialog(this) == DialogResult.OK)
+                {
+                    cbSaveTo.Items.Add(ofd.Folder);
+                    cbBatchSaveTo.SelectedIndex = cbBatchSaveTo.Items.Add(ofd.Folder);
+                }
+            }
         }
 
         private void btnBatchDownload_Click(object sender, EventArgs e)
@@ -865,6 +887,20 @@ namespace YouTube_Downloader
             // Make sure download directory exists.
             if (!this.ValidateDirectory(path))
                 return;
+
+            if (chbBatchCreateFolder.Checked)
+            {
+                path = Path.Combine(path, txtBatchFolder.Text);
+                try
+                {
+                    Directory.CreateDirectory(path);
+                }
+                catch
+                {
+                    MessageBox.Show(this, $"Couldn\'t create \"{txtBatchFolder.Text}\" folder. Might be invalid character(s).");
+                    return;
+                }
+            }
 
             try
             {
