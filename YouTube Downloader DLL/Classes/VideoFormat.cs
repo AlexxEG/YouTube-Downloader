@@ -15,7 +15,7 @@ namespace YouTube_Downloader_DLL.Classes
         /// <summary>
         /// Gets the audio bit rate. Returns -1 if not defined.
         /// </summary>
-        public int AudioBitRate { get; private set; }
+        public float AudioBitRate { get; private set; }
 
         /// <summary>
         /// Gets whether the format is audio only.
@@ -185,9 +185,9 @@ namespace YouTube_Downloader_DLL.Classes
             // Check for abr token (audio bit rate?)
             JToken abr = token.SelectToken("abr");
             if (abr != null)
-                this.AudioBitRate = int.Parse(abr.ToString());
+                this.AudioBitRate = float.Parse(abr.ToString());
 
-            // Check for filesize token
+            // Check for filesize tokenw
             JToken filesize = token.SelectToken("filesize");
             if (filesize != null && !string.IsNullOrEmpty(filesize.ToString()))
                 this.FileSize = long.Parse(filesize.ToString());
