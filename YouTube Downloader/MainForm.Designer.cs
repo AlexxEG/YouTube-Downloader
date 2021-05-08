@@ -1008,7 +1008,7 @@
             // btnCheckAgain
             // 
             this.btnCheckAgain.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCheckAgain.Location = new System.Drawing.Point(490, 286);
+            this.btnCheckAgain.Location = new System.Drawing.Point(640, 286);
             this.btnCheckAgain.Name = "btnCheckAgain";
             this.btnCheckAgain.Size = new System.Drawing.Size(106, 23);
             this.btnCheckAgain.TabIndex = 0;
@@ -1040,7 +1040,7 @@
             this.groupBox2.Controls.Add(this.btnConvert);
             this.groupBox2.Location = new System.Drawing.Point(6, 6);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(590, 274);
+            this.groupBox2.Size = new System.Drawing.Size(740, 274);
             this.groupBox2.TabIndex = 5;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Convert to MP3";
@@ -1055,7 +1055,7 @@
             this.groupBox5.Controls.Add(this.pConvertFile);
             this.groupBox5.Location = new System.Drawing.Point(6, 19);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(578, 109);
+            this.groupBox5.Size = new System.Drawing.Size(728, 109);
             this.groupBox5.TabIndex = 8;
             this.groupBox5.TabStop = false;
             // 
@@ -1099,7 +1099,7 @@
             this.pConvertFolder.Location = new System.Drawing.Point(3, 16);
             this.pConvertFolder.Name = "pConvertFolder";
             this.pConvertFolder.Padding = new System.Windows.Forms.Padding(3);
-            this.pConvertFolder.Size = new System.Drawing.Size(572, 90);
+            this.pConvertFolder.Size = new System.Drawing.Size(722, 90);
             this.pConvertFolder.TabIndex = 3;
             this.pConvertFolder.Visible = false;
             // 
@@ -1132,7 +1132,7 @@
             // btnBrowseOutputFolder
             // 
             this.btnBrowseOutputFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBrowseOutputFolder.Location = new System.Drawing.Point(542, 31);
+            this.btnBrowseOutputFolder.Location = new System.Drawing.Point(692, 31);
             this.btnBrowseOutputFolder.Name = "btnBrowseOutputFolder";
             this.btnBrowseOutputFolder.Size = new System.Drawing.Size(24, 22);
             this.btnBrowseOutputFolder.TabIndex = 3;
@@ -1148,13 +1148,13 @@
             this.txtInputFolder.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.txtInputFolder.Location = new System.Drawing.Point(51, 6);
             this.txtInputFolder.Name = "txtInputFolder";
-            this.txtInputFolder.Size = new System.Drawing.Size(485, 20);
+            this.txtInputFolder.Size = new System.Drawing.Size(635, 20);
             this.txtInputFolder.TabIndex = 0;
             // 
             // btnBrowseInputFolder
             // 
             this.btnBrowseInputFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBrowseInputFolder.Location = new System.Drawing.Point(542, 5);
+            this.btnBrowseInputFolder.Location = new System.Drawing.Point(692, 5);
             this.btnBrowseInputFolder.Name = "btnBrowseInputFolder";
             this.btnBrowseInputFolder.Size = new System.Drawing.Size(24, 22);
             this.btnBrowseInputFolder.TabIndex = 1;
@@ -1179,7 +1179,7 @@
             this.txtOutputFolder.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.txtOutputFolder.Location = new System.Drawing.Point(51, 32);
             this.txtOutputFolder.Name = "txtOutputFolder";
-            this.txtOutputFolder.Size = new System.Drawing.Size(485, 20);
+            this.txtOutputFolder.Size = new System.Drawing.Size(635, 20);
             this.txtOutputFolder.TabIndex = 2;
             // 
             // pConvertFile
@@ -1194,7 +1194,7 @@
             this.pConvertFile.Location = new System.Drawing.Point(3, 16);
             this.pConvertFile.Name = "pConvertFile";
             this.pConvertFile.Padding = new System.Windows.Forms.Padding(3);
-            this.pConvertFile.Size = new System.Drawing.Size(572, 90);
+            this.pConvertFile.Size = new System.Drawing.Size(722, 90);
             this.pConvertFile.TabIndex = 2;
             // 
             // label5
@@ -1209,7 +1209,7 @@
             // btnBrowseOutputFile
             // 
             this.btnBrowseOutputFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBrowseOutputFile.Location = new System.Drawing.Point(542, 31);
+            this.btnBrowseOutputFile.Location = new System.Drawing.Point(692, 31);
             this.btnBrowseOutputFile.Name = "btnBrowseOutputFile";
             this.btnBrowseOutputFile.Size = new System.Drawing.Size(24, 22);
             this.btnBrowseOutputFile.TabIndex = 7;
@@ -1224,13 +1224,13 @@
             this.txtInputFile.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.txtInputFile.Location = new System.Drawing.Point(51, 6);
             this.txtInputFile.Name = "txtInputFile";
-            this.txtInputFile.Size = new System.Drawing.Size(485, 20);
+            this.txtInputFile.Size = new System.Drawing.Size(635, 20);
             this.txtInputFile.TabIndex = 2;
             // 
             // btnBrowseInputFile
             // 
             this.btnBrowseInputFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBrowseInputFile.Location = new System.Drawing.Point(542, 5);
+            this.btnBrowseInputFile.Location = new System.Drawing.Point(692, 5);
             this.btnBrowseInputFile.Name = "btnBrowseInputFile";
             this.btnBrowseInputFile.Size = new System.Drawing.Size(24, 22);
             this.btnBrowseInputFile.TabIndex = 6;
@@ -1254,7 +1254,7 @@
             this.txtOutputFile.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.txtOutputFile.Location = new System.Drawing.Point(51, 32);
             this.txtOutputFile.Name = "txtOutputFile";
-            this.txtOutputFile.Size = new System.Drawing.Size(485, 20);
+            this.txtOutputFile.Size = new System.Drawing.Size(635, 20);
             this.txtOutputFile.TabIndex = 3;
             // 
             // gCropping
@@ -1317,7 +1317,7 @@
             // btnConvert
             // 
             this.btnConvert.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnConvert.Location = new System.Drawing.Point(509, 245);
+            this.btnConvert.Location = new System.Drawing.Point(659, 245);
             this.btnConvert.Name = "btnConvert";
             this.btnConvert.Size = new System.Drawing.Size(75, 23);
             this.btnConvert.TabIndex = 1;
@@ -1343,7 +1343,7 @@
             // 
             this.chbMaxSimDownloads.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.chbMaxSimDownloads.AutoSize = true;
-            this.chbMaxSimDownloads.Location = new System.Drawing.Point(380, 338);
+            this.chbMaxSimDownloads.Location = new System.Drawing.Point(530, 386);
             this.chbMaxSimDownloads.Name = "chbMaxSimDownloads";
             this.chbMaxSimDownloads.Size = new System.Drawing.Size(167, 17);
             this.chbMaxSimDownloads.TabIndex = 4;
@@ -1375,7 +1375,7 @@
             this.olvQueue.Location = new System.Drawing.Point(6, 6);
             this.olvQueue.Name = "olvQueue";
             this.olvQueue.ShowGroups = false;
-            this.olvQueue.Size = new System.Drawing.Size(590, 324);
+            this.olvQueue.Size = new System.Drawing.Size(740, 373);
             this.olvQueue.TabIndex = 7;
             this.olvQueue.UseCompatibleStateImageBehavior = false;
             this.olvQueue.UseHyperlinks = true;
@@ -1422,7 +1422,7 @@
             // nudMaxSimDownloads
             // 
             this.nudMaxSimDownloads.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.nudMaxSimDownloads.Location = new System.Drawing.Point(553, 337);
+            this.nudMaxSimDownloads.Location = new System.Drawing.Point(703, 385);
             this.nudMaxSimDownloads.Maximum = new decimal(new int[] {
             999,
             0,
@@ -1447,7 +1447,7 @@
             // 
             this.chbAutoConvert.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chbAutoConvert.AutoSize = true;
-            this.chbAutoConvert.Location = new System.Drawing.Point(6, 338);
+            this.chbAutoConvert.Location = new System.Drawing.Point(6, 386);
             this.chbAutoConvert.Name = "chbAutoConvert";
             this.chbAutoConvert.Size = new System.Drawing.Size(164, 17);
             this.chbAutoConvert.TabIndex = 1;
