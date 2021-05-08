@@ -277,8 +277,9 @@ namespace YouTube_Downloader_DLL.Operations
                         { nameof(FileSize), format.FileSize }
                     });
 
+                    string prefix = _prefix ? count + ". " : string.Empty;
                     string finalFile = Path.Combine(this.Output,
-                        $"{Helper.FormatTitle(format.VideoInfo.Title)}.{format.Extension}");
+                        $"{prefix}{Helper.FormatTitle(format.VideoInfo.Title)}.{format.Extension}");
 
                     this.DownloadedFiles.Add(finalFile);
 
