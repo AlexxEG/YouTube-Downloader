@@ -50,6 +50,8 @@ namespace YouTube_Downloader_DLL.Operations
             this.Inputs.AddRange(inputs);
 
             _preferredQuality = preferredQuality;
+            _ignoreExisting = ignoreExisting;
+            _prefix = prefix;
             _logger = OperationLogger.Create(OperationLogger.YTDLogFile);
 
             _downloader = new FileDownloader();
@@ -278,10 +280,20 @@ namespace YouTube_Downloader_DLL.Operations
                     string finalFile = Path.Combine(this.Output,
                         $"{Helper.FormatTitle(format.VideoInfo.Title)}.{format.Extension}");
 
-                    // Overwrite if finalFile already exists
-                    Helper.DeleteFiles(finalFile);
-
                     this.DownloadedFiles.Add(finalFile);
+
+                    if (_ignoreExisting == false)
+                    {
+                        // Overwrite if finalFile already exists
+                        Helper.DeleteFiles(finalFile);
+                    }
+                    else
+                    {
+                        _downloads++;
+                        this.ReportProgress(EventFileDownloadComplete, finalFile);
+                        _logger.LogLine($"Skipped existing {finalFile}...");
+                        goto finish;
+                    }
 
                     if (format.AudioOnly)
                     {
@@ -359,6 +371,8 @@ namespace YouTube_Downloader_DLL.Operations
                         // Delete all related files. Helper method will check if it exists, throwing no errors
                         Helper.DeleteFiles(_downloader.Files.Select(x => x.Path).ToArray());
                     }
+
+                finish:
 
                     // Reset before starting new download.
                     this.ReportProgress(ProgressMin, null);
