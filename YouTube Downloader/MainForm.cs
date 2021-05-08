@@ -904,7 +904,11 @@ namespace YouTube_Downloader
 
             try
             {
-                var operation = new BatchOperation(path, videos, preferredQuality);
+                var operation = new BatchOperation(path,
+                                                   videos,
+                                                   preferredQuality,
+                                                   chbBatchIgnoreExisting.Checked,
+                                                   chbBatchNumberPrefix.Checked);
 
                 this.AddQueueItem(operation, true);
                 DownloadQueueHandler.Add(operation);

@@ -97,9 +97,9 @@
             this.txtPlaylistLink = new System.Windows.Forms.TextBox();
             this.batchTabPage = new System.Windows.Forms.TabPage();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.btnBatchBrowse = new System.Windows.Forms.Button();
             this.btnBatchDownload = new System.Windows.Forms.Button();
             this.chbBatchNumberPrefix = new System.Windows.Forms.CheckBox();
-            this.chbBatchReverse = new System.Windows.Forms.CheckBox();
             this.chbBatchIgnoreExisting = new System.Windows.Forms.CheckBox();
             this.txtBatchFolder = new System.Windows.Forms.TextBox();
             this.chbBatchCreateFolder = new System.Windows.Forms.CheckBox();
@@ -159,7 +159,6 @@
             this.playlistSelectAllMenuItem = new System.Windows.Forms.MenuItem();
             this.playlistSelectNoneMenuItem = new System.Windows.Forms.MenuItem();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.btnBatchBrowse = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.flpDownloadClip.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -851,7 +850,6 @@
             this.groupBox6.Controls.Add(this.btnBatchBrowse);
             this.groupBox6.Controls.Add(this.btnBatchDownload);
             this.groupBox6.Controls.Add(this.chbBatchNumberPrefix);
-            this.groupBox6.Controls.Add(this.chbBatchReverse);
             this.groupBox6.Controls.Add(this.chbBatchIgnoreExisting);
             this.groupBox6.Controls.Add(this.txtBatchFolder);
             this.groupBox6.Controls.Add(this.chbBatchCreateFolder);
@@ -865,6 +863,18 @@
             this.groupBox6.TabIndex = 18;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Batch";
+            // 
+            // btnBatchBrowse
+            // 
+            this.btnBatchBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBatchBrowse.Location = new System.Drawing.Point(708, 45);
+            this.btnBatchBrowse.Name = "btnBatchBrowse";
+            this.btnBatchBrowse.Size = new System.Drawing.Size(26, 22);
+            this.btnBatchBrowse.TabIndex = 26;
+            this.btnBatchBrowse.Text = "...";
+            this.toolTip1.SetToolTip(this.btnBatchBrowse, "Browse");
+            this.btnBatchBrowse.UseVisualStyleBackColor = true;
+            this.btnBatchBrowse.Click += new System.EventHandler(this.btnBatchBrowse_Click);
             // 
             // btnBatchDownload
             // 
@@ -881,23 +891,12 @@
             // 
             this.chbBatchNumberPrefix.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chbBatchNumberPrefix.AutoSize = true;
-            this.chbBatchNumberPrefix.Location = new System.Drawing.Point(179, 108);
+            this.chbBatchNumberPrefix.Location = new System.Drawing.Point(107, 108);
             this.chbBatchNumberPrefix.Name = "chbBatchNumberPrefix";
             this.chbBatchNumberPrefix.Size = new System.Drawing.Size(92, 17);
             this.chbBatchNumberPrefix.TabIndex = 24;
             this.chbBatchNumberPrefix.Text = "Number Prefix";
             this.chbBatchNumberPrefix.UseVisualStyleBackColor = true;
-            // 
-            // chbBatchReverse
-            // 
-            this.chbBatchReverse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.chbBatchReverse.AutoSize = true;
-            this.chbBatchReverse.Location = new System.Drawing.Point(107, 108);
-            this.chbBatchReverse.Name = "chbBatchReverse";
-            this.chbBatchReverse.Size = new System.Drawing.Size(66, 17);
-            this.chbBatchReverse.TabIndex = 23;
-            this.chbBatchReverse.Text = "Reverse";
-            this.chbBatchReverse.UseVisualStyleBackColor = true;
             // 
             // chbBatchIgnoreExisting
             // 
@@ -1510,18 +1509,6 @@
             this.playlistSelectNoneMenuItem.Text = "Select none";
             this.playlistSelectNoneMenuItem.Click += new System.EventHandler(this.playlistSelectNoneMenuItem_Click);
             // 
-            // btnBatchBrowse
-            // 
-            this.btnBatchBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBatchBrowse.Location = new System.Drawing.Point(708, 45);
-            this.btnBatchBrowse.Name = "btnBatchBrowse";
-            this.btnBatchBrowse.Size = new System.Drawing.Size(26, 22);
-            this.btnBatchBrowse.TabIndex = 26;
-            this.btnBatchBrowse.Text = "...";
-            this.toolTip1.SetToolTip(this.btnBatchBrowse, "Browse");
-            this.btnBatchBrowse.UseVisualStyleBackColor = true;
-            this.btnBatchBrowse.Click += new System.EventHandler(this.btnBatchBrowse_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1695,7 +1682,6 @@
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.GroupBox groupBox6;
         private System.Windows.Forms.CheckBox chbBatchNumberPrefix;
-        private System.Windows.Forms.CheckBox chbBatchReverse;
         private System.Windows.Forms.CheckBox chbBatchIgnoreExisting;
         private System.Windows.Forms.TextBox txtBatchFolder;
         private System.Windows.Forms.CheckBox chbBatchCreateFolder;

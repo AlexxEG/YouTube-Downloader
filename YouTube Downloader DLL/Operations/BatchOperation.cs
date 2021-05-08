@@ -24,6 +24,8 @@ namespace YouTube_Downloader_DLL.Operations
         bool _cancel;
         bool _processing;
         bool? _downloaderSuccessful;
+        bool _ignoreExisting;
+        bool _prefix;
         PreferredQuality _preferredQuality;
 
         Exception _operationException;
@@ -39,7 +41,7 @@ namespace YouTube_Downloader_DLL.Operations
         /// </summary>
         public event EventHandler<string> FileDownloadComplete;
 
-        public BatchOperation(string output, ICollection<string> inputs, PreferredQuality preferredQuality)
+        public BatchOperation(string output, ICollection<string> inputs, PreferredQuality preferredQuality, bool ignoreExisting, bool prefix)
         {
             this.Title = $"Batch download (0/{inputs.Count} videos)";
             this.ReportsProgress = true;
