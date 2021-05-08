@@ -32,10 +32,9 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.btnPaste = new System.Windows.Forms.Button();
-            this.imageList16px = new System.Windows.Forms.ImageList(this.components);
             this.btnGetVideo = new System.Windows.Forms.Button();
             this.txtYoutubeLink = new System.Windows.Forms.TextBox();
+            this.imageList16px = new System.Windows.Forms.ImageList(this.components);
             this.flpDownloadClip = new System.Windows.Forms.FlowLayoutPanel();
             this.chbDownloadClipFrom = new System.Windows.Forms.CheckBox();
             this.dpDownloadClipFrom = new YouTube_Downloader.Controls.DurationPicker();
@@ -86,7 +85,6 @@
             this.playlistIgnoreExistingMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.playlistReverseMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.playlistNumberPrefixMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.btnPlaylistPaste = new System.Windows.Forms.Button();
             this.btnGetPlaylist = new System.Windows.Forms.Button();
             this.label14 = new System.Windows.Forms.Label();
             this.cbPlaylistQuality = new System.Windows.Forms.ComboBox();
@@ -189,7 +187,6 @@
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Controls.Add(this.btnPaste);
             this.groupBox1.Controls.Add(this.btnGetVideo);
             this.groupBox1.Controls.Add(this.txtYoutubeLink);
             this.groupBox1.Location = new System.Drawing.Point(6, 6);
@@ -208,25 +205,6 @@
             this.label2.TabIndex = 3;
             this.label2.Text = "Link";
             // 
-            // btnPaste
-            // 
-            this.btnPaste.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPaste.ImageIndex = 0;
-            this.btnPaste.ImageList = this.imageList16px;
-            this.btnPaste.Location = new System.Drawing.Point(712, 18);
-            this.btnPaste.Name = "btnPaste";
-            this.btnPaste.Size = new System.Drawing.Size(22, 22);
-            this.btnPaste.TabIndex = 1;
-            this.toolTip1.SetToolTip(this.btnPaste, "Paste");
-            this.btnPaste.UseVisualStyleBackColor = true;
-            this.btnPaste.Click += new System.EventHandler(this.btnPaste_Click);
-            // 
-            // imageList16px
-            // 
-            this.imageList16px.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList16px.ImageStream")));
-            this.imageList16px.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageList16px.Images.SetKeyName(0, "Paste-64.png");
-            // 
             // btnGetVideo
             // 
             this.btnGetVideo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -244,8 +222,14 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtYoutubeLink.Location = new System.Drawing.Point(39, 19);
             this.txtYoutubeLink.Name = "txtYoutubeLink";
-            this.txtYoutubeLink.Size = new System.Drawing.Size(667, 20);
+            this.txtYoutubeLink.Size = new System.Drawing.Size(695, 20);
             this.txtYoutubeLink.TabIndex = 0;
+            // 
+            // imageList16px
+            // 
+            this.imageList16px.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList16px.ImageStream")));
+            this.imageList16px.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageList16px.Images.SetKeyName(0, "Paste-64.png");
             // 
             // flpDownloadClip
             // 
@@ -663,7 +647,6 @@
             this.groupBox7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox7.Controls.Add(this.menuButton1);
-            this.groupBox7.Controls.Add(this.btnPlaylistPaste);
             this.groupBox7.Controls.Add(this.btnGetPlaylist);
             this.groupBox7.Controls.Add(this.label14);
             this.groupBox7.Controls.Add(this.cbPlaylistQuality);
@@ -743,19 +726,6 @@
             this.playlistNumberPrefixMenuItem.Name = "playlistNumberPrefixMenuItem";
             this.playlistNumberPrefixMenuItem.Size = new System.Drawing.Size(241, 22);
             this.playlistNumberPrefixMenuItem.Text = "Number prefix";
-            // 
-            // btnPlaylistPaste
-            // 
-            this.btnPlaylistPaste.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPlaylistPaste.ImageIndex = 0;
-            this.btnPlaylistPaste.ImageList = this.imageList16px;
-            this.btnPlaylistPaste.Location = new System.Drawing.Point(712, 18);
-            this.btnPlaylistPaste.Name = "btnPlaylistPaste";
-            this.btnPlaylistPaste.Size = new System.Drawing.Size(22, 22);
-            this.btnPlaylistPaste.TabIndex = 1;
-            this.toolTip1.SetToolTip(this.btnPlaylistPaste, "Paste");
-            this.btnPlaylistPaste.UseVisualStyleBackColor = true;
-            this.btnPlaylistPaste.Click += new System.EventHandler(this.btnPlaylistPaste_Click);
             // 
             // btnGetPlaylist
             // 
@@ -858,7 +828,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtPlaylistLink.Location = new System.Drawing.Point(60, 19);
             this.txtPlaylistLink.Name = "txtPlaylistLink";
-            this.txtPlaylistLink.Size = new System.Drawing.Size(646, 20);
+            this.txtPlaylistLink.Size = new System.Drawing.Size(674, 20);
             this.txtPlaylistLink.TabIndex = 0;
             // 
             // batchTabPage
@@ -1593,7 +1563,6 @@
         private System.Windows.Forms.Button btnGetVideo;
         private System.Windows.Forms.ComboBox cbQuality;
         private System.Windows.Forms.TextBox txtYoutubeLink;
-        private System.Windows.Forms.Button btnPaste;
         private System.ComponentModel.BackgroundWorker bwGetVideo;
         private System.Windows.Forms.Button btnDownload;
         private System.Windows.Forms.Label label4;
@@ -1671,7 +1640,6 @@
         private System.Windows.Forms.TextBox txtExtension;
         private System.Windows.Forms.ImageList imageList16px;
         private System.Windows.Forms.ToolTip toolTip1;
-        private System.Windows.Forms.Button btnPlaylistPaste;
         private System.Windows.Forms.NumericUpDown nudMaxSimDownloads;
         private BrightIdeasSoftware.ObjectListView olvQueue;
         private BrightIdeasSoftware.OLVColumn olvColumn1;

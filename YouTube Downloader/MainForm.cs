@@ -163,16 +163,6 @@ namespace YouTube_Downloader
 
         #region Download Tab
 
-        private void btnPaste_Click(object sender, EventArgs e)
-        {
-            // Only paste if enabled so that it can't be changed
-            // while getting video information.
-            if (txtYoutubeLink.Enabled)
-            {
-                txtYoutubeLink.Text = Clipboard.GetText();
-            }
-        }
-
         private void btnGetVideo_Click(object sender, EventArgs e)
         {
             if (!Helper.IsValidUrl(txtYoutubeLink.Text))
@@ -187,7 +177,7 @@ namespace YouTube_Downloader
 
                 txtTitle.Text = string.Empty;
                 cbQuality.Items.Clear();
-                btnGetVideo.Enabled = txtYoutubeLink.Enabled = btnDownload.Enabled = cbQuality.Enabled = btnPaste.Enabled = false;
+                btnGetVideo.Enabled = txtYoutubeLink.Enabled = btnDownload.Enabled = cbQuality.Enabled = false;
                 videoThumbnail.Tag = null;
 
                 bwGetVideo.RunWorkerAsync(txtYoutubeLink.Text);
@@ -405,7 +395,7 @@ namespace YouTube_Downloader
                 flpDownloadClip.Visible = videoInfo.VideoSource == VideoSource.Twitch;
             }
 
-            btnGetVideo.Enabled = txtYoutubeLink.Enabled = btnPaste.Enabled = true;
+            btnGetVideo.Enabled = txtYoutubeLink.Enabled = true;
             cbQuality.Enabled = videoInfo.Formats.Count > 0;
             btnDownload.Enabled = true;
         }
@@ -434,14 +424,6 @@ namespace YouTube_Downloader
         private BackgroundWorker _backgroundWorkerPlaylist;
         private OrderedDictionary _playlistIgnored = new OrderedDictionary();
         private QuickPlaylist _playlist;
-
-        private void btnPlaylistPaste_Click(object sender, EventArgs e)
-        {
-            if (txtPlaylistLink.Enabled)
-            {
-                txtPlaylistLink.Text = Clipboard.GetText();
-            }
-        }
 
         private void btnPlaylistBrowse_Click(object sender, EventArgs e)
         {
