@@ -1540,6 +1540,7 @@ namespace YouTube_Downloader
             cbPlaylistQuality.SelectedIndex = (int)settings.PreferredQualityPlaylist;
 
             // Batch
+            // ========================================
             cbBatchSaveTo.Items.AddRange(directories);
 
             if (cbBatchSaveTo.Items.Count > 0 && settings.SelectedDirectory < cbBatchSaveTo.Items.Count)
@@ -1547,6 +1548,7 @@ namespace YouTube_Downloader
 
             cbBatchPreferredQuality.Items.AddRange(Enum.GetNames(typeof(PreferredQuality)));
             cbBatchPreferredQuality.SelectedIndex = (int)settings.PreferredQualityBatch;
+            // ========================================
 
             // Restore CheckBox.Checked
             chbAutoConvert.Checked = settings.AutoConvert;
