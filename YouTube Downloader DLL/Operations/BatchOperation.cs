@@ -287,7 +287,7 @@ namespace YouTube_Downloader_DLL.Operations
                         // Overwrite if finalFile already exists
                         Helper.DeleteFiles(finalFile);
                     }
-                    else
+                    else if (File.Exists(finalFile))
                     {
                         _downloads++;
                         this.ReportProgress(EventFileDownloadComplete, finalFile);
