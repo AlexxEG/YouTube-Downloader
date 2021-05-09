@@ -487,6 +487,8 @@ namespace YouTube_Downloader
             if (playlistReverseMenuItem.Checked)
                 videos = videos.Reverse();
 
+            int count = 0;
+
             foreach (var video in videos)
             {
                 if (_backgroundWorkerPlaylist.CancellationPending)
@@ -496,7 +498,8 @@ namespace YouTube_Downloader
                 }
 
                 var title = WebUtility.HtmlDecode(video.Title);
-                var item = new ListViewItem(Helper.FormatTitle(title));
+                var item = new ListViewItem((++count).ToString());
+                item.SubItems.Add(Helper.FormatTitle(title));
                 item.SubItems.Add(video.Duration);
                 item.Checked = true;
                 item.Tag = video;

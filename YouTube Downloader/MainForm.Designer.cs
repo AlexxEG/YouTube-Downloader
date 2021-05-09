@@ -34,7 +34,6 @@
             this.label2 = new System.Windows.Forms.Label();
             this.btnGetVideo = new System.Windows.Forms.Button();
             this.txtYoutubeLink = new System.Windows.Forms.TextBox();
-            this.imageList16px = new System.Windows.Forms.ImageList(this.components);
             this.flpDownloadClip = new System.Windows.Forms.FlowLayoutPanel();
             this.chbDownloadClipFrom = new System.Windows.Forms.CheckBox();
             this.dpDownloadClipFrom = new YouTube_Downloader.Controls.DurationPicker();
@@ -75,6 +74,7 @@
             this.txtPlaylistFilter = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
             this.lvPlaylistVideos = new System.Windows.Forms.ListView();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.groupBox7 = new System.Windows.Forms.GroupBox();
@@ -159,6 +159,7 @@
             this.playlistSelectAllMenuItem = new System.Windows.Forms.MenuItem();
             this.playlistSelectNoneMenuItem = new System.Windows.Forms.MenuItem();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.label16 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.flpDownloadClip.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -224,12 +225,6 @@
             this.txtYoutubeLink.Name = "txtYoutubeLink";
             this.txtYoutubeLink.Size = new System.Drawing.Size(695, 20);
             this.txtYoutubeLink.TabIndex = 0;
-            // 
-            // imageList16px
-            // 
-            this.imageList16px.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList16px.ImageStream")));
-            this.imageList16px.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageList16px.Images.SetKeyName(0, "Paste-64.png");
             // 
             // flpDownloadClip
             // 
@@ -621,6 +616,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lvPlaylistVideos.CheckBoxes = true;
             this.lvPlaylistVideos.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
             this.columnHeader7,
             this.columnHeader8});
             this.lvPlaylistVideos.FullRowSelect = true;
@@ -631,6 +627,11 @@
             this.lvPlaylistVideos.TabIndex = 0;
             this.lvPlaylistVideos.UseCompatibleStateImageBehavior = false;
             this.lvPlaylistVideos.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "#";
+            this.columnHeader1.Width = 30;
             // 
             // columnHeader7
             // 
@@ -646,6 +647,7 @@
             // 
             this.groupBox7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox7.Controls.Add(this.label16);
             this.groupBox7.Controls.Add(this.menuButton1);
             this.groupBox7.Controls.Add(this.btnGetPlaylist);
             this.groupBox7.Controls.Add(this.label14);
@@ -1509,6 +1511,16 @@
             this.playlistSelectNoneMenuItem.Text = "Select none";
             this.playlistSelectNoneMenuItem.Click += new System.EventHandler(this.playlistSelectNoneMenuItem_Click);
             // 
+            // label16
+            // 
+            this.label16.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label16.Location = new System.Drawing.Point(127, 83);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(294, 42);
+            this.label16.TabIndex = 19;
+            this.label16.Text = "Limitations: Currently only the first 200 videos can be downloaded. And duration " +
+    "can\'t be shown in preview but it won\'t affect the download.";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1641,7 +1653,6 @@
         private System.Windows.Forms.TextBox txtOutputFolder;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.TextBox txtExtension;
-        private System.Windows.Forms.ImageList imageList16px;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.NumericUpDown nudMaxSimDownloads;
         private BrightIdeasSoftware.ObjectListView olvQueue;
@@ -1691,6 +1702,8 @@
         private System.Windows.Forms.ComboBox cbBatchPreferredQuality;
         private System.Windows.Forms.Button btnBatchDownload;
         private System.Windows.Forms.Button btnBatchBrowse;
+        private System.Windows.Forms.ColumnHeader columnHeader1;
+        private System.Windows.Forms.Label label16;
     }
 }
 
