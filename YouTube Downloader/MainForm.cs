@@ -637,7 +637,7 @@ namespace YouTube_Downloader
                 Environment.NewLine,
                 lvPlaylistVideos.SelectedItems
                     .Cast<ListViewItem>()
-                    .Select(x => x.Text));
+                    .Select(x => x.SubItems[1].Text));
 
             try
             {
@@ -669,7 +669,7 @@ namespace YouTube_Downloader
             foreach (string filter in filters)
                 foreach (ListViewItem item in lvPlaylistVideos.Items
                                                 .Cast<ListViewItem>()
-                                                .Where(i => i.Text.ToLower().Contains(filter.ToLower())))
+                                                .Where(i => i.SubItems[1].Text.ToLower().Contains(filter.ToLower())))
                     items.Add(item);
 
             return items.ToArray();
