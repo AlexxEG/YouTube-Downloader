@@ -27,24 +27,24 @@ namespace YouTube_Downloader_DLL.Classes
             var wc = new WebClient();
             wc.Encoding = Encoding.UTF8;
             int videoIndex = 0;
+
+            // Change playlist URL to embed so we can retrieve whole playlist without infinite scrolling issues
+            this.Url = this.Url.Replace("https://www.youtube.com/playlist?list=", "https://www.youtube.com/embed/videoseries?list=");
+
             string source = wc.DownloadString(this.Url);
             Match m = null;
 
             // Find playlist title
             var playlistname = new Regex(
-                @"pl-header-title[\s|\""].*?>(.*?)(?=<)",
+                @"titleText.*?text\\"":\\""(.*?)\\""}",
                 RegexOptions.Singleline);
 
             this.Title = playlistname.Match(source).Groups[1].Value.Trim();
-
-            // Find the load more button
-            var loadmore = new Regex(
-                @"data-uix-load-more-href=""([^ ""]*)",
-                RegexOptions.Compiled);
+            this.Title = Regex.Unescape(this.Title);
 
             // Find video id and title in any order
             var titleId = new Regex(
-                @"<tr(?=.*?data-video-id=""(.*?)"")(?=.*?data-title=""(.*?)"").*?pl-video-edit-options",
+                @"playlistPanelVideoRenderer.*?title.*?text\\"":\\""(.*?)\\""}.*?videoId\\"":\\""(.*?)\\""",
                 RegexOptions.Compiled | RegexOptions.Singleline);
 
             // Find duration. Private/deleted e.g. videos does not have duration
@@ -55,40 +55,30 @@ namespace YouTube_Downloader_DLL.Classes
             // Leaving this as null allow duplicates
             List<string> ids = this.IgnoreDuplicates ? new List<string>() : null;
 
-            do
+            foreach (Match match in titleId.Matches(source))
             {
-                if (m != null)
-                {
-                    source = wc.DownloadString(@"https://www.youtube.com" + m.Groups[1].Value);
+                string fullMatch = match.Groups[0].Value;
+                string resultTitle = Regex.Unescape(match.Groups[1].Value);
+                string resultId = match.Groups[2].Value;
+                string resultDuration = string.Empty;
 
-                    source = Regex.Unescape(source);
-                    source = HttpUtility.HtmlDecode(source);
-                }
+                if (ids?.Contains(resultId) == true)
+                    continue;
 
-                foreach (Match match in titleId.Matches(source))
-                {
-                    string fullMatch = match.Groups[0].Value;
-                    string resultId = match.Groups[1].Value;
-                    string resultTitle = match.Groups[2].Value;
-                    string resultDuration = string.Empty;
+                Match mDuration;
+                if ((mDuration = duration.Match(fullMatch)).Success)
+                    resultDuration = mDuration.Groups[1].Value;
+                resultDuration = "??:??";
 
-                    if (ids?.Contains(resultId) == true)
-                        continue;
+                ids?.Add(resultId);
+                this.Videos.Add(new QuickVideoInfo(videoIndex + 1, // Not zero-based
+                                                   resultId,
+                                                   resultTitle,
+                                                   resultDuration));
 
-                    Match mDuration;
-                    if ((mDuration = duration.Match(fullMatch)).Success)
-                        resultDuration = mDuration.Groups[1].Value;
-
-                    ids?.Add(resultId);
-                    this.Videos.Add(new QuickVideoInfo(videoIndex + 1, // Not zero-based
-                                                       resultId,
-                                                       resultTitle,
-                                                       resultDuration));
-
-                    videoIndex++;
-                }
+                videoIndex++;
             }
-            while ((m = loadmore.Match(source)).Success);
+
 
             return this;
         }
