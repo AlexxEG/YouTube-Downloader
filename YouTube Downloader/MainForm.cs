@@ -677,9 +677,22 @@ namespace YouTube_Downloader
 
         private void btnPlaylistRemove_Click(object sender, EventArgs e)
         {
+            var items = this.GetFilteredItems();
+
+            if (items.Length == 0)
+                return; // Do nothing
+
+            if (MessageBox.Show(this,
+                    $"Are you sure you want to delete {items.Length} item(s)?",
+                    "Confirmation",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
+            {
+                return;
+            }
+
             lvPlaylistVideos.BeginUpdate();
 
-            foreach (var item in this.GetFilteredItems())
+            foreach (var item in items)
             {
                 lvPlaylistVideos.Items.Remove(item);
             }
