@@ -78,6 +78,7 @@
             this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.label16 = new System.Windows.Forms.Label();
             this.menuButton1 = new YouTube_Downloader.Controls.MenuButton();
             this.imageList14px = new System.Windows.Forms.ImageList(this.components);
             this.cmsPlaylistOptions = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -159,7 +160,6 @@
             this.playlistSelectAllMenuItem = new System.Windows.Forms.MenuItem();
             this.playlistSelectNoneMenuItem = new System.Windows.Forms.MenuItem();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.label16 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.flpDownloadClip.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -665,6 +665,16 @@
             this.groupBox7.TabIndex = 0;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Playlist";
+            // 
+            // label16
+            // 
+            this.label16.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label16.Location = new System.Drawing.Point(127, 83);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(294, 42);
+            this.label16.TabIndex = 19;
+            this.label16.Text = "Limitations: Currently only the first 200 videos can be downloaded. And duration " +
+    "can\'t be shown in preview but it won\'t affect the download.";
             // 
             // menuButton1
             // 
@@ -1390,7 +1400,7 @@
             // olvColumn1
             // 
             this.olvColumn1.AspectName = "Title";
-            this.olvColumn1.Text = "Video";
+            this.olvColumn1.Text = "Name";
             this.olvColumn1.Width = 172;
             // 
             // olvColumn2
@@ -1421,7 +1431,7 @@
             // 
             this.olvColumn6.AspectName = "InputText";
             this.olvColumn6.Hyperlink = true;
-            this.olvColumn6.Text = "Input";
+            this.olvColumn6.Text = "Source";
             this.olvColumn6.Width = 178;
             // 
             // nudMaxSimDownloads
@@ -1510,16 +1520,6 @@
             this.playlistSelectNoneMenuItem.Index = 5;
             this.playlistSelectNoneMenuItem.Text = "Select none";
             this.playlistSelectNoneMenuItem.Click += new System.EventHandler(this.playlistSelectNoneMenuItem_Click);
-            // 
-            // label16
-            // 
-            this.label16.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label16.Location = new System.Drawing.Point(127, 83);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(294, 42);
-            this.label16.TabIndex = 19;
-            this.label16.Text = "Limitations: Currently only the first 200 videos can be downloaded. And duration " +
-    "can\'t be shown in preview but it won\'t affect the download.";
             // 
             // MainForm
             // 
