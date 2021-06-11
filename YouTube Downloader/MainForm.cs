@@ -1276,7 +1276,7 @@ namespace YouTube_Downloader
 
             if (fails > 0)
             {
-                MessageBox.Show(this, "Couldn't open " + fails + " file(s).");
+                MessageBox.Show(this, $"Failed to open {fails} file(s).");
             }
         }
 
