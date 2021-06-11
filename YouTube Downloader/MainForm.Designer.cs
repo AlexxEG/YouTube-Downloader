@@ -160,7 +160,6 @@
             this.playlistSelectAllMenuItem = new System.Windows.Forms.MenuItem();
             this.playlistSelectNoneMenuItem = new System.Windows.Forms.MenuItem();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.label17 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.flpDownloadClip.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -1051,7 +1050,6 @@
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox2.Controls.Add(this.label17);
             this.groupBox2.Controls.Add(this.groupBox5);
             this.groupBox2.Controls.Add(this.gCropping);
             this.groupBox2.Controls.Add(this.btnConvert);
@@ -1523,16 +1521,6 @@
             this.playlistSelectNoneMenuItem.Text = "Select none";
             this.playlistSelectNoneMenuItem.Click += new System.EventHandler(this.playlistSelectNoneMenuItem_Click);
             // 
-            // label17
-            // 
-            this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(6, 145);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(446, 39);
-            this.label17.TabIndex = 9;
-            this.label17.Text = "Convert: Make sure output has the .mp3 extension.\r\n\r\nCrop only: Leave the output " +
-    "extension the same as input and it will leave the format the same.";
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1568,7 +1556,6 @@
             this.convertTabPage.ResumeLayout(false);
             this.convertTabPage.PerformLayout();
             this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
             this.pConvertFolder.ResumeLayout(false);
@@ -1717,7 +1704,6 @@
         private System.Windows.Forms.Button btnBatchBrowse;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.Label label16;
-        private System.Windows.Forms.Label label17;
     }
 }
 
