@@ -252,7 +252,40 @@
   <metadata name="groupBox6.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
+  <metadata name="btnBatchBrowse.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="btnBatchDownload.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="chbBatchNumberPrefix.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="chbBatchIgnoreExisting.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="txtBatchFolder.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="chbBatchCreateFolder.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="cbBatchSaveTo.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="label11.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="label15.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="cbBatchPreferredQuality.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
   <metadata name="groupBox4.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="txtBatchLinks.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
   <metadata name="convertTabPage.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -379,27 +412,27 @@
     <value>
         AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj00LjAuMC4w
         LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0
-        ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkDAAAADwMAAACI
-        BAAAAk1TRnQBSQFMAwEBAAHIAQEByAEBAQ4BAAEOAQAE/wEhAQAI/wFCAU0BNgcAATYDAAEoAwABOAMA
+        ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkDAAAADwMAAACG
+        BAAAAk1TRnQBSQFMAwEBAAHQAQEB0AEBAQ4BAAEOAQAE/wEhAQAI/wFCAU0BNgcAATYDAAEoAwABOAMA
         AQ4DAAEBAQABIAUAAUABDBIAAx0BKQNcAc0DZQH0A1ABmwMaASUDAQECCwABAQMUARsDSQGHAlQBYQHu
         AloBXgHVAykBP6gAA14BzgHZAbgBwwH/Ae0BzwHXAf8DagH5A1IBowMcASgDAQECBAADFAEbA0wBkgNf
-        AfsCRQHsAf8CPgHoAf8CWgFeAdWoAANdAfAB6QHKAdMB/wHyAdUB3AH/Ae4B0AHYAf8BWgFPAVIB+gNT
-        AaUDGgElAxABFQJNAU4BlQIrAWcB/AI/AekB/wI3AeQB/wJFAewB/wJUAWEB7qgAA0QBeQNiAfYB7AHO
-        AdYB/wHyAdUB3AH/Ae4B0QHYAf8BZQFXAV4B/ANUAa4DUQGiAisBZwH8AkAB6QH/Ai8B3gH/Aj4B6AH/
-        AisBZwH8A0kBiKgAAwoBDgNEAXkDWQH1AewBzgHWAf8B8gHVAdwB/wHvAdEB2QH/A6gB/QGPAUABnwH9
-        AYYBgQHkAf8CPwHoAf8CQQHpAf8DXwH7A0wBkgMUARusAAMMARADRAF6A2IB9gHsAc4B1gH/AfIB1QHc
-        Af8B8AHTAdoB/wHZAbkBxAH/AaEBQwGdAf8BnQFBAaIB/wGbAT4BnAH/A14B1QMsAUMDAgEDsAADCgEO
-        A0cBgANtAfcB7QHQAdcB/wHtAc8B2AH/AbABhgGaAf8BvwGZAakB/wHnAcgB0QH/Ae8B0gHaAf8BZQFX
-        AV0B/ANhAeIDFgEftAADDwEUA1ABnQFTAU0BTgH6AbYBjQGgAf8BzwGsAbkB/wHyAdUB3AH/AfEB1AHb
-        Af8B7gHQAdgB/wHwAdMB2gH/AVYBTQFRAfoDTAGQsAADAwEEAyMBMwNXAbcDXwH7Ab8BmQGpAf8B8gHV
-        AdwB/wHxAdQB2wH/A38B/gFhAU0BVwH8A38B/gHlAcUBzwH/A18B6KwAAxoBJQM+AWsDVQG1A2IB9gFP
-        ATsBPgH8Ad8BvgHIAf8B8gHVAdwB/wHfAb8ByQH/A2EB4QNSAaEDYAHUA38B/gGrAYABlQH/qAADBwEJ
-        A1UBrQNlAfQBqAGaAYgB/QNVAbUDXQHTA6gB/QHyAdUB3AH/A38B/gNZAb4DGgElAzQBVANdAdcDXgHd
-        qAADPAFmA18B8wHKAbYBpQH/A2UB9AM+AWoDRwGAA2IB7wHyAdUB3AH/AeQBxQHOAf8DXAHqA0UBfAMR
-        ARcDMQFOAy4BR6gAA1sBywNcAfgDZwHyA1UBrQMaASUDEgEZA1kBwgNiAfYB4gHCAc0B/wHjAcMBzQH/
-        A2EB7gNCAXUDDQERAwIBA6gAAwwBEANdAcoDOwFlAwcBCQgAAwoBDgNAAW8DXwHjAaEBPAGLAf8DYQHh
-        AzYBWQMEAQWsAAFCAU0BPgcAAT4DAAEoAwABOAMAAQ4DAAEBAQABAQUAAXAXAAP/AQABAwcAAQEfAAGA
-        BwABwAcAAeAHAAHABwABgB8AAQwBBAYACw==
+        AfsCRAHsAf8CPQHoAf8CWgFeAdWoAANdAfAB6QHKAdMB/wHyAdUB3AH/Ae4B0AHYAf8BWAFOAVEB+gNT
+        AaUDGgElAxABFQJNAU4BlQIrAWYB/AI+AekB/wI2AeQB/wJEAewB/wJUAWEB7qgAA0QBeQNiAfYB7AHO
+        AdYB/wHyAdUB3AH/Ae4B0QHYAf8BZAFWAV0B/ANUAa4DUQGiAisBZgH8Aj8B6QH/Ai4B3gH/Aj0B6AH/
+        AisBZgH8A0kBiKgAAwoBDgNEAXkDWQH1AewBzgHWAf8B8gHVAdwB/wHvAdEB2QH/A6gB/QGPAUABnwH9
+        AYYBgQHkAf8CPgHoAf8CQAHpAf8DXwH7A0wBkgMUARusAAMMARADRAF6A2IB9gHsAc4B1gH/AfIB1QHc
+        Af8B8AHTAdoB/wHZAbkBxAH/AaEBQgGdAf8BnQFAAaIB/wGbAT0BnAH/A14B1QMsAUMDAgEDsAADCgEO
+        A0cBgANtAfcB7QHQAdcB/wHtAc8B2AH/AbABhgGaAf8BvwGZAakB/wHnAcgB0QH/Ae8B0gHaAf8BZAFW
+        AVwB/ANhAeIDFgEftAADDwEUA1ABnQFSAk0B+gG2AY0BoAH/Ac8BrAG5Af8B8gHVAdwB/wHxAdQB2wH/
+        Ae4B0AHYAf8B8AHTAdoB/wFUAU0BUAH6A0wBkLAAAwMBBAMjATMDVwG3A18B+wG/AZkBqQH/AfIB1QHc
+        Af8B8QHUAdsB/wN/Af4BYAFLAVYB/AN/Af4B5QHFAc8B/wNfAeisAAMaASUDPgFrA1UBtQNiAfYBTQE6
+        AT0B/AHfAb4ByAH/AfIB1QHcAf8B3wG/AckB/wNhAeEDUgGhA2AB1AN/Af4BqwGAAZUB/6gAAwcBCQNV
+        Aa0DZQH0AagBmgGIAf0DVQG1A10B0wOoAf0B8gHVAdwB/wN/Af4DWQG+AxoBJQM0AVQDXQHXA14B3agA
+        AzwBZgNfAfMBygG2AaUB/wNlAfQDPgFqA0cBgANiAe8B8gHVAdwB/wHkAcUBzgH/A1wB6gNFAXwDEQEX
+        AzEBTgMuAUeoAANbAcsDXAH4A2cB8gNVAa0DGgElAxIBGQNZAcIDYgH2AeIBwgHNAf8B4wHDAc0B/wNh
+        Ae4DQgF1Aw0BEQMCAQOoAAMMARADXQHKAzsBZQMHAQkIAAMKAQ4DQAFvA18B4wGhATsBiwH/A2EB4QM2
+        AVkDBAEFrAABQgFNAT4HAAE+AwABKAMAATgDAAEOAwABAQEAAQEFAAFwFwAD/wEAAQMHAAEBHwABgAcA
+        AcAHAAHgBwABwAcAAYAfAAEMAQQGAAs=
 </value>
   </data>
   <metadata name="cmsPlaylistOptions.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
@@ -436,75 +469,6 @@
     <value>True</value>
   </metadata>
   <metadata name="txtPlaylistLink.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="groupBox6.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="btnBatchBrowse.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="btnBatchDownload.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="chbBatchNumberPrefix.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="chbBatchIgnoreExisting.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="txtBatchFolder.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="chbBatchCreateFolder.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="cbBatchSaveTo.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="label11.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="label15.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="cbBatchPreferredQuality.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="btnBatchBrowse.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="btnBatchDownload.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="chbBatchNumberPrefix.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="chbBatchIgnoreExisting.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="txtBatchFolder.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="chbBatchCreateFolder.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="cbBatchSaveTo.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="label11.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="label15.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="cbBatchPreferredQuality.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="groupBox4.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="txtBatchLinks.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
   <metadata name="txtBatchLinks.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -606,18 +570,6 @@
   <metadata name="txtOutputFile.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
-  <metadata name="chbCropFrom.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="mtxtTo.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="chbCropTo.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="mtxtFrom.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
   <metadata name="chbMaxSimDownloads.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
@@ -644,6 +596,9 @@
   </metadata>
   <metadata name="$this.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
+  </metadata>
+  <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>98</value>
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">

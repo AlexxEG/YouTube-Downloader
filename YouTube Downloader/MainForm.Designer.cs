@@ -905,9 +905,9 @@
             this.chbBatchNumberPrefix.AutoSize = true;
             this.chbBatchNumberPrefix.Location = new System.Drawing.Point(107, 108);
             this.chbBatchNumberPrefix.Name = "chbBatchNumberPrefix";
-            this.chbBatchNumberPrefix.Size = new System.Drawing.Size(92, 17);
+            this.chbBatchNumberPrefix.Size = new System.Drawing.Size(91, 17);
             this.chbBatchNumberPrefix.TabIndex = 24;
-            this.chbBatchNumberPrefix.Text = "Number Prefix";
+            this.chbBatchNumberPrefix.Text = "Number prefix";
             this.chbBatchNumberPrefix.UseVisualStyleBackColor = true;
             // 
             // chbBatchIgnoreExisting
@@ -916,9 +916,9 @@
             this.chbBatchIgnoreExisting.AutoSize = true;
             this.chbBatchIgnoreExisting.Location = new System.Drawing.Point(6, 108);
             this.chbBatchIgnoreExisting.Name = "chbBatchIgnoreExisting";
-            this.chbBatchIgnoreExisting.Size = new System.Drawing.Size(95, 17);
+            this.chbBatchIgnoreExisting.Size = new System.Drawing.Size(94, 17);
             this.chbBatchIgnoreExisting.TabIndex = 22;
-            this.chbBatchIgnoreExisting.Text = "Ignore Existing";
+            this.chbBatchIgnoreExisting.Text = "Ignore existing";
             this.chbBatchIgnoreExisting.UseVisualStyleBackColor = true;
             // 
             // txtBatchFolder
@@ -1291,9 +1291,9 @@
             this.chbCropFrom.AutoSize = true;
             this.chbCropFrom.Location = new System.Drawing.Point(6, 21);
             this.chbCropFrom.Name = "chbCropFrom";
-            this.chbCropFrom.Size = new System.Drawing.Size(74, 17);
+            this.chbCropFrom.Size = new System.Drawing.Size(71, 17);
             this.chbCropFrom.TabIndex = 0;
-            this.chbCropFrom.Text = "Crop From";
+            this.chbCropFrom.Text = "Crop from";
             this.chbCropFrom.UseVisualStyleBackColor = true;
             this.chbCropFrom.CheckedChanged += new System.EventHandler(this.chbCropFrom_CheckedChanged);
             // 
@@ -1313,9 +1313,9 @@
             this.chbCropTo.Enabled = false;
             this.chbCropTo.Location = new System.Drawing.Point(192, 21);
             this.chbCropTo.Name = "chbCropTo";
-            this.chbCropTo.Size = new System.Drawing.Size(39, 17);
+            this.chbCropTo.Size = new System.Drawing.Size(35, 17);
             this.chbCropTo.TabIndex = 2;
-            this.chbCropTo.Text = "To";
+            this.chbCropTo.Text = "to";
             this.chbCropTo.UseVisualStyleBackColor = true;
             this.chbCropTo.CheckedChanged += new System.EventHandler(this.chbCropTo_CheckedChanged);
             // 
