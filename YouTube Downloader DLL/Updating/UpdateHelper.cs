@@ -10,7 +10,7 @@ namespace YouTube_Downloader_DLL.Updating
     public class UpdateHelper
     {
         public const string GetReleasesAPIUrl = "https://api.github.com/repos/AlexxEG/YouTube-Downloader/releases";
-        public const string UserAgent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2;)";
+        public const string UserAgent = "YouTube-Downloader Update Checker";
 
         public static async Task<Update> GetLatestUpdateAsync()
         {
