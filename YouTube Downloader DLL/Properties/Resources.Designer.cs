@@ -19,7 +19,7 @@ namespace YouTube_Downloader_DLL.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -61,23 +61,21 @@ namespace YouTube_Downloader_DLL.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;html&gt;
+        ///   Looks up a localized string similar to &lt;!--This is not a &quot;standard&quot; html file. It&apos;s meant to be used with string.Format.--&gt;
+        ///&lt;html&gt;
         ///    &lt;head&gt;
-        ///        &lt;style type=&quot;&quot; text/css&quot;&quot;&gt;
+        ///        &lt;style type=&quot;text/css&quot;&gt;
         ///            body {{
         ///                border-left: 1px solid #DCDCDC;
         ///                border-right: 1px solid #DCDCDC;
         ///                border-top: 1px solid #DCDCDC;
         ///                border-bottom: 1px solid #DCDCDC;
-        ///                font-family: RobotoDraft, &quot;&quot;Helvetica Neue&quot;&quot;, Helvetica, Arial;
+        ///                font-family: RobotoDraft, &quot;Helvetica Neue&quot;, Helvetica, Arial;
         ///                font-size: 14px;
         ///            }}
         ///        &lt;/style&gt;
         ///    &lt;/head&gt;
-        ///    &lt;body&gt;
-        ///        {0}
-        ///    &lt;/body&gt;
-        ///&lt;/html&gt;.
+        ///    &lt;bod [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Changelog {
             get {
@@ -86,7 +84,8 @@ namespace YouTube_Downloader_DLL.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;html&gt;
+        ///   Looks up a localized string similar to &lt;!--This is not a &quot;standard&quot; html file. It&apos;s meant to be used with string.Format.--&gt;
+        ///&lt;html&gt;
         ///	&lt;head&gt;
         ///		&lt;style type=&quot;text/css&quot;&gt;
         ///			body {{
@@ -105,14 +104,7 @@ namespace YouTube_Downloader_DLL.Properties {
         ///			#content {{
         ///				position: relative;
         ///				top: 0;
-        ///				left: 0;
-        ///				bottom: 0;
-        ///				right: 0;
-        ///				overflow: auto;
-        ///			}}
-        ///
-        ///			.info {{
-        ///				height: [rest of string was truncated]&quot;;.
+        ///				left: 0;        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Exception {
             get {

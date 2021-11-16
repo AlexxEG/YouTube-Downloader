@@ -12,7 +12,7 @@ namespace YouTube_Downloader.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.7.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.0.3.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -108,9 +108,9 @@ namespace YouTube_Downloader.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::LeaxDev.WindowStates.WindowStates WindowStates {
+        public global::YouTube_Downloader.Classes.WindowStates WindowStates {
             get {
-                return ((global::LeaxDev.WindowStates.WindowStates)(this["WindowStates"]));
+                return ((global::YouTube_Downloader.Classes.WindowStates)(this["WindowStates"]));
             }
             set {
                 this["WindowStates"] = value;
