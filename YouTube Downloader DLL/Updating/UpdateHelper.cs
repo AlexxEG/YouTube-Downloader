@@ -24,10 +24,7 @@ namespace YouTube_Downloader_DLL.Updating
         /// <summary>
         /// Returns true if given update is newer than local version.
         /// </summary>
-        public static bool IsUpdate(Update update)
-        {
-            return Common.Version < update.Version;
-        }
+        public static bool IsUpdate(Update update) => Common.Version < update.Version;
 
         public static async Task<bool> IsUpdateAvailableAsync()
         {
@@ -43,21 +40,14 @@ namespace YouTube_Downloader_DLL.Updating
 
         private static async Task<JArray> GetJsonResponseAsync(string url)
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(GetReleasesAPIUrl);
+            var request = WebRequest.Create(url) as HttpWebRequest;
             request.KeepAlive = false;
             request.UserAgent = UserAgent;
 
-            string jsonString = string.Empty;
-            JArray json = null;
+            var response = await request.GetResponseAsync() as HttpWebResponse;
+            var jsonString = await new StreamReader(response.GetResponseStream()).ReadToEndAsync();
 
-            await Task.Run(delegate
-            {
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                jsonString = new StreamReader(response.GetResponseStream()).ReadToEnd();
-                json = JsonConvert.DeserializeObject<JArray>(jsonString);
-            });
-
-            return json;
+            return JsonConvert.DeserializeObject<JArray>(jsonString);
         }
     }
 }
