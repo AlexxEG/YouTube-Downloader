@@ -62,6 +62,9 @@ namespace YouTube_Downloader
                     olvQueue.ListViewItemSorter = new BarTextProgressComparer(order);
                 }
             };
+
+            rbConvertFile.BackColor = Color.FromArgb(249, 249, 249);
+            rbConvertFolder.BackColor = Color.FromArgb(249, 249, 249);
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
