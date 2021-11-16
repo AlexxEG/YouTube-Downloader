@@ -9,12 +9,12 @@ namespace YouTube_Downloader_DLL.Updating
 {
     public class UpdateHelper
     {
-        public const string GetReleasesAPIUrl = "https://api.github.com/repos/AlexxEG/YouTube-Downloader/releases";
+        public const string GitHubAPIGetReleases = "https://api.github.com/repos/AlexxEG/YouTube-Downloader/releases";
         public const string UserAgent = "YouTube-Downloader Update Checker";
 
         public static async Task<Update> GetLatestUpdateAsync()
         {
-            var response = await GetJsonResponseAsync(GetReleasesAPIUrl);
+            var response = await GetJsonResponseAsync(GitHubAPIGetReleases);
             string downloadUrl = response[0]["assets"][0]["browser_download_url"].ToString();
             string version = response[0]["tag_name"].ToString().TrimStart('v');
 
