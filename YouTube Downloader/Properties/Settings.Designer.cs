@@ -108,9 +108,9 @@ namespace YouTube_Downloader.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::YouTube_Downloader.Classes.WindowStates WindowStates {
+        public global::LeaxDev.WindowStates.WindowStates WindowStates {
             get {
-                return ((global::YouTube_Downloader.Classes.WindowStates)(this["WindowStates"]));
+                return ((global::LeaxDev.WindowStates.WindowStates)(this["WindowStates"]));
             }
             set {
                 this["WindowStates"] = value;
