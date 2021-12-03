@@ -137,24 +137,6 @@ namespace YouTube_Downloader_DLL
             Process.Start(e.Url.ToString());
         }
 
-        [Obsolete]
-        private new void Show()
-        {
-            throw new NotImplementedException();
-        }
-
-        [Obsolete]
-        private new void Show(IWin32Window owner)
-        {
-            throw new NotImplementedException();
-        }
-
-        [Obsolete]
-        private new void ShowDialog()
-        {
-            throw new NotImplementedException();
-        }
-
         public new void ShowDialog(IWin32Window owner)
         {
             this.Owner = owner;
