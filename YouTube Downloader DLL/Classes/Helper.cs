@@ -241,12 +241,11 @@ namespace YouTube_Downloader_DLL.Classes
         /// Returns the highest quality audio format from the given VideoFormat.
         /// </summary>
         /// <param name="format">The format to get audio format from.</param>
+        /// <returns>Returns <see langword="null"/> if no audio formats are found.</returns>
         public static VideoFormat GetAudioFormat(VideoFormat format)
         {
-            List<VideoFormat> audio = new List<VideoFormat>();
-
-            // Add all audio only formats
-            audio.AddRange(format.VideoInfo.Formats.FindAll(f => f.AudioOnly == true && f.Extension != "webm"));
+            // Find all audio only formats
+            var audio = format.VideoInfo.Formats.FindAll(f => f.AudioOnly == true && f.Extension != "webm");
 
             // Return null if no audio is found
             if (audio.Count == 0)
