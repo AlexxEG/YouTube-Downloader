@@ -11,9 +11,11 @@ namespace YouTube_Downloader_DLL
 {
     public partial class UpdateDownloader : Form
     {
-        public const string ChangelogUrl = "https://raw.githubusercontent.com/AlexxEG/YouTube-Downloader/master/CHANGELOG.md";
+        private const string ChangelogUrl = "https://raw.githubusercontent.com/AlexxEG/YouTube-Downloader/master/CHANGELOG.md";
+        private const string ButtonTextDownload = "Download";
+        private const string ButtonTextInstall = "Install";
 
-        WebClient _webClient;
+        WebClient _webClient = new WebClient();
         Update _latestUpdate;
 
         public new IWin32Window Owner { get; private set; }
@@ -21,6 +23,9 @@ namespace YouTube_Downloader_DLL
         public UpdateDownloader()
         {
             InitializeComponent();
+
+            _webClient.DownloadProgressChanged += webClient_DownloadProgressChanged;
+            _webClient.DownloadFileCompleted += webClient_DownloadFileCompleted;
         }
 
         private void UpdateDownloader_Load(object sender, EventArgs e)
@@ -33,12 +38,8 @@ namespace YouTube_Downloader_DLL
 
         private void btnDownload_Click(object sender, EventArgs e)
         {
-            if (btnDownload.Text == "Download")
+            if (btnDownload.Text == ButtonTextDownload)
             {
-                _webClient = new WebClient();
-                _webClient.DownloadProgressChanged += webClient_DownloadProgressChanged;
-                _webClient.DownloadFileCompleted += webClient_DownloadFileCompleted;
-
                 btnDownload.Enabled = false;
                 btnCancel.Enabled = true;
                 btnClose.Enabled = false;
@@ -47,7 +48,7 @@ namespace YouTube_Downloader_DLL
                     new Uri(_latestUpdate.DownloadUrl),
                     Path.GetFileName(_latestUpdate.DownloadUrl));
             }
-            else if (btnDownload.Text == "Install")
+            else if (btnDownload.Text == ButtonTextInstall)
             {
                 if (!File.Exists(Path.GetFileName(_latestUpdate.DownloadUrl)))
                 {
@@ -116,12 +117,9 @@ namespace YouTube_Downloader_DLL
         private void webClient_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
             progressBar1.Value = progressBar1.Maximum;
-            btnDownload.Text = "Install";
+            btnDownload.Text = ButtonTextInstall;
             btnDownload.Enabled = true;
             btnClose.Enabled = true;
-
-            _webClient.Dispose();
-            _webClient = null;
         }
 
         private void webBrowser1_Navigating(object sender, WebBrowserNavigatingEventArgs e)
