@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -111,9 +112,7 @@ namespace YouTube_Downloader_DLL.Classes
         public static string FixUrl(string url)
         {
             // Remove "Watch Later" information, causes error
-            url = url.Replace("&index=6&list=WL", "");
-
-            return url;
+            return url.Replace("&index=6&list=WL", string.Empty);
         }
 
         /// <summary>
@@ -131,8 +130,6 @@ namespace YouTube_Downloader_DLL.Classes
         /// <param name="title">The title to format.</param>
         public static string FormatTitle(string title)
         {
-            string[] illegalCharacters = new string[] { "/", @"\", "*", "?", "\"", "<", ">" };
-
             var replace = new Dictionary<string, string>()
             {
                 {"|", "-"},
@@ -145,12 +142,13 @@ namespace YouTube_Downloader_DLL.Classes
                 {"amp;", "&"}
             };
 
-            var sb = new System.Text.StringBuilder(title);
+            var sb = new StringBuilder(title);
 
-            foreach (string s in illegalCharacters)
+            // Remove illegal characters
+            foreach (string s in new string[] { "/", @"\", "*", "?", "\"", "<", ">" })
                 sb.Replace(s, string.Empty);
 
-            foreach (KeyValuePair<string, string> s in replace)
+            foreach (var s in replace)
                 sb.Replace(s.Key, s.Value);
 
             return sb.ToString().Trim();
@@ -200,9 +198,8 @@ namespace YouTube_Downloader_DLL.Classes
             if (speed == 0)
                 return 0;
 
-            long remainBytes = totalBytes - downloadedBytes;
-
-            return remainBytes / speed;
+            // Get remaining bytes and divide by speed
+            return (totalBytes - downloadedBytes) / speed;
         }
 
         /// <summary>
@@ -232,7 +229,7 @@ namespace YouTube_Downloader_DLL.Classes
         /// <param name="url">The url to get playlist id from.</param>
         public static string GetPlaylistId(string url)
         {
-            Regex regex = new Regex(@"^(?:https?://)?(?:www.)?youtube.com/.*list=([0-9a-zA-Z\-_]*).*$");
+            var regex = new Regex(@"^(?:https?://)?(?:www.)?youtube.com/.*list=([0-9a-zA-Z\-_]*).*$");
 
             return regex.Match(url).Groups[1].Value;
         }
@@ -261,51 +258,37 @@ namespace YouTube_Downloader_DLL.Classes
         /// <param name="video">The video to get format from.</param>
         public static VideoFormat GetPreferredFormat(VideoInfo video, PreferredQuality preferredQuality)
         {
-            VideoFormat[] qualities = Helper.GetVideoFormats(video);
-
             /* Find a format based on user's preference.
              * 
              * Highest  : Self-explanatory
              * High     : 1080p
-             * Medium   : 720p
-             * Low      : 360p
-             * Lowest   : 140p
+             * Medium   :  720p
+             * Low      :  360p
+             * Lowest   :  140p
              */
-
-            int index = -1;
+            var index = -1;
+            var format = string.Empty;
 
             switch (preferredQuality)
             {
-                case PreferredQuality.Highest:
-                    // Do nothing
-                    break;
+                // case PreferredQuality.Highest: - Do nothing here
                 case PreferredQuality.High:
-                    if ((index = qualities.IndexOf("1080")) > -1)
-                    {
-                        return qualities[index];
-                    }
-                    break;
+                    format = "1080"; break;
                 case PreferredQuality.Medium:
-                    if ((index = qualities.IndexOf("720")) > -1)
-                    {
-                        return qualities[index];
-                    }
-                    break;
+                    format = "720"; break;
                 case PreferredQuality.Low:
-                    if ((index = qualities.IndexOf("360")) > -1)
-                    {
-                        return qualities[index];
-                    }
-                    break;
+                    format = "360"; break;
                 case PreferredQuality.Lowest:
-                    if ((index = qualities.IndexOf("144")) > -1)
-                    {
-                        return qualities[index];
-                    }
-                    break;
+                    format = "144"; break;
             }
 
-            if (!(index > -1)) index = qualities.Length - 1;
+            var qualities = Helper.GetVideoFormats(video);
+
+            if (!string.IsNullOrEmpty(format))
+                index = qualities.IndexOf(format);
+
+            // If nothing found just return last
+            if (index < 0) index = qualities.Length - 1;
 
             return qualities[index];
         }
@@ -316,22 +299,10 @@ namespace YouTube_Downloader_DLL.Classes
         /// <param name="video">The video to get formats from.</param>
         public static VideoFormat[] GetVideoFormats(VideoInfo video)
         {
-            var formats = new List<VideoFormat>();
-
-            foreach (VideoFormat format in video.Formats)
-            {
-                // Skip audio only formats
-                if (format.AudioOnly)
-                    continue;
-
-                // Only include .mp4 videos, and exclude vp9 vcodec
-                if (format.HasAudioAndVideo || format.VCodec.Contains("vp9") || !format.Extension.Contains("mp4"))
-                    continue;
-
-                formats.Add(format);
-            }
-
-            return formats.ToArray();
+            // Skip audio only, audio + video & vp9 video formats
+            return video.Formats
+                .SkipWhile(x => x.AudioOnly || x.HasAudioAndVideo || x.VCodec.Contains("vp9") || !x.Extension.Contains("mp4"))
+                .ToArray();
         }
 
         /// <summary>
@@ -340,7 +311,7 @@ namespace YouTube_Downloader_DLL.Classes
         /// <param name="url">The url to check.</param>
         public static bool IsPlaylist(string url)
         {
-            Regex regex = new Regex(@"^(?:https?://)?(?:www.)?youtube.com/.*list=([0-9a-zA-Z\-_]*).*$");
+            var regex = new Regex(@"^(?:https?://)?(?:www.)?youtube.com/.*list=([0-9a-zA-Z\-_]*).*$");
 
             return regex.IsMatch(url);
         }
@@ -363,10 +334,9 @@ namespace YouTube_Downloader_DLL.Classes
             if (!url.ToLower().Contains("www.youtube.com/watch?"))
                 return false;
 
-            string pattern = @"^(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?$";
-            Regex regex = new Regex(pattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            var pattern = @"^(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?$";
 
-            return regex.IsMatch(url);
+            return Regex.IsMatch(url, pattern, RegexOptions.IgnoreCase);
         }
 
         /// <summary>
@@ -375,7 +345,7 @@ namespace YouTube_Downloader_DLL.Classes
         /// <param name="url">The url to check.</param>
         public static bool IsValidTwitchUrl(string url)
         {
-            string pattern = @"(https?:\/\/)?(www.)?twitch\.tv\/videos\/\d{9}(\?.*)?$";
+            var pattern = @"(https?:\/\/)?(www.)?twitch\.tv\/videos\/\d{9}(\?.*)?$";
 
             return Regex.IsMatch(url, pattern, RegexOptions.IgnoreCase);
         }
@@ -443,7 +413,7 @@ namespace YouTube_Downloader_DLL.Classes
 
         public static string Format(long millis)
         {
-            string format = "";
+            string format = string.Empty;
 
             for (int i = 0; i < TimeUnitsValue.Length; i++)
             {
